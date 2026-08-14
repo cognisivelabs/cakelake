@@ -5,8 +5,8 @@ still needs a client answer. As answers come in, move items from "Open
 questions" into the relevant confirmed section and note the date/source of
 the decision.
 
-Last updated: 2026-08-14 (resolved login OTP channel — email/WhatsApp, no
-SMS — and simplified admin console scope to MVP CRUD).
+Last updated: 2026-08-14 (re-confirmed WhatsApp is outbound-only; flagged
+the prototype's WhatsApp drawer placing unpaid orders as a discrepancy).
 
 ## Client
 
@@ -95,10 +95,14 @@ client confirmation (see open questions).
     Deliberately capped at two messages, not a message per status stage —
     more than that risks the customer muting the thread, which defeats the
     purpose. This is a second, WhatsApp-specific channel alongside the
-    order confirmation email (requirement #8), not a replacement for it —
-    see [ADR-012](../adr/ADR-012-whatsapp-notifications.md) for the
-    technical approach and why full WhatsApp-native ordering (browsing,
-    cart-building, and payment inside the chat) is out of scope for now.
+    order confirmation email (requirement #8), not a replacement for it.
+    **WhatsApp is outbound-only — customers cannot place, modify, or
+    confirm an order through WhatsApp in any form** (no cart-building, no
+    "reply CONFIRM to order"). Ordering happens on the website only; the
+    two messages above are the entire extent of WhatsApp's role. Confirmed
+    again 2026-08-14 — see
+    [ADR-012](../adr/ADR-012-whatsapp-notifications.md) for the technical
+    approach and full reasoning.
 
 ## Operational requirements
 
@@ -161,6 +165,19 @@ confirmed decision that mobile-path OTP goes by **WhatsApp**, never SMS
 (see requirement #7, [ADR-005](../adr/ADR-005-customer-identity.md)).
 Needs a copy/logic fix in Claude Design — not a local patch, per the usual
 workflow.
+
+**⚠ Fourth discrepancy to resolve — more serious:** prototype v2's
+WhatsApp drawer implements real ordering, not just notifications. Its
+`waSend`/`waReply` logic responds to quick-reply chips ("Send my cart",
+"Order a cake", "Custom cake"), and a "CONFIRM" reply calls
+`commitOrder('WhatsApp')` directly — placing a real order **with no
+payment step**. As built, this would let anyone push a free, unpaid order
+into the kitchen queue from the WhatsApp drawer alone. This directly
+contradicts requirement #10 above (WhatsApp is outbound-only) and needs
+removing entirely in Claude Design — the drawer should only ever display
+the two outbound notifications, never accept a reply that creates,
+modifies, or confirms an order. See
+[ADR-012](../adr/ADR-012-whatsapp-notifications.md).
 
 **✅ Login mechanism resolved (2026-08-14):** account login is email or
 mobile, customer's choice; the one-time code goes by email or **WhatsApp**
@@ -285,3 +302,9 @@ through with the client.
   for MVP — roles, invites, and the audit log deferred to a later phase,
   not discarded. See [ADR-005](../adr/ADR-005-customer-identity.md) and
   [ADR-011](../adr/ADR-011-admin-console.md).
+- **2026-08-14** (chat) — Re-confirmed requirement #10: WhatsApp is
+  outbound-only, customers cannot place/modify/confirm an order through it
+  in any form. Prompted by finding the prototype's WhatsApp drawer
+  actually commits real, unpaid orders via a "CONFIRM" reply — flagged as
+  the fourth discrepancy to fix in Claude Design, not just a documentation
+  clarification. See [ADR-012](../adr/ADR-012-whatsapp-notifications.md).

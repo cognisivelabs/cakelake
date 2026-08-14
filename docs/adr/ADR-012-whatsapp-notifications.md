@@ -51,8 +51,13 @@ defeats the purpose. The in-app live tracker
 stage-by-stage detail for anyone who wants it; WhatsApp covers the two
 moments that actually warrant an interruption.
 
-Full WhatsApp-native ordering (catalog browsing, cart-building, in-chat
-checkout) is **explicitly out of scope** for this ADR — see Alternatives.
+**WhatsApp is outbound-only. Customers cannot place an order through
+WhatsApp, in any form — no cart-building, no "confirm" reply that commits
+an order, nothing.** Full WhatsApp-native ordering (catalog browsing,
+cart-building, in-chat checkout) is **explicitly out of scope** for this
+ADR — see Alternatives. Confirmed again 2026-08-14, explicitly, because
+the prototype had drifted from this — see the flagged discrepancy in
+Consequences.
 
 ## Rationale
 
@@ -104,6 +109,16 @@ approved *before* launch, not discovered as a blocker during development.
   call (WhatsApp, alongside the SES email in ADR-008) — both failures
   should be logged ([ADR-009](ADR-009-logging-and-error-tracking.md)) but
   never block the order/status-update itself succeeding
+- **⚠ Discrepancy, confirmed 2026-08-14, needs fixing in Claude Design (not
+  a local patch):** prototype v2's WhatsApp drawer implements a real
+  ordering flow, not just notifications. `waSend`/`waReply` respond to
+  quick-reply chips ("Send my cart", "Order a cake", "Custom cake"), and a
+  "CONFIRM" reply calls `commitOrder('WhatsApp')` directly — placing a
+  real order **with no payment step at all**. As built, this would let
+  anyone push a free, unpaid order into the kitchen queue straight from
+  the WhatsApp drawer. This needs removing entirely: the WhatsApp drawer
+  should only ever *display* the two outbound notifications from this
+  ADR, never accept a reply that creates, modifies, or confirms an order
 
 ## Alternatives Considered
 

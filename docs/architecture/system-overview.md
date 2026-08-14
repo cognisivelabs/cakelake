@@ -155,29 +155,31 @@ without dedicated ops.
 ## 8. Admin Console
 
 ```
-Staff member logs in at /admin with a one-time code (mobile or email --
-same OTP style as customer login, but checked against a separate
-`team` collection, not customer accounts -- ADR-005, ADR-011)
+Staff member logs in at /admin (own credentials, separate from
+customer accounts -- ADR-005, ADR-011)
       |
       v
 Same Next.js app, same Express API, same MongoDB -- an authenticated,
-store-scoped, role-gated route section:
-  - Catalogue CRUD (items, prices, photos, availability)     [Owner, Catalogue manager]
-  - Offers CRUD (create/edit/end time-limited promotions)    [Owner, Catalogue manager]
-  - Team & access: invite staff, assign roles, suspend/remove [Owner only]
-  - Activity log: every catalogue/offer/team change, who + when
+store-scoped route section:
+  - Catalogue CRUD (items, prices, photos, availability)
+  - Offers CRUD (create/edit/end time-limited promotions)
   - Metrics view (orders + traffic, from section 7 above)     [not yet built]
 ```
 
-Three roles, most to least privileged: **Owner** (everything, plus who has
-access), **Catalogue manager** (items/offers/photos/orders, no team
-access), **Counter staff** (orders only, read-only menu). This is not a
-second application — see [ADR-011](../adr/ADR-011-admin-console.md) for why
-reusing the same app was chosen over splitting it out, and for the
-confirmation flag on this role/invite/audit-log scope (it's more than the
-original catalogue/offers CRUD ask). The counter order-status taps
-(section 4, requirement #5's staff side) and the admin console are
-different route sections of the same app, usable by the same staff login.
+MVP scope is deliberately flat: catalogue and offers management, no role
+tiers. This is not a second application — see
+[ADR-011](../adr/ADR-011-admin-console.md) for why reusing the same app was
+chosen over splitting it out. The counter order-status taps (section 4,
+requirement #5's staff side) and the admin console are different route
+sections of the same app, usable by the same staff login.
+
+**Deferred to a later phase, not built now:** the prototype
+(`Cake Lake Admin.dc.html`) designed a fuller system — three roles (Owner /
+Catalogue manager / Counter staff), invite-based onboarding, and an
+activity log of every change. Confirmed 2026-08-14 as out of MVP scope,
+worth revisiting once a second branch or a bigger team actually needs the
+access control — the design stays in the prototype as a ready reference,
+not thrown away.
 
 ## 9. What's Deliberately Not Here (Yet)
 

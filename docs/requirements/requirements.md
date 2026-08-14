@@ -5,8 +5,8 @@ still needs a client answer. As answers come in, move items from "Open
 questions" into the relevant confirmed section and note the date/source of
 the decision.
 
-Last updated: 2026-08-14 (payment gateway: ADCB if available, PayTabs as
-the confirmed fallback — both settle into the client's ADCB account).
+Last updated: 2026-08-14 (resolved login OTP channel — email/WhatsApp, no
+SMS — and simplified admin console scope to MVP CRUD).
 
 ## Client
 
@@ -59,8 +59,12 @@ client confirmation (see open questions).
      now.**
    - Every future branch running on the same system.
 7. **Two ways to check out: account or guest.**
-   - **Account** — the customer's mobile number is their ID. Once logged in,
-     they can place an order and see their own past order history.
+   - **Account** — the customer logs in with **email or mobile number**,
+     their choice. The one-time login code goes by **email or WhatsApp —
+     never SMS** (confirmed 2026-08-14, reusing the WhatsApp integration
+     from requirement #10 rather than a separate SMS provider — see
+     [ADR-005](../adr/ADR-005-customer-identity.md)). Once logged in, they
+     can place an order and see their own past order history.
    - **Guest** — no account needed. At checkout, ask for an email address;
      that's where the live order-tracking link/details get sent, so a guest
      can follow their order without ever logging in.
@@ -76,6 +80,12 @@ client confirmation (see open questions).
    - Insert/update/remove time-limited offers (requirement #2)
    - Scoped to a store (requirement #6) — a future second branch manages
      its own catalogue/offers independently
+   - **Flat access for MVP** — confirmed 2026-08-14: no role tiers, no
+     invite flow, no audit log. The prototype designed a fuller
+     role/invite/audit-log system (Owner / Catalogue manager / Counter
+     staff); that's deferred to a later phase, not built now, kept as a
+     ready reference for when a second branch or bigger team needs it —
+     see [ADR-011](../adr/ADR-011-admin-console.md).
 10. **WhatsApp order notifications.** Exactly two automated messages per
     order, sent to the customer on WhatsApp:
     - **Order confirmed** — sent the moment an order is placed: what was
@@ -144,24 +154,26 @@ v1 and v2) now filters trackable orders to `state === 'live' || state ===
 tracking page. Verified directly in
 `prototype/Cake Lake Ordering Prototype v2.dc.html`.
 
-**⚠ New elaboration to confirm — login mechanism.** Prototype v2 implements
-account login (requirement #7) as a one-time code sent to mobile *or*
-email, the customer's choice — not mobile-only as originally decided in
-ADR-005. This is a reasonable middle ground (email OTP is free; mobile OTP
-still supports the phone-first flow) but does partially reopen the
-"no SMS/OTP cost" assumption ADR-005 made — confirm whether this is wanted,
-or whether OTP should be deferred/mobile-only as originally decided. See
-[ADR-005](../adr/ADR-005-customer-identity.md)'s flagged update.
+**⚠ Third discrepancy to resolve:** prototype v2's login flow explicitly
+says **SMS** — `authSentKind` labels mobile OTP as `'SMS'`, and the code
+screen reads "the 4-digit code we texted you." Both now contradict the
+confirmed decision that mobile-path OTP goes by **WhatsApp**, never SMS
+(see requirement #7, [ADR-005](../adr/ADR-005-customer-identity.md)).
+Needs a copy/logic fix in Claude Design — not a local patch, per the usual
+workflow.
 
-**⚠ New elaboration to confirm — admin console scope.** The new admin
-console prototype (`prototype/Cake Lake Admin.dc.html`, requirement #9)
-goes beyond simple catalogue/offer CRUD: it adds three roles (Owner,
-Catalogue manager, Counter staff) with different permissions, an
-invite-based onboarding flow, and an activity/audit log of who changed
-what. All reasonable, none of it was explicitly asked for — confirm this
-is the intended scope before treating it as settled. It does **not** yet
-include an orders view or the order/traffic metrics view from ADR-010. See
-[ADR-011](../adr/ADR-011-admin-console.md)'s flagged update.
+**✅ Login mechanism resolved (2026-08-14):** account login is email or
+mobile, customer's choice; the one-time code goes by email or **WhatsApp**
+— SMS dropped entirely, reusing the WhatsApp integration from requirement
+#10 rather than a separate SMS provider. See requirement #7 and
+[ADR-005](../adr/ADR-005-customer-identity.md).
+
+**✅ Admin console scope resolved (2026-08-14):** simplified to plain
+catalogue/offers CRUD for MVP — no roles, no invite flow, no audit log.
+The prototype's fuller role/invite/audit-log system is deferred to a later
+phase (kept as a ready reference, not discarded) — revisit once a second
+branch or a bigger team justifies it. See requirement #9 and
+[ADR-011](../adr/ADR-011-admin-console.md).
 
 ## Open questions for client
 
@@ -266,3 +278,10 @@ through with the client.
   client's ADCB account either way. Unblocks starting the payment
   integration layer without waiting on ADCB's answer. See
   [ADR-006](../adr/ADR-006-payment-gateway.md).
+- **2026-08-14** (chat) — Resolved both remaining prototype elaborations:
+  (1) account login OTP goes by email or **WhatsApp**, SMS dropped
+  entirely — reuses the ADR-012 WhatsApp integration instead of a separate
+  SMS provider; (2) admin console simplified to flat catalogue/offers CRUD
+  for MVP — roles, invites, and the audit log deferred to a later phase,
+  not discarded. See [ADR-005](../adr/ADR-005-customer-identity.md) and
+  [ADR-011](../adr/ADR-011-admin-console.md).

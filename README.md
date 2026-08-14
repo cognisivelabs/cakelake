@@ -95,7 +95,7 @@ high-traffic platform.
 | Repo structure | Single repo, no polyrepo split | [ADR-002](docs/adr/ADR-002-single-repo-structure.md) |
 | Hosting | AWS `me-central-1`, one small compute node | [ADR-003](docs/adr/ADR-003-hosting.md) |
 | Order tracking | HTTP polling, no WebSockets | [ADR-004](docs/adr/ADR-004-order-tracking-strategy.md) |
-| Customer identity | Mobile number (accounts) / email (guests) | [ADR-005](docs/adr/ADR-005-customer-identity.md) |
+| Customer identity | Email or mobile via WhatsApp OTP (accounts) / email (guests) | [ADR-005](docs/adr/ADR-005-customer-identity.md) |
 | Payments | ADCB if available, else PayTabs (confirmed fallback); Apple Pay/Google Pay only online; tap card in person | [ADR-006](docs/adr/ADR-006-payment-gateway.md) |
 | Data model | Store-scoped from day one | [ADR-007](docs/adr/ADR-007-store-scoped-data-model.md) |
 | Notifications | Order confirmation email via AWS SES | [ADR-008](docs/adr/ADR-008-order-confirmation-email.md) |

@@ -51,7 +51,7 @@ and identity shape, mainly.
 | [ADR-002](ADR-002-single-repo-structure.md) | Single Repository, Not Polyrepo | Accepted |
 | [ADR-003](ADR-003-hosting.md) | AWS `me-central-1` Hosting, Minimal Footprint | Proposed |
 | [ADR-004](ADR-004-order-tracking-strategy.md) | Order Tracking — Polling, Not WebSockets | Proposed |
-| [ADR-005](ADR-005-customer-identity.md) | Customer Identity — Mobile Number for Accounts, Email for Guests | Accepted |
+| [ADR-005](ADR-005-customer-identity.md) | Customer Identity — Email or Mobile (via WhatsApp) for Accounts, Email for Guests | Accepted |
 | [ADR-006](ADR-006-payment-gateway.md) | Payment Gateway — ADCB if Available, PayTabs as Confirmed Fallback | Proposed |
 | [ADR-007](ADR-007-store-scoped-data-model.md) | Store-Scoped Data Model From Day One | Accepted |
 | [ADR-008](ADR-008-order-confirmation-email.md) | Order Confirmation Email | Proposed |

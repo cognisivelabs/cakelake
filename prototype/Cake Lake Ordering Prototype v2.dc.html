@@ -17,18 +17,18 @@
   <link rel="stylesheet" href="../design-system/tokens/motion.css">
   <link rel="stylesheet" href="../design-system/styles.css">
   <script src="../design-system/_ds_bundle.js"></script>
+  <script src="./image-slot.js"></script>
   <style>
     body{margin:0;background:var(--cream);color:var(--ink);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;}
     a{color:var(--berry);text-decoration:none;}
     a:hover{color:var(--berry-deep);}
-    input,select,textarea{font-family:'Inter',sans-serif;}
+    input,select,textarea{font-family:'Inter',sans-serif;box-sizing:border-box;}
     input:focus,select:focus,textarea:focus{outline:2px solid var(--honey);outline-offset:1px;}
-    @keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-14px);}}
     @media (prefers-reduced-motion:reduce){*{animation:none !important;}}
   </style>
 </helmet>
 
-<div style="min-height:100vh;background:var(--cream);color:var(--ink);font-family:'Inter',sans-serif;">
+<div style="min-height:100vh;background:var(--cream);padding-bottom:80px;">
 
   <header style="position:sticky;top:0;z-index:60;background:rgba(251,246,236,0.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);">
     <div style="max-width:1180px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:20px;">
@@ -44,8 +44,8 @@
         </svg>
         Cake Lake
       </div>
-      <nav style="display:flex;gap:26px;font-weight:500;font-size:14.5px;flex-wrap:wrap;justify-content:center;">
-        <sc-for list="{{ navLinks }}" as="link" hint-placeholder-count="6">
+      <nav style="display:flex;gap:24px;font-weight:500;font-size:14.5px;flex-wrap:wrap;justify-content:center;">
+        <sc-for list="{{ navLinks }}" as="link" hint-placeholder-count="5">
           <span onClick="{{ link.go }}" style="cursor:pointer;padding:4px 0;color:{{ link.color }};border-bottom:2px solid {{ link.underline }};">{{ link.label }}</span>
         </sc-for>
       </nav>
@@ -61,6 +61,15 @@
         </button>
       </div>
     </div>
+    <sc-if value="{{ showRail }}">
+      <div style="border-top:1px solid var(--line);background:rgba(251,246,236,0.92);">
+        <div style="max-width:1180px;margin:0 auto;padding:10px 24px;display:flex;gap:8px;overflow-x:auto;">
+          <sc-for list="{{ cats }}" as="c" hint-placeholder-count="7">
+            <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Tab" active="{{ c.active }}" on-click="{{ c.go }}" hint-size="auto,36px">{{ c.label }}</x-import>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
   </header>
 
   <main style="max-width:1180px;margin:0 auto;padding:0 24px 40px;">
@@ -68,41 +77,26 @@
     <!-- ========== HOME ========== -->
     <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
       <div>
-        <section style="padding:56px 0 40px;display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:40px;align-items:center;">
-          <div>
-            <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Eyebrow" hint-size="auto,18px">Dubai Marina · Baked fresh daily</x-import>
-            <h1 style="font-family:'Fraunces',serif;font-weight:600;letter-spacing:-0.01em;font-size:clamp(2.4rem,5vw,4rem);line-height:1.02;margin:18px 0 20px;text-wrap:pretty;">Cake, made <em style="font-style:italic;color:var(--berry);font-weight:500;">properly</em>,<br>ordered in seconds.</h1>
-            <p style="font-size:17px;color:var(--ink-soft);max-width:440px;line-height:1.6;margin:0 0 28px;">Custom cakes, cupcakes and celebration bakes — order online, on WhatsApp, or at the counter on Marina Walk. Follow every layer as it comes together.</p>
-            <div style="display:flex;gap:14px;flex-wrap:wrap;margin-bottom:34px;">
-              <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Button" on-click="{{ goMenu }}" hint-size="auto,48px">Order online →</x-import>
-              <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Button" variant="ghost" on-click="{{ openWa }}" hint-size="auto,48px">Order on WhatsApp</x-import>
-            </div>
-            <div style="display:flex;gap:28px;flex-wrap:wrap;">
-              <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Stat" value="45 min" label="Avg. pickup time" hint-size="auto,44px"></x-import>
-              <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Stat" value="120+" label="Bakes on the menu" hint-size="auto,44px"></x-import>
-              <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Stat" value="4.9 ★" label="Customer rating" hint-size="auto,44px"></x-import>
-            </div>
+        <section style="padding:clamp(32px,5vw,60px) 0 40px;text-align:center;">
+          <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.StatusPill" status="open" hint-size="auto,24px">Open now · Marina Walk · 08:00 — 22:00</x-import>
+          <h1 style="font-family:'Fraunces',serif;font-weight:600;letter-spacing:-0.01em;line-height:1.02;font-size:clamp(2.4rem,6vw,4.6rem);margin:20px auto 18px;max-width:20ch;">Everything in the case, <em style="font-style:italic;color:var(--berry);font-weight:500;">today</em>.</h1>
+          <p style="color:var(--ink-soft);font-size:17px;line-height:1.6;margin:0 auto 26px;max-width:52ch;">The whole counter, priced and ready. Pick what you want, choose a slot, collect it warm — or send the order over on WhatsApp.</p>
+          <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:34px;">
+            <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Button" on-click="{{ goMenu }}" hint-size="auto,48px">Start an order →</x-import>
+            <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Button" variant="ghost" on-click="{{ openWa }}" hint-size="auto,48px">Order on WhatsApp</x-import>
           </div>
-          <div style="display:flex;justify-content:center;">
-            <svg viewBox="0 0 420 420" fill="none" style="width:100%;max-width:400px;display:block;">
-              <ellipse cx="210" cy="360" rx="150" ry="18" fill="#EDE3CC"></ellipse>
-              <rect x="90" y="220" width="240" height="90" rx="18" fill="#C7355A"></rect>
-              <rect x="90" y="220" width="240" height="18" rx="9" fill="#e37991"></rect>
-              <rect x="115" y="140" width="190" height="90" rx="18" fill="#E2A233"></rect>
-              <rect x="115" y="140" width="190" height="18" rx="9" fill="#edbf6f"></rect>
-              <rect x="140" y="70" width="140" height="80" rx="18" fill="#6F9463"></rect>
-              <rect x="140" y="70" width="140" height="18" rx="9" fill="#93b287"></rect>
-              <circle cx="210" cy="55" r="16" fill="#C7355A"></circle>
-              <path d="M210 20 C205 30 215 35 210 45" stroke="#2B241D" stroke-width="3" stroke-linecap="round" fill="none"></path>
-              <circle cx="60" cy="100" r="10" fill="#E2A233" style="animation:float 6s ease-in-out infinite;"></circle>
-              <circle cx="360" cy="150" r="7" fill="#6F9463" style="animation:float 6s ease-in-out infinite 1.2s;"></circle>
-              <circle cx="340" cy="300" r="9" fill="#C7355A" style="animation:float 6s ease-in-out infinite .6s;"></circle>
-            </svg>
+          <div style="display:flex;gap:32px;justify-content:center;flex-wrap:wrap;">
+            <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Stat" value="45 min" label="Avg. pickup time" hint-size="auto,44px"></x-import>
+            <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Stat" value="120+" label="Bakes on the menu" hint-size="auto,44px"></x-import>
+            <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Stat" value="4.9 ★" label="Customer rating" hint-size="auto,44px"></x-import>
           </div>
         </section>
 
-        <section style="padding:20px 0 64px;">
-          <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.SectionHead" eyebrow="Right now" title="Fresh offers" hint-size="100%,90px"></x-import>
+        <section style="padding:0 0 56px;">
+          <div style="display:flex;justify-content:space-between;align-items:baseline;gap:20px;flex-wrap:wrap;margin-bottom:18px;">
+            <h2 style="font-family:'Fraunces',serif;font-weight:600;letter-spacing:-0.01em;font-size:clamp(1.5rem,2.6vw,2rem);margin:0;">Deals on now</h2>
+            <span onClick="{{ goOffers }}" style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--berry-deep);cursor:pointer;">All offers →</span>
+          </div>
           <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:22px;">
             <sc-for list="{{ offers }}" as="o" hint-placeholder-count="3">
               <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.OfferCard" tag="{{ o.tag }}" title="{{ o.title }}" description="{{ o.desc }}" code="{{ o.code }}" hint-size="100%,190px"></x-import>
@@ -110,11 +104,49 @@
           </div>
         </section>
 
-        <section style="padding:0 0 64px;">
-          <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.SectionHead" eyebrow="The counter" title="Pick your bake" description="Tap any bake for sizes, flavours and lead times." hint-size="100%,110px"></x-import>
-          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:22px;">
-            <sc-for list="{{ featured }}" as="it" hint-placeholder-count="6">
-              <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.ItemCard" name="{{ it.name }}" description="{{ it.desc }}" price="{{ it.priceLabel }}" chips="{{ it.tags }}" image="{{ it.icon }}" on-add="{{ it.add }}" on-click="{{ it.open }}" style="{{ pointer }}" hint-size="100%,400px"></x-import>
+        <section style="padding:0 0 56px;">
+          <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.SectionHead" eyebrow="Signature bakes" title="What we're known for" hint-size="100%,90px"></x-import>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:22px;">
+            <sc-for list="{{ heroBakes }}" as="b" hint-placeholder-count="2">
+              <div onClick="{{ b.open }}" style="background:var(--paper);border:1px solid var(--line);border-radius:22px;overflow:hidden;cursor:pointer;">
+                <div style="position:relative;height:260px;background:var(--pistachio-soft);">
+                  <image-slot id="{{ b.slotId }}" shape="rect" placeholder="{{ b.slotHint }}" src="{{ b.photo }}" credit="{{ b.credit }}" credit-href="{{ b.creditHref }}"></image-slot>
+                </div>
+                <div style="padding:22px;display:flex;flex-direction:column;gap:13px;">
+                  <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                    <sc-for list="{{ b.tags }}" as="t" hint-placeholder-count="2">
+                      <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Chip" hint-size="auto,20px">{{ t }}</x-import>
+                    </sc-for>
+                  </div>
+                  <h3 style="font-family:'Fraunces',serif;font-weight:600;font-size:clamp(1.3rem,2.4vw,1.7rem);margin:0;">{{ b.name }}</h3>
+                  <p style="color:var(--ink-soft);font-size:14.5px;line-height:1.6;margin:0;">{{ b.desc }}</p>
+                  <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px dashed var(--line);padding-top:14px;">
+                    <span style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:19px;">{{ b.priceLabel }}</span>
+                    <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Button" size="sm" on-click="{{ b.add }}" hint-size="auto,36px">Add +</x-import>
+                  </div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </section>
+
+        <section style="padding:0 0 56px;">
+          <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.SectionHead" eyebrow="Also in the case" title="Cupcakes, loaves and cookies" description="Boxed to order, ready within two hours." hint-size="100%,110px"></x-import>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;">
+            <sc-for list="{{ smallBakes }}" as="s" hint-placeholder-count="8">
+              <div onClick="{{ s.open }}" style="display:flex;flex-direction:column;gap:11px;cursor:pointer;">
+                <div style="position:relative;height:160px;background:var(--pistachio-soft);border-radius:14px;overflow:hidden;">
+                  <image-slot id="{{ s.slotId }}" shape="rect" placeholder="{{ s.slotHint }}" src="{{ s.photo }}" credit="{{ s.credit }}" credit-href="{{ s.creditHref }}"></image-slot>
+                </div>
+                <div style="display:flex;justify-content:space-between;gap:10px;align-items:baseline;">
+                  <span style="font-weight:600;font-size:14.5px;">{{ s.name }}</span>
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:13.5px;white-space:nowrap;">{{ s.priceLabel }}</span>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);">{{ s.lead }}</span>
+                  <button onClick="{{ s.add }}" aria-label="Add" style="width:32px;height:32px;border-radius:50%;border:1.5px solid var(--ink);background:transparent;color:var(--ink);font-size:16px;cursor:pointer;line-height:1;flex:none;">+</button>
+                </div>
+              </div>
             </sc-for>
           </div>
           <div style="margin-top:28px;">
@@ -122,81 +154,86 @@
           </div>
         </section>
 
-        <section style="padding:0 0 64px;">
-          <div style="background:var(--ink);color:var(--cream);border-radius:32px;padding:clamp(28px,4vw,56px);">
-            <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Eyebrow" tone="honey" hint-size="auto,18px">Live status</x-import>
-            <h2 style="font-family:'Fraunces',serif;font-weight:600;letter-spacing:-0.01em;font-size:clamp(1.7rem,3vw,2.3rem);margin:14px 0 0;color:var(--cream);">Watch your cake come together</h2>
-            <p style="color:var(--on-ink);max-width:520px;margin:14px 0 32px;font-size:15.5px;line-height:1.6;">Every order moves through the same four layers, and we text you at each one — no guessing, no "where's my order" calls.</p>
-            <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.OrderTracker" stages="{{ trackerStages }}" current="{{ stage }}" order-id="{{ activeOrderLabel }}" eta="{{ etaLabel }}" hint-size="100%,320px"></x-import>
-            <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:22px;">
-              <button onClick="{{ advanceStage }}" style="background:transparent;border:1.5px solid var(--ink-line-soft);color:var(--on-ink);padding:9px 16px;border-radius:100px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">Simulate next stage</button>
-              <button onClick="{{ goTrack }}" style="background:transparent;border:1.5px solid var(--ink-line-soft);color:var(--on-ink);padding:9px 16px;border-radius:100px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">Open the tracker</button>
+        <section style="padding:0 0 56px;">
+          <div style="background:var(--ink);border-radius:32px;padding:clamp(26px,4vw,48px);display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:36px;align-items:center;">
+            <div>
+              <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Eyebrow" tone="honey" hint-size="auto,18px">Live status</x-import>
+              <h2 style="font-family:'Fraunces',serif;font-weight:600;letter-spacing:-0.01em;font-size:clamp(1.6rem,2.8vw,2.2rem);color:var(--cream);margin:14px 0 14px;">Follow it out of the oven.</h2>
+              <p style="color:var(--on-ink);font-size:15px;line-height:1.7;margin:0 0 24px;">Four stages, one message each — whether you ordered online, on WhatsApp, or at the counter.</p>
+              <div style="display:flex;gap:12px;flex-wrap:wrap;">
+                <button onClick="{{ advanceStage }}" style="background:transparent;border:1.5px solid var(--ink-line-soft);color:var(--on-ink);padding:9px 16px;border-radius:100px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">Simulate next stage</button>
+                <button onClick="{{ goTrack }}" style="background:transparent;border:1.5px solid var(--ink-line-soft);color:var(--on-ink);padding:9px 16px;border-radius:100px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">Open the tracker</button>
+              </div>
+            </div>
+            <div style="background:var(--ink-raised);border-radius:var(--radius-inverse-inner);padding:32px;">
+              <div style="display:flex;justify-content:space-between;margin-bottom:22px;font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--on-ink-muted);border-bottom:1px dashed var(--ink-line);padding-bottom:16px;">
+                <span>{{ activeOrderLabel }}</span>
+                <span>{{ etaLabel }}</span>
+              </div>
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:32px;align-items:center;">
+                <div>{{ trackerCake }}</div>
+                <div>
+                  <sc-for list="{{ trackerRows }}" as="z" hint-placeholder-count="4">
+                    <div style="display:flex;gap:16px;padding:16px 0;border-bottom:{{ z.rule }};">
+                      <span style="width:26px;height:26px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:11px;border:2px solid {{ z.border }};background:{{ z.bg }};color:{{ z.color }};">{{ z.mark }}</span>
+                      <div>
+                        <div style="font-weight:600;font-size:15px;color:{{ z.titleColor }};">{{ z.title }}</div>
+                        <div style="font-size:13px;color:var(--on-ink-dim);margin-top:2px;">{{ z.sub }}</div>
+                      </div>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
             </div>
           </div>
         </section>
 
-        <section style="padding:0 0 64px;display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:48px;align-items:center;">
-          <div>
-            <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Eyebrow" hint-size="auto,18px">Three ways to order</x-import>
-            <h2 style="font-family:'Fraunces',serif;font-weight:600;letter-spacing:-0.01em;font-size:clamp(1.7rem,3vw,2.3rem);margin:14px 0 16px;">Online, WhatsApp, or at the counter</h2>
-            <p style="color:var(--ink-soft);line-height:1.7;font-size:15px;margin:0 0 20px;">The same system runs all three, so a cake ordered in a chat lands in the same kitchen queue and the same live tracker as one ordered in the shop.</p>
-            <div style="display:flex;flex-direction:column;gap:14px;">
-              <sc-for list="{{ channels }}" as="c" hint-placeholder-count="3">
-                <div style="display:flex;gap:12px;align-items:flex-start;">
-                  <span style="width:8px;height:8px;border-radius:50%;background:var(--berry);margin-top:7px;flex:none;"></span>
-                  <div>
-                    <b style="display:block;font-size:14.5px;">{{ c.title }}</b>
-                    <span style="color:var(--ink-soft);font-size:13px;">{{ c.sub }}</span>
-                  </div>
-                </div>
-              </sc-for>
+        <section style="padding:0 0 56px;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:22px;">
+          <sc-for list="{{ channels }}" as="c" hint-placeholder-count="3">
+            <div style="background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:24px;display:flex;flex-direction:column;gap:10px;">
+              <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Eyebrow" hint-size="auto,18px">{{ c.step }}</x-import>
+              <h3 style="font-family:'Fraunces',serif;font-weight:600;font-size:19px;margin:6px 0 0;">{{ c.title }}</h3>
+              <p style="color:var(--ink-soft);font-size:14px;line-height:1.6;margin:0;">{{ c.sub }}</p>
             </div>
-            <div style="margin-top:24px;">
-              <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Button" variant="ghost" size="sm" on-click="{{ openWa }}" hint-size="auto,36px">Start a WhatsApp order</x-import>
-            </div>
-          </div>
-          <div style="background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:22px;max-width:360px;margin:0 auto;display:flex;flex-direction:column;gap:14px;">
-            <div style="background:var(--pistachio-soft);border-radius:14px;height:150px;display:flex;align-items:center;justify-content:center;">
-              <svg viewBox="0 0 120 90" fill="none" style="width:150px;display:block;">
-                <rect x="8" y="30" width="104" height="52" rx="8" fill="#6F9463" opacity="0.35"></rect>
-                <rect x="8" y="30" width="104" height="10" rx="5" fill="#6F9463" opacity="0.55"></rect>
-                <rect x="24" y="52" width="30" height="22" rx="5" fill="#C7355A"></rect>
-                <rect x="66" y="52" width="30" height="22" rx="5" fill="#E2A233"></rect>
-                <path d="M12 30 L60 10 L108 30" stroke="#6F9463" stroke-width="3" stroke-linecap="round" fill="none"></path>
-              </svg>
-            </div>
-            <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.StatusPill" status="open" hint-size="auto,24px">Open now</x-import>
-            <h3 style="font-family:'Fraunces',serif;font-weight:600;font-size:19px;margin:0;">The counter, Marina Walk</h3>
-            <p style="color:var(--ink-soft);font-size:13.5px;margin:0;line-height:1.6;">Walk in, pick from the case, or collect an order you placed online. Same queue, same tracker.</p>
-            <div style="display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ink-soft);border-top:1px dashed var(--line);padding-top:12px;">
-              <span>08:00 — 22:00</span><span>NEAR PIER 7</span>
-            </div>
-          </div>
+          </sc-for>
         </section>
       </div>
     </sc-if>
 
     <!-- ========== MENU ========== -->
     <sc-if value="{{ isMenu }}">
-      <div style="padding:48px 0 0;">
-        <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Eyebrow" hint-size="auto,18px">Full menu</x-import>
-        <h1 style="font-family:'Fraunces',serif;font-weight:600;letter-spacing:-0.01em;font-size:clamp(2rem,4vw,3.2rem);margin:16px 0 14px;">Everything we bake.</h1>
-        <p style="color:var(--ink-soft);font-size:16px;max-width:520px;line-height:1.6;margin:0 0 32px;">Browse by occasion or search for something specific. Pre-order windows are marked on each item.</p>
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:20px;">
-          <div style="display:flex;gap:8px;flex-wrap:wrap;">
-            <sc-for list="{{ cats }}" as="c" hint-placeholder-count="7">
-              <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Tab" active="{{ c.active }}" on-click="{{ c.go }}" hint-size="auto,40px">{{ c.label }}</x-import>
-            </sc-for>
+      <div style="padding:36px 0 0;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:24px;">
+          <div>
+            <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Eyebrow" hint-size="auto,18px">Full menu</x-import>
+            <h1 style="font-family:'Fraunces',serif;font-weight:600;letter-spacing:-0.01em;font-size:clamp(1.9rem,3.6vw,2.8rem);margin:14px 0 0;">Everything we bake.</h1>
           </div>
-          <div style="position:relative;width:260px;max-width:100%;">
+          <div style="position:relative;width:280px;max-width:100%;">
             <svg width="15" height="15" viewBox="0 0 15 15" fill="none" style="position:absolute;left:14px;top:50%;transform:translateY(-50%);opacity:.5;"><circle cx="6.5" cy="6.5" r="5" stroke="#2B241D" stroke-width="1.5"></circle><path d="M10.5 10.5L13.5 13.5" stroke="#2B241D" stroke-width="1.5" stroke-linecap="round"></path></svg>
             <input type="text" placeholder="Search the menu..." value="{{ q }}" onChange="{{ setQ }}" style="width:100%;padding:11px 14px 11px 38px;border-radius:100px;border:1.5px solid var(--line);font-size:13.5px;background:var(--paper);color:var(--ink);">
           </div>
         </div>
         <p style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ink-soft);margin:0 0 20px;">{{ resultCount }}</p>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:22px;">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:22px;">
           <sc-for list="{{ menuItems }}" as="it" hint-placeholder-count="9">
-            <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.ItemCard" name="{{ it.name }}" description="{{ it.desc }}" price="{{ it.priceLabel }}" chips="{{ it.tags }}" image="{{ it.icon }}" on-add="{{ it.add }}" on-click="{{ it.open }}" style="{{ pointer }}" hint-size="100%,400px"></x-import>
+            <div onClick="{{ it.open }}" style="background:var(--paper);border:1px solid var(--line);border-radius:22px;overflow:hidden;cursor:pointer;display:flex;flex-direction:column;">
+              <div style="position:relative;height:180px;background:var(--pistachio-soft);">
+                <image-slot id="{{ it.slotId }}" shape="rect" placeholder="{{ it.slotHint }}" src="{{ it.photo }}" credit="{{ it.credit }}" credit-href="{{ it.creditHref }}"></image-slot>
+              </div>
+              <div style="padding:18px;display:flex;flex-direction:column;gap:11px;flex:1;">
+                <div style="display:flex;gap:6px;flex-wrap:wrap;">
+                  <sc-for list="{{ it.tags }}" as="t" hint-placeholder-count="1">
+                    <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Chip" hint-size="auto,20px">{{ t }}</x-import>
+                  </sc-for>
+                </div>
+                <h3 style="font-family:'Fraunces',serif;font-weight:600;font-size:17px;margin:0;">{{ it.name }}</h3>
+                <p style="color:var(--ink-soft);font-size:13.5px;line-height:1.55;margin:0;">{{ it.desc }}</p>
+                <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px dashed var(--line);padding-top:12px;margin-top:auto;">
+                  <span style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:15px;">{{ it.priceLabel }}</span>
+                  <button onClick="{{ it.add }}" aria-label="Add" style="width:32px;height:32px;border-radius:50%;border:1.5px solid var(--ink);background:transparent;color:var(--ink);font-size:16px;cursor:pointer;line-height:1;">+</button>
+                </div>
+              </div>
+            </div>
           </sc-for>
         </div>
         <sc-if value="{{ menuEmpty }}">
@@ -215,13 +252,13 @@
       </div>
     </sc-if>
 
-    <!-- ========== PRODUCT DETAIL ========== -->
+    <!-- ========== PRODUCT ========== -->
     <sc-if value="{{ isProduct }}">
-      <div style="padding:36px 0 0;">
+      <div style="padding:32px 0 0;">
         <button onClick="{{ goMenu }}" style="background:none;border:none;padding:0;color:var(--ink-soft);font-size:13px;cursor:pointer;font-family:'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase;">← Back to menu</button>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:40px;margin-top:24px;align-items:start;">
-          <div style="background:var(--pistachio-soft);border-radius:14px;min-height:360px;display:flex;align-items:center;justify-content:center;">
-            <div style="width:180px;">{{ detailArt }}</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:40px;margin-top:22px;align-items:start;">
+          <div style="position:relative;height:min(460px,60vh);background:var(--pistachio-soft);border-radius:22px;overflow:hidden;">
+            <image-slot id="{{ detailSlotId }}" shape="rect" placeholder="{{ detailSlotHint }}" src="{{ detailPhoto }}" credit="{{ detailCredit }}" credit-href="{{ detailCreditHref }}"></image-slot>
           </div>
           <div>
             <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;">
@@ -234,8 +271,8 @@
 
             <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:10px;">{{ detailOptionLabel }}</div>
             <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px;">
-              <sc-for list="{{ detailSizes }}" as="s" hint-placeholder-count="3">
-                <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Tab" active="{{ s.active }}" on-click="{{ s.go }}" hint-size="auto,40px">{{ s.label }}</x-import>
+              <sc-for list="{{ detailSizes }}" as="z" hint-placeholder-count="3">
+                <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Tab" active="{{ z.active }}" on-click="{{ z.go }}" hint-size="auto,40px">{{ z.label }}</x-import>
               </sc-for>
             </div>
 
@@ -269,19 +306,16 @@
               </div>
               <p style="font-size:12.5px;color:var(--ink-soft);margin:14px 0 0;font-family:'JetBrains Mono',monospace;">{{ detailLead }}</p>
             </div>
-            <div style="margin-top:18px;">
-              <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Button" variant="ghost" size="sm" on-click="{{ openWa }}" hint-size="auto,36px">Ask about this on WhatsApp</x-import>
-            </div>
           </div>
         </div>
       </div>
     </sc-if>
 
-    <!-- ========== CUSTOM CAKE BUILDER ========== -->
+    <!-- ========== BUILDER ========== -->
     <sc-if value="{{ isBuilder }}">
-      <div style="padding:48px 0 0;">
+      <div style="padding:44px 0 0;">
         <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Eyebrow" hint-size="auto,18px">Custom order</x-import>
-        <h1 style="font-family:'Fraunces',serif;font-weight:600;letter-spacing:-0.01em;font-size:clamp(2rem,4vw,3.2rem);margin:16px 0 14px;">Build your cake.</h1>
+        <h1 style="font-family:'Fraunces',serif;font-weight:600;letter-spacing:-0.01em;font-size:clamp(1.9rem,3.6vw,2.8rem);margin:14px 0 14px;">Build your cake.</h1>
         <p style="color:var(--ink-soft);font-size:16px;max-width:520px;line-height:1.6;margin:0 0 32px;">Pick the shape of it and we'll price it as you go. Custom cakes need 48h; three tiers need 72h.</p>
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:32px;align-items:start;">
           <div style="display:flex;flex-direction:column;gap:26px;">
@@ -299,20 +333,23 @@
               <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:10px;">Message on the cake</div>
               <input type="text" placeholder="Congratulations, Sara" value="{{ builderMsg }}" onChange="{{ setBuilderMsg }}" maxlength="28" style="width:100%;max-width:380px;padding:11px 16px;border-radius:100px;border:1.5px solid var(--line);font-size:14px;background:var(--paper);color:var(--ink);">
             </div>
-          </div>
-          <div style="background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:22px;position:sticky;top:100px;">
-            <div style="background:var(--pistachio-soft);border-radius:14px;padding:20px;display:flex;align-items:center;justify-content:center;margin-bottom:18px;">
-              <div style="width:150px;">{{ builderArt }}</div>
+            <div>
+              <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:10px;">Reference photo (optional)</div>
+              <div style="position:relative;height:180px;max-width:380px;background:var(--pistachio-soft);border-radius:14px;overflow:hidden;">
+                <image-slot id="builder-reference" shape="rect" placeholder="Drop a photo of the cake you have in mind"></image-slot>
+              </div>
             </div>
+          </div>
+          <div style="background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:22px;position:sticky;top:150px;">
             <div style="display:flex;flex-direction:column;gap:10px;font-size:13.5px;">
-              <sc-for list="{{ builderSummary }}" as="r" hint-placeholder-count="5">
+              <sc-for list="{{ builderSummary }}" as="r" hint-placeholder-count="6">
                 <div style="display:flex;justify-content:space-between;gap:16px;">
                   <span style="color:var(--ink-soft);">{{ r.k }}</span>
                   <span style="font-weight:500;text-align:right;">{{ r.v }}</span>
                 </div>
               </sc-for>
             </div>
-            <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px dashed var(--line);padding-top:14px;margin:16px 0 16px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px dashed var(--line);padding-top:14px;margin:16px 0;">
               <span style="font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--ink-soft);">{{ builderServes }}</span>
               <span style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:20px;">{{ builderPrice }}</span>
             </div>
@@ -324,9 +361,9 @@
 
     <!-- ========== CART ========== -->
     <sc-if value="{{ isCart }}">
-      <div style="padding:48px 0 0;">
+      <div style="padding:44px 0 0;">
         <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Eyebrow" hint-size="auto,18px">Your basket</x-import>
-        <h1 style="font-family:'Fraunces',serif;font-weight:600;letter-spacing:-0.01em;font-size:clamp(2rem,4vw,3.2rem);margin:16px 0 32px;">Cart.</h1>
+        <h1 style="font-family:'Fraunces',serif;font-weight:600;letter-spacing:-0.01em;font-size:clamp(1.9rem,3.6vw,2.8rem);margin:14px 0 30px;">Cart.</h1>
         <sc-if value="{{ cartEmpty }}">
           <div style="background:var(--paper);border:1.5px dashed var(--line);border-radius:22px;padding:56px 24px;text-align:center;">
             <b style="display:block;font-family:'Fraunces',serif;font-size:20px;margin-bottom:8px;">Nothing in the basket yet</b>
@@ -339,7 +376,7 @@
             <div style="display:flex;flex-direction:column;gap:14px;">
               <sc-for list="{{ cartRows }}" as="r" hint-placeholder-count="2">
                 <div style="background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:18px;display:flex;gap:16px;align-items:center;">
-                  <div style="width:64px;height:64px;border-radius:12px;background:var(--pistachio-soft);display:flex;align-items:center;justify-content:center;flex:none;padding:8px;">{{ r.icon }}</div>
+                  <div style="width:72px;height:72px;border-radius:12px;background:var(--pistachio-soft);flex:none;position:relative;overflow:hidden;">{{ r.thumb }}</div>
                   <div style="flex:1;min-width:0;">
                     <div style="font-weight:600;font-size:15px;">{{ r.name }}</div>
                     <div style="color:var(--ink-soft);font-size:12.5px;margin-top:3px;">{{ r.meta }}</div>
@@ -357,7 +394,7 @@
                 </div>
               </sc-for>
             </div>
-            <div style="background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:22px;position:sticky;top:100px;">
+            <div style="background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:22px;position:sticky;top:150px;">
               <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:10px;">How you'll get it</div>
               <div style="display:flex;gap:8px;margin-bottom:20px;">
                 <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Tab" active="{{ isPickup }}" on-click="{{ setPickup }}" hint-size="auto,40px">Pickup</x-import>
@@ -393,9 +430,9 @@
 
     <!-- ========== CHECKOUT ========== -->
     <sc-if value="{{ isCheckout }}">
-      <div style="padding:48px 0 0;">
+      <div style="padding:44px 0 0;">
         <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Eyebrow" hint-size="auto,18px">Checkout</x-import>
-        <h1 style="font-family:'Fraunces',serif;font-weight:600;letter-spacing:-0.01em;font-size:clamp(2rem,4vw,3.2rem);margin:16px 0 32px;">Nearly baked.</h1>
+        <h1 style="font-family:'Fraunces',serif;font-weight:600;letter-spacing:-0.01em;font-size:clamp(1.9rem,3.6vw,2.8rem);margin:14px 0 30px;">Nearly baked.</h1>
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:28px;align-items:start;">
           <div style="display:flex;flex-direction:column;gap:18px;">
             <div style="background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:22px;">
@@ -406,11 +443,10 @@
                 <input type="email" placeholder="Email (for the receipt)" value="{{ fEmail }}" onChange="{{ setEmail }}" style="padding:12px 16px;border-radius:100px;border:1.5px solid var(--line);font-size:14px;background:var(--cream);color:var(--ink);">
               </div>
             </div>
-
             <div style="background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:22px;">
               <h3 style="font-family:'Fraunces',serif;font-weight:600;font-size:18px;margin:0 0 16px;">Pickup or delivery</h3>
               <div style="display:flex;gap:8px;margin-bottom:16px;">
-                <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Tab" active="{{ isPickup }}" on-click="{{ setPickup }}" hint-size="auto,40px">Pickup — Marina</x-import>
+                <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Tab" active="{{ isPickup }}" on-click="{{ setPickup }}" hint-size="auto,40px">Pickup — Marina Walk</x-import>
                 <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Tab" active="{{ isDelivery }}" on-click="{{ setDelivery }}" hint-size="auto,40px">Delivery</x-import>
               </div>
               <sc-if value="{{ isDelivery }}">
@@ -428,14 +464,13 @@
                 <div>
                   <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:8px;">Slot</div>
                   <div style="display:flex;gap:8px;flex-wrap:wrap;">
-                    <sc-for list="{{ slots }}" as="s" hint-placeholder-count="3">
-                      <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Tab" active="{{ s.active }}" on-click="{{ s.go }}" hint-size="auto,40px">{{ s.label }}</x-import>
+                    <sc-for list="{{ slots }}" as="z" hint-placeholder-count="3">
+                      <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Tab" active="{{ z.active }}" on-click="{{ z.go }}" hint-size="auto,40px">{{ z.label }}</x-import>
                     </sc-for>
                   </div>
                 </div>
               </div>
             </div>
-
             <div style="background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:22px;">
               <h3 style="font-family:'Fraunces',serif;font-weight:600;font-size:18px;margin:0 0 16px;">How you'll pay</h3>
               <div style="display:flex;flex-direction:column;gap:10px;">
@@ -451,8 +486,7 @@
               </div>
             </div>
           </div>
-
-          <div style="background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:22px;position:sticky;top:100px;">
+          <div style="background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:22px;position:sticky;top:150px;">
             <h3 style="font-family:'Fraunces',serif;font-weight:600;font-size:18px;margin:0 0 16px;">Order summary</h3>
             <div style="display:flex;flex-direction:column;gap:12px;font-size:13.5px;">
               <sc-for list="{{ cartRows }}" as="r" hint-placeholder-count="2">
@@ -486,13 +520,13 @@
 
     <!-- ========== CONFIRMATION ========== -->
     <sc-if value="{{ isConfirm }}">
-      <div style="padding:56px 0 0;max-width:720px;">
+      <div style="padding:52px 0 0;max-width:720px;">
         <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.StatusPill" status="open" hint-size="auto,24px">Order confirmed</x-import>
-        <h1 style="font-family:'Fraunces',serif;font-weight:600;letter-spacing:-0.01em;font-size:clamp(2rem,4vw,3.2rem);margin:18px 0 14px;">It's in the <em style="font-style:italic;color:var(--berry);font-weight:500;">kitchen queue</em>.</h1>
+        <h1 style="font-family:'Fraunces',serif;font-weight:600;letter-spacing:-0.01em;font-size:clamp(1.9rem,3.6vw,2.8rem);margin:18px 0 14px;">It's in the <em style="font-style:italic;color:var(--berry);font-weight:500;">kitchen queue</em>.</h1>
         <p style="color:var(--ink-soft);font-size:16px;line-height:1.6;margin:0 0 28px;">{{ confirmLine }}</p>
         <div style="background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:22px;margin-bottom:22px;">
           <div style="display:flex;flex-direction:column;gap:12px;font-size:14px;">
-            <sc-for list="{{ confirmRows }}" as="r" hint-placeholder-count="5">
+            <sc-for list="{{ confirmRows }}" as="r" hint-placeholder-count="6">
               <div style="display:flex;justify-content:space-between;gap:16px;">
                 <span style="color:var(--ink-soft);">{{ r.k }}</span>
                 <span style="font-family:'JetBrains Mono',monospace;text-align:right;">{{ r.v }}</span>
@@ -514,19 +548,38 @@
       </div>
     </sc-if>
 
-    <!-- ========== TRACK ORDER ========== -->
+    <!-- ========== TRACK ========== -->
     <sc-if value="{{ isTrack }}">
-      <div style="padding:48px 0 0;">
+      <div style="padding:44px 0 0;">
         <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Eyebrow" hint-size="auto,18px">Order tracking</x-import>
-        <h1 style="font-family:'Fraunces',serif;font-weight:600;letter-spacing:-0.01em;font-size:clamp(2rem,4vw,3.2rem);margin:16px 0 14px;">Where's my cake?</h1>
-        <p style="color:var(--ink-soft);font-size:16px;max-width:520px;line-height:1.6;margin:0 0 28px;">{{ trackIntro }}</p>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px;">
+        <h1 style="font-family:'Fraunces',serif;font-weight:600;letter-spacing:-0.01em;font-size:clamp(1.9rem,3.6vw,2.8rem);margin:14px 0 14px;">Where's my cake?</h1>
+        <p style="color:var(--ink-soft);font-size:16px;max-width:520px;line-height:1.6;margin:0 0 26px;">{{ trackIntro }}</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:22px;">
           <sc-for list="{{ trackables }}" as="o" hint-placeholder-count="2">
             <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Tab" active="{{ o.active }}" on-click="{{ o.go }}" hint-size="auto,40px">{{ o.label }}</x-import>
           </sc-for>
         </div>
         <div style="background:var(--ink);border-radius:32px;padding:clamp(24px,3.5vw,40px);">
-          <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.OrderTracker" stages="{{ trackerStages }}" current="{{ stage }}" order-id="{{ activeOrderLabel }}" eta="{{ etaLabel }}" hint-size="100%,320px"></x-import>
+          <div style="background:var(--ink-raised);border-radius:var(--radius-inverse-inner);padding:32px;">
+              <div style="display:flex;justify-content:space-between;margin-bottom:22px;font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--on-ink-muted);border-bottom:1px dashed var(--ink-line);padding-bottom:16px;">
+                <span>{{ activeOrderLabel }}</span>
+                <span>{{ etaLabel }}</span>
+              </div>
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:32px;align-items:center;">
+                <div>{{ trackerCake }}</div>
+                <div>
+                  <sc-for list="{{ trackerRows }}" as="z" hint-placeholder-count="4">
+                    <div style="display:flex;gap:16px;padding:16px 0;border-bottom:{{ z.rule }};">
+                      <span style="width:26px;height:26px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:11px;border:2px solid {{ z.border }};background:{{ z.bg }};color:{{ z.color }};">{{ z.mark }}</span>
+                      <div>
+                        <div style="font-weight:600;font-size:15px;color:{{ z.titleColor }};">{{ z.title }}</div>
+                        <div style="font-size:13px;color:var(--on-ink-dim);margin-top:2px;">{{ z.sub }}</div>
+                      </div>
+                    </div>
+                  </sc-for>
+                </div>
+              </div>
+            </div>
           <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:22px;align-items:center;">
             <button onClick="{{ advanceStage }}" style="background:transparent;border:1.5px solid var(--ink-line-soft);color:var(--on-ink);padding:9px 16px;border-radius:100px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">Simulate next stage</button>
             <label style="display:flex;align-items:center;gap:8px;color:var(--on-ink);font-size:12.5px;cursor:pointer;">
@@ -539,7 +592,7 @@
           <div style="background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:22px;">
             <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:14px;">Message log</div>
             <div style="display:flex;flex-direction:column;gap:12px;">
-              <sc-for list="{{ trackLog }}" as="l" hint-placeholder-count="3">
+              <sc-for list="{{ trackLog }}" as="l" hint-placeholder-count="4">
                 <div style="display:flex;gap:12px;">
                   <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ink-soft);flex:none;">{{ l.t }}</span>
                   <span style="font-size:13.5px;">{{ l.m }}</span>
@@ -558,11 +611,11 @@
 
     <!-- ========== ACCOUNT ========== -->
     <sc-if value="{{ isAccount }}">
-      <div style="padding:48px 0 0;">
+      <div style="padding:44px 0 0;">
         <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Eyebrow" hint-size="auto,18px">Your account</x-import>
-        <h1 style="font-family:'Fraunces',serif;font-weight:600;letter-spacing:-0.01em;font-size:clamp(2rem,4vw,3.2rem);margin:16px 0 14px;">Layla Haddad</h1>
-        <p style="color:var(--ink-soft);font-size:16px;line-height:1.6;margin:0 0 32px;">+971 50 441 8802 · layla@example.com</p>
-        <div style="display:flex;gap:28px;flex-wrap:wrap;margin-bottom:36px;">
+        <h1 style="font-family:'Fraunces',serif;font-weight:600;letter-spacing:-0.01em;font-size:clamp(1.9rem,3.6vw,2.8rem);margin:14px 0 14px;">Layla Haddad</h1>
+        <p style="color:var(--ink-soft);font-size:16px;line-height:1.6;margin:0 0 30px;">+971 50 441 8802 · layla@example.com</p>
+        <div style="display:flex;gap:28px;flex-wrap:wrap;margin-bottom:34px;">
           <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Stat" value="{{ orderCountLabel }}" label="Orders placed" hint-size="auto,44px"></x-import>
           <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Stat" value="{{ spendLabel }}" label="Spent with us" hint-size="auto,44px"></x-import>
           <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Stat" value="2" label="Saved addresses" hint-size="auto,44px"></x-import>
@@ -588,10 +641,10 @@
 
     <!-- ========== OFFERS ========== -->
     <sc-if value="{{ isOffers }}">
-      <div style="padding:48px 0 0;">
+      <div style="padding:44px 0 0;">
         <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Eyebrow" hint-size="auto,18px">Offers</x-import>
-        <h1 style="font-family:'Fraunces',serif;font-weight:600;letter-spacing:-0.01em;font-size:clamp(2rem,4vw,3.2rem);margin:16px 0 14px;">Worth ordering early for.</h1>
-        <p style="color:var(--ink-soft);font-size:16px;max-width:520px;line-height:1.6;margin:0 0 32px;">Apply a code in the cart. One code per order.</p>
+        <h1 style="font-family:'Fraunces',serif;font-weight:600;letter-spacing:-0.01em;font-size:clamp(1.9rem,3.6vw,2.8rem);margin:14px 0 14px;">Worth ordering early for.</h1>
+        <p style="color:var(--ink-soft);font-size:16px;max-width:520px;line-height:1.6;margin:0 0 30px;">Apply a code in the cart. One code per order.</p>
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:22px;">
           <sc-for list="{{ allOffers }}" as="o" hint-placeholder-count="4">
             <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.OfferCard" tag="{{ o.tag }}" title="{{ o.title }}" description="{{ o.desc }}" code="{{ o.code }}" hint-size="100%,190px"></x-import>
@@ -603,34 +656,42 @@
       </div>
     </sc-if>
 
-    <!-- ========== LOCATIONS ========== -->
+    <!-- ========== VISIT ========== -->
     <sc-if value="{{ isLocations }}">
-      <div style="padding:48px 0 0;">
+      <div style="padding:44px 0 0;">
         <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Eyebrow" hint-size="auto,18px">Find us</x-import>
-        <h1 style="font-family:'Fraunces',serif;font-weight:600;letter-spacing:-0.01em;font-size:clamp(2rem,4vw,3.2rem);margin:16px 0 14px;">One shop, on Marina Walk.</h1>
-        <p style="color:var(--ink-soft);font-size:16px;max-width:520px;line-height:1.6;margin:0 0 32px;">Open 08:00 — 22:00 daily. The pickup counter runs until close, and delivery covers Marina, JBR and Al Sufouh.</p>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;max-width:560px;">
-          <sc-for list="{{ locations }}" as="l" hint-placeholder-count="4">
-            <div style="background:{{ l.bg }};border:{{ l.border }};border-radius:22px;padding:28px;">
-              <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.StatusPill" status="{{ l.status }}" hint-size="auto,24px">{{ l.statusLabel }}</x-import>
-              <h3 style="font-family:'Fraunces',serif;font-weight:600;font-size:20px;margin:14px 0 6px;">{{ l.name }}</h3>
-              <p style="color:var(--ink-soft);font-size:14px;margin:0 0 12px;line-height:1.6;">{{ l.address }}</p>
-              <p style="font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--ink-soft);margin:0 0 16px;">{{ l.hours }}</p>
-              <button onClick="{{ l.action }}" style="border:1.5px solid var(--ink);background:transparent;color:var(--ink);border-radius:100px;padding:9px 16px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">{{ l.actionLabel }}</button>
+        <h1 style="font-family:'Fraunces',serif;font-weight:600;letter-spacing:-0.01em;font-size:clamp(1.9rem,3.6vw,2.8rem);margin:14px 0 14px;">One shop, on Marina Walk.</h1>
+        <p style="color:var(--ink-soft);font-size:16px;max-width:520px;line-height:1.6;margin:0 0 30px;">Open 08:00 — 22:00 daily. The pickup counter runs until close, and delivery covers Marina, JBR and Al Sufouh.</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:22px;align-items:start;">
+          <div style="position:relative;height:320px;background:var(--pistachio-soft);border-radius:22px;overflow:hidden;">
+            <image-slot id="shopfront" shape="rect" placeholder="Drop a photo of the shopfront"></image-slot>
+          </div>
+          <div style="background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:26px;">
+            <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.StatusPill" status="open" hint-size="auto,24px">Open now</x-import>
+            <h3 style="font-family:'Fraunces',serif;font-weight:600;font-size:21px;margin:14px 0 8px;">Cake Lake, Marina Walk</h3>
+            <p style="color:var(--ink-soft);font-size:14.5px;margin:0 0 14px;line-height:1.6;">Near Pier 7, Dubai Marina. Order at the counter or collect an order you placed online.</p>
+            <div style="display:flex;flex-direction:column;gap:8px;font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--ink-soft);border-top:1px dashed var(--line);padding-top:14px;margin-bottom:18px;">
+              <div style="display:flex;justify-content:space-between;"><span>HOURS</span><span>08:00 — 22:00 DAILY</span></div>
+              <div style="display:flex;justify-content:space-between;"><span>PICKUP</span><span>COUNTER 2</span></div>
+              <div style="display:flex;justify-content:space-between;"><span>PARKING</span><span>PIER 7 BASEMENT</span></div>
             </div>
-          </sc-for>
+            <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Button" on-click="{{ goMenu }}" hint-size="auto,48px">Order for pickup →</x-import>
+          </div>
         </div>
       </div>
     </sc-if>
 
     <!-- ========== STORY ========== -->
     <sc-if value="{{ isStory }}">
-      <div style="padding:48px 0 0;max-width:760px;">
+      <div style="padding:44px 0 0;max-width:760px;">
         <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Eyebrow" hint-size="auto,18px">Our story</x-import>
-        <h1 style="font-family:'Fraunces',serif;font-weight:600;letter-spacing:-0.01em;font-size:clamp(2rem,4vw,3.2rem);margin:16px 0 20px;">One oven, then four.</h1>
+        <h1 style="font-family:'Fraunces',serif;font-weight:600;letter-spacing:-0.01em;font-size:clamp(1.9rem,3.6vw,2.8rem);margin:14px 0 20px;">One oven, still one oven.</h1>
+        <div style="position:relative;height:300px;background:var(--pistachio-soft);border-radius:22px;overflow:hidden;margin-bottom:26px;">
+          <image-slot id="story-kitchen" shape="rect" placeholder="Drop a photo of the kitchen or the team"></image-slot>
+        </div>
         <p style="color:var(--ink-soft);font-size:17px;line-height:1.7;margin:0 0 18px;">Cake Lake started in 2019 in a Marina kitchen with one deck oven and a Friday-only order sheet. The sheet filled up. Then it kept filling up.</p>
-        <p style="color:var(--ink-soft);font-size:17px;line-height:1.7;margin:0 0 32px;">Everything is still baked the morning it's collected, and every cake is finished by hand. The only thing we automated is the waiting — which is why the tracker exists.</p>
-        <div style="display:flex;flex-direction:column;gap:0;border-top:1px solid var(--line);">
+        <p style="color:var(--ink-soft);font-size:17px;line-height:1.7;margin:0 0 30px;">Everything is still baked the morning it's collected, and every cake is finished by hand. The only thing we automated is the waiting — which is why the tracker exists.</p>
+        <div style="display:flex;flex-direction:column;border-top:1px solid var(--line);">
           <sc-for list="{{ timeline }}" as="t" hint-placeholder-count="4">
             <div style="display:flex;gap:24px;padding:18px 0;border-bottom:1px solid var(--line);">
               <span style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--berry-deep);flex:none;width:56px;">{{ t.year }}</span>
@@ -643,10 +704,10 @@
 
     <!-- ========== CONTACT ========== -->
     <sc-if value="{{ isContact }}">
-      <div style="padding:48px 0 0;">
+      <div style="padding:44px 0 0;">
         <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Eyebrow" hint-size="auto,18px">Contact</x-import>
-        <h1 style="font-family:'Fraunces',serif;font-weight:600;letter-spacing:-0.01em;font-size:clamp(2rem,4vw,3.2rem);margin:16px 0 14px;">Talk to the bakery.</h1>
-        <p style="color:var(--ink-soft);font-size:16px;max-width:520px;line-height:1.6;margin:0 0 32px;">WhatsApp is fastest — a baker answers between 08:00 and 20:00.</p>
+        <h1 style="font-family:'Fraunces',serif;font-weight:600;letter-spacing:-0.01em;font-size:clamp(1.9rem,3.6vw,2.8rem);margin:14px 0 14px;">Talk to the bakery.</h1>
+        <p style="color:var(--ink-soft);font-size:16px;max-width:520px;line-height:1.6;margin:0 0 30px;">WhatsApp is fastest — a baker answers between 08:00 and 20:00.</p>
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:22px;align-items:start;">
           <div style="display:flex;flex-direction:column;gap:14px;">
             <sc-for list="{{ contactRows }}" as="c" hint-placeholder-count="3">
@@ -674,10 +735,10 @@
 
     <!-- ========== CORPORATE ========== -->
     <sc-if value="{{ isCorporate }}">
-      <div style="padding:48px 0 0;">
+      <div style="padding:44px 0 0;">
         <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Eyebrow" hint-size="auto,18px">Corporate &amp; bulk</x-import>
-        <h1 style="font-family:'Fraunces',serif;font-weight:600;letter-spacing:-0.01em;font-size:clamp(2rem,4vw,3.2rem);margin:16px 0 14px;">Bulk orders, on an invoice.</h1>
-        <p style="color:var(--ink-soft);font-size:16px;max-width:560px;line-height:1.6;margin:0 0 32px;">From 20 boxes up. Branded sleeves, staggered delivery windows, one monthly invoice — and a WhatsApp line straight to the kitchen.</p>
+        <h1 style="font-family:'Fraunces',serif;font-weight:600;letter-spacing:-0.01em;font-size:clamp(1.9rem,3.6vw,2.8rem);margin:14px 0 14px;">Bulk orders, on an invoice.</h1>
+        <p style="color:var(--ink-soft);font-size:16px;max-width:560px;line-height:1.6;margin:0 0 30px;">From 20 boxes up. Branded sleeves, staggered delivery windows, one monthly invoice — and a WhatsApp line straight to the kitchen.</p>
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:22px;margin-bottom:32px;">
           <sc-for list="{{ corpTiers }}" as="t" hint-placeholder-count="3">
             <div style="background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:22px;display:flex;flex-direction:column;gap:14px;">
@@ -690,7 +751,7 @@
             </div>
           </sc-for>
         </div>
-        <div style="background:var(--ink);border-radius:32px;padding:clamp(28px,4vw,44px);display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:32px;align-items:center;">
+        <div style="background:var(--ink);border-radius:32px;padding:clamp(26px,4vw,44px);display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:32px;align-items:center;">
           <div>
             <h2 style="font-family:'Fraunces',serif;font-weight:600;font-size:clamp(1.5rem,2.6vw,2rem);color:var(--cream);margin:0 0 12px;">Set up an account</h2>
             <p style="color:var(--on-ink);font-size:15px;line-height:1.6;margin:0;">Tell us your usual order and we'll keep it on file. Repeat it in one WhatsApp message.</p>
@@ -705,9 +766,9 @@
 
   </main>
 
-  <footer style="border-top:1px solid var(--line);padding:56px 0 32px;">
+  <footer style="border-top:1px solid var(--line);padding:52px 0 32px;">
     <div style="max-width:1180px;margin:0 auto;padding:0 24px;">
-      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:40px;margin-bottom:44px;">
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:40px;margin-bottom:40px;">
         <div>
           <span style="font-family:'Fraunces',serif;font-size:24px;font-weight:700;display:flex;align-items:center;gap:9px;">
             <svg width="36" height="24" viewBox="0 0 120 80" fill="none" style="display:block;">
@@ -721,12 +782,7 @@
             </svg>
             Cake Lake
           </span>
-          <p style="color:var(--ink-soft);font-size:14px;line-height:1.6;margin:14px 0 0;max-width:260px;">Cakes and celebration bakes, made fresh in Dubai Marina. Order online, on WhatsApp, or at the counter.</p>
-          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;">
-            <sc-for list="{{ payChips }}" as="p" hint-placeholder-count="4">
-              <span style="font-family:'JetBrains Mono',monospace;font-size:11px;padding:6px 10px;border:1px solid var(--line);border-radius:8px;color:var(--ink-soft);">{{ p }}</span>
-            </sc-for>
-          </div>
+          <p style="color:var(--ink-soft);font-size:14px;line-height:1.6;margin:14px 0 0;max-width:260px;">Cakes and celebration bakes, made fresh on Marina Walk. Order online, on WhatsApp, or at the counter.</p>
         </div>
         <sc-for list="{{ footCols }}" as="col" hint-placeholder-count="3">
           <div>
@@ -741,19 +797,34 @@
       </div>
       <div style="display:flex;justify-content:space-between;padding-top:24px;border-top:1px solid var(--line);font-size:12.5px;color:var(--ink-soft);flex-wrap:wrap;gap:10px;">
         <span>© 2026 Cake Lake Bakery. Dubai, UAE.</span>
-        <span>Prototype — clickable</span>
+        <span>Prototype v2 — The Case</span>
       </div>
     </div>
   </footer>
 
-  <!-- ========== WHATSAPP DRAWER ========== -->
+  <!-- ========== PERSISTENT ORDER BAR ========== -->
+  <sc-if value="{{ showOrderBar }}">
+    <div style="position:fixed;left:0;right:0;bottom:0;z-index:70;background:var(--ink);padding:12px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+      <div style="display:flex;align-items:center;gap:14px;">
+        <span style="background:var(--berry);color:#fff;font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:700;min-width:24px;height:24px;padding:0 7px;border-radius:100px;display:flex;align-items:center;justify-content:center;">{{ cartCount }}</span>
+        <span style="color:var(--cream);font-size:14px;font-weight:500;">{{ orderBarLabel }}</span>
+        <span style="font-family:'JetBrains Mono',monospace;color:var(--on-ink);font-size:13px;">{{ grandTotal }}</span>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <button onClick="{{ goCart }}" style="border:1.5px solid var(--ink-line-soft);background:transparent;color:var(--cream);border-radius:100px;padding:10px 18px;font-size:13.5px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">View cart</button>
+        <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Button" size="sm" on-click="{{ goCheckout }}" hint-size="auto,36px">Checkout →</x-import>
+      </div>
+    </div>
+  </sc-if>
+
+  <!-- ========== WHATSAPP ========== -->
   <sc-if value="{{ waEnabled }}" hint-placeholder-val="{{ true }}">
-    <button onClick="{{ toggleWa }}" aria-label="Order on WhatsApp" style="position:fixed;right:22px;bottom:22px;z-index:80;display:flex;align-items:center;gap:10px;background:var(--pistachio);color:#fff;border:none;border-radius:100px;padding:14px 20px;font-size:14px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;box-shadow:0 18px 40px -20px rgba(43,36,29,.25);">
+    <button onClick="{{ toggleWa }}" aria-label="Order on WhatsApp" style="position:fixed;right:22px;bottom:{{ waBottom }};z-index:80;display:flex;align-items:center;gap:10px;background:var(--pistachio);color:#fff;border:none;border-radius:100px;padding:14px 20px;font-size:14px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;box-shadow:0 18px 40px -20px rgba(43,36,29,.25);">
       <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M10 2.5a7.5 7.5 0 0 0-6.4 11.4L2.5 17.5l3.7-1.1A7.5 7.5 0 1 0 10 2.5Z" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"></path><path d="M7.2 7.6c0 2.4 2.3 4.6 4.6 4.6.6 0 1.2-.5 1.2-1l-1.3-.8-.8.7c-.9-.4-1.6-1.1-2-2l.7-.8-.8-1.3c-.5 0-1.6.1-1.6 1.6Z" fill="#fff"></path></svg>
       {{ waButtonLabel }}
     </button>
     <sc-if value="{{ waOpen }}">
-      <div style="position:fixed;right:22px;bottom:88px;z-index:90;width:min(360px,calc(100vw - 44px));background:var(--paper);border:1px solid var(--line);border-radius:22px;box-shadow:0 18px 40px -20px rgba(43,36,29,.25);overflow:hidden;display:flex;flex-direction:column;max-height:min(560px,calc(100vh - 140px));">
+      <div style="position:fixed;right:22px;bottom:{{ waPanelBottom }};z-index:90;width:min(360px,calc(100vw - 44px));background:var(--paper);border:1px solid var(--line);border-radius:22px;box-shadow:0 18px 40px -20px rgba(43,36,29,.25);overflow:hidden;display:flex;flex-direction:column;max-height:min(520px,calc(100vh - 180px));">
         <div style="background:var(--pistachio);color:#fff;padding:14px 18px;display:flex;justify-content:space-between;align-items:center;gap:12px;">
           <div>
             <div style="font-weight:700;font-size:14px;">Cake Lake · WhatsApp</div>
@@ -779,7 +850,7 @@
   </sc-if>
 
   <sc-if value="{{ toast }}">
-    <div style="position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:95;background:var(--ink);color:var(--cream);border-radius:100px;padding:12px 22px;font-size:13.5px;font-weight:500;box-shadow:0 18px 40px -20px rgba(43,36,29,.45);">{{ toast }}</div>
+    <div style="position:fixed;left:50%;bottom:{{ toastBottom }};transform:translateX(-50%);z-index:95;background:var(--ink);color:var(--cream);border:1px solid var(--ink-line-soft);border-radius:100px;padding:12px 22px;font-size:13.5px;font-weight:500;">{{ toast }}</div>
   </sc-if>
 
 </div>
@@ -789,7 +860,7 @@
 const CAT_COLOR = {Birthday:'#C7355A', Wedding:'#E2A233', Cupcakes:'#6F9463', Cheesecakes:'#C7355A', Everyday:'#E2A233', Cookies:'#6F9463'};
 
 const ITEMS = [
-  {id:'redvelvet', name:'Classic Red Velvet', cat:'Birthday', price:145, kind:'cake', desc:'Cream cheese frosting, six inch round.', long:'Our most-ordered cake. Deep cocoa sponge, tangy cream cheese frosting, finished with a crumb edge. Baked the morning you collect it.', tags:['Eggless option'], lead:'Ready in 4h · same-day slots'},
+  {id:'redvelvet', name:'Classic Red Velvet', cat:'Birthday', price:145, kind:'cake', desc:'Cream cheese frosting, six inch round.', long:'Our most-ordered cake. Deep cocoa sponge, tangy cream cheese frosting, finished with a crumb edge. Baked the morning you collect it.', tags:['Bestseller','Eggless option'], lead:'Ready in 4h · same-day slots'},
   {id:'fudge', name:'Chocolate Fudge Drip', cat:'Birthday', price:165, kind:'cake', desc:'Dark chocolate ganache drip, sprinkles.', long:'Three layers of dark chocolate sponge, fudge filling, ganache drip over the edge. Sprinkles by request.', tags:['Bestseller'], lead:'Ready in 4h · same-day slots'},
   {id:'funfetti', name:'Rainbow Funfetti', cat:'Birthday', price:150, kind:'cake', desc:'Vanilla sponge, confetti crumb.', long:'Vanilla bean sponge shot through with confetti, vanilla buttercream, rainbow crumb edge. The kids\u2019 order.', tags:['Eggless option'], lead:'Ready in 4h · same-day slots'},
   {id:'number', name:'Number & Letter Cakes', cat:'Birthday', price:180, kind:'cake', desc:'Shaped sponge, any name or age.', long:'Hand-cut shaped sponge in any single number or letter, piped buttercream, fresh fruit or chocolate finish.', tags:['Pre-order 48h'], lead:'Pre-order 48h ahead'},
@@ -834,16 +905,35 @@ const STAGES = [
   {title:'Ready', sub:'Pickup at counter 2'}
 ];
 
-const LOCATIONS = [
-  {name:'Dubai Marina', address:'Marina Walk, near Pier 7. Order at the counter or online for pickup and delivery.', hours:'08:00 — 22:00 DAILY', status:'open', statusLabel:'Open now'}
-];
-
 const SEED_ORDERS = [
   {id:'LY-4471', items:'Chocolate Fudge Drip · 8 inch', total:223, when:'Today · 12:00 — 14:00', fulfil:'pickup', method:'Card', live:true},
   {id:'LY-4402', items:'Salted Caramel Cups · Box of 12', total:132, when:'12 Aug · Collected', fulfil:'pickup', method:'WhatsApp', live:false},
   {id:'LY-4310', items:'Three-Tier Blush', total:890, when:'2 Aug · Delivered', fulfil:'delivery', method:'Card', live:false},
   {id:'LY-4188', items:'New York Baked, Date & Honey Loaf', total:205, when:'19 Jul · Collected', fulfil:'pickup', method:'Apple Pay', live:false}
 ];
+
+// Placeholder stock photos pulled from cognisivelabs/cakelake (docs/design/photos).
+// Replace with the client's own product photography — see photos/SOURCES.md.
+const PHOTOS = {
+  redvelvet:{src:'../docs/design/photos/berry-cream-layer-cake.jpg', credit:'Photo: Simone Coletta (CC BY-SA 3.0)', href:'https://commons.wikimedia.org/wiki/File:Victoria_Sponge_Cake_(250677289).jpeg'},
+  blush:{src:'../docs/design/photos/pistachio-celebration-cake.jpg', credit:'Photo: Andy Li (CC0)', href:'https://commons.wikimedia.org/wiki/File:Pistachio_cake_-_Garden_Caf%C3%A9_Brighton_2023-12-30.jpg'},
+  fudge:{src:'../docs/design/photos/dark-chocolate-fudge.jpg', credit:'Photo: Andy Li (CC0)', href:'https://commons.wikimedia.org/wiki/File:Belgian_Chocolate_Fudge_Cake_-_Caff%C3%A8_Nero_2025-09-05.jpg'},
+  basque:{src:'../docs/design/photos/basque-cheesecake.jpg', credit:'Photo: さえぼー (CC BY-SA 4.0)', href:'https://commons.wikimedia.org/wiki/File:Basque-style_cheesecake_from_Japanese_convenience_stores.jpg'},
+  vanilla:{src:'../docs/design/photos/cupcake-box-of-six.jpg', credit:'Photo: Prerna Jaddwani (CC BY-SA 4.0)', href:'https://commons.wikimedia.org/wiki/File:Vanilla_cupcakes_with_buttercream_frosting.JPG'},
+  banana:{src:'../docs/design/photos/cardamom-loaf.jpg', credit:'Photo: Whitney (CC BY 2.0)', href:'https://commons.wikimedia.org/wiki/File:Walnut-Bourbon_Banana_Bread_loaf_and_slices_on_a_plate.jpg'},
+  caramel:{src:'../docs/design/photos/salted-caramel-cups.jpg', credit:'Photo: ArtOfHappiness (CC BY-SA 4.0)', href:'https://commons.wikimedia.org/wiki/File:Butterscotch_Cupcakes.jpg'},
+  pistachio:{src:'../docs/design/photos/pistachio-rose-cups.jpg', credit:'Photo: Vegan Feast Catering (CC BY 2.0)', href:'https://commons.wikimedia.org/wiki/File:Pistachio_Baklava_Vegan_Cupcake_(3335449431).jpg'},
+  date:{src:'../docs/design/photos/date-honey-loaf.jpg', credit:'Photo: Andy Li (CC0)', href:'https://commons.wikimedia.org/wiki/File:Caramelised_banana_nut_loaf_cafe_-_Black_Mocha_2025-11-07.jpg'},
+  rolls:{src:'../docs/design/photos/sourdough-cinnamon-rolls.jpg', credit:'Photo: Andy Li (CC0)', href:'https://commons.wikimedia.org/wiki/File:Cinnamon_Swirl_-_Caff%C3%A8_Nero_2025-08-09.jpg'},
+  choc:{src:'../docs/design/photos/classic-chocolate-chip.jpg', credit:'Photo: eebAMDG (CC BY-SA 4.0)', href:'https://commons.wikimedia.org/wiki/File:Homemade_Chocolate_Chip_Cookies_(54734058634).jpg'},
+  short:{src:'../docs/design/photos/pistachio-shortbread.jpg', credit:'Photo: Dave souza (CC BY-SA 2.5)', href:'https://commons.wikimedia.org/wiki/File:Shortbread_fingers.jpg'},
+  funfetti:{src:'../docs/design/photos/rainbow-funfetti.jpg', credit:'Photo: Embabahcairo0009 (CC BY-SA 4.0)', href:'https://commons.wikimedia.org/wiki/File:Confetti_Cake.jpg'},
+  number:{src:'../docs/design/photos/number-letter-cakes.jpg', credit:'Photo: AlphaLemur (CC BY 4.0)', href:'https://commons.wikimedia.org/wiki/File:G_shaped_birthday_cake.jpg'},
+  ivory:{src:'../docs/design/photos/ivory-rose-tier.jpg', credit:'Photo: Rexness (CC BY-SA 2.0)', href:'https://commons.wikimedia.org/wiki/File:Wedding_Cake_2_tier_w_Swiss_butter_cream_and_90_fresh_white_cream_roses_(14574314081).jpg'},
+  ny:{src:'../docs/design/photos/new-york-baked.jpg', credit:'Photo: EvanProdromou (CC BY-SA 4.0)', href:'https://commons.wikimedia.org/wiki/File:New_York_cheesecake_2.jpg'}
+};
+
+const CART_COLOR = ITEMS.reduce((m,i) => { m[i.id] = CAT_COLOR[i.cat]; return m; }, {custom:'#C7355A', re:'#E2A233'});
 
 const money = n => 'AED ' + Math.round(n);
 
@@ -857,17 +947,59 @@ class Component extends DCLogic {
       builder:{tiers:'One tier', size:'8 inch', flavour:'Vanilla bean', frosting:'Swiss buttercream', msg:''},
       form:{name:'', phone:'', email:'', address:''}, day:'Today', slot:'12:00 — 14:00',
       pay:'card', err:'', orders:SEED_ORDERS, trackId:'LY-4471', stage:1,
-      waOpen:false, waMsgs:[{from:'them', text:'Hi, this is Cake Lake in Dubai Marina. You can order right here — I\u2019ll take you through it.'}],
+      waOpen:false, waMsgs:[{from:'them', text:'Hi, this is Cake Lake on Marina Walk. You can order right here — I\u2019ll take you through it.'}],
       waUpdates:true, toast:'', noteSent:''
     };
+  }
+
+  // React sets src/credit while the element is still connecting, so image-slot's
+  // attribute path never marks it filled and the (license-required) credit chip
+  // stays hidden. Re-assigning src on a connected element forces its render.
+  syncSlots = () => {
+    if(typeof document === 'undefined') return;
+    requestAnimationFrame(() => {
+      document.querySelectorAll('image-slot[src]').forEach(el => {
+        const src = el.getAttribute('src');
+        if(src && !el.hasAttribute('data-filled')) el.setAttribute('src', src);
+      });
+    });
+  };
+
+  componentDidMount(){ this.syncSlots(); }
+  componentDidUpdate(){ this.syncSlots(); }
+
+  // The logo mark, assembled stage by stage: base tier → middle → top → cherry.
+  // Stages not reached yet are dashed outlines, so the cake builds as the order does.
+  trackerCake(stage){
+    const R = React.createElement;
+    const D = {
+      base:'M12 60 H108 A4 4 0 0 1 112 64 V72 q-8.667 7 -17.333 0 q-8.667 7 -17.333 0 q-8.667 7 -17.333 0 q-8.667 7 -17.333 0 q-8.667 7 -17.333 0 q-8.667 7 -17.333 0 V64 A4 4 0 0 1 12 60 Z',
+      mid:'M25 40 H95 A4 4 0 0 1 99 44 V51 q-7.8 6.5 -15.6 0 q-7.8 6.5 -15.6 0 q-7.8 6.5 -15.6 0 q-7.8 6.5 -15.6 0 q-7.8 6.5 -15.6 0 V44 A4 4 0 0 1 25 40 Z',
+      top:'M37 21 H83 A4 4 0 0 1 87 25 V31 q-6.75 6 -13.5 0 q-6.75 6 -13.5 0 q-6.75 6 -13.5 0 q-6.75 6 -13.5 0 V25 A4 4 0 0 1 37 21 Z'
+    };
+    const layer = (key, d, fill, on) => R('path', on
+      ? {key, d, fill}
+      : {key, d, fill:'none', stroke:'#5c5340', strokeWidth:2, strokeDasharray:'5 4'});
+    const kids = [
+      layer('base', D.base, '#856B62', stage >= 0),
+      layer('mid', D.mid, '#E63C74', stage >= 1),
+      layer('top', D.top, '#3FB6C4', stage >= 2)
+    ];
+    if(stage >= 3){
+      kids.push(R('path', {key:'stem', d:'M60 12c3-4 7-5 10-4', stroke:'#E0852A', strokeWidth:3, strokeLinecap:'round', fill:'none'}));
+      kids.push(R('circle', {key:'cherry', cx:60, cy:14, r:7.5, fill:'#E63C74'}));
+    } else {
+      kids.push(R('circle', {key:'cherry', cx:60, cy:14, r:7.5, fill:'none', stroke:'#5c5340', strokeWidth:2, strokeDasharray:'5 4'}));
+    }
+    return R('svg', {viewBox:'0 0 120 84', fill:'none', style:{width:'100%', maxWidth:220, display:'block', margin:'0 auto'}}, kids);
   }
 
   go = r => { this.setState({route:r}); if(typeof window!=='undefined') window.scrollTo(0,0); };
   flash = t => { this.setState({toast:t}); clearTimeout(this._t); this._t = setTimeout(()=>this.setState({toast:''}), 1900); };
 
-  icon(color, size){
-    const s = size || 88;
-    return React.createElement('svg', {viewBox:'0 0 80 80', fill:'none', style:{width:'100%', height:'auto', display:'block', maxWidth:s}},
+  thumb(id){
+    const color = CART_COLOR[id] || '#C7355A';
+    return React.createElement('svg', {viewBox:'0 0 80 80', fill:'none', style:{width:'100%', height:'100%', display:'block', padding:'10px', boxSizing:'border-box'}},
       React.createElement('rect', {x:14, y:46, width:52, height:20, rx:6, fill:color}),
       React.createElement('rect', {x:20, y:28, width:40, height:20, rx:6, fill:color, opacity:0.75}),
       React.createElement('rect', {x:26, y:14, width:28, height:16, rx:6, fill:color, opacity:0.55}),
@@ -889,24 +1021,24 @@ class Component extends DCLogic {
 
   quickAdd(it, e){
     if(e && e.stopPropagation) e.stopPropagation();
-    const s = SIZES[it.kind][0];
-    this.addToCart({key:it.id+'|0', id:it.id, name:it.name, meta:s.label, unit:it.price*s.mult, qty:1, color:CAT_COLOR[it.cat]});
+    const z = SIZES[it.kind][0];
+    this.addToCart({key:it.id+'|0', id:it.id, name:it.name, meta:z.label, unit:it.price*z.mult, qty:1});
   }
 
   detailItem(){ return ITEMS.find(i => i.id === this.state.detailId) || ITEMS[0]; }
 
   detailUnit(){
     const it = this.detailItem();
-    const s = SIZES[it.kind][this.state.sizeIdx] || SIZES[it.kind][0];
-    return it.price*s.mult + (this.state.candles?8:0) + (this.state.gift?15:0);
+    const z = SIZES[it.kind][this.state.sizeIdx] || SIZES[it.kind][0];
+    return it.price*z.mult + (this.state.candles?8:0) + (this.state.gift?15:0);
   }
 
   addDetail = () => {
     const it = this.detailItem();
-    const s = SIZES[it.kind][this.state.sizeIdx];
+    const z = SIZES[it.kind][this.state.sizeIdx];
     const extras = [this.state.candles && 'candles', this.state.gift && 'gift box'].filter(Boolean).join(', ');
-    const meta = [s.label, this.state.msg && '"'+this.state.msg+'"', extras].filter(Boolean).join(' · ');
-    this.addToCart({key:it.id+'|'+this.state.sizeIdx+'|'+meta, id:it.id, name:it.name, meta, unit:this.detailUnit(), qty:this.state.qty, color:CAT_COLOR[it.cat]});
+    const meta = [z.label, this.state.msg && '"'+this.state.msg+'"', extras].filter(Boolean).join(' · ');
+    this.addToCart({key:it.id+'|'+this.state.sizeIdx+'|'+meta, id:it.id, name:it.name, meta, unit:this.detailUnit(), qty:this.state.qty});
     this.go('cart');
   };
 
@@ -929,7 +1061,7 @@ class Component extends DCLogic {
   addBuilder = () => {
     const b = this.state.builder;
     const meta = [b.tiers, b.size, b.flavour, b.frosting, b.msg && '"'+b.msg+'"'].filter(Boolean).join(' · ');
-    this.addToCart({key:'custom|'+meta, id:'custom', name:'Custom cake', meta, unit:this.builderPrice(), qty:1, color:'#C7355A'});
+    this.addToCart({key:'custom|'+meta, id:'custom', name:'Custom cake', meta, unit:this.builderPrice(), qty:1});
     this.go('cart');
   };
 
@@ -977,8 +1109,7 @@ class Component extends DCLogic {
   }
 
   waSend = text => {
-    const msgs = this.state.waMsgs.concat([{from:'me', text}]);
-    this.setState({waMsgs:msgs});
+    this.setState({waMsgs:this.state.waMsgs.concat([{from:'me', text}])});
     setTimeout(() => this.waReply(text), 420);
   };
 
@@ -995,7 +1126,7 @@ class Component extends DCLogic {
     } else if(t.indexOf('track')>-1){
       reply = 'Order '+this.state.trackId+' is at "'+STAGES[Math.min(this.state.stage,3)].title+'". '+(this.state.stage>=3?'Ready at counter 2.':'ETA 12:40.');
     } else if(t.indexOf('hour')>-1){
-      reply = 'Both shops are open 08:00 — 22:00 daily. Pickup counters run until close.';
+      reply = 'We\u2019re open 08:00 — 22:00 daily on Marina Walk. The pickup counter runs until close.';
     } else if(t.indexOf('custom')>-1){
       reply = 'Custom cakes need 48h, three tiers need 72h. Send me the occasion, number of guests and a photo if you have one.';
     }
@@ -1008,13 +1139,17 @@ class Component extends DCLogic {
     const cats = ['All','Birthday','Wedding','Cupcakes','Cheesecakes','Everyday','Cookies'];
     const q = s.q.trim().toLowerCase();
     const filtered = ITEMS.filter(i => (s.cat==='All' || i.cat===s.cat) && (!q || (i.name+' '+i.desc).toLowerCase().indexOf(q)>-1));
-    const decorate = list => list.map(it => ({
-      name:it.name, desc:it.desc, tags:it.tags, priceLabel:this.priceLabel(it),
-      icon:this.icon(CAT_COLOR[it.cat]),
-      add:e => this.quickAdd(it, e),
-      open:() => this.openItem(it.id)
-    }));
+    const shape = it => {
+      const p = PHOTOS[it.id] || {};
+      return {
+        name:it.name, desc:it.desc, tags:it.tags, priceLabel:this.priceLabel(it),
+        lead:it.lead.toUpperCase(), slotId:'ph-'+it.id, slotHint:'Photo — '+it.name,
+        photo:p.src || '', credit:p.credit || '', creditHref:p.href || '',
+        add:e => this.quickAdd(it, e), open:() => this.openItem(it.id)
+      };
+    };
     const it = this.detailItem();
+    const detailPhoto = PHOTOS[it.id] || {};
     const sizes = SIZES[it.kind];
     const live = s.orders.find(o => o.id === s.trackId) || s.orders[0];
     const b = s.builder;
@@ -1022,46 +1157,58 @@ class Component extends DCLogic {
     const cartRows = s.cart.map((c,i) => ({
       name:c.name, meta:c.meta || '—', qty:c.qty, qtyName:c.qty+' × '+c.name,
       each:money(c.unit)+' each', total:money(c.unit*c.qty),
-      icon:this.icon(c.color, 44),
+      thumb:this.thumb(c.id),
       inc:() => { const cart=this.state.cart.slice(); cart[i]=Object.assign({},cart[i],{qty:cart[i].qty+1}); this.setState({cart}); },
       dec:() => { const cart=this.state.cart.slice(); if(cart[i].qty<=1) cart.splice(i,1); else cart[i]=Object.assign({},cart[i],{qty:cart[i].qty-1}); this.setState({cart}); },
       remove:() => { const cart=this.state.cart.slice(); cart.splice(i,1); this.setState({cart}); }
     }));
     const totalRows = [{k:'Subtotal', v:money(this.subtotal())}];
     if(this.discount()>0) totalRows.push({k:'Discount · '+s.applied, v:'– '+money(this.discount())});
-    totalRows.push({k: s.fulfil==='delivery' ? 'Delivery' : 'Pickup — Marina', v: s.fulfil==='delivery' ? (this.deliveryFee()? money(this.deliveryFee()) : 'Free') : 'Free'});
+    totalRows.push({k: s.fulfil==='delivery' ? 'Delivery' : 'Pickup — Marina Walk', v: s.fulfil==='delivery' ? (this.deliveryFee()? money(this.deliveryFee()) : 'Free') : 'Free'});
     const order = s.lastOrder || live;
     const stageNow = Math.min(s.stage, 3);
+    const count = s.cart.reduce((n,c)=>n+c.qty,0);
+    const barVisible = count>0 && ['home','menu','product','builder','offers'].indexOf(s.route)>-1;
 
     return {
-      pointer:{cursor:'pointer'}, fullWidth:{width:'100%', justifyContent:'center'},
-      navLinks:[['Menu','menu'],['Offers','offers'],['Track order','track'],['Locations','locations'],['Custom','builder'],['Corporate','corporate']].map(([label,r]) => ({
+      fullWidth:{width:'100%', justifyContent:'center'},
+      navLinks:[['Menu','menu'],['Offers','offers'],['Track order','track'],['Visit','locations'],['Custom','builder']].map(([label,r]) => ({
         label, go:() => this.go(r), color: s.route===r ? 'var(--berry-deep)' : 'var(--ink)', underline: s.route===r ? 'var(--berry)' : 'transparent'
       })),
       goHome:() => this.go('home'), goMenu:() => this.go('menu'), goCart:() => this.go('cart'),
       goCheckout:() => this.go('checkout'), goTrack:() => this.go('track'), goAccount:() => this.go('account'),
       goBuilder:() => this.go('builder'), goLocations:() => this.go('locations'), goContact:() => this.go('contact'),
+      goOffers:() => this.go('offers'),
       isHome:s.route==='home', isMenu:s.route==='menu', isProduct:s.route==='product', isBuilder:s.route==='builder',
       isCart:s.route==='cart', isCheckout:s.route==='checkout', isConfirm:s.route==='confirm', isTrack:s.route==='track',
       isAccount:s.route==='account', isOffers:s.route==='offers', isLocations:s.route==='locations',
       isStory:s.route==='story', isContact:s.route==='contact', isCorporate:s.route==='corporate',
+      showRail:s.route==='home' || s.route==='menu',
 
-      cartCount:s.cart.reduce((n,c)=>n+c.qty,0), hasCart:s.cart.length>0, cartEmpty:s.cart.length===0,
+      cartCount:count, hasCart:count>0, cartEmpty:s.cart.length===0,
+      showOrderBar:barVisible,
+      orderBarLabel: count===1 ? 'item in your order' : 'items in your order',
+      waBottom: barVisible ? '86px' : '22px',
+      waPanelBottom: barVisible ? '152px' : '88px',
+      toastBottom: barVisible ? '90px' : '24px',
+
       offers:OFFERS.slice(0,3), allOffers:OFFERS,
-      featured:decorate(ITEMS.filter(i => ['redvelvet','fudge','pistachio','ny','basque','rolls'].indexOf(i.id)>-1)),
+      heroBakes:ITEMS.filter(i => ['redvelvet','blush'].indexOf(i.id)>-1).map(shape),
+      smallBakes:ITEMS.filter(i => ['caramel','pistachio','vanilla','date','banana','rolls','choc','short'].indexOf(i.id)>-1).map(shape),
       channels:[
-        {title:'Order online', sub:'Full menu, live slots, card or Tabby.'},
-        {title:'Order on WhatsApp', sub:'Send your cart in a chat, reply CONFIRM.'},
-        {title:'Order in the shop', sub:'Walk up to the counter on Marina Walk.'}
+        {step:'One', title:'Order online', sub:'Full menu, live slots, card or Tabby. Same-day on most bakes.'},
+        {step:'Two', title:'Or on WhatsApp', sub:'Send your cart in a chat and reply CONFIRM. Same queue, same tracker.'},
+        {step:'Three', title:'Or at the counter', sub:'Walk in on Marina Walk and pick straight from the case.'}
       ],
 
-      cats:cats.map(c => ({label:c, active:s.cat===c, go:() => this.setState({cat:c})})),
+      cats:cats.map(c => ({label:c, active:s.cat===c, go:() => { this.setState({cat:c}); if(s.route!=='menu') this.go('menu'); }})),
       q:s.q, setQ:e => this.setState({q:e.target.value}),
-      menuItems:decorate(filtered), menuEmpty:filtered.length===0,
+      menuItems:filtered.map(shape), menuEmpty:filtered.length===0,
       resultCount:filtered.length + (filtered.length===1 ? ' item' : ' items'),
 
       detailName:it.name, detailLong:it.long, detailTags:it.tags, detailLead:it.lead.toUpperCase(),
-      detailArt:this.icon(CAT_COLOR[it.cat], 180),
+      detailSlotId:'ph-'+it.id, detailSlotHint:'Photo — '+it.name,
+      detailPhoto:detailPhoto.src || '', detailCredit:detailPhoto.credit || '', detailCreditHref:detailPhoto.href || '',
       detailOptionLabel:SIZE_LABEL[it.kind],
       detailSizes:sizes.map((z,i) => ({label:z.label, active:s.sizeIdx===i, go:() => this.setState({sizeIdx:i})})),
       detailPriceLine:(sizes[s.sizeIdx]||sizes[0]).label,
@@ -1079,7 +1226,6 @@ class Component extends DCLogic {
         {label:'Finish', options:bOpt('frosting',['Swiss buttercream','Cream cheese','Ganache','Semi-naked'])}
       ],
       builderMsg:b.msg, setBuilderMsg:e => this.setState({builder:Object.assign({}, this.state.builder, {msg:e.target.value})}),
-      builderArt:this.icon('#C7355A', 150),
       builderSummary:[
         {k:'Tiers', v:b.tiers}, {k:'Base size', v:b.size}, {k:'Sponge', v:b.flavour},
         {k:'Finish', v:b.frosting}, {k:'Message', v:b.msg || '—'},
@@ -1112,7 +1258,7 @@ class Component extends DCLogic {
       payCta: s.pay==='whatsapp' ? 'Place order on WhatsApp →' : s.pay==='cash' ? 'Place order — pay at counter →' : 'Pay '+money(this.total())+' →',
       checkoutError:s.err, placeOrder:this.placeOrder,
 
-      confirmLine: order ? 'Order '+order.id+' · '+order.when+' · '+(order.fulfil==='delivery'?'delivery':'pickup at Marina')+'. We text you at each stage.' : '',
+      confirmLine: order ? 'Order '+order.id+' · '+order.when+' · '+(order.fulfil==='delivery'?'delivery':'pickup at Marina Walk')+'. We text you at each stage.' : '',
       confirmRows: order ? [
         {k:'Order number', v:'#'+order.id},
         {k:'Items', v:order.items},
@@ -1123,6 +1269,18 @@ class Component extends DCLogic {
       ] : [],
 
       trackerStages:STAGES, stage:stageNow,
+      trackerCake:this.trackerCake(stageNow),
+      trackerRows:STAGES.map((z,i) => {
+        const done = i < stageNow, active = i === stageNow;
+        return {
+          title:z.title, sub:z.sub, mark: done ? '✓' : String(i+1),
+          bg: done ? 'var(--stage-done)' : active ? 'var(--stage-active)' : 'transparent',
+          border: done ? 'var(--stage-done)' : active ? 'var(--stage-active)' : 'var(--stage-idle)',
+          color: done ? 'var(--on-pistachio)' : active ? 'var(--on-honey)' : 'var(--stage-idle)',
+          titleColor: done || active ? '#fff' : 'var(--on-ink-dim)',
+          rule: i === STAGES.length-1 ? 'none' : '1px solid var(--ink-line)'
+        };
+      }),
       activeOrderLabel:'ORDER #'+(live? live.id : 'LY-4471'),
       etaLabel: stageNow>=3 ? 'READY NOW' : 'ETA 12:40',
       advanceStage:() => this.setState({stage:(s.stage+1)%4}),
@@ -1144,15 +1302,7 @@ class Component extends DCLogic {
         items:o.items, total:money(o.total),
         status:o.live ? 'open' : 'soon', statusLabel:o.live ? 'In progress' : 'Completed',
         actionLabel:o.live ? 'Track' : 'Reorder',
-        action:() => { if(o.live){ this.setState({trackId:o.id}); this.go('track'); } else { this.addToCart({key:'re|'+o.id, id:'re', name:o.items, meta:'Reorder of #'+o.id, unit:o.total, qty:1, color:'#E2A233'}); this.go('cart'); } }
-      })),
-
-      locations:LOCATIONS.map(l => ({
-        name:l.name, address:l.address, hours:l.hours, status:l.status, statusLabel:l.statusLabel,
-        bg: l.status==='open' ? 'var(--paper)' : 'transparent',
-        border: l.status==='open' ? '1px solid var(--line)' : '1.5px dashed var(--line)',
-        actionLabel: l.status==='open' ? 'Order from here' : 'Get notified',
-        action:() => l.status==='open' ? this.go('menu') : this.flash('We\u2019ll text you when '+l.name+' opens')
+        action:() => { if(o.live){ this.setState({trackId:o.id}); this.go('track'); } else { this.addToCart({key:'re|'+o.id, id:'re', name:o.items, meta:'Reorder of #'+o.id, unit:o.total, qty:1}); this.go('cart'); } }
       })),
 
       timeline:[
@@ -1163,7 +1313,7 @@ class Component extends DCLogic {
       ],
       contactRows:[
         {k:'WhatsApp', v:'+971 50 000 0000', note:'Fastest — a baker answers 08:00 — 20:00.'},
-        {k:'Phone', v:'+971 4 000 0000', note:'Marina shop, during opening hours.'},
+        {k:'Phone', v:'+971 4 000 0000', note:'The shop, during opening hours.'},
         {k:'Email', v:'hello@cakelake.ae', note:'Corporate and wedding enquiries, 1 working day.'}
       ],
       sendNote:() => this.setState({noteSent:'Sent — we reply within a day.'}),
@@ -1174,10 +1324,9 @@ class Component extends DCLogic {
         {tag:'Gifting', name:'Client gift boxes', desc:'Ribboned boxes with a handwritten card, delivered to up to 40 addresses.', from:'AED 95 each'}
       ],
 
-      payChips:['Visa','Mastercard','Apple Pay','Tabby'],
       footCols:[
         {title:'Shop', links:[['Full menu','menu'],['Offers','offers'],['Custom cakes','builder'],['Track order','track']].map(([label,r])=>({label, go:()=>this.go(r)}))},
-        {title:'Company', links:[['Our story','story'],['Locations','locations'],['Corporate & bulk','corporate']].map(([label,r])=>({label, go:()=>this.go(r)}))},
+        {title:'Company', links:[['Our story','story'],['Visit the shop','locations'],['Corporate & bulk','corporate']].map(([label,r])=>({label, go:()=>this.go(r)}))},
         {title:'Support', links:[['Contact','contact'],['Your account','account'],['Delivery info','locations']].map(([label,r])=>({label, go:()=>this.go(r)}))}
       ],
 

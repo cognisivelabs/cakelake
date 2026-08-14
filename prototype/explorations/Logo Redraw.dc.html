@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="../../design-system/tokens/fonts.css">
+  <link rel="stylesheet" href="../../design-system/tokens/colors.css">
+  <link rel="stylesheet" href="../../design-system/tokens/typography.css">
+  <link rel="stylesheet" href="../../design-system/tokens/spacing.css">
+  <link rel="stylesheet" href="../../design-system/tokens/radius.css">
+  <link rel="stylesheet" href="../../design-system/tokens/elevation.css">
+  <link rel="stylesheet" href="../../design-system/tokens/motion.css">
+  <link rel="stylesheet" href="../../design-system/styles.css">
+  <script src="../../design-system/_ds_bundle.js"></script>
+  <style>
+    body{margin:0;background:var(--cream);color:var(--ink);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;}
+    a{color:var(--berry);text-decoration:none;}
+    a:hover{color:var(--berry-deep);}
+  </style>
+</helmet>
+
+<div style="min-height:100vh;background:var(--cream);padding:48px 24px 80px;">
+  <div style="max-width:1180px;margin:0 auto;">
+
+    <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Eyebrow" hint-size="auto,18px">Identity · redrawn from the original</x-import>
+    <h1 style="font-family:'Fraunces',serif;font-weight:600;letter-spacing:-0.01em;font-size:clamp(2rem,4vw,3.2rem);margin:16px 0 16px;max-width:24ch;">Your logo, drawn <em style="font-style:italic;color:var(--berry);font-weight:500;">properly</em>.</h1>
+    <p style="color:var(--ink-soft);font-size:17px;line-height:1.6;max-width:62ch;margin:0 0 8px;">Same badge, same three scalloped tiers, same cherry — rebuilt as vectors from the 180px original, so it stays crisp at any size. The type is the one thing that changes.</p>
+    <p style="color:var(--ink-soft);font-size:15px;line-height:1.6;max-width:62ch;margin:0 0 44px;">Everything below is live vector, not an image. Reference by number in chat.</p>
+
+    <section style="margin-bottom:56px;">
+      <div style="display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:26px;">
+        <h2 style="font-family:'Fraunces',serif;font-weight:600;font-size:22px;margin:0;">Side by side</h2>
+        <span style="color:var(--ink-soft);font-size:14px;">The original file against the redraw, both at 180px.</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:22px;">
+        <div style="background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:22px;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);">What you sent · 180px</span>
+          <div style="margin-top:16px;background:var(--cream);border-radius:14px;padding:24px;display:flex;justify-content:center;">
+            <img src="uploads/logo_file-1786725316032-wbmr.webp" alt="Original Cake Lake Bakery logo" width="180" height="180" style="display:block;border-radius:50%;">
+          </div>
+          <p style="color:var(--ink-soft);font-size:13.5px;line-height:1.6;margin:14px 0 0;">Soft edges, JPEG noise in the yellow, type breaking up. Unusable above about 200px.</p>
+        </div>
+        <div style="background:var(--paper);border:1.5px solid var(--berry);border-radius:22px;padding:22px;">
+          <span style="font-family:'JetBrains Mono',monospace;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--berry-deep);">01 · Faithful redraw</span>
+          <div style="margin-top:16px;background:var(--cream);border-radius:14px;padding:24px;display:flex;justify-content:center;">
+            <div style="width:180px;height:180px;">{{ badgeFaithful }}</div>
+          </div>
+          <p style="color:var(--ink-soft);font-size:13.5px;line-height:1.6;margin:14px 0 0;">Same shapes and colours, clean geometry. Scales to a shopfront sign without softening.</p>
+        </div>
+      </div>
+    </section>
+
+    <section style="margin-bottom:56px;">
+      <div style="display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:26px;">
+        <h2 style="font-family:'Fraunces',serif;font-weight:600;font-size:22px;margin:0;">Modernised type</h2>
+        <span style="color:var(--ink-soft);font-size:14px;">The mark untouched — only the lettering is reset.</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:22px;">
+        <sc-for list="{{ typeOptions }}" as="t" hint-placeholder-count="3">
+          <div style="background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:22px;display:flex;flex-direction:column;gap:16px;">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.14em;color:var(--berry-deep);">{{ t.num }}</span>
+            <div style="background:var(--cream);border-radius:14px;height:200px;display:flex;align-items:center;justify-content:center;padding:16px;">
+              <div style="width:100%;max-width:200px;">{{ t.art }}</div>
+            </div>
+            <div>
+              <h3 style="font-family:'Fraunces',serif;font-weight:600;font-size:18px;margin:0 0 5px;">{{ t.name }}</h3>
+              <p style="color:var(--ink-soft);font-size:13.5px;line-height:1.6;margin:0;">{{ t.desc }}</p>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+
+    <section style="margin-bottom:56px;">
+      <div style="display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:26px;">
+        <h2 style="font-family:'Fraunces',serif;font-weight:600;font-size:22px;margin:0;">Sitting on the site</h2>
+        <span style="color:var(--ink-soft);font-size:14px;">The gold badge against the cream page — and the fix if it clashes.</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:22px;">
+        <sc-for list="{{ paletteOptions }}" as="p" hint-placeholder-count="3">
+          <div style="background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:22px;display:flex;flex-direction:column;gap:16px;">
+            <span style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.14em;color:var(--berry-deep);">{{ p.num }}</span>
+            <div style="background:rgba(251,246,236,0.9);border:1px solid var(--line);border-radius:14px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;gap:12px;">
+              <div style="display:flex;align-items:center;gap:9px;">
+                <div style="width:32px;height:32px;flex:none;">{{ p.mark }}</div>
+                <span style="font-family:'Fraunces',serif;font-size:21px;font-weight:700;">Cake Lake</span>
+              </div>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.06em;color:var(--ink-soft);">HEADER</span>
+            </div>
+            <div>
+              <h3 style="font-family:'Fraunces',serif;font-weight:600;font-size:18px;margin:0 0 5px;">{{ p.name }}</h3>
+              <p style="color:var(--ink-soft);font-size:13.5px;line-height:1.6;margin:0;">{{ p.desc }}</p>
+            </div>
+            <div style="display:flex;gap:7px;flex-wrap:wrap;border-top:1px dashed var(--line);padding-top:14px;">
+              <sc-for list="{{ p.swatches }}" as="s" hint-placeholder-count="4">
+                <div style="display:flex;align-items:center;gap:6px;">
+                  <span style="width:16px;height:16px;border-radius:4px;background:{{ s.hex }};border:1px solid rgba(43,36,29,.12);display:block;"></span>
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--ink-soft);">{{ s.hex }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+
+    <section>
+      <div style="display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:26px;">
+        <h2 style="font-family:'Fraunces',serif;font-weight:600;font-size:22px;margin:0;">Where it has to work</h2>
+        <span style="color:var(--ink-soft);font-size:14px;">Small sizes, one colour, and reversed.</span>
+      </div>
+      <div style="background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:26px;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:28px;align-items:end;">
+        <sc-for list="{{ applications }}" as="a" hint-placeholder-count="6">
+          <div style="display:flex;flex-direction:column;gap:12px;align-items:flex-start;">
+            <div style="background:{{ a.bg }};border-radius:{{ a.radius }};padding:{{ a.pad }};display:flex;align-items:center;justify-content:center;">
+              <div style="width:{{ a.size }};height:{{ a.size }};">{{ a.art }}</div>
+            </div>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);">{{ a.label }}</span>
+          </div>
+        </sc-for>
+      </div>
+      <p style="color:var(--ink-soft);font-size:14px;line-height:1.7;margin:22px 0 0;max-width:62ch;">The three-tier mark loses its top tier below about 24px, which is why the favicon and the WhatsApp avatar use the cherry-and-two-tier reduction. That's normal practice — one drawing for signage, one for the small stuff.</p>
+    </section>
+
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1180,&quot;height&quot;:900}}">
+const el = React.createElement;
+
+// Colours sampled from the supplied file, cleaned of JPEG drift.
+const O = {gold:'#EFD412', ring:'#D9BE0E', teal:'#3FB6C4', pink:'#E63C74', brown:'#856B62', cherry:'#E63C74', stem:'#E0852A', word:'#DB4E12'};
+// The site's own palette, for the brand-aligned variant.
+const B = {gold:'#FBF6EC', ring:'#E7DECC', teal:'#6F9463', pink:'#C7355A', brown:'#2B241D', cherry:'#C7355A', stem:'#E2A233', word:'#2B241D'};
+
+// One scalloped icing tier: straight top, rounded shoulders, dripping bottom edge.
+function tier(x0, x1, yTop, yBase, n, depth, fill, r){
+  const w = (x1 - x0) / n;
+  let d = 'M' + (x0 + r) + ' ' + yTop + ' H' + (x1 - r) +
+          ' A' + r + ' ' + r + ' 0 0 1 ' + x1 + ' ' + (yTop + r) +
+          ' V' + yBase;
+  for(let i = 0; i < n; i++) d += ' q' + (-w/2) + ' ' + depth + ' ' + (-w) + ' 0';
+  d += ' V' + (yTop + r) + ' A' + r + ' ' + r + ' 0 0 1 ' + (x0 + r) + ' ' + yTop + ' Z';
+  return el('path', {d, fill});
+}
+
+// The cake mark in a 120 × 96 box: three tiers, cherry, no container.
+function cake(c, opts){
+  const o = opts || {};
+  const kids = [
+    tier(8, 112, 60, 72, 6, 7, c.brown, 4),
+    tier(21, 99, 40, 51, 5, 6.5, c.pink, 4),
+    tier(33, 87, 21, 31, 4, 6, c.teal, 4)
+  ];
+  if(!o.noCherry){
+    kids.push(el('path', {key:'stem', d:'M60 12c3-4 7-5 10-4', stroke:c.stem, strokeWidth:3, strokeLinecap:'round', fill:'none'}));
+    kids.push(el('circle', {key:'cherry', cx:60, cy:14, r:7.5, fill:c.cherry}));
+  }
+  return kids;
+}
+
+const svgBox = (box, kids, extra) => el('svg', Object.assign({viewBox:box, fill:'none', style:{width:'100%', height:'100%', display:'block', overflow:'visible'}}, extra||{}), kids);
+
+// Mark on its own.
+const mark = (c) => svgBox('0 0 120 80', cake(c));
+
+// Two-tier reduction for tiny sizes.
+function markSmall(c){
+  return svgBox('0 0 120 80', [
+    tier(8, 112, 52, 68, 5, 9, c.brown, 5),
+    tier(26, 94, 26, 42, 4, 9, c.pink, 5),
+    el('circle', {key:'cherry', cx:60, cy:14, r:9, fill:c.cherry})
+  ]);
+}
+
+// The full badge: gold disc, inner keyline, cake, lowercase wordmark.
+function badge(c, opts){
+  const o = opts || {};
+  const font = o.font || 'system-ui, -apple-system, sans-serif';
+  const weight = o.weight || 500;
+  const size = o.size || 19;
+  const spacing = o.spacing === undefined ? 0 : o.spacing;
+  const label = o.label || 'cake lake bakery';
+  return svgBox('0 0 200 200', [
+    el('circle', {key:'disc', cx:100, cy:100, r:100, fill:c.gold}),
+    el('circle', {key:'ring', cx:100, cy:100, r:91, fill:'none', stroke:c.ring, strokeWidth:2.5}),
+    el('g', {key:'cake', transform:'translate(40 44)'}, cake(c)),
+    el('text', {key:'word', x:100, y:158, textAnchor:'middle', fontFamily:font, fontWeight:weight, fontSize:size, letterSpacing:spacing, fill:c.word}, label)
+  ]);
+}
+
+// Horizontal lockup: mark left, name right.
+function lockup(c, opts){
+  const o = opts || {};
+  return svgBox('0 0 320 100', [
+    el('g', {key:'cake', transform:'translate(6 14) scale(0.78)'}, cake(c)),
+    el('text', {key:'a', x:112, y:52, fontFamily:o.font, fontWeight:o.weight, fontSize:34, letterSpacing:o.spacing, fill:o.wordColor || c.word}, 'cake lake'),
+    el('text', {key:'b', x:113, y:76, fontFamily:"'JetBrains Mono', monospace", fontWeight:400, fontSize:13, letterSpacing:3.4, fill:c.brown}, 'BAKERY · DUBAI')
+  ]);
+}
+
+class Component extends DCLogic {
+  renderVals(){
+    const FR = "'Fraunces', serif";
+    return {
+      badgeFaithful: badge(O, {}),
+
+      typeOptions:[
+        {num:'02', name:'Fraunces badge', desc:'The badge with the lettering reset in Fraunces — the face the website already uses for headlines. Instantly more premium, and it ties the shopfront to the site.', art:badge(O, {font:FR, weight:600, size:21, spacing:0.2})},
+        {num:'03', name:'Wide-set sans', desc:'Keeps the original\u2019s friendly lowercase sans but opens the letterspacing and evens the weight. The most conservative change — the client will still recognise it.', art:badge(O, {font:'system-ui, -apple-system, sans-serif', weight:400, size:17, spacing:1.6})},
+        {num:'04', name:'Horizontal lockup', desc:'Mark beside the name rather than under it, with a mono descriptor line. This is the version for the website header, invoices and email signatures, where a circle wastes space.', art:lockup(O, {font:FR, weight:600, spacing:-0.4})}
+      ],
+
+      paletteOptions:[
+        {num:'05', name:'As-is, gold badge', desc:'The original colours dropped straight onto the cream page. The gold fights the cream slightly, and the orange-red type sits close to the site\u2019s berry without matching it.',
+         mark:badge(O, {font:'system-ui, sans-serif', weight:500, size:19}),
+         swatches:[{hex:'#EFD412'},{hex:'#3FB6C4'},{hex:'#E63C74'},{hex:'#856B62'}]},
+        {num:'06', name:'Mark only, original colours', desc:'Drop the gold disc and let the cake sit directly on cream. Keeps every original colour, removes the clash, and reads better at header size. My recommendation.',
+         mark:mark(O),
+         swatches:[{hex:'#3FB6C4'},{hex:'#E63C74'},{hex:'#856B62'},{hex:'#E0852A'}]},
+        {num:'07', name:'Brand-aligned recolour', desc:'Same drawing, recoloured to the site\u2019s berry, honey and pistachio. Cleanest on the website — but it is a real change to the logo, so it needs the client\u2019s blessing.',
+         mark:mark(B),
+         swatches:[{hex:'#C7355A'},{hex:'#E2A233'},{hex:'#6F9463'},{hex:'#2B241D'}]}
+      ],
+
+      applications:[
+        {label:'Badge · 64px', art:badge(O, {font:'system-ui, sans-serif', weight:500, size:19}), size:'64px', bg:'transparent', radius:'0', pad:'0'},
+        {label:'Header · 26px', art:mark(O), size:'26px', bg:'transparent', radius:'0', pad:'0'},
+        {label:'Favicon · 16px', art:markSmall(O), size:'16px', bg:'transparent', radius:'0', pad:'0'},
+        {label:'Avatar · circle', art:markSmall(O), size:'44px', bg:O.gold, radius:'50%', pad:'12px'},
+        {label:'One colour', art:mark({gold:'#2B241D', ring:'#2B241D', teal:'#2B241D', pink:'#2B241D', brown:'#2B241D', cherry:'#2B241D', stem:'#2B241D', word:'#2B241D'}), size:'52px', bg:'transparent', radius:'0', pad:'0'},
+        {label:'Reversed on ink', art:mark({gold:'#FBF6EC', ring:'#FBF6EC', teal:'#7FCAD4', pink:'#F07396', brown:'#C9C0B2', cherry:'#F07396', stem:'#E2A233', word:'#FBF6EC'}), size:'52px', bg:'#2B241D', radius:'14px', pad:'12px'}
+      ]
+    };
+  }
+}
+
+</script>
+</body>
+</html>

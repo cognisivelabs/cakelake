@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="../support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="../../design-system/tokens/fonts.css">
+  <link rel="stylesheet" href="../../design-system/tokens/colors.css">
+  <link rel="stylesheet" href="../../design-system/tokens/typography.css">
+  <link rel="stylesheet" href="../../design-system/tokens/spacing.css">
+  <link rel="stylesheet" href="../../design-system/tokens/radius.css">
+  <link rel="stylesheet" href="../../design-system/tokens/elevation.css">
+  <link rel="stylesheet" href="../../design-system/tokens/motion.css">
+  <link rel="stylesheet" href="../../design-system/styles.css">
+  <script src="../../design-system/_ds_bundle.js"></script>
+  <style>
+    body{margin:0;background:var(--cream);color:var(--ink);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;}
+    a{color:var(--berry);text-decoration:none;}
+    a:hover{color:var(--berry-deep);}
+  </style>
+</helmet>
+
+<div style="min-height:100vh;background:var(--cream);padding:48px 24px 80px;">
+  <div style="max-width:1180px;margin:0 auto;">
+
+    <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Eyebrow" hint-size="auto,18px">Identity · 13 options</x-import>
+    <h1 style="font-family:'Fraunces',serif;font-weight:600;letter-spacing:-0.01em;font-size:clamp(2rem,4vw,3.2rem);margin:16px 0 16px;max-width:22ch;">Thirteen marks, one <em style="font-style:italic;color:var(--berry);font-weight:500;">wordmark</em>.</h1>
+    <p style="color:var(--ink-soft);font-size:17px;line-height:1.6;max-width:60ch;margin:0 0 12px;">Every option uses the same three brand colours and the same Fraunces wordmark — only the mark changes. Each is shown large, then at the size it actually runs in the header (26px), then as a 16px favicon, because that's where marks fail.</p>
+    <p style="color:var(--ink-soft);font-size:15px;line-height:1.6;max-width:60ch;margin:0 0 40px;">Reference me by number in chat — "let's push 04 and 07".</p>
+
+    <div style="display:flex;flex-direction:column;gap:56px;">
+      <sc-for list="{{ groups }}" as="g" hint-placeholder-count="4">
+        <section>
+          <div style="display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:14px;margin-bottom:26px;">
+            <h2 style="font-family:'Fraunces',serif;font-weight:600;font-size:22px;margin:0;">{{ g.title }}</h2>
+            <span style="color:var(--ink-soft);font-size:14px;">{{ g.note }}</span>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:22px;">
+            <sc-for list="{{ g.items }}" as="o" hint-placeholder-count="3">
+              <div style="background:var(--paper);border:{{ o.border }};border-radius:22px;padding:22px;display:flex;flex-direction:column;gap:16px;">
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;">
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.14em;color:var(--berry-deep);">{{ o.num }}</span>
+                  <sc-if value="{{ o.isCurrent }}">
+                    <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Chip" hint-size="auto,20px">Current</x-import>
+                  </sc-if>
+                </div>
+                <div style="background:var(--cream);border-radius:14px;height:150px;display:flex;align-items:center;justify-content:center;">
+                  <div style="width:96px;height:96px;">{{ o.big }}</div>
+                </div>
+                <div>
+                  <h3 style="font-family:'Fraunces',serif;font-weight:600;font-size:18px;margin:0 0 5px;">{{ o.name }}</h3>
+                  <p style="color:var(--ink-soft);font-size:13.5px;line-height:1.6;margin:0;">{{ o.desc }}</p>
+                </div>
+                <div style="border-top:1px dashed var(--line);padding-top:14px;display:flex;flex-direction:column;gap:12px;">
+                  <div style="display:flex;align-items:center;gap:9px;">
+                    <div style="width:26px;height:26px;flex:none;">{{ o.header }}</div>
+                    <span style="font-family:'Fraunces',serif;font-size:24px;font-weight:700;">Cake Lake</span>
+                  </div>
+                  <div style="display:flex;align-items:center;gap:10px;">
+                    <div style="width:16px;height:16px;flex:none;">{{ o.favicon }}</div>
+                    <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);">16px favicon test</span>
+                  </div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </section>
+      </sc-for>
+    </div>
+
+    <section style="margin-top:64px;background:var(--ink);border-radius:32px;padding:clamp(28px,4vw,48px);">
+      <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Eyebrow" tone="honey" hint-size="auto,18px">What to look for</x-import>
+      <h2 style="font-family:'Fraunces',serif;font-weight:600;letter-spacing:-0.01em;font-size:clamp(1.6rem,2.8vw,2.2rem);color:var(--cream);margin:14px 0 24px;">How to judge these</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:28px;">
+        <sc-for list="{{ criteria }}" as="c" hint-placeholder-count="4">
+          <div>
+            <b style="display:block;color:var(--cream);font-size:15px;margin-bottom:7px;">{{ c.k }}</b>
+            <span style="color:var(--on-ink);font-size:14px;line-height:1.6;">{{ c.v }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1180,&quot;height&quot;:900}}">
+const BERRY = '#C7355A', HONEY = '#E2A233', PIST = '#6F9463', INK = '#2B241D', CREAM = '#FBF6EC';
+const el = React.createElement;
+
+function svg(children, box){
+  return el('svg', {viewBox:box || '0 0 80 80', fill:'none', style:{width:'100%', height:'100%', display:'block'}}, children);
+}
+
+const MARKS = {
+  // 1 — the current mark, geometry verbatim from the DS asset (assets/logo-mark.svg)
+  tiers: () => svg([
+    el('rect', {key:1, x:4, y:15, width:18, height:6, rx:2, fill:BERRY}),
+    el('rect', {key:2, x:6, y:10, width:14, height:6, rx:2, fill:HONEY}),
+    el('rect', {key:3, x:8, y:5, width:10, height:6, rx:2, fill:PIST})
+  ], '0 0 26 26'),
+  // 13 — the current mark with a cherry added
+  tiersCherry: () => svg([
+    el('rect', {key:1, x:10, y:50, width:60, height:18, rx:6, fill:BERRY}),
+    el('rect', {key:2, x:17, y:33, width:46, height:17, rx:6, fill:HONEY}),
+    el('rect', {key:3, x:25, y:18, width:30, height:15, rx:6, fill:PIST}),
+    el('circle', {key:4, cx:40, cy:11, r:5, fill:BERRY})
+  ]),
+  // 2 — reflection: tiers above, mirrored ripple below
+  reflect: () => svg([
+    el('rect', {key:1, x:22, y:26, width:36, height:13, rx:5, fill:PIST}),
+    el('rect', {key:2, x:14, y:39, width:52, height:14, rx:5, fill:BERRY}),
+    el('rect', {key:3, x:14, y:57, width:52, height:7, rx:3.5, fill:BERRY, opacity:0.4}),
+    el('rect', {key:4, x:22, y:67, width:36, height:6, rx:3, fill:PIST, opacity:0.28}),
+    el('circle', {key:5, cx:40, cy:19, r:4.5, fill:HONEY})
+  ]),
+  // 3 — lake horizon: honey sun over two ripple lines
+  horizon: () => svg([
+    el('circle', {key:1, cx:40, cy:32, r:16, fill:HONEY}),
+    el('path', {key:2, d:'M8 52c6-5 12-5 18 0s12 5 18 0 12-5 18 0', stroke:BERRY, strokeWidth:5, strokeLinecap:'round'}),
+    el('path', {key:3, d:'M8 66c6-5 12-5 18 0s12 5 18 0 12-5 18 0', stroke:PIST, strokeWidth:5, strokeLinecap:'round'})
+  ]),
+  // 4 — slice: wedge from above
+  slice: () => svg([
+    el('circle', {key:1, cx:40, cy:40, r:30, fill:HONEY, opacity:0.32}),
+    el('path', {key:2, d:'M40 40 L40 10 A30 30 0 0 1 66 25 Z', fill:BERRY}),
+    el('circle', {key:3, cx:40, cy:40, r:5, fill:PIST})
+  ]),
+  // 5 — plate: circle holding three bars
+  plate: () => svg([
+    el('circle', {key:1, cx:40, cy:40, r:30, fill:'none', stroke:INK, strokeWidth:4}),
+    el('rect', {key:2, x:20, y:46, width:40, height:11, rx:4, fill:BERRY}),
+    el('rect', {key:3, x:25, y:34, width:30, height:11, rx:4, fill:HONEY}),
+    el('rect', {key:4, x:31, y:23, width:18, height:10, rx:4, fill:PIST})
+  ]),
+  // 6 — tins from above: three offset circles
+  tins: () => svg([
+    el('circle', {key:1, cx:30, cy:34, r:19, fill:BERRY, opacity:0.85}),
+    el('circle', {key:2, cx:50, cy:34, r:19, fill:HONEY, opacity:0.85}),
+    el('circle', {key:3, cx:40, cy:52, r:19, fill:PIST, opacity:0.85})
+  ]),
+  // 7 — swirl: piped buttercream spiral
+  swirl: () => svg([
+    el('path', {key:1, d:'M40 68V52', stroke:INK, strokeWidth:5, strokeLinecap:'round'}),
+    el('path', {key:2, d:'M22 52h36', stroke:BERRY, strokeWidth:9, strokeLinecap:'round'}),
+    el('path', {key:3, d:'M27 40h26', stroke:HONEY, strokeWidth:9, strokeLinecap:'round'}),
+    el('path', {key:4, d:'M32 28h16', stroke:PIST, strokeWidth:9, strokeLinecap:'round'}),
+    el('circle', {key:5, cx:40, cy:16, r:5, fill:BERRY})
+  ]),
+  // 8 — candle: single tier, tall flame
+  candle: () => svg([
+    el('rect', {key:1, x:12, y:44, width:56, height:24, rx:8, fill:BERRY}),
+    el('rect', {key:2, x:12, y:44, width:56, height:8, rx:4, fill:HONEY}),
+    el('rect', {key:3, x:37, y:24, width:6, height:20, rx:3, fill:PIST}),
+    el('path', {key:4, d:'M40 8c-4 6 4 8 0 14', stroke:HONEY, strokeWidth:4, strokeLinecap:'round'})
+  ]),
+  // 9 — monogram CL in a rounded square
+  monogram: () => svg([
+    el('rect', {key:1, x:8, y:8, width:64, height:64, rx:20, fill:INK}),
+    el('text', {key:2, x:40, y:53, textAnchor:'middle', fontFamily:'Fraunces, serif', fontSize:34, fontWeight:600, fill:CREAM}, 'CL'),
+    el('circle', {key:3, cx:58, cy:22, r:5, fill:BERRY})
+  ]),
+  // 10 — monogram L with a cake in the corner
+  monoL: () => svg([
+    el('path', {key:1, d:'M24 14v44h34', stroke:INK, strokeWidth:9, strokeLinecap:'round', strokeLinejoin:'round'}),
+    el('rect', {key:2, x:44, y:24, width:26, height:10, rx:4, fill:HONEY}),
+    el('rect', {key:3, x:49, y:14, width:16, height:9, rx:4, fill:PIST}),
+    el('circle', {key:4, cx:57, cy:8, r:4, fill:BERRY})
+  ]),
+  // 11 — sprinkles: three dots, no cake at all
+  sprinkles: () => svg([
+    el('rect', {key:1, x:16, y:30, width:11, height:26, rx:5.5, fill:BERRY, transform:'rotate(-18 21.5 43)'}),
+    el('rect', {key:2, x:34, y:26, width:11, height:30, rx:5.5, fill:HONEY}),
+    el('rect', {key:3, x:52, y:30, width:11, height:26, rx:5.5, fill:PIST, transform:'rotate(18 57.5 43)'})
+  ]),
+  // 12 — wordmark only: the berry dot becomes the mark
+  dot: () => svg([
+    el('circle', {key:1, cx:40, cy:40, r:22, fill:BERRY}),
+    el('circle', {key:2, cx:40, cy:40, r:9, fill:CREAM})
+  ])
+};
+
+const OPTIONS = [
+  {num:'01', key:'tiers', name:'Three-tier stack', group:'literal', current:true, desc:'The mark you have now: three bars, nothing else. Reads as cake and holds up at every size — its only weakness is that it stays flat and symmetrical, so it never becomes memorable.'},
+  {num:'13', key:'tiersCherry', name:'Stack with a cherry', group:'literal', desc:'The current mark plus a berry dot on top and taller tiers. The dot gives it a focal point and asymmetry — but at 16px it closes up against the top tier.'},
+  {num:'02', key:'reflect', name:'Cake on the lake', group:'name', desc:'The tiers plus their reflection. The only option that earns the second half of the name, and the fading ripple is distinctive.'},
+  {num:'03', key:'horizon', name:'Lake horizon', group:'name', desc:'Sun over two ripples, in the brand colours. Calm and premium, but nothing says bakery — needs the wordmark to carry the category.'},
+  {num:'04', key:'slice', name:'Slice from above', group:'literal', desc:'A plan-view cake with one slice cut. Simplest silhouette of the twelve, and the only one that still reads at 16px without help.'},
+  {num:'05', key:'plate', name:'On the plate', group:'literal', desc:'The stack contained in a ring. Containment makes it feel like a stamp or seal — good on boxes and ribbons.'},
+  {num:'06', key:'tins', name:'Three tins', group:'abstract', desc:'Overlapping circles, one per brand colour. Modern and flexible, but generic — the same shape works for any three-part brand.'},
+  {num:'07', key:'swirl', name:'Piped swirl', group:'literal', desc:'A buttercream swirl read as stacked strokes. Warmer and more handmade than the rectangles; the widest at small sizes.'},
+  {num:'08', key:'candle', name:'One candle', group:'literal', desc:'A single tier with a tall flame — pushes the celebration story rather than the bake. Narrows the brand to birthdays.'},
+  {num:'09', key:'monogram', name:'CL monogram', group:'monogram', desc:'Ink tile, Fraunces initials, one berry dot. Survives any size and any surface, but hides what the shop sells.'},
+  {num:'10', key:'monoL', name:'L with a cake', group:'monogram', desc:'An L holding a small stack in the crook. Monogram discipline with the category kept visible.'},
+  {num:'11', key:'sprinkles', name:'Three sprinkles', group:'abstract', desc:'Just the sprinkles, fanned. Playful and very small-size friendly; leans young, which may not suit wedding tiers.'},
+  {num:'12', key:'dot', name:'Wordmark and dot', group:'abstract', desc:'No pictorial mark at all — a berry dot beside the Fraunces wordmark. The most grown-up route, and the cheapest to apply.'}
+];
+
+const GROUPS = [
+  {id:'literal', title:'The bake itself', note:'Instantly legible, and the crowded end of the category.'},
+  {id:'name', title:'Playing on "lake"', note:'The differentiator nobody else can borrow.'},
+  {id:'monogram', title:'Monogram', note:'Scales anywhere; hides the category.'},
+  {id:'abstract', title:'Abstract and wordmark', note:'Most flexible, least literal.'}
+];
+
+class Component extends DCLogic {
+  renderVals(){
+    const shape = o => ({
+      num:o.num, name:o.name, desc:o.desc, isCurrent:!!o.current,
+      border: o.current ? '1.5px solid var(--berry)' : '1px solid var(--line)',
+      big:MARKS[o.key](), header:MARKS[o.key](), favicon:MARKS[o.key]()
+    });
+    return {
+      groups:GROUPS.map(g => ({
+        title:g.title, note:g.note,
+        items:OPTIONS.filter(o => o.group === g.id).map(shape)
+      })),
+      criteria:[
+        {k:'The 16px test', v:'Most of these live as a favicon and a WhatsApp avatar before anything else. If the tiers merge into a blob, the mark is too detailed.'},
+        {k:'One colour', v:'Ask to see your shortlist in solid ink. A mark that only works in three colours will not survive a stamp, a receipt, or a box embosser.'},
+        {k:'Does it need the words?', v:'03, 06, 11 and 12 do not say "bakery" on their own. That is fine if the wordmark is always next to them, and a problem on a cake box lid.'},
+        {k:'Room to grow', v:'A mark tied to birthdays (08) or to sprinkles (11) gets awkward when the wedding-tier side of the business grows.'}
+      ]
+    };
+  }
+}
+
+</script>
+</body>
+</html>

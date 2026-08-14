@@ -183,3 +183,5 @@ through with the client.
   New operational requirements: logging for debugging, and metrics on
   orders/traffic. See ADR-008 through ADR-011 for the proposed technical
   approach to each.
+- **2026-08-14** (chat) — Confirmed: admin authentication is separate from
+  customer login (ADR-011 flipped from Proposed to Accepted on this point).

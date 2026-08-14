@@ -1,6 +1,6 @@
 # ADR-011: Admin Console
 
-**Status:** Proposed
+**Status:** Accepted
 **Date:** 2026-08-14
 
 ## Context
@@ -38,9 +38,11 @@ repo. It covers:
 
 Authentication for admin users is a separate concern from customer identity
 (ADR-005) — staff log in with their own credentials (email/password or
-similar), not a customer mobile-number account. Exact auth mechanism is an
-implementation detail left open, but it must be clearly separated from the
-customer-facing login so a customer account can never reach admin routes.
+similar), not a customer mobile-number account. **Confirmed 2026-08-14:
+admin auth is separate from customer login.** The exact auth mechanism
+(email/password vs. something else) is still an implementation detail left
+open, but the separation itself — a customer account can never reach admin
+routes, and vice versa — is settled, not just this ADR's assumption.
 
 ## Rationale
 

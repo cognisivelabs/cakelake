@@ -18,6 +18,20 @@ use with attribution (or no attribution, for CC0). Attribution below.
 | `cupcake-box-of-six.jpg` | Cupcake box of six | [Commons](https://commons.wikimedia.org/wiki/File:Vanilla_cupcakes_with_buttercream_frosting.JPG) | CC BY-SA 4.0 | Prerna Jaddwani |
 | `cardamom-loaf.jpg` | Cardamom loaf | [Commons](https://commons.wikimedia.org/wiki/File:Walnut-Bourbon_Banana_Bread_loaf_and_slices_on_a_plate.jpg) | CC BY 2.0 | Whitney (via Flickr) |
 | `basque-cheesecake.jpg` | Basque cheesecake | [Commons](https://commons.wikimedia.org/wiki/File:Basque-style_cheesecake_from_Japanese_convenience_stores.jpg) | CC BY-SA 4.0 | さえぼー |
+| `salted-caramel-cups.jpg` | Salted Caramel Cups | [Commons](https://commons.wikimedia.org/wiki/File:Butterscotch_Cupcakes.jpg) (cropped) | CC BY-SA 4.0 | ArtOfHappiness |
+| `pistachio-rose-cups.jpg` | Pistachio Rose Cups | [Commons](https://commons.wikimedia.org/wiki/File:Pistachio_Baklava_Vegan_Cupcake_(3335449431).jpg) — approximate match: shows pistachio, not the rose-water element | CC BY 2.0 | Vegan Feast Catering |
+| `date-honey-loaf.jpg` | Date & Honey Loaf | [Commons](https://commons.wikimedia.org/wiki/File:Caramelised_banana_nut_loaf_cafe_-_Black_Mocha_2025-11-07.jpg) (cropped) | CC0 | Andy Li |
+| `sourdough-cinnamon-rolls.jpg` | Sourdough Cinnamon Rolls | [Commons](https://commons.wikimedia.org/wiki/File:Cinnamon_Swirl_-_Caff%C3%A8_Nero_2025-08-09.jpg) | CC0 | Andy Li |
+| `classic-chocolate-chip.jpg` | Classic Chocolate Chip | [Commons](https://commons.wikimedia.org/wiki/File:Homemade_Chocolate_Chip_Cookies_(54734058634).jpg) | CC BY-SA 4.0 | eebAMDG |
+| `pistachio-shortbread.jpg` | Pistachio Shortbread | [Commons](https://commons.wikimedia.org/wiki/File:Shortbread_fingers.jpg) — approximate match: plain shortbread, not pistachio-topped | CC BY-SA 2.5 | Dave souza |
+| `rainbow-funfetti.jpg` | Rainbow Funfetti | [Commons](https://commons.wikimedia.org/wiki/File:Confetti_Cake.jpg) (cropped to remove a child's arm and a board game box) | CC BY-SA 4.0 | Embabahcairo0009 |
+| `number-letter-cakes.jpg` | Number & Letter Cakes | [Commons](https://commons.wikimedia.org/wiki/File:G_shaped_birthday_cake.jpg) | CC BY 4.0 | AlphaLemur |
+| `ivory-rose-tier.jpg` | Ivory Rose Tier | [Commons](https://commons.wikimedia.org/wiki/File:Wedding_Cake_2_tier_w_Swiss_butter_cream_and_90_fresh_white_cream_roses_(14574314081).jpg) | CC BY-SA 2.0 | Rexness |
+| `new-york-baked.jpg` | New York Baked | [Commons](https://commons.wikimedia.org/wiki/File:New_York_cheesecake_2.jpg) | CC BY-SA 4.0 | EvanProdromou |
+
+A "Naked Fruit Tier" photo was sourced and then dropped at the user's request
+(2026-08-14) — the item itself was also removed from the prototype's menu
+data (`prototype/Cake Lake Ordering Prototype.dc.html`).
 
 All files had EXIF metadata (including embedded GPS on one) stripped before
 being added here.

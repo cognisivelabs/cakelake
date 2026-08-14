@@ -21,6 +21,10 @@ traceable.
   client-facing questionnaire, and (as answers come in) a decisions log.
 - [`docs/design/`](docs/design/) — a short written pointer to the design
   system's canonical home (see below).
+- [`docs/adr/`](docs/adr/) — Architecture Decision Records: tech stack,
+  hosting, and other technical decisions, with the reasoning behind them.
+- [`docs/architecture/`](docs/architecture/) — a short system overview
+  tying the ADRs together into one picture of how the pieces fit.
 
 No application code is written in this phase.
 
@@ -57,11 +61,40 @@ Development does not start until the client signs off on this prototype.
 ### 3. Development
 
 - [`app/`](app/) — the real build. Left empty until the client approves a
-  prototype and development is explicitly greenlit. Tentative stack (not
-  locked in): Next.js frontend, Node/Express + MongoDB backend, AWS
-  `me-central-1` hosting, Telr or PayTabs for UAE payments. Final choices are
-  confirmed in `docs/requirements/requirements.md` once the prototype is
-  approved.
+  prototype and development is explicitly greenlit. Tech stack is proposed
+  in [`docs/adr/`](docs/adr/), not locked in — see the Tech Stack table
+  below. Final choices are confirmed in `docs/requirements/requirements.md`
+  once the prototype is approved.
+
+## Documentation
+
+| Area | Where | What it covers |
+|---|---|---|
+| Requirements | [`docs/requirements/`](docs/requirements/) | Confirmed scope, open questions, decisions log |
+| Design | [`docs/design/`](docs/design/) | Pointer to the canonical Claude Design project |
+| Design system mirror | [`design-system/`](design-system/) | Read-only pull of the Claude Design components/tokens |
+| Prototype | [`prototype/`](prototype/) | Click-through builds for client sign-off, plus explored-but-not-picked directions |
+| Architecture decisions | [`docs/adr/`](docs/adr/) | ADRs — tech stack, hosting, identity, order tracking, payments, data model |
+| System overview | [`docs/architecture/system-overview.md`](docs/architecture/system-overview.md) | How the ADRs fit together into one picture |
+
+### Tech Stack
+
+Proposed, not locked in — see [`docs/adr/`](docs/adr/) for the full
+reasoning behind each choice, and note the scale this is sized for: a
+single bakery shop today, a few branches down the line, not a
+high-traffic platform.
+
+| Layer | Technology | ADR |
+|---|---|---|
+| Frontend | Next.js (React) | [ADR-001](docs/adr/ADR-001-tech-stack.md) |
+| Backend | Node.js / Express | [ADR-001](docs/adr/ADR-001-tech-stack.md) |
+| Database | MongoDB (Atlas) | [ADR-001](docs/adr/ADR-001-tech-stack.md) |
+| Repo structure | Single repo, no polyrepo split | [ADR-002](docs/adr/ADR-002-single-repo-structure.md) |
+| Hosting | AWS `me-central-1`, one small compute node | [ADR-003](docs/adr/ADR-003-hosting.md) |
+| Order tracking | HTTP polling, no WebSockets | [ADR-004](docs/adr/ADR-004-order-tracking-strategy.md) |
+| Customer identity | Mobile number (accounts) / email (guests) | [ADR-005](docs/adr/ADR-005-customer-identity.md) |
+| Payments | Telr or PayTabs — pending client info | [ADR-006](docs/adr/ADR-006-payment-gateway.md) |
+| Data model | Store-scoped from day one | [ADR-007](docs/adr/ADR-007-store-scoped-data-model.md) |
 
 ## Workflow
 
@@ -73,3 +106,6 @@ Development does not start until the client signs off on this prototype.
   mirror directly.
 - `app/` scaffolding starts only once the client has approved the design in
   Claude Design and development is explicitly requested.
+- Technical decisions get an ADR in `docs/adr/` — Proposed while still
+  tentative, Accepted once settled. See [`docs/adr/README.md`](docs/adr/README.md)
+  for the format and when to write one.

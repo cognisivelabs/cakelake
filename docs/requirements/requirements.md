@@ -5,8 +5,8 @@ still needs a client answer. As answers come in, move items from "Open
 questions" into the relevant confirmed section and note the date/source of
 the decision.
 
-Last updated: 2026-08-14 (confirmed in-person tap payment and required
-Apple Pay/Google Pay for online checkout).
+Last updated: 2026-08-14 (payment gateway changed to ADCB — Telr/PayTabs
+no longer in the picture; checkout is Apple Pay/Google Pay only).
 
 ## Client
 
@@ -23,13 +23,14 @@ client confirmation (see open questions).
 3. **Fully mobile-friendly** — mobile is treated as the primary surface, not
    an adaptation of desktop.
 4. **Payment, online and in-person, two separate surfaces:**
-   - **Online:** a UAE payment gateway (Telr or PayTabs — front-runners
-     over Stripe: cheaper and easier UAE merchant approval for a
-     retail/F&B business; final choice depends on the client's trade
-     licence and bank account status, see open questions), **with Apple
-     Pay and Google Pay as required options** alongside card — both are
-     widely used in Dubai, and confirmed with the client as wanted, not
-     optional extras.
+   - **Online:** **ADCB (Abu Dhabi Commercial Bank) is the payment
+     gateway** — the client's own bank, providing merchant payment
+     processing for the site. Telr and PayTabs, the earlier front-runners,
+     are **not being used**. Checkout is **Apple Pay and Google Pay
+     only** — no manual card-entry form is currently planned (see
+     [ADR-006](../adr/ADR-006-payment-gateway.md) for the flagged UX
+     question this raises: customers without a wallet set up on their
+     device/browser would have no way to pay online).
    - **In-person:** the shop already takes **tap/contactless card
      payment** at the counter via its existing card terminal — confirmed
      with the client as the in-person method. This is separate from the
@@ -110,8 +111,8 @@ approved — not to be treated as a final decision:
 - **Frontend:** Next.js
 - **Backend:** Node/Express + MongoDB
 - **Hosting:** AWS, `me-central-1` region
-- **Payments:** Telr or PayTabs (UAE gateway, final choice pending — see open
-  questions)
+- **Payments:** ADCB payment gateway (the client's own bank), Apple Pay +
+  Google Pay only — confirmed 2026-08-14, see requirement #4
 
 ## Existing design-system context
 
@@ -172,10 +173,21 @@ through with the client.
 - **Delivery:** Is delivery in scope for launch, or a phase 2 add-on to
   pickup-only ordering? If in scope, what are the delivery zones? (The
   mockup currently references Dubai-only, free over AED 200, as a placeholder.)
-- **Payment gateway:** Telr vs PayTabs — depends on the client's trade
-  licence and bank account status. Also confirm whether a buy-now-pay-later
-  option (e.g. Tabby, shown as a placeholder badge in the mockup) is
-  actually wanted, since that's a separate integration from the core gateway.
+- **ADCB gateway integration details:** confirm what ADCB actually offers
+  for web merchant integration — a documented API/SDK, hosted checkout
+  page, or something else; what onboarding/KYC the client still needs to
+  complete; and a realistic timeline. Telr/PayTabs are well-known,
+  developer-documented UAE payment gateways; ADCB's own merchant gateway
+  product is less of a known quantity for this kind of integration, so
+  this needs direct confirmation before development can start on checkout.
+- **Card-entry fallback:** confirm whether checkout should really be
+  Apple Pay/Google Pay *only*, or whether a manual card-entry option should
+  exist as a fallback for customers without a wallet set up on their
+  device or browser (e.g. most desktop checkouts). See
+  [ADR-006](../adr/ADR-006-payment-gateway.md).
+- Also confirm whether a buy-now-pay-later option (e.g. Tabby, shown as a
+  placeholder badge in the mockup) is actually wanted — that would be a
+  separate integration from the ADCB gateway either way.
 - **Offer types:** Which promotion types does the client actually want to
   run at launch — percentage off, BOGO/bundle deals, delivery-threshold
   discounts, seasonal campaigns, first-order discounts, referral credits,
@@ -235,3 +247,9 @@ through with the client.
   Pay and Google Pay confirmed as required online payment options
   alongside card, not optional — updates requirement #4 and ADR-006's
   gateway selection criteria.
+- **2026-08-14** (chat, client-confirmed) — **Superseded the above:**
+  Telr and PayTabs are not being used at all. The online payment gateway
+  is **ADCB** (the client's own bank), and checkout is **Apple Pay and
+  Google Pay only** — no manual card-entry form currently planned. New
+  open question raised: what ADCB actually provides for web integration
+  (see Open Questions). See [ADR-006](../adr/ADR-006-payment-gateway.md).

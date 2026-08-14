@@ -12,7 +12,7 @@ Cake Lake needs hosting for:
 3. MongoDB (see [ADR-001](ADR-001-tech-stack.md) — Atlas, not self-hosted)
 4. DNS and TLS
 5. Whatever secrets management the payment gateway integration needs
-   (API keys for Telr/PayTabs — see [ADR-006](ADR-006-payment-gateway.md))
+   (API keys/credentials for ADCB's gateway — see [ADR-006](ADR-006-payment-gateway.md))
 
 The client operates in Dubai, UAE. Customers and the shop itself are both
 in-region, so hosting close to them keeps latency low for both the ordering

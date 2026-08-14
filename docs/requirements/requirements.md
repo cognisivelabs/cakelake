@@ -5,8 +5,8 @@ still needs a client answer. As answers come in, move items from "Open
 questions" into the relevant confirmed section and note the date/source of
 the decision.
 
-Last updated: 2026-08-14 (confirmed a dedicated second number handles
-automated WhatsApp messaging).
+Last updated: 2026-08-14 (confirmed in-person tap payment and required
+Apple Pay/Google Pay for online checkout).
 
 ## Client
 
@@ -22,10 +22,20 @@ client confirmation (see open questions).
    start/end window.
 3. **Fully mobile-friendly** — mobile is treated as the primary surface, not
    an adaptation of desktop.
-4. **Online payment via a UAE payment gateway.** Telr or PayTabs are the
-   front-runners over Stripe: cheaper and easier UAE merchant approval for a
-   retail/F&B business. Final choice depends on the client's trade licence
-   and bank account status (see open questions).
+4. **Payment, online and in-person, two separate surfaces:**
+   - **Online:** a UAE payment gateway (Telr or PayTabs — front-runners
+     over Stripe: cheaper and easier UAE merchant approval for a
+     retail/F&B business; final choice depends on the client's trade
+     licence and bank account status, see open questions), **with Apple
+     Pay and Google Pay as required options** alongside card — both are
+     widely used in Dubai, and confirmed with the client as wanted, not
+     optional extras.
+   - **In-person:** the shop already takes **tap/contactless card
+     payment** at the counter via its existing card terminal — confirmed
+     with the client as the in-person method. This is separate from the
+     online gateway above; the counter QR flow (requirement #6) doesn't
+     force a customer physically in the shop through the online gateway
+     if they'd rather tap their card at the till.
 5. **Live order status for pickup orders**, Pizza-Hut-style: placed → baking
    → decorating → ready. This is the product's signature moment, not a plain
    progress bar — see `docs/design/design-system.md` for the visual treatment.
@@ -219,3 +229,9 @@ through with the client.
   a **second** number, dedicated to the system. The client's existing
   number stays manual, untouched, for the human side of the relationship.
   Resolves ADR-012's open question.
+- **2026-08-14** (chat, client-confirmed) — In-person payment is
+  tap/contactless card at the shop's existing terminal — resolves the
+  "is in-person payment still supported" question raised earlier. Apple
+  Pay and Google Pay confirmed as required online payment options
+  alongside card, not optional — updates requirement #4 and ADR-006's
+  gateway selection criteria.

@@ -96,7 +96,7 @@ high-traffic platform.
 | Hosting | AWS `me-central-1`, one small compute node | [ADR-003](docs/adr/ADR-003-hosting.md) |
 | Order tracking | HTTP polling, no WebSockets | [ADR-004](docs/adr/ADR-004-order-tracking-strategy.md) |
 | Customer identity | Mobile number (accounts) / email (guests) | [ADR-005](docs/adr/ADR-005-customer-identity.md) |
-| Payments | Telr or PayTabs — pending client info | [ADR-006](docs/adr/ADR-006-payment-gateway.md) |
+| Payments | Telr or PayTabs (pending client info) + Apple Pay/Google Pay online; tap card in person | [ADR-006](docs/adr/ADR-006-payment-gateway.md) |
 | Data model | Store-scoped from day one | [ADR-007](docs/adr/ADR-007-store-scoped-data-model.md) |
 | Notifications | Order confirmation email via AWS SES | [ADR-008](docs/adr/ADR-008-order-confirmation-email.md) |
 | Logging | Structured logs to CloudWatch + Sentry-style error tracking | [ADR-009](docs/adr/ADR-009-logging-and-error-tracking.md) |

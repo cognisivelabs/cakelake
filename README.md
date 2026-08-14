@@ -19,22 +19,29 @@ traceable.
 
 - [`docs/requirements/`](docs/requirements/) — the requirements doc, the
   client-facing questionnaire, and (as answers come in) a decisions log.
-- [`docs/design/`](docs/design/) — the written design system reference:
-  palette, type, and the signature order-tracker component. The visual
-  prototyping itself happens in Claude Design, not in this repo; this doc is
-  what keeps that tool and this repo aligned.
+- [`docs/design/`](docs/design/) — a short written pointer to the design
+  system's canonical home (see below).
 
 No application code is written in this phase.
 
 ### 2. Prototype approval
 
-Static HTML mockups — built in Claude Design against the reference in
-`docs/design/design-system.md`, then exported back into this repo.
+**Claude Design is the single source of truth for the design system** — not
+this repo. The live project is
+["Cake Lake Design System"](https://claude.ai/design) on claude.ai/design:
+a real React component library (Button, ItemCard, OrderTracker, etc.), design
+tokens, foundation guidelines, and a click-through recreation of the site,
+all built and maintained there.
 
-- [`prototype/`](prototype/) — static HTML mockups: design system reference,
-  home, menu, offers, order tracker, and locations pages.
+- [`design-system/`](design-system/) — a **read-only mirror** of that Claude
+  Design project, pulled down so the design trail stays versioned in git
+  alongside requirements and code. Claude Design always wins on conflict: if
+  this folder and the live project disagree, re-pull from Claude Design
+  rather than hand-editing files here. See
+  [`design-system/readme.md`](design-system/readme.md) for the full index.
 
-Development does not start until the client signs off on this prototype.
+Development does not start until the client signs off on the design in
+Claude Design.
 
 ### 3. Development
 
@@ -49,7 +56,9 @@ Development does not start until the client signs off on this prototype.
 
 - Client answers get folded into `docs/requirements/requirements.md` as they
   come in, shrinking the open-questions section over time.
-- Design work happens in Claude Design, referencing `docs/design/design-system.md`.
-  Finished prototypes land in `prototype/`.
-- `app/` scaffolding starts only once the client has approved a prototype and
-  development is explicitly requested.
+- Design work happens entirely in Claude Design. `design-system/` in this
+  repo is a pulled-down mirror for version history, not a place to edit —
+  when the Claude Design project changes, re-pull it rather than editing the
+  mirror directly.
+- `app/` scaffolding starts only once the client has approved the design in
+  Claude Design and development is explicitly requested.

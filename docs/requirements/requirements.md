@@ -45,18 +45,20 @@ approved — not to be treated as a final decision:
 - **Payments:** Telr or PayTabs (UAE gateway, final choice pending — see open
   questions)
 
-## Existing prototype context
+## Existing design-system context
 
-A static HTML prototype already exists in `prototype/` (design system, home,
-menu, offers, order tracker, locations pages), built before this requirements
-pass. It's a useful sketch of intent but **its content is illustrative, not
-confirmed** — sample menu items, prices, offer copy, and footer details (e.g.
-payment badges, delivery zones) were authored as placeholders for the design
-exercise and should not be read as client-approved facts. Notably, the
-prototype already assumes delivery is in scope and shows a "Tabby" (buy-now-
-pay-later) badge alongside card payments — both are open questions below, not
-confirmed requirements, and should be reconciled with the client rather than
-carried forward by default.
+A design system and click-through site recreation already exist in Claude
+Design (mirrored locally at [`design-system/`](../../design-system)), built
+before this requirements pass from an earlier static HTML mockup. It's a
+useful sketch of intent but **its content is illustrative, not confirmed** —
+sample menu items, prices, offer copy, shop names/addresses, and footer
+details (e.g. payment badges, delivery zones) were authored as placeholders
+for the design exercise and should not be read as client-approved facts.
+Notably, the mockup already assumes delivery is in scope and shows a "Tabby"
+(buy-now-pay-later) badge alongside card payments, and depicts two live shops
+plus two more "opening 2026" — none of this is confirmed; see the open
+questions below and reconcile with the client rather than carrying it forward
+by default.
 
 ## Open questions for client
 
@@ -66,25 +68,24 @@ through with the client.
 
 - **Brand:** Final brand name and logo — "Cake Lake Bakery" is a working name.
 - **Catalogue:** Exact categories, pricing, product photography, and
-  allergen/dietary info for every item. The prototype's menu (birthday,
-  wedding, cupcakes, cheesecakes, everyday bakes, cookies) is a sketch, not
-  the confirmed range.
+  allergen/dietary info for every item. The mockup's menu (celebration cakes,
+  cupcakes, loaves & bakes) is a sketch, not the confirmed range.
 - **Delivery:** Is delivery in scope for launch, or a phase 2 add-on to
   pickup-only ordering? If in scope, what are the delivery zones? (The
-  prototype currently references Marina, JBR, and Al Sufouh as placeholders.)
+  mockup currently references Dubai-only, free over AED 200, as a placeholder.)
 - **Payment gateway:** Telr vs PayTabs — depends on the client's trade
   licence and bank account status. Also confirm whether a buy-now-pay-later
-  option (e.g. Tabby, shown as a placeholder badge in the prototype) is
+  option (e.g. Tabby, shown as a placeholder badge in the mockup) is
   actually wanted, since that's a separate integration from the core gateway.
 - **Offer types:** Which promotion types does the client actually want to
   run at launch — percentage off, BOGO/bundle deals, delivery-threshold
   discounts, seasonal campaigns, first-order discounts, referral credits,
-  corporate/bulk discounts? The prototype sketches all of these; scoping
+  corporate/bulk discounts? The mockup sketches several of these; scoping
   down to launch-ready types vs. later-phase types needs client input.
 - **Multi-branch timeline:** Does the branch-selector UI need to be live at
-  launch (the prototype already shows a locations page with "opening 2026"
-  and "planned" branches), or is it enough for the data model to be
-  branch-ready while the UI stays single-store until a second branch is real?
+  launch (the mockup already shows a locations page with two live shops and
+  two "opening 2026"), or is it enough for the data model to be branch-ready
+  while the UI stays single-store until a second branch is real?
 - **Order lifecycle policy:** What's the cancellation/edit policy once an
   order is placed? How does staff update order status — manual taps on a
   staff-facing screen, or integration with an existing POS/kitchen system?

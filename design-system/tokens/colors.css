@@ -1,0 +1,60 @@
+:root{
+  /* --- base palette (verbatim from source) --- */
+  --cream:#FBF6EC;
+  --paper:#FFFFFF;
+  --ink:#2B241D;
+  --ink-soft:#6b6155;
+  --berry:#C7355A;
+  --berry-deep:#9E2645;
+  --pistachio:#6F9463;
+  --pistachio-soft:#E4EEDF;
+  --honey:#E2A233;
+  --honey-deep:#C4830F;
+  --line:#E7DECC;
+
+  /* --- dark-section palette (the ink tracker / in-store blocks) --- */
+  --ink-raised:#332b22;
+  --ink-shadow:#241d16;
+  --ink-line:#46402f;
+  --ink-line-soft:#5c5340;
+  --on-ink:#c9c0b2;
+  --on-ink-muted:#9c9384;
+  --on-ink-dim:#8a8171;
+  --on-honey:#2B1E05;
+  --on-pistachio:#0e150c;
+  --candle:#f5d78b;
+
+  /* --- semantic aliases --- */
+  --bg-page:var(--cream);
+  --surface-card:var(--paper);
+  --surface-sunken:var(--cream);
+  --surface-inverse:var(--ink);
+  --surface-inverse-raised:var(--ink-raised);
+  --surface-media:var(--pistachio-soft);
+
+  --text-heading:var(--ink);
+  --text-body:var(--ink);
+  --text-muted:var(--ink-soft);
+  --text-accent:var(--berry-deep);
+  --text-on-inverse:var(--cream);
+  --text-on-inverse-muted:var(--on-ink);
+
+  --border-hairline:var(--line);
+  --border-strong:var(--ink);
+  --border-coupon:var(--berry);
+
+  --action-primary:var(--honey);
+  --action-primary-hover:var(--honey-deep);
+  --action-primary-text:var(--on-honey);
+  --action-accent:var(--berry);
+  --action-accent-hover:var(--berry-deep);
+
+  --status-open-bg:var(--pistachio-soft);
+  --status-open-fg:var(--pistachio);
+  --status-soon-bg:var(--cream);
+  --status-soon-fg:var(--ink-soft);
+
+  --stage-done:var(--pistachio);
+  --stage-active:var(--honey);
+  --stage-idle:var(--ink-line-soft);
+}

@@ -1,0 +1,10 @@
+:root{
+  --radius:22px;          /* cards, large containers */
+  --radius-sm:12px;       /* chips, small tiles */
+  --radius-media:14px;    /* image / illustration wells */
+  --radius-card-alt:16px; /* offer + comp cards */
+  --radius-inverse:32px;  /* dark full-width blocks */
+  --radius-inverse-inner:20px;
+  --radius-phone:36px;
+  --radius-pill:100px;    /* every button and status pill */
+}

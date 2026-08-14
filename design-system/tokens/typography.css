@@ -1,0 +1,33 @@
+:root{
+  --font-display:'Fraunces',Georgia,serif;
+  --font-body:'Inter',system-ui,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,monospace;
+
+  /* display — Fraunces 600, tight tracking */
+  --display-weight:600;
+  --display-tracking:-0.01em;
+  --display-leading:1.02;
+  --text-hero:clamp(2.5rem,5.2vw,4.1rem);
+  --text-page-title:clamp(2.2rem,4.4vw,3.4rem);
+  --text-h2:clamp(1.7rem,3vw,2.3rem);
+  --text-h2-compact:1.6rem;
+  --text-h3:19px;
+  --text-h3-sm:18px;
+
+  /* body — Inter */
+  --text-body-lg:17px;
+  --text-body:15px;
+  --text-body-sm:14px;
+  --text-body-xs:13px;
+  --text-caption:12.5px;
+  --body-leading:1.6;
+  --body-leading-loose:1.7;
+
+  /* mono — data, prices, codes */
+  --text-data:16px;
+  --text-data-sm:12.5px;
+  --text-eyebrow:12px;
+  --eyebrow-tracking:0.14em;
+  --text-chip:10.5px;
+  --chip-tracking:0.06em;
+}

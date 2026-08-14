@@ -103,7 +103,64 @@ Neither QR flow needs infrastructure beyond what's already described above
 — they're just entry points into the same store-scoped catalogue and
 checkout, distinguished by which link/code was scanned.
 
-## 6. What's Deliberately Not Here (Yet)
+## 6. Order Confirmation Email
+
+```
+1. Order is created and payment is confirmed (ADR-006's webhook marks
+   the order paid)
+
+2. Express API calls SES directly, inline in the order-creation path
+   (ADR-008) -- one email, no queue, proportionate to order volume
+
+3. Email contains the order summary and the same order-tracking link
+   the in-app tracker uses -- for guests, this IS how they reach
+   tracking (ADR-005); for account customers it's a convenience
+   alongside their order history
+
+4. A send failure is logged (see 7, below) but never fails the order
+   itself -- the order is valid once paid, regardless of email delivery
+```
+
+## 7. Logging, Error Tracking, and Metrics
+
+Three separate small answers to three separate questions (ADR-009,
+ADR-010):
+
+```
+"What happened, in sequence?"     -> structured JSON logs -> CloudWatch
+"Did something break unexpectedly?" -> exceptions -> Sentry (or similar)
+"How many orders / how much traffic?" -> Mongo aggregation queries
+                                          (orders) + a lightweight,
+                                          cookie-free analytics tool
+                                          (traffic) -> surfaced in the
+                                          admin console
+```
+
+None of these are a shared platform — deliberately three small, boring
+tools instead of one heavyweight observability stack, sized for a team
+without dedicated ops.
+
+## 8. Admin Console
+
+```
+Staff member logs in at /admin (separate auth from customer accounts
+-- ADR-011, distinct from the mobile-number customer identity in ADR-005)
+      |
+      v
+Same Next.js app, same Express API, same MongoDB -- just an
+authenticated, store-scoped route section:
+  - Catalogue CRUD (items, prices, photos, availability)
+  - Offers CRUD (create/edit/end time-limited promotions)
+  - Metrics view (orders + traffic, from section 7 above)
+```
+
+This is not a second application — see [ADR-011](../adr/ADR-011-admin-console.md)
+for why reusing the same app was chosen over splitting it out. The
+counter order-status taps (section 4, requirement #5's staff side) and the
+admin console are different route sections of the same app, usable by the
+same staff login.
+
+## 9. What's Deliberately Not Here (Yet)
 
 Matching the ADRs, these are explicitly deferred, not overlooked:
 
@@ -115,3 +172,10 @@ Matching the ADRs, these are explicitly deferred, not overlooked:
 - No branch-selector UI — the data model supports it (ADR-007), but
   whether it's live at launch is still an open question in
   [requirements.md](../requirements/requirements.md)
+- No queue-based/outbox notification system — order confirmation email is
+  one inline SES call (ADR-008)
+- No full observability stack (no ELK, no APM/tracing platform) — just
+  structured logs, an error tracker, and a couple of aggregation queries
+  (ADR-009, ADR-010)
+- No separate admin application — it's a protected route section of the
+  same app (ADR-011)

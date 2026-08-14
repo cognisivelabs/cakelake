@@ -5,8 +5,8 @@ still needs a client answer. As answers come in, move items from "Open
 questions" into the relevant confirmed section and note the date/source of
 the decision.
 
-Last updated: 2026-08-14 (added account/guest checkout requirement; flagged
-Track Order page showing already-delivered orders as a discrepancy).
+Last updated: 2026-08-14 (added order confirmation email, admin console,
+logging, and metrics requirements).
 
 ## Client
 
@@ -50,6 +50,34 @@ client confirmation (see open questions).
    - **Guest** — no account needed. At checkout, ask for an email address;
      that's where the live order-tracking link/details get sent, so a guest
      can follow their order without ever logging in.
+8. **Order confirmation email.** Every customer — account or guest — gets an
+   email when they place an order, confirming what was ordered and (for
+   guests) doubling as the order-tracking link delivery from requirement #7.
+   This is in addition to the in-app live tracker (requirement #5), not a
+   replacement for it.
+9. **Admin console.** A staff-facing tool, separate from the customer site,
+   for managing the catalogue and offers day to day:
+   - Insert/update/remove catalogue items (name, price, description,
+     photos, tags, availability)
+   - Insert/update/remove time-limited offers (requirement #2)
+   - Scoped to a store (requirement #6) — a future second branch manages
+     its own catalogue/offers independently
+
+## Operational requirements
+
+Not customer-facing, but confirmed as needed for running the site once it's
+live:
+
+- **Logging.** Application errors and key events need to be logged
+  somewhere a developer can actually debug from — not just left to crash
+  silently or print to a console nobody's watching.
+- **Metrics.** Basic visibility into order volume and site traffic — enough
+  to answer "how many orders today," "what's selling," "how many people are
+  visiting" without digging through raw data by hand.
+
+See [`docs/adr/`](../adr/) for how each of these (and the two requirements
+above) are proposed to be implemented, sized for this project's actual
+load rather than a full observability/analytics platform.
 
 ## Tentative technical direction (not locked in)
 
@@ -150,3 +178,8 @@ through with the client.
   page incorrectly lists already-collected/delivered orders alongside the
   live one — should only show current + upcoming (today/future), see
   discrepancy note above.
+- **2026-08-14** (chat) — New requirement #8 (order confirmation email for
+  every customer) and #9 (admin console for catalogue/offers management).
+  New operational requirements: logging for debugging, and metrics on
+  orders/traffic. See ADR-008 through ADR-011 for the proposed technical
+  approach to each.

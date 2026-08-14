@@ -74,7 +74,7 @@ Development does not start until the client signs off on this prototype.
 | Design | [`docs/design/`](docs/design/) | Pointer to the canonical Claude Design project |
 | Design system mirror | [`design-system/`](design-system/) | Read-only pull of the Claude Design components/tokens |
 | Prototype | [`prototype/`](prototype/) | Click-through builds for client sign-off, plus explored-but-not-picked directions |
-| Architecture decisions | [`docs/adr/`](docs/adr/) | ADRs — tech stack, hosting, identity, order tracking, payments, data model |
+| Architecture decisions | [`docs/adr/`](docs/adr/) | ADRs — tech stack, hosting, identity, order tracking, payments, data model, notifications, logging, metrics, admin console |
 | System overview | [`docs/architecture/system-overview.md`](docs/architecture/system-overview.md) | How the ADRs fit together into one picture |
 
 ### Tech Stack
@@ -95,6 +95,10 @@ high-traffic platform.
 | Customer identity | Mobile number (accounts) / email (guests) | [ADR-005](docs/adr/ADR-005-customer-identity.md) |
 | Payments | Telr or PayTabs — pending client info | [ADR-006](docs/adr/ADR-006-payment-gateway.md) |
 | Data model | Store-scoped from day one | [ADR-007](docs/adr/ADR-007-store-scoped-data-model.md) |
+| Notifications | Order confirmation email via AWS SES | [ADR-008](docs/adr/ADR-008-order-confirmation-email.md) |
+| Logging | Structured logs to CloudWatch + Sentry-style error tracking | [ADR-009](docs/adr/ADR-009-logging-and-error-tracking.md) |
+| Metrics | Mongo aggregation (orders) + lightweight cookie-free analytics (traffic) | [ADR-010](docs/adr/ADR-010-metrics-and-analytics.md) |
+| Admin console | Protected route section of the same app, not a separate one | [ADR-011](docs/adr/ADR-011-admin-console.md) |
 
 ## Workflow
 

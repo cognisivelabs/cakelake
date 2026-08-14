@@ -54,6 +54,10 @@ and identity shape, mainly.
 | [ADR-005](ADR-005-customer-identity.md) | Customer Identity — Mobile Number for Accounts, Email for Guests | Accepted |
 | [ADR-006](ADR-006-payment-gateway.md) | Payment Gateway — Telr vs. PayTabs | Proposed |
 | [ADR-007](ADR-007-store-scoped-data-model.md) | Store-Scoped Data Model From Day One | Accepted |
+| [ADR-008](ADR-008-order-confirmation-email.md) | Order Confirmation Email | Proposed |
+| [ADR-009](ADR-009-logging-and-error-tracking.md) | Logging & Error Tracking | Proposed |
+| [ADR-010](ADR-010-metrics-and-analytics.md) | Metrics & Analytics — Orders and Traffic | Proposed |
+| [ADR-011](ADR-011-admin-console.md) | Admin Console | Proposed |
 
 ## How to Propose a New ADR
 

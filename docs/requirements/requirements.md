@@ -5,7 +5,7 @@ still needs a client answer. As answers come in, move items from "Open
 questions" into the relevant confirmed section and note the date/source of
 the decision.
 
-Last updated: 2026-08-14.
+Last updated: 2026-08-14 (QR ordering elaborated into counter + leaflet flows).
 
 ## Client
 
@@ -30,8 +30,15 @@ client confirmation (see open questions).
    progress bar — see `docs/design/design-system.md` for the visual treatment.
 6. **Store-scoped data model from day one.** Every order, catalogue item, and
    offer is scoped to a `store`, even though there's a single store today.
-   This is what makes two things possible without a rebuild:
-   - Ordering online while physically in the shop (QR-code-at-table style).
+   This is what makes several things possible without a rebuild:
+   - **Counter QR** — a QR code at the shop counter so an in-store customer
+     can order online instead of queuing at the till.
+   - **Leaflet QR** — a separate, distinct QR (a short link) included with
+     every order's leaflet, meant to bring the customer back to order online
+     next time. Deliberately a different QR/link from the counter one so
+     each can be tied to its own offer or promo code (e.g. the leaflet QR
+     carries a "welcome back" discount that the counter QR doesn't) and
+     tracked separately.
    - Every future branch running on the same system.
 
 ## Tentative technical direction (not locked in)
@@ -64,11 +71,12 @@ by default.
 2026-08-14) reconciled the mockup to a single shop, which is correct per
 scope — but it also **removed QR-code-at-table in-shop ordering**, making
 in-shop ordering counter-only. That conflicts with confirmed requirement #6
-above (order online while physically in the shop, QR-at-table style), which
-was not an open question — it was explicit, confirmed scope. This needs to be
-corrected in the prototype (re-add QR-at-table ordering) rather than treated
-as a legitimate scope change, unless the client has separately asked for it
-to drop — which hasn't happened here.
+above (order online while physically in the shop, QR-code style), which
+was not an open question — it was explicit, confirmed scope. Requirement #6
+has since been elaborated into two distinct QR flows (counter QR + leaflet
+QR, see above) — the prototype needs to add both back rather than staying
+counter-only-in-person, unless the client has separately asked to drop this
+— which hasn't happened here.
 
 ## Open questions for client
 
@@ -92,6 +100,9 @@ through with the client.
   discounts, seasonal campaigns, first-order discounts, referral credits,
   corporate/bulk discounts? The mockup sketches several of these; scoping
   down to launch-ready types vs. later-phase types needs client input.
+  Confirmed separately: counter-QR and leaflet-QR ordering will each be able
+  to carry their own offer/promo code (see requirement #6) — exact offer
+  content for each is still open.
 - **Multi-branch timeline:** Does the branch-selector UI need to be live at
   launch (the mockup already shows a locations page with two live shops and
   two "opening 2026"), or is it enough for the data model to be branch-ready
@@ -104,6 +115,8 @@ through with the client.
 
 ## Decisions log
 
-_(Empty for now — entries get added here as open questions are resolved with
-the client, each with a date and source, e.g. "call 2026-08-20" or "email
-2026-08-21".)_
+- **2026-08-14** (chat) — Requirement #6's QR ordering elaborated into two
+  distinct QR flows: a **counter QR** (in-shop, order-instead-of-queue) and
+  a **leaflet QR** (sent home with an order, short link, meant to drive
+  reorders). Deliberately separate QRs/links so each can carry its own
+  offer or promo code and be tracked independently.

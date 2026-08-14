@@ -38,7 +38,10 @@ client confirmation (see open questions).
      next time. Deliberately a different QR/link from the counter one so
      each can be tied to its own offer or promo code (e.g. the leaflet QR
      carries a "welcome back" discount that the counter QR doesn't) and
-     tracked separately.
+     tracked separately. **Leaflet design (the physical leaflet, its QR
+     placement, any visual treatment) is deferred to a later pass — only the
+     data-model requirement (a distinct, offer-linkable QR/link) is confirmed
+     now.**
    - Every future branch running on the same system.
 
 ## Tentative technical direction (not locked in)
@@ -74,9 +77,9 @@ in-shop ordering counter-only. That conflicts with confirmed requirement #6
 above (order online while physically in the shop, QR-code style), which
 was not an open question — it was explicit, confirmed scope. Requirement #6
 has since been elaborated into two distinct QR flows (counter QR + leaflet
-QR, see above) — the prototype needs to add both back rather than staying
-counter-only-in-person, unless the client has separately asked to drop this
-— which hasn't happened here.
+QR, see above); of the two, only the **counter QR** needs adding back to
+the prototype now — leaflet QR design is deferred (see above), so its
+absence from the prototype isn't a discrepancy.
 
 ## Open questions for client
 

@@ -36,7 +36,7 @@ date: 2026-08-14T18:18:00Z
 | Home / hero, ordering channels | docs/requirements/requirements.md (confirmed scope 1–6) |
 | Menu, product detail, custom cake builder | docs/requirements/requirements.md (catalogue — open question); design-system/ui_kits/cakelake-site/data.jsx |
 | Offers | docs/requirements/requirements.md (offer types — open question) |
-| Cart, checkout, confirmation | docs/requirements/requirements.md (req #7 account/guest; req #4 payments: ADCB gateway, Apple Pay/Google Pay only; Tabby unconfirmed) |
+| Cart, checkout, confirmation | docs/requirements/requirements.md (req #7 account/guest; req #4 payments: ADCB if available, PayTabs as confirmed fallback, Apple Pay/Google Pay only; Tabby unconfirmed) |
 | Counter QR panel (home, Visit) | docs/requirements/requirements.md (req #6 counter QR) |
 | Track order | docs/requirements/requirements.md (live pickup status; current + upcoming only) |
 | Locations | docs/requirements/requirements.md (single store today, store-scoped model) |

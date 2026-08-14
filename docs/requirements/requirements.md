@@ -5,8 +5,8 @@ still needs a client answer. As answers come in, move items from "Open
 questions" into the relevant confirmed section and note the date/source of
 the decision.
 
-Last updated: 2026-08-14 (payment gateway changed to ADCB — Telr/PayTabs
-no longer in the picture; checkout is Apple Pay/Google Pay only).
+Last updated: 2026-08-14 (payment gateway: ADCB if available, PayTabs as
+the confirmed fallback — both settle into the client's ADCB account).
 
 ## Client
 
@@ -23,14 +23,17 @@ client confirmation (see open questions).
 3. **Fully mobile-friendly** — mobile is treated as the primary surface, not
    an adaptation of desktop.
 4. **Payment, online and in-person, two separate surfaces:**
-   - **Online:** **ADCB (Abu Dhabi Commercial Bank) is the payment
-     gateway** — the client's own bank, providing merchant payment
-     processing for the site. Telr and PayTabs, the earlier front-runners,
-     are **not being used**. Checkout is **Apple Pay and Google Pay
-     only** — no manual card-entry form is currently planned (see
-     [ADR-006](../adr/ADR-006-payment-gateway.md) for the flagged UX
-     question this raises: customers without a wallet set up on their
-     device/browser would have no way to pay online).
+   - **Online:** **ADCB if they offer a web/e-commerce gateway, PayTabs as
+     the confirmed fallback otherwise** — either way settling into the
+     client's existing ADCB account (the gateway that processes a
+     transaction and the bank the money lands in don't have to be the same
+     institution). ADCB's physical card machine for the shop is a
+     different product from a website payment integration, so this needs
+     a direct yes/no from ADCB before it's finalized — see
+     [ADR-006](../adr/ADR-006-payment-gateway.md). Checkout is **Apple Pay
+     and Google Pay only** — no manual card-entry form is currently
+     planned (flagged UX question: customers without a wallet set up on
+     their device/browser would have no way to pay online — still open).
    - **In-person:** the shop already takes **tap/contactless card
      payment** at the counter via its existing card terminal — confirmed
      with the client as the in-person method. This is separate from the
@@ -111,8 +114,8 @@ approved — not to be treated as a final decision:
 - **Frontend:** Next.js
 - **Backend:** Node/Express + MongoDB
 - **Hosting:** AWS, `me-central-1` region
-- **Payments:** ADCB payment gateway (the client's own bank), Apple Pay +
-  Google Pay only — confirmed 2026-08-14, see requirement #4
+- **Payments:** ADCB if they have a web gateway, PayTabs as the confirmed
+  fallback — Apple Pay + Google Pay only, see requirement #4
 
 ## Existing design-system context
 
@@ -173,13 +176,14 @@ through with the client.
 - **Delivery:** Is delivery in scope for launch, or a phase 2 add-on to
   pickup-only ordering? If in scope, what are the delivery zones? (The
   mockup currently references Dubai-only, free over AED 200, as a placeholder.)
-- **ADCB gateway integration details:** confirm what ADCB actually offers
-  for web merchant integration — a documented API/SDK, hosted checkout
-  page, or something else; what onboarding/KYC the client still needs to
-  complete; and a realistic timeline. Telr/PayTabs are well-known,
-  developer-documented UAE payment gateways; ADCB's own merchant gateway
-  product is less of a known quantity for this kind of integration, so
-  this needs direct confirmation before development can start on checkout.
+- **Ask ADCB directly:** "Do you have a web/e-commerce payment gateway —
+  separate from our card machine — that supports Apple Pay and Google Pay
+  for online checkout?" A yes/no with enough detail to actually integrate
+  (API/SDK vs. hosted checkout, onboarding/KYC steps, timeline). Until
+  answered, **PayTabs is the confirmed fallback** — a known-good, already
+  Apple Pay/Google Pay-enabled UAE gateway — so this no longer blocks
+  starting development on the payment integration layer (see
+  [ADR-006](../adr/ADR-006-payment-gateway.md)).
 - **Card-entry fallback:** confirm whether checkout should really be
   Apple Pay/Google Pay *only*, or whether a manual card-entry option should
   exist as a fallback for customers without a wallet set up on their
@@ -253,3 +257,12 @@ through with the client.
   Google Pay only** — no manual card-entry form currently planned. New
   open question raised: what ADCB actually provides for web integration
   (see Open Questions). See [ADR-006](../adr/ADR-006-payment-gateway.md).
+- **2026-08-14** (chat) — **Refined the above into a two-path plan:**
+  clarified that ADCB's card machine (in-person) and a website payment
+  gateway are different products, and that the gateway which processes a
+  transaction doesn't have to be the same institution the money settles
+  into. Resolution: ask ADCB whether they have a web gateway; if not (or
+  slow), **PayTabs is the confirmed fallback**, still settling into the
+  client's ADCB account either way. Unblocks starting the payment
+  integration layer without waiting on ADCB's answer. See
+  [ADR-006](../adr/ADR-006-payment-gateway.md).

@@ -1,128 +1,161 @@
-# ADR-006: Payment Gateway — ADCB, Apple Pay + Google Pay Only
+# ADR-006: Payment Gateway — ADCB if Available, PayTabs as Confirmed Fallback
 
-**Status:** Accepted (gateway choice) — integration details still open, see Consequences
+**Status:** Proposed — fallback path confirmed; final pick pending ADCB's answer
 **Date:** 2026-08-14
 
 ## Context
 
-Confirmed requirement #4 calls for online payment. This ADR went through
-two rounds before landing here, both worth keeping for context:
+Confirmed requirement #4 calls for online payment, with Apple Pay and
+Google Pay as required checkout methods. This ADR went through several
+rounds before landing here — worth keeping all of them, since each
+resolved something real:
 
 **Round 1 (superseded):** Telr and PayTabs, two established UAE payment
 gateways, were the original front-runners over Stripe (cheaper, easier UAE
-merchant approval for a retail/F&B business). The choice between the two
-was left open pending the client's trade licence and bank account status.
+merchant approval for a retail/F&B business). Choice between the two left
+open pending the client's trade licence and bank account status.
 
 **Round 2 (superseded):** the client confirmed Apple Pay and Google Pay as
-required checkout options. Initially read as "use Telr or PayTabs, but make
-sure wallets are supported."
+required checkout options, alongside Telr/PayTabs.
 
-**Round 3 (current):** the client clarified further — **Telr and PayTabs
-are not being used at all.** The client has an existing business account
-and corporate cards with **ADCB (Abu Dhabi Commercial Bank)**, and ADCB is
-providing the payment gateway for the site directly.
+**Round 3 (superseded):** the client said Telr and PayTabs weren't being
+used at all — the client's own bank, ADCB, would be the gateway instead,
+based on their existing business account and the physical card machine
+ADCB had already provided the shop.
 
-One important technical distinction surfaced while confirming this, worth
-recording since it's an easy thing to conflate: a bank card being
-"Apple Pay/Google Pay-enabled" for the *cardholder's own spending* is a
-completely different capability from a *merchant* being able to accept
-Apple Pay/Google Pay from *customers* on a website. The former is about the
-client's own wallet; the latter requires a merchant acquiring relationship
-— something has to sit between "customer taps Apple Pay" and "funds settle
-into the bakery's account." That's the role ADCB is confirmed to be
-playing here: **ADCB is the website's payment gateway/acquirer**, not just
-the bank behind the client's own cards.
+**Round 4 (current):** working through what the ADCB card machine actually
+is clarified an important distinction — it's a **physical point-of-sale
+terminal**, which accepts an in-person NFC tap (including from an Apple
+Pay/Google Pay-loaded phone), completely separately from whatever a
+**website checkout** would need. A website has no terminal to tap; Apple
+Pay/Google Pay on the web work through Apple's/Google's JavaScript payment
+APIs, which hand an encrypted token to a **payment gateway** integrated
+into the site's backend — a software integration, not a hardware one. Bank
+card machines and web payment gateways are commonly separate products even
+within the same bank, so having one doesn't confirm the other exists.
+
+That produced the current, practical two-path plan.
 
 ## Decision
 
-- **Payment gateway: ADCB.** Telr and PayTabs are rejected — see
-  Alternatives.
-- **Checkout methods: Apple Pay and Google Pay only.** No manual
-  card-entry form is currently planned. Flagged as needing explicit
-  confirmation — see Consequences — because it has a real UX
-  consequence: a customer without a wallet configured on their device or
-  browser (most desktop browsers, for one) would have no way to pay
-  online at all.
+1. **Ask ADCB directly:** do they offer a separate web/e-commerce payment
+   gateway (API, SDK, or hosted checkout page) for the site — distinct
+   from the physical card machine — and does it support Apple Pay/Google
+   Pay for *web* checkout specifically? If yes, and it's not slow to set
+   up, **use it.**
+2. **If ADCB doesn't have this, or it's unclear/slow: use PayTabs.**
+   Confirmed as the fallback, not just "reconsider later" — PayTabs is a
+   well-documented UAE gateway with established Apple Pay/Google Pay web
+   support, so it's a known-good path rather than a second unknown.
+3. **Either way, settlement lands in the client's existing ADCB account.**
+   The gateway (whichever it turns out to be) and the bank account funds
+   settle into are separate concerns — PayTabs doesn't require banking
+   with PayTabs; it processes the transaction and deposits into whatever
+   account the merchant designates, which can be — and here, will be —
+   the client's ADCB account. So "we want the money in ADCB" is satisfied
+   regardless of which of the two gateways ends up doing the processing.
+4. **Checkout methods: Apple Pay and Google Pay only**, no manual
+   card-entry form currently planned — this part is unchanged from the
+   prior round and still flagged as needing explicit UX confirmation (see
+   Consequences); it doesn't depend on which gateway wins.
 
 ## Rationale
 
-**This is a relationship decision, not a technical comparison.** Unlike
-the original Telr-vs-PayTabs framing (which was genuinely a "which do we
-pick" technical/business trade-off), choosing ADCB is straightforward: it's
-the client's own bank, an existing relationship, presumably simpler
-onboarding as a result. This ADR isn't arguing ADCB is technically superior
-to Telr/PayTabs — it's recording that the client has decided to use their
-own bank, which is a perfectly reasonable business call to make
-independent of a feature-by-feature gateway comparison.
+**A confirmed fallback turns an open risk into a bounded one.** The
+previous version of this ADR left "what if ADCB doesn't have a web
+product" as an unresolved risk. Naming PayTabs as the specific,
+already-vetted fallback means the answer to "does ADCB work out" is never
+"start over" — it's "use the other known-good option," decided now rather
+than improvised later if ADCB's answer is disappointing.
 
-**Wallet-only checkout follows from what was actually asked for.** The
-client's own words were "not using Telr or PayTabs, only Apple and Google
-Pay" — read plainly, that's a scope decision (wallets only), not just a
-preference for which wallets to support alongside card. Recording it as
-the working decision rather than quietly adding a card form back in.
+**The gateway/settlement-account distinction is what makes this
+low-risk.** Once it's clear that "money ends up at ADCB" doesn't require
+"ADCB processes the transaction," the two paths stop being in tension with
+the client's actual goal (their money, in their bank). This is the single
+fact that unblocks the decision — worth keeping explicit in this ADR
+rather than just in chat history, since it's easy to re-lose the thread on
+this later.
 
-**Integrate behind a thin interface regardless.** The Express backend (see
-[ADR-001](ADR-001-tech-stack.md)) should still wrap payment calls behind a
-small internal interface (create-payment, verify-webhook, refund) rather
-than calling ADCB's SDK/API directly from route handlers — good practice
-for isolating a third-party dependency that touches money, unrelated to
-which specific gateway was chosen.
+**Ask ADCB a specific, answerable question, not a vague one.** "Do you
+support Apple Pay" is exactly the ambiguous framing that caused the
+confusion in Rounds 3–4 (a card machine "supports" Apple Pay, in a totally
+different sense than a web gateway does). The question to actually ask is
+specific: *"Do you have a web/e-commerce payment gateway, separate from
+our card machine, that supports Apple Pay and Google Pay for online
+checkout?"* — a question ADCB's business banking team can answer
+unambiguously, which is the point.
+
+**Integrate behind a thin interface regardless of which gateway wins.**
+The Express backend (see [ADR-001](ADR-001-tech-stack.md)) should wrap
+payment calls behind a small internal interface (create-payment,
+verify-webhook, refund) rather than calling either gateway's SDK directly
+from route handlers — good practice for isolating a third-party dependency
+that touches money, and it means the ADCB-vs-PayTabs choice doesn't ripple
+through the whole codebase either way.
 
 ## Consequences
 
-- **Open question, needs the client (and ADCB) to confirm:** what ADCB
-  actually provides for web merchant integration — a documented API/SDK,
-  a hosted checkout page, something else — plus what onboarding/KYC steps
-  remain and a realistic timeline. Telr and PayTabs are well-known,
-  developer-documented UAE payment gateways with established e-commerce
-  integration paths; ADCB's own merchant gateway product is a much less
-  known quantity for this kind of integration. This is real technical
-  risk worth surfacing to the client early, not discovered mid-build.
-- **Open question, needs explicit confirmation:** is Apple Pay/Google
-  Pay-only checkout really intended, or should a card-entry fallback exist
-  for customers without a compatible wallet? Worth walking through the
-  actual UX with the client (e.g. "what happens to a customer checking out
-  from a desktop browser with no wallet set up?") rather than assuming
-  either answer.
+- **Open question, needs the client to ask ADCB directly (see the specific
+  question above):** whether ADCB has a web gateway product at all. This
+  is now a bounded question with a known fallback, not a blocking risk —
+  development on the payment integration layer can proceed against the
+  PayTabs API in the meantime, and swap in ADCB later if it turns out to
+  be available and worthwhile, without redesigning anything (see the thin
+  interface point above)
+- **Open question, still needs explicit confirmation:** is Apple Pay/
+  Google Pay-only checkout really intended, or should a card-entry
+  fallback exist for customers without a compatible wallet (most desktop
+  browsers, notably)? Unchanged from the prior round — not resolved by
+  the ADCB/PayTabs question
 - Apple Pay and Google Pay each need their own merchant/domain setup steps
   (Apple Pay merchant ID + domain verification; Google Pay merchant
-  registration) on top of whatever ADCB's base integration requires — this
-  doesn't change based on which underlying gateway is used
-- ADCB's API keys/credentials need a secrets home — see
-  [ADR-003](ADR-003-hosting.md) — same as any gateway would
+  registration) regardless of which underlying gateway is used
+- Whichever gateway is used, its API keys/credentials need a secrets home
+  — see [ADR-003](ADR-003-hosting.md)
 - The buy-now-pay-later question (Tabby, shown only as a placeholder badge
-  in the prototype) is a separate decision from the core gateway choice —
-  see the open question in requirements.md
-- **In-person tap payment stays out of scope for this ADR.** The shop's
-  existing card terminal handles contactless payment at the counter
-  already — nothing to build, integrate, or decide here. The two systems
-  don't need to talk to each other; an in-person sale is recorded as paid,
+  in the prototype) remains a separate decision — see the open question in
+  requirements.md
+- **In-person tap payment stays out of scope for this ADR.** The ADCB card
+  machine handles contactless payment at the counter already — nothing to
+  build, integrate, or decide here. It doesn't need to talk to whichever
+  online gateway is chosen; an in-person sale is recorded as paid,
   independent of the online checkout flow
-- If ADCB turns out not to offer a workable web integration (the real risk
-  flagged above), the fallback is revisiting Telr/PayTabs — this ADR
-  should be updated or superseded at that point, not silently patched
+- Once ADCB's answer comes back, this ADR's Status flips to Accepted with
+  the specific choice recorded — either "ADCB, confirmed web gateway
+  available" or "PayTabs, ADCB had no web product" — rather than left as
+  a two-path plan
 
 ## Alternatives Considered
 
-**Telr**
-The original front-runner alongside PayTabs — cheaper and easier UAE
-merchant approval than Stripe, well-documented developer integration.
-Rejected in favor of the client's existing ADCB relationship. Worth
-revisiting as a fallback if ADCB's web integration turns out to be
-impractical (see Consequences).
+**Committing to ADCB only, and treating "no web product" as a blocker to
+resolve later**
+The previous version of this ADR. Rejected in favor of naming the fallback
+now — there's no reason to let the whole payment integration wait on a
+single yes/no from one bank when a known-good alternative already exists.
 
-**PayTabs**
-Same standing as Telr — established, well-documented UAE gateway.
-Rejected for the same reason. Same fallback note applies.
+**Committing to PayTabs only, skipping the ADCB question entirely**
+Would remove the open question altogether and let development start
+immediately. Rejected because the client has a real, existing ADCB
+relationship and it's a reasonable preference to use it if it works
+technically — worth one direct question to ADCB before ruling it out,
+which costs little and might simplify things (one less third party in the
+money-movement chain).
+
+**Telr**
+Same standing as PayTabs — established, well-documented UAE gateway with
+Apple Pay/Google Pay web support. Not chosen as *the* named fallback only
+because a single, concrete fallback is more useful than two — PayTabs was
+picked arbitrarily between two otherwise-equivalent options. Telr remains
+a perfectly viable substitute if PayTabs specifically hits a snag later.
 
 **Stripe**
 Ruled out earlier in the original scope — harder and more expensive UAE
 merchant approval for this business type. Not re-evaluated here; nothing
-about the ADCB decision changes that calculus.
+about this round changes that calculus.
 
-**Card-entry checkout alongside wallets (rejected for now, not
-permanently)**
+**Card-entry checkout alongside wallets (still not adopted, not
+permanently rejected)**
 The safer default for a payments UX — never leaves a customer stranded
 without a way to pay. Not adopted as the current plan because the client's
-direction reads as wallet-only by choice. Flagged rather than silently
-overridden — see the open question in Consequences.
+direction reads as wallet-only by choice. Still flagged as an open
+question above rather than silently decided either way.

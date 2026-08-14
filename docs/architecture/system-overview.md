@@ -103,22 +103,33 @@ Neither QR flow needs infrastructure beyond what's already described above
 — they're just entry points into the same store-scoped catalogue and
 checkout, distinguished by which link/code was scanned.
 
-## 6. Order Confirmation Email
+## 6. Order Notifications — Email + WhatsApp
 
 ```
 1. Order is created and payment is confirmed (ADR-006's webhook marks
    the order paid)
 
-2. Express API calls SES directly, inline in the order-creation path
-   (ADR-008) -- one email, no queue, proportionate to order volume
+2. Express API calls SES (ADR-008) AND the WhatsApp Business Platform
+   (ADR-012) directly, inline in the order-creation path -- two sends,
+   no queue, proportionate to order volume
 
-3. Email contains the order summary and the same order-tracking link
-   the in-app tracker uses -- for guests, this IS how they reach
-   tracking (ADR-005); for account customers it's a convenience
-   alongside their order history
+3. Email contains the order summary and the order-tracking link -- for
+   guests, this IS how they reach tracking (ADR-005); for account
+   customers it's a convenience alongside their order history
 
-4. A send failure is logged (see 7, below) but never fails the order
-   itself -- the order is valid once paid, regardless of email delivery
+4. WhatsApp gets a pre-approved template message: what was ordered,
+   total, fulfilment method and slot -- exactly one message, no more,
+   at this moment (ADR-012)
+
+5. Later, when staff mark the order "ready" (the same action from
+   section 4's staff order-status flow), the SAME WhatsApp call site
+   fires a second, different template: ready for collection/delivery.
+   This is the only other automated WhatsApp message an order ever
+   gets -- deliberately capped at two total, so the thread doesn't get
+   muted
+
+6. A send failure (email or WhatsApp) is logged (see 7, below) but
+   never fails the order or status update itself
 ```
 
 ## 7. Logging, Error Tracking, and Metrics
@@ -186,3 +197,6 @@ Matching the ADRs, these are explicitly deferred, not overlooked:
   (ADR-009, ADR-010)
 - No separate admin application — it's a protected route section of the
   same app (ADR-011)
+- No WhatsApp-native ordering (catalog browsing, cart, in-chat checkout) —
+  scoped to exactly two outbound notifications per order (ADR-012); no
+  in-chat payment exists in the UAE regardless

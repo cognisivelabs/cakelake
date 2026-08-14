@@ -77,7 +77,7 @@ Development does not start until the client signs off on this prototype.
 | Design | [`docs/design/`](docs/design/) | Pointer to the canonical Claude Design project |
 | Design system mirror | [`design-system/`](design-system/) | Read-only pull of the Claude Design components/tokens |
 | Prototype | [`prototype/`](prototype/) | Click-through builds for client sign-off, plus explored-but-not-picked directions |
-| Architecture decisions | [`docs/adr/`](docs/adr/) | ADRs — tech stack, hosting, identity, order tracking, payments, data model, notifications, logging, metrics, admin console |
+| Architecture decisions | [`docs/adr/`](docs/adr/) | ADRs — tech stack, hosting, identity, order tracking, payments, data model, notifications, logging, metrics, admin console, WhatsApp |
 | System overview | [`docs/architecture/system-overview.md`](docs/architecture/system-overview.md) | How the ADRs fit together into one picture |
 
 ### Tech Stack
@@ -102,6 +102,7 @@ high-traffic platform.
 | Logging | Structured logs to CloudWatch + Sentry-style error tracking | [ADR-009](docs/adr/ADR-009-logging-and-error-tracking.md) |
 | Metrics | Mongo aggregation (orders) + lightweight cookie-free analytics (traffic) | [ADR-010](docs/adr/ADR-010-metrics-and-analytics.md) |
 | Admin console | Protected route section of the same app, not a separate one | [ADR-011](docs/adr/ADR-011-admin-console.md) |
+| WhatsApp notifications | Two messages per order (confirmed, ready) via WhatsApp Business Platform | [ADR-012](docs/adr/ADR-012-whatsapp-notifications.md) |
 
 ## Workflow
 

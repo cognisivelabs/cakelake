@@ -576,10 +576,10 @@
         </div>
         <div style="margin-top:32px;border:1.5px dashed var(--pistachio);background:var(--pistachio-soft);border-radius:16px;padding:20px;display:flex;justify-content:space-between;gap:16px;align-items:center;flex-wrap:wrap;">
           <div>
-            <b style="display:block;font-size:14.5px;">Get updates on WhatsApp</b>
-            <span style="font-size:13px;color:var(--ink-soft);">One message per stage, and a photo before it leaves the counter.</span>
+            <b style="display:block;font-size:14.5px;">{{ waConfirmTitle }}</b>
+            <span style="font-size:13px;color:var(--ink-soft);">{{ waConfirmCopy }}</span>
           </div>
-          <button onClick="{{ openWa }}" style="border:1.5px solid var(--pistachio);background:var(--paper);color:var(--pistachio);border-radius:100px;padding:11px 18px;font-size:13.5px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">Turn on updates</button>
+          <button onClick="{{ waConfirmAction }}" style="border:1.5px solid var(--pistachio);background:var(--paper);color:var(--pistachio);border-radius:100px;padding:11px 18px;font-size:13.5px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">{{ waConfirmCta }}</button>
         </div>
       </div>
     </sc-if>
@@ -628,7 +628,7 @@
             <button onClick="{{ advanceStage }}" style="background:transparent;border:1.5px solid var(--ink-line-soft);color:var(--on-ink);padding:9px 16px;border-radius:100px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">Simulate next stage</button>
             <label style="display:flex;align-items:center;gap:8px;color:var(--on-ink);font-size:12.5px;cursor:pointer;">
               <input type="checkbox" checked="{{ waUpdates }}" onChange="{{ toggleWaUpdates }}" style="width:15px;height:15px;accent-color:var(--pistachio);">
-              WhatsApp updates on
+              Message me on WhatsApp when it's ready
             </label>
           </div>
         </div>
@@ -1070,6 +1070,9 @@
     <button onClick="{{ toggleWa }}" aria-label="Order on WhatsApp" style="position:fixed;right:22px;bottom:{{ waBottom }};z-index:80;display:flex;align-items:center;gap:10px;background:var(--pistachio);color:#fff;border:none;border-radius:100px;padding:14px 20px;font-size:14px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;box-shadow:0 18px 40px -20px rgba(43,36,29,.25);">
       <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M10 2.5a7.5 7.5 0 0 0-6.4 11.4L2.5 17.5l3.7-1.1A7.5 7.5 0 1 0 10 2.5Z" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"></path><path d="M7.2 7.6c0 2.4 2.3 4.6 4.6 4.6.6 0 1.2-.5 1.2-1l-1.3-.8-.8.7c-.9-.4-1.6-1.1-2-2l.7-.8-.8-1.3c-.5 0-1.6.1-1.6 1.6Z" fill="#fff"></path></svg>
       {{ waButtonLabel }}
+      <sc-if value="{{ waHasUnread }}">
+        <span style="position:absolute;top:-6px;right:-6px;background:var(--berry);color:#fff;font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;min-width:20px;height:20px;padding:0 5px;border-radius:100px;display:flex;align-items:center;justify-content:center;border:2px solid var(--cream);">{{ waUnread }}</span>
+      </sc-if>
     </button>
     <sc-if value="{{ waOpen }}">
       <div style="position:fixed;right:22px;bottom:{{ waPanelBottom }};z-index:90;width:min(360px,calc(100vw - 44px));background:var(--paper);border:1px solid var(--line);border-radius:22px;box-shadow:0 18px 40px -20px rgba(43,36,29,.25);overflow:hidden;display:flex;flex-direction:column;max-height:min(520px,calc(100vh - 180px));">
@@ -1082,7 +1085,12 @@
         </div>
         <div style="flex:1;overflow-y:auto;padding:16px;background:var(--cream);display:flex;flex-direction:column;gap:10px;">
           <sc-for list="{{ waMsgs }}" as="m" hint-placeholder-count="3">
-            <div style="align-self:{{ m.align }};max-width:82%;background:{{ m.bg }};border:1px solid {{ m.border }};border-radius:{{ m.radius }};padding:10px 13px;font-size:13.5px;line-height:1.55;white-space:pre-line;">{{ m.text }}</div>
+            <div style="align-self:{{ m.align }};max-width:86%;background:{{ m.bg }};border:1px solid {{ m.border }};border-radius:{{ m.radius }};padding:10px 13px;font-size:13.5px;line-height:1.55;white-space:pre-line;">
+              <sc-if value="{{ m.isAuto }}">
+                <span style="display:block;font-family:'JetBrains Mono',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--pistachio);margin-bottom:7px;padding-bottom:6px;border-bottom:1px dashed var(--line);">{{ m.label }}</span>
+              </sc-if>
+              {{ m.text }}
+            </div>
           </sc-for>
         </div>
         <div style="border-top:1px solid var(--line);padding:12px 16px;background:var(--paper);display:flex;flex-direction:column;gap:10px;">
@@ -1210,7 +1218,8 @@ class Component extends DCLogic {
       },
       draft:null, newAddr:{label:'', line:''},
       pay:'card', err:'', orders:SEED_ORDERS, trackId:'LY-4471', stage:1,
-      waOpen:false, waMsgs:[{from:'them', text:'Hi, this is Cake Lake on Marina Walk. You can order right here — I\u2019ll take you through it.'}],
+      waOpen:false, waUnread:0,
+      waMsgs:[{from:'them', text:'Hi, this is Cake Lake on Marina Walk. You can order right here — I\u2019ll take you through it.'}],
       waUpdates:true, toast:'', noteSent:''
     };
   }
@@ -1372,10 +1381,46 @@ class Component extends DCLogic {
       via: guest ? 'guest' : 'account', email:this.state.form.email
     };
     const orders = [order].concat(this.state.orders.map(o => o.state==='live' ? Object.assign({}, o, {state:'done'}) : o));
+    const receipt = this.receiptText(order);
     this.setState({orders, trackId:id, stage:0, cart:[], applied:null, promo:'', promoNote:'One code per order.', err:'', route:'confirm', lastOrder:order});
     window.scrollTo(0,0);
+    if(this.state.waUpdates){
+      const msgs = this.state.waMsgs.concat([{from:'them', auto:true, label:'Order confirmed', text:receipt}]);
+      this.setState({waMsgs:msgs, waUnread: this.state.waOpen ? 0 : this.state.waUnread + 1});
+    }
     return order;
   }
+
+  // Automated WhatsApp notifications. Two moments only: the receipt when an order is
+  // placed, and the nudge when it's ready — anything more and people mute the thread.
+  waNotify(label, text){
+    if(!this.state.waUpdates) return;
+    const msgs = this.state.waMsgs.concat([{from:'them', auto:true, label, text}]);
+    this.setState({waMsgs:msgs, waUnread: this.state.waOpen ? 0 : this.state.waUnread + 1});
+    if(!this.state.waOpen) this.flash('WhatsApp: ' + label.toLowerCase());
+  }
+
+  receiptText(order){
+    const lines = this.state.cart.map(c => '• ' + c.qty + ' × ' + c.name + (c.meta ? ' (' + c.meta + ')' : ''));
+    return 'Order #' + order.id + ' confirmed ✓\n\n'
+      + lines.join('\n')
+      + '\n\nTotal ' + money(order.total) + ' · ' + order.method
+      + '\n' + (order.fulfil === 'delivery' ? 'Delivery' : 'Pickup — Marina Walk') + ' · ' + order.when
+      + '\n\nWe\u2019ll message you again the moment it\u2019s ready.';
+  }
+
+  readyText(order){
+    return order && order.fulfil === 'delivery'
+      ? 'Order #' + order.id + ' is out for delivery ✓\n\nOur driver is on the way to you now. Anything urgent, reply here.'
+      : 'Order #' + (order ? order.id : '') + ' is ready ✓\n\nCollect at counter 2 on Marina Walk — just give your order number. We hold cakes chilled until close (22:00).';
+  }
+
+  advanceStage = () => {
+    const next = (this.state.stage + 1) % 4;
+    this.setState({stage:next});
+    const order = this.state.lastOrder || this.state.orders.find(o => o.id === this.state.trackId);
+    if(next === 3) this.waNotify('Ready for collection', this.readyText(order));
+  };
 
   cartText(){
     if(!this.state.cart.length) return 'Hi Cake Lake — I\u2019d like to place an order.';
@@ -1744,7 +1789,7 @@ class Component extends DCLogic {
       }),
       activeOrderLabel:'ORDER #'+(live? live.id : '—'),
       etaLabel: live && live.state==='upcoming' ? 'SCHEDULED' : stageNow>=3 ? 'READY NOW' : 'ETA 12:40',
-      advanceStage:() => this.setState({stage:(s.stage+1)%4}),
+      advanceStage:this.advanceStage,
       trackIntro: live
         ? live.items+' · '+live.when + (live.state==='upcoming' ? ' · not started yet' : '')
         : 'Nothing in the kitchen right now. Completed orders live in your account history.',
@@ -1761,6 +1806,14 @@ class Component extends DCLogic {
       ],
       collectionCopy:'Marina Walk, near Pier 7. Give your order number at counter 2 — no queue for collections. Parking is free for 30 minutes at Pier 7 basement.',
       waUpdates:s.waUpdates, toggleWaUpdates:() => this.setState({waUpdates:!s.waUpdates}),
+      waConfirmTitle: s.waUpdates ? 'Your receipt is in WhatsApp' : 'Get updates on WhatsApp',
+      waConfirmCopy: s.waUpdates
+        ? 'We\u2019ve sent what you ordered, the total and your slot. One more message when it\u2019s ready — nothing else.'
+        : 'Two messages only: what you ordered, and a nudge when it\u2019s ready to collect.',
+      waConfirmCta: s.waUpdates ? 'Read the message' : 'Turn on updates',
+      waConfirmAction: s.waUpdates
+        ? () => this.setState({waOpen:true, waUnread:0})
+        : () => { this.setState({waUpdates:true, waOpen:true, waUnread:0}); this.flash('WhatsApp updates on'); },
 
       orderCountLabel:String(s.orders.length),
       spendLabel:money(s.orders.reduce((n,o)=>n+o.total,0)),
@@ -1810,19 +1863,26 @@ class Component extends DCLogic {
       ],
 
       waEnabled:this.props.whatsappEnabled ?? true,
-      waOpen:s.waOpen, toggleWa:() => this.setState({waOpen:!s.waOpen}),
-      openWa:() => this.setState({waOpen:true}),
-      waButtonLabel:s.cart.length ? 'Send cart on WhatsApp' : 'Order on WhatsApp',
+      waOpen:s.waOpen, toggleWa:() => this.setState({waOpen:!s.waOpen, waUnread:0}),
+      openWa:() => this.setState({waOpen:true, waUnread:0}),
+      waButtonLabel:s.waUnread > 0
+        ? (s.waUnread === 1 ? '1 new message' : s.waUnread + ' new messages')
+        : s.cart.length ? 'Send cart on WhatsApp' : 'Order on WhatsApp',
+      waHasUnread:s.waUnread > 0, waUnread:String(s.waUnread),
       waMsgs:s.waMsgs.map(m => ({
         text:m.text, align:m.from==='me' ? 'flex-end' : 'flex-start',
         bg:m.from==='me' ? 'var(--pistachio-soft)' : 'var(--paper)',
-        border:m.from==='me' ? 'var(--pistachio-soft)' : 'var(--line)',
-        radius:m.from==='me' ? '14px 14px 4px 14px' : '14px 14px 14px 4px'
+        border:m.from==='me' ? 'var(--pistachio-soft)' : m.auto ? 'var(--pistachio)' : 'var(--line)',
+        radius:m.from==='me' ? '14px 14px 4px 14px' : '14px 14px 14px 4px',
+        isAuto:!!m.auto, label:m.label || ''
       })),
-      waReplies:[
-        s.cart.length ? 'Send my cart' : 'Order a cake',
-        'CONFIRM', 'Track my order', 'Custom cake', 'Opening hours'
-      ].map(label => ({label, go:() => this.waSend(label)})),
+      // Three chips at most — the footer competes with the thread on short screens.
+      waReplies:(s.cart.length
+        ? ['Send my cart', 'CONFIRM', 'Track my order']
+        : s.orders.some(o => o.state === 'live' || o.state === 'upcoming')
+          ? ['Track my order', 'Order a cake', 'Opening hours']
+          : ['Order a cake', 'Custom cake', 'Opening hours']
+      ).map(label => ({label, go:() => this.waSend(label)})),
       waLink:'https://wa.me/'+waNumber+'?text='+encodeURIComponent(this.cartText()),
       toast:s.toast
     };

@@ -58,6 +58,7 @@ and identity shape, mainly.
 | [ADR-009](ADR-009-logging-and-error-tracking.md) | Logging & Error Tracking | Proposed |
 | [ADR-010](ADR-010-metrics-and-analytics.md) | Metrics & Analytics — Orders and Traffic | Proposed |
 | [ADR-011](ADR-011-admin-console.md) | Admin Console | Accepted |
+| [ADR-012](ADR-012-whatsapp-notifications.md) | WhatsApp Order Notifications | Proposed |
 
 ## How to Propose a New ADR
 

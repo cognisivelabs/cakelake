@@ -5,9 +5,8 @@ still needs a client answer. As answers come in, move items from "Open
 questions" into the relevant confirmed section and note the date/source of
 the decision.
 
-Last updated: 2026-08-14 (counter QR and Track Order discrepancies
-resolved in the prototype; new admin console + OTP login mechanism
-flagged for confirmation).
+Last updated: 2026-08-14 (added WhatsApp order notification requirement,
+now built into prototype v2).
 
 ## Client
 
@@ -63,6 +62,19 @@ client confirmation (see open questions).
    - Insert/update/remove time-limited offers (requirement #2)
    - Scoped to a store (requirement #6) — a future second branch manages
      its own catalogue/offers independently
+10. **WhatsApp order notifications.** Exactly two automated messages per
+    order, sent to the customer on WhatsApp:
+    - **Order confirmed** — sent the moment an order is placed: what was
+      ordered, total, fulfilment method and slot
+    - **Ready for collection/delivery** — sent the moment staff mark the
+      order ready (the same status-advance action from requirement #5)
+    Deliberately capped at two messages, not a message per status stage —
+    more than that risks the customer muting the thread, which defeats the
+    purpose. This is a second, WhatsApp-specific channel alongside the
+    order confirmation email (requirement #8), not a replacement for it —
+    see [ADR-012](../adr/ADR-012-whatsapp-notifications.md) for the
+    technical approach and why full WhatsApp-native ordering (browsing,
+    cart-building, and payment inside the chat) is out of scope for now.
 
 ## Operational requirements
 
@@ -198,3 +210,8 @@ through with the client.
   auto-accepted: OTP login via mobile-or-email (was mobile-only in
   ADR-005), and an admin console with roles/invites/audit-log beyond the
   original catalogue/offers CRUD ask (ADR-011).
+- **2026-08-14** (chat + Claude Design sync) — New requirement #10:
+  WhatsApp order notifications, capped at exactly two messages per order
+  (confirmed, ready). Scoped deliberately as a notification channel, not
+  full WhatsApp-native ordering/payment — see ADR-012. Already built into
+  prototype v2's checkout and track-order screens.

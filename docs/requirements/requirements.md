@@ -5,8 +5,8 @@ still needs a client answer. As answers come in, move items from "Open
 questions" into the relevant confirmed section and note the date/source of
 the decision.
 
-Last updated: 2026-08-14 (added WhatsApp order notification requirement,
-now built into prototype v2).
+Last updated: 2026-08-14 (confirmed a dedicated second number handles
+automated WhatsApp messaging).
 
 ## Client
 
@@ -215,3 +215,7 @@ through with the client.
   (confirmed, ready). Scoped deliberately as a notification channel, not
   full WhatsApp-native ordering/payment — see ADR-012. Already built into
   prototype v2's checkout and track-order screens.
+- **2026-08-14** (chat) — Confirmed: automated WhatsApp messages send from
+  a **second** number, dedicated to the system. The client's existing
+  number stays manual, untouched, for the human side of the relationship.
+  Resolves ADR-012's open question.

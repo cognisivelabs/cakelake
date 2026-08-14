@@ -87,14 +87,14 @@ approved *before* launch, not discovered as a blocker during development.
   a monthly fee) or directly via Meta's Cloud API (no middleman fee, more
   setup and verification work). Not decided here; a small, separate
   implementation choice.
-- **Open question, needs the client's input:** the business's current
-  WhatsApp number is used manually today via the regular WhatsApp Business
-  app. Once a number is registered to the Cloud API, it operates through
-  the API, not the manual app, for anything automated. Confirm whether the
-  client wants to migrate their existing number (retiring manual use of it)
-  or use a second number for automated notifications while keeping the
-  original for manual chat — this affects the client's day-to-day workflow,
-  not just engineering.
+- **Confirmed 2026-08-14: a second WhatsApp number is used for automated
+  system messaging.** The client's existing number keeps working exactly
+  as it does today, entirely manual, for the human side of the
+  relationship. The second number is registered to the Cloud API and used
+  by nothing but the two automated sends in this ADR — it never needs to
+  be checked or replied to by staff. Getting that second number verified
+  as a WhatsApp Business Platform sender is a one-time setup step, not
+  ongoing engineering work.
 - Two message templates (order-confirmed, ready-for-collection/delivery)
   need drafting and submitting to Meta for approval ahead of launch
 - WhatsApp API costs are per-conversation (Utility category), billed

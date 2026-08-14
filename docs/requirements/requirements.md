@@ -60,6 +60,16 @@ plus two more "opening 2026" — none of this is confirmed; see the open
 questions below and reconcile with the client rather than carrying it forward
 by default.
 
+**⚠ Discrepancy to resolve:** a newer working prototype (`prototype/`,
+2026-08-14) reconciled the mockup to a single shop, which is correct per
+scope — but it also **removed QR-code-at-table in-shop ordering**, making
+in-shop ordering counter-only. That conflicts with confirmed requirement #6
+above (order online while physically in the shop, QR-at-table style), which
+was not an open question — it was explicit, confirmed scope. This needs to be
+corrected in the prototype (re-add QR-at-table ordering) rather than treated
+as a legitimate scope change, unless the client has separately asked for it
+to drop — which hasn't happened here.
+
 ## Open questions for client
 
 These need direct client input before they can move to "confirmed." See

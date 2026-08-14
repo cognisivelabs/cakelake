@@ -39,9 +39,15 @@ all built and maintained there.
   this folder and the live project disagree, re-pull from Claude Design
   rather than hand-editing files here. See
   [`design-system/readme.md`](design-system/readme.md) for the full index.
+- [`prototype/`](prototype/) — the working ordering-flow prototype
+  (`Cake Lake Ordering Prototype.dc.html` + `support.js`), built in Claude
+  Design against the components in `design-system/` (its stylesheet/bundle
+  paths point at `../design-system/` rather than a separate copy). Open the
+  `.dc.html` file in a browser to view it. See [`github.md`](github.md) for
+  the sync notes on what it covers and what it reconciled against the
+  requirements doc.
 
-Development does not start until the client signs off on the design in
-Claude Design.
+Development does not start until the client signs off on this prototype.
 
 ### 3. Development
 

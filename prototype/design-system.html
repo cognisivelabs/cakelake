@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Design System — Cake Lake Bakery</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FBF6EC;
+    --paper:#FFFFFF;
+    --ink:#2B241D;
+    --ink-soft:#6b6155;
+    --berry:#C7355A;
+    --berry-deep:#9E2645;
+    --pistachio:#6F9463;
+    --pistachio-soft:#E4EEDF;
+    --honey:#E2A233;
+    --honey-deep:#C4830F;
+    --line:#E7DECC;
+    --radius:22px;
+    --radius-sm:12px;
+    --shadow: 0 18px 40px -20px rgba(43,36,29,0.25);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--cream);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  h1,h2,h3,.display{
+    font-family:'Fraunces',serif;
+    font-weight:600;
+    letter-spacing:-0.01em;
+    margin:0;
+  }
+  .mono{
+    font-family:'JetBrains Mono',monospace;
+  }
+  a{color:inherit;text-decoration:none;}
+  img,svg{display:block;max-width:100%;}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 24px;}
+  .eyebrow{
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--berry-deep);
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+  }
+  .eyebrow::before{
+    content:'';
+    width:6px;height:6px;border-radius:50%;
+    background:var(--berry);
+    display:inline-block;
+  }
+  button{font-family:inherit;cursor:pointer;}
+  .btn{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:14px 26px;
+    border-radius:100px;
+    font-weight:600;
+    font-size:15px;
+    border:1.5px solid transparent;
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .btn:active{transform:scale(0.97);}
+  .btn-primary{
+    background:var(--honey);
+    color:#2B1E05;
+    box-shadow: 0 10px 24px -10px rgba(226,162,51,0.7);
+  }
+  .btn-primary:hover{background:var(--honey-deep);}
+  .btn-ghost{
+    background:transparent;
+    border-color:var(--ink);
+    color:var(--ink);
+  }
+  .btn-ghost:hover{background:var(--ink);color:var(--cream);}
+  .btn-sm{padding:9px 16px;font-size:13px;}
+
+  /* ---------- HEADER ---------- */
+  header{
+    position:sticky;top:0;z-index:50;
+    background:rgba(251,246,236,0.88);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:16px 24px;
+    max-width:1180px;margin:0 auto;
+  }
+  .logo{
+    font-family:'Fraunces',serif;
+    font-size:24px;font-weight:700;
+    display:flex;align-items:center;gap:9px;
+  }
+  .logo-mark{width:26px;height:26px;flex:none;}
+  .nav-links{display:flex;gap:34px;font-weight:500;font-size:14.5px;}
+  .nav-links a{position:relative;padding:4px 0;}
+  .nav-links a::after{
+    content:'';position:absolute;left:0;bottom:-2px;width:0;height:2px;
+    background:var(--berry);transition:width .2s ease;
+  }
+  .nav-links a:hover::after{width:100%;}
+  .nav-right{display:flex;align-items:center;gap:16px;}
+  .cart-btn{
+    position:relative;width:42px;height:42px;border-radius:50%;
+    border:1.5px solid var(--line);background:var(--paper);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .cart-count{
+    position:absolute;top:-5px;right:-5px;
+    background:var(--berry);color:#fff;
+    font-size:10.5px;font-weight:700;
+    width:18px;height:18px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-family:'JetBrains Mono',monospace;
+  }
+  .burger{display:none;background:none;border:none;padding:8px;}
+  .mobile-menu{
+    display:none;flex-direction:column;gap:2px;
+    background:var(--paper);border-bottom:1px solid var(--line);
+    padding:10px 24px 18px;
+  }
+  .mobile-menu a{padding:12px 4px;border-bottom:1px dashed var(--line);font-weight:500;}
+  .mobile-menu.open{display:flex;}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    padding:64px 0 40px;
+    display:grid;grid-template-columns:1.05fr 0.95fr;gap:40px;align-items:center;
+  }
+  .hero h1{
+    font-size:clamp(2.5rem,5.2vw,4.1rem);
+    line-height:1.02;
+    margin:18px 0 20px;
+  }
+  .hero h1 em{
+    font-style:italic;color:var(--berry);font-weight:500;
+  }
+  .hero p{
+    font-size:17px;color:var(--ink-soft);max-width:440px;line-height:1.6;margin-bottom:28px;
+  }
+  .hero-ctas{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:34px;}
+  .stat-row{display:flex;gap:28px;flex-wrap:wrap;}
+  .stat{font-family:'JetBrains Mono',monospace;}
+  .stat b{display:block;font-size:20px;color:var(--ink);}
+  .stat span{font-size:11.5px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:.06em;}
+
+  .hero-art{position:relative;display:flex;justify-content:center;}
+  .hero-art svg{width:100%;max-width:420px;}
+  .crumb{
+    position:absolute;border-radius:50%;opacity:.8;
+    animation:float 6s ease-in-out infinite;
+  }
+  @keyframes float{
+    0%,100%{transform:translateY(0);}
+    50%{transform:translateY(-14px);}
+  }
+
+  /* ---------- OFFERS ---------- */
+  .section{padding:64px 0;}
+  .section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;margin-bottom:28px;flex-wrap:wrap;}
+  .section-head h2{font-size:clamp(1.7rem,3vw,2.3rem);}
+  .offers-strip{
+    display:flex;gap:16px;overflow-x:auto;padding-bottom:8px;
+    scrollbar-width:none;
+  }
+  .offers-strip::-webkit-scrollbar{display:none;}
+  .offer-card{
+    flex:none;width:280px;
+    background:var(--paper);
+    border:1.5px dashed var(--berry);
+    border-radius:16px;
+    padding:22px;position:relative;
+  }
+  .offer-card::before,.offer-card::after{
+    content:'';position:absolute;width:18px;height:18px;background:var(--cream);
+    border-radius:50%;top:50%;transform:translateY(-50%);
+  }
+  .offer-card::before{left:-9px;}
+  .offer-card::after{right:-9px;}
+  .offer-tag{
+    font-family:'JetBrains Mono',monospace;font-size:11px;
+    background:var(--pistachio-soft);color:var(--pistachio);
+    padding:4px 10px;border-radius:100px;display:inline-block;margin-bottom:12px;font-weight:700;
+  }
+  .offer-card h3{font-size:19px;margin-bottom:6px;}
+  .offer-card p{font-size:13.5px;color:var(--ink-soft);margin:0 0 14px;}
+  .offer-code{
+    display:flex;justify-content:space-between;align-items:center;
+    border-top:1px dashed var(--line);padding-top:12px;
+    font-family:'JetBrains Mono',monospace;font-size:12.5px;
+  }
+
+  /* ---------- MENU ---------- */
+  .tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:32px;}
+  .tab{
+    padding:10px 18px;border-radius:100px;border:1.5px solid var(--line);
+    background:var(--paper);font-weight:600;font-size:13.5px;color:var(--ink-soft);
+    transition:all .15s ease;
+  }
+  .tab.active{background:var(--ink);color:var(--cream);border-color:var(--ink);}
+  .menu-grid{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:22px;
+  }
+  .item-card{
+    background:var(--paper);border-radius:var(--radius);
+    padding:22px;border:1px solid var(--line);
+    display:flex;flex-direction:column;gap:14px;
+    transition:transform .18s ease, box-shadow .18s ease;
+  }
+  .item-card:hover{transform:translateY(-5px);box-shadow:var(--shadow);}
+  .item-media{
+    background:var(--pistachio-soft);border-radius:14px;
+    height:150px;display:flex;align-items:center;justify-content:center;
+  }
+  .item-media svg{width:88px;height:88px;}
+  .item-chips{display:flex;gap:6px;flex-wrap:wrap;}
+  .chip{
+    font-size:10.5px;font-family:'JetBrains Mono',monospace;
+    padding:3px 8px;border-radius:100px;
+    background:var(--cream);color:var(--ink-soft);border:1px solid var(--line);
+  }
+  .item-card h3{font-size:18px;}
+  .item-card p{font-size:13px;color:var(--ink-soft);margin:0;line-height:1.5;}
+  .item-foot{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:8px;border-top:1px dashed var(--line);}
+  .price{font-family:'JetBrains Mono',monospace;font-weight:700;font-size:16px;}
+  .add-btn{
+    width:38px;height:38px;border-radius:50%;background:var(--ink);color:var(--cream);
+    border:none;font-size:18px;display:flex;align-items:center;justify-content:center;
+    transition:background .15s ease;
+  }
+  .add-btn:hover{background:var(--berry);}
+
+  /* ---------- TRACKER ---------- */
+  .tracker-section{
+    background:var(--ink);color:var(--cream);border-radius:32px;
+    padding:56px 40px;
+  }
+  .tracker-section .eyebrow{color:var(--honey);}
+  .tracker-section .eyebrow::before{background:var(--honey);}
+  .tracker-section h2{color:var(--cream);}
+  .tracker-section > p{color:#c9c0b2;max-width:520px;margin:14px 0 40px;font-size:15.5px;line-height:1.6;}
+  .tracker-card{
+    background:#332b22;border-radius:20px;padding:32px;
+    display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center;
+  }
+  .layer-cake{width:100%;max-width:220px;margin:0 auto;}
+  .stage-list{display:flex;flex-direction:column;gap:0;}
+  .stage{
+    display:flex;gap:16px;padding:16px 0;border-bottom:1px solid #46402f;position:relative;
+  }
+  .stage:last-child{border-bottom:none;}
+  .stage-dot{
+    width:26px;height:26px;border-radius:50%;border:2px solid #5c5340;
+    display:flex;align-items:center;justify-content:center;flex:none;
+    font-family:'JetBrains Mono',monospace;font-size:11px;color:#5c5340;
+  }
+  .stage.done .stage-dot{background:var(--pistachio);border-color:var(--pistachio);color:#0e150c;}
+  .stage.active .stage-dot{background:var(--honey);border-color:var(--honey);color:#2B1E05;}
+  .stage-title{font-weight:600;font-size:15px;}
+  .stage-sub{font-size:12.5px;color:#9c9384;margin-top:2px;}
+  .stage.done .stage-title,.stage.active .stage-title{color:#fff;}
+  .stage:not(.done):not(.active) .stage-title{color:#8a8171;}
+  .order-meta{
+    display:flex;justify-content:space-between;margin-bottom:22px;
+    font-family:'JetBrains Mono',monospace;font-size:12.5px;color:#9c9384;
+    border-bottom:1px dashed #46402f;padding-bottom:16px;
+  }
+  .sim-btn{
+    margin-top:18px;background:transparent;border:1.5px solid #5c5340;color:#c9c0b2;
+    padding:9px 16px;border-radius:100px;font-size:12.5px;font-weight:600;
+  }
+  .sim-btn:hover{border-color:var(--honey);color:var(--honey);}
+
+  /* ---------- IN-STORE / OMNICHANNEL ---------- */
+  .instore{
+    display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;
+  }
+  .phone-mock{
+    background:var(--ink);border-radius:36px;padding:14px;
+    max-width:260px;margin:0 auto;box-shadow:var(--shadow);
+  }
+  .phone-screen{
+    background:var(--paper);border-radius:24px;overflow:hidden;
+    padding:16px;
+  }
+  .qr-block{
+    background:var(--cream);border-radius:12px;padding:14px;display:flex;gap:10px;align-items:center;margin-bottom:12px;
+  }
+  .qr-icon{width:38px;height:38px;flex:none;}
+  .instore-copy h2{margin-bottom:16px;}
+  .instore-copy p{color:var(--ink-soft);line-height:1.7;font-size:15px;margin-bottom:20px;}
+  .feature-list{display:flex;flex-direction:column;gap:14px;}
+  .feature-list li{display:flex;gap:12px;align-items:flex-start;list-style:none;font-size:14.5px;}
+  .feature-list b{display:block;font-size:14.5px;}
+  .feature-list span{color:var(--ink-soft);font-size:13px;}
+  .feat-dot{
+    width:8px;height:8px;border-radius:50%;background:var(--berry);margin-top:6px;flex:none;
+  }
+
+  /* ---------- LOCATIONS ---------- */
+  .loc-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+  .loc-card{
+    border-radius:var(--radius);padding:28px;border:1px solid var(--line);
+  }
+  .loc-live{background:var(--paper);}
+  .loc-soon{
+    background:transparent;border:1.5px dashed var(--line);
+    display:flex;flex-direction:column;justify-content:center;align-items:flex-start;
+  }
+  .status-pill{
+    display:inline-flex;align-items:center;gap:6px;
+    font-family:'JetBrains Mono',monospace;font-size:11px;font-weight:700;
+    padding:5px 10px;border-radius:100px;margin-bottom:14px;
+  }
+  .status-open{background:var(--pistachio-soft);color:var(--pistachio);}
+  .status-open::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--pistachio);}
+  .status-soon{background:var(--cream);color:var(--ink-soft);border:1px solid var(--line);}
+
+  /* ---------- FOOTER ---------- */
+  footer{
+    border-top:1px solid var(--line);padding:56px 0 32px;margin-top:20px;
+  }
+  .foot-grid{
+    display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:40px;margin-bottom:44px;
+  }
+  .foot-brand p{color:var(--ink-soft);font-size:14px;line-height:1.6;margin:14px 0 0;max-width:260px;}
+  .foot-col h4{font-size:12.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-soft);margin-bottom:14px;}
+  .foot-col a{display:block;font-size:14px;padding:6px 0;color:var(--ink);}
+  .pay-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;}
+  .pay-chip{
+    font-family:'JetBrains Mono',monospace;font-size:11px;padding:6px 10px;
+    border:1px solid var(--line);border-radius:8px;color:var(--ink-soft);
+  }
+  .foot-bottom{
+    display:flex;justify-content:space-between;padding-top:24px;border-top:1px solid var(--line);
+    font-size:12.5px;color:var(--ink-soft);flex-wrap:wrap;gap:10px;
+  }
+
+  @media (max-width:860px){
+    .nav-links{display:none;}
+    .burger{display:block;}
+    .hero{grid-template-columns:1fr;padding-top:32px;}
+    .hero-art{order:-1;}
+    .menu-grid{grid-template-columns:repeat(2,1fr);}
+    .tracker-card{grid-template-columns:1fr;}
+    .instore{grid-template-columns:1fr;}
+    .instore .phone-mock{order:-1;}
+    .loc-grid{grid-template-columns:1fr;}
+    .foot-grid{grid-template-columns:1fr 1fr;}
+  }
+  @media (max-width:520px){
+    .menu-grid{grid-template-columns:1fr;}
+    .hero-ctas .btn{flex:1;justify-content:center;}
+    .tracker-section{padding:36px 22px;border-radius:22px;}
+    .foot-grid{grid-template-columns:1fr;}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .crumb{animation:none;}
+    html{scroll-behavior:auto;}
+  }
+</style>
+<style>
+  .page-hero{padding:56px 0 24px;}
+  .page-hero h1{font-size:clamp(2.2rem,4.4vw,3.4rem);margin:16px 0 14px;}
+  .page-hero p{color:var(--ink-soft);font-size:16px;max-width:600px;line-height:1.6;}
+  .ds-block{margin-bottom:64px;}
+  .ds-block > .eyebrow{margin-bottom:10px;display:block;}
+  .ds-block h2{font-size:1.6rem;margin-bottom:8px;}
+  .ds-block > p.desc{color:var(--ink-soft);font-size:14.5px;max-width:600px;margin:0 0 28px;line-height:1.6;}
+
+  .swatch-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;}
+  .swatch{border-radius:14px;overflow:hidden;border:1px solid var(--line);}
+  .swatch-color{height:80px;}
+  .swatch-info{padding:10px 12px;background:var(--paper);}
+  .swatch-info b{display:block;font-size:12.5px;}
+  .swatch-info span{font-family:'JetBrains Mono',monospace;font-size:10.5px;color:var(--ink-soft);}
+
+  .type-row{border-bottom:1px dashed var(--line);padding:22px 0;display:flex;justify-content:space-between;align-items:baseline;gap:20px;flex-wrap:wrap;}
+  .type-row:last-child{border-bottom:none;}
+  .type-sample.display{font-family:'Fraunces',serif;font-weight:600;}
+  .type-sample.body{font-family:'Inter',sans-serif;}
+  .type-sample.mono{font-family:'JetBrains Mono',monospace;}
+  .type-meta{font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--ink-soft);white-space:nowrap;}
+
+  .comp-row{display:flex;gap:14px;flex-wrap:wrap;align-items:center;margin-bottom:14px;}
+  .comp-card{border:1px solid var(--line);border-radius:16px;padding:24px;background:var(--paper);}
+  .token-table{width:100%;border-collapse:collapse;font-size:13.5px;}
+  .token-table th{text-align:left;font-family:'JetBrains Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--ink-soft);padding:8px 10px;border-bottom:1.5px solid var(--line);}
+  .token-table td{padding:10px 10px;border-bottom:1px solid var(--line);}
+  .token-table td:first-child{font-family:'JetBrains Mono',monospace;font-size:12.5px;}
+  .signature-card{
+    background:var(--ink);color:var(--cream);border-radius:24px;padding:36px;
+    display:grid;grid-template-columns:auto 1fr;gap:24px;align-items:center;
+  }
+  .signature-card p{color:#c9c0b2;font-size:14.5px;line-height:1.6;margin:8px 0 0;}
+  @media (max-width:860px){
+    .swatch-grid{grid-template-columns:repeat(3,1fr);}
+    .signature-card{grid-template-columns:1fr;text-align:left;}
+  }
+  @media (max-width:520px){
+    .swatch-grid{grid-template-columns:repeat(2,1fr);}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <nav class="nav">
+    <a href="index.html" class="logo">
+      <svg class="logo-mark" viewBox="0 0 26 26" fill="none">
+        <rect x="4" y="15" width="18" height="6" rx="2" fill="#C7355A"/>
+        <rect x="6" y="10" width="14" height="6" rx="2" fill="#E2A233"/>
+        <rect x="8" y="5" width="10" height="6" rx="2" fill="#6F9463"/>
+      </svg>
+      Cake Lake
+    </a>
+    <div class="nav-links">
+      <span class="eyebrow" style="color:var(--ink-soft);">Internal reference</span>
+    </div>
+    <div class="nav-right">
+      <a href="index.html" class="btn btn-ghost btn-sm">← Back to site</a>
+    </div>
+  </nav>
+</header>
+
+<main class="wrap">
+
+  <section class="page-hero">
+    <span class="eyebrow">Design system</span>
+    <h1>Cake Lake Bakery — visual language</h1>
+    <p>The tokens, type, and components used across the site. Reference this when building new pages so everything stays one consistent brand rather than a collection of one-off screens.</p>
+  </section>
+
+  <!-- COLOR -->
+  <section class="section ds-block" style="padding-top:8px;">
+    <span class="eyebrow">Color</span>
+    <h2>Palette</h2>
+    <p class="desc">Warm and fresh rather than the typical bakery "cream + terracotta" default — cream stays light, and the personality comes from raspberry, pistachio and honey doing distinct jobs rather than decoration.</p>
+    <div class="swatch-grid">
+      <div class="swatch"><div class="swatch-color" style="background:#FBF6EC;"></div><div class="swatch-info"><b>Cream</b><span>#FBF6EC — page background</span></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#FFFFFF;"></div><div class="swatch-info"><b>Paper</b><span>#FFFFFF — cards, surfaces</span></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#2B241D;"></div><div class="swatch-info" style="background:#2B241D;"><b style="color:#fff;">Ink</b><span style="color:#c9c0b2;">#2B241D — text, dark sections</span></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#C7355A;"></div><div class="swatch-info"><b>Berry</b><span>#C7355A — primary brand accent</span></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#6F9463;"></div><div class="swatch-info"><b>Pistachio</b><span>#6F9463 — fresh / success accent</span></div></div>
+      <div class="swatch"><div class="swatch-color" style="background:#E2A233;"></div><div class="swatch-info"><b>Honey</b><span>#E2A233 — primary CTA</span></div></div>
+    </div>
+  </section>
+
+  <!-- TYPE -->
+  <section class="section ds-block">
+    <span class="eyebrow">Typography</span>
+    <h2>Type scale</h2>
+    <p class="desc">Fraunces carries the personality — used with restraint, on headlines only. Inter handles everything readable. JetBrains Mono marks anything transactional: prices, order numbers, codes, timestamps.</p>
+    <div>
+      <div class="type-row"><span class="type-sample display" style="font-size:44px;">Cake, made properly.</span><span class="type-meta">Fraunces / 600 / Display</span></div>
+      <div class="type-row"><span class="type-sample display" style="font-size:28px;">Pick your bake</span><span class="type-meta">Fraunces / 600 / H2</span></div>
+      <div class="type-row"><span class="type-sample body" style="font-size:17px;">Custom cakes, cupcakes and celebration bakes — order online.</span><span class="type-meta">Inter / 400 / Body large</span></div>
+      <div class="type-row"><span class="type-sample body" style="font-size:14px;">Any celebration cake, when you order 48h ahead.</span><span class="type-meta">Inter / 400 / Body</span></div>
+      <div class="type-row"><span class="type-sample mono" style="font-size:15px;">AED 145 · ORDER #LY-4471</span><span class="type-meta">JetBrains Mono / 700 / Data</span></div>
+    </div>
+  </section>
+
+  <!-- SIGNATURE -->
+  <section class="section ds-block">
+    <span class="eyebrow">Signature element</span>
+    <h2>The layered tracker</h2>
+    <div class="signature-card">
+      <svg width="120" height="120" viewBox="0 0 220 220" fill="none">
+        <ellipse cx="110" cy="196" rx="80" ry="10" fill="#241d16"/>
+        <rect x="45" y="150" width="130" height="42" rx="10" fill="#E2A233"/>
+        <rect x="58" y="105" width="104" height="45" rx="10" fill="#6F9463"/>
+        <rect x="70" y="62" width="80" height="43" rx="10" fill="#C7355A"/>
+        <circle cx="110" cy="50" r="13" fill="#f5d78b"/>
+      </svg>
+      <div>
+        <b style="font-family:'Fraunces',serif;font-size:18px;">Not a generic 1-2-3-4 stepper.</b>
+        <p>Order status is shown as a cake literally being built layer by layer — placed → oven → decorating → ready. It's the one deliberately bold, illustrated moment in an otherwise restrained design, used only for order tracking so it stays meaningful rather than decorative.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMPONENTS -->
+  <section class="section ds-block">
+    <span class="eyebrow">Components</span>
+    <h2>Buttons</h2>
+    <div class="comp-card">
+      <div class="comp-row">
+        <button class="btn btn-primary">Order online →</button>
+        <button class="btn btn-ghost">Track an order</button>
+        <button class="btn btn-primary btn-sm">Small primary</button>
+        <button class="btn btn-ghost btn-sm">Small ghost</button>
+      </div>
+      <p style="font-size:13px;color:var(--ink-soft);margin:14px 0 0;">Primary (honey) for the one action per screen that matters most. Ghost (outlined) for everything secondary. Never more than one primary button visible at a time in a section.</p>
+    </div>
+  </section>
+
+  <section class="section ds-block">
+    <h2 style="margin-bottom:20px;">Tags &amp; status</h2>
+    <div class="comp-card">
+      <div class="comp-row">
+        <span class="chip">Eggless option</span>
+        <span class="chip">Bestseller</span>
+        <span class="chip">Pre-order 72h</span>
+        <span class="status-pill status-open">Open now</span>
+        <span class="status-pill status-soon">Opening 2026</span>
+        <span class="offer-tag">Ends Fri</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="section ds-block">
+    <h2 style="margin-bottom:20px;">Cards</h2>
+    <div class="comp-row" style="align-items:stretch;">
+      <div class="item-card" style="width:260px;">
+        <div class="item-media"><svg viewBox="0 0 80 80" fill="none"><rect x="14" y="46" width="52" height="20" rx="6" fill="#C7355A"/><rect x="20" y="28" width="40" height="20" rx="6" fill="#C7355A" opacity="0.75"/><rect x="26" y="14" width="28" height="16" rx="6" fill="#C7355A" opacity="0.55"/><circle cx="40" cy="10" r="5" fill="#C7355A"/></svg></div>
+        <div class="item-chips"><span class="chip">Bestseller</span></div>
+        <h3 style="font-size:18px;">Product card</h3>
+        <p>Icon, chips, name, description, price, add button.</p>
+        <div class="item-foot"><span class="price">AED 145</span><button class="add-btn">+</button></div>
+      </div>
+      <div class="offer-card" style="width:260px;">
+        <span class="offer-tag">Ends Fri</span>
+        <h3>Offer card</h3>
+        <p>Dashed border, coupon-style, punch-hole detail.</p>
+        <div class="offer-code"><span>CODE</span><span>EID20</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TOKENS TABLE -->
+  <section class="section ds-block">
+    <span class="eyebrow">Reference</span>
+    <h2>Spacing &amp; radius tokens</h2>
+    <table class="token-table">
+      <tr><th>Token</th><th>Value</th><th>Use</th></tr>
+      <tr><td>--radius</td><td>22px</td><td>Cards, large containers</td></tr>
+      <tr><td>--radius-sm</td><td>12px</td><td>Chips, small tiles</td></tr>
+      <tr><td>Button radius</td><td>100px</td><td>All buttons, pill-shaped</td></tr>
+      <tr><td>Section padding</td><td>64px vertical</td><td>Between major sections</td></tr>
+      <tr><td>Shadow</td><td>0 18px 40px -20px rgba(43,36,29,.25)</td><td>Hover states only, never at rest</td></tr>
+    </table>
+  </section>
+
+  <section class="section ds-block" style="margin-bottom:20px;">
+    <span class="eyebrow">Fonts used</span>
+    <h2 style="margin-bottom:16px;">Google Fonts import</h2>
+    <div class="comp-card">
+      <code class="mono" style="font-size:12.5px;word-break:break-all;">Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500 · Inter:wght@400;500;600;700 · JetBrains+Mono:wght@400;500;700</code>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-bottom" style="border-top:none;padding-top:0;">
+      <span>Cake Lake Bakery — design system v1</span>
+      <a href="index.html" style="text-decoration:underline;">← Back to site</a>
+    </div>
+  </div>
+</footer>
+
+<script></script>
+</body>
+</html>

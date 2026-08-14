@@ -5,7 +5,8 @@ still needs a client answer. As answers come in, move items from "Open
 questions" into the relevant confirmed section and note the date/source of
 the decision.
 
-Last updated: 2026-08-14 (QR ordering elaborated into counter + leaflet flows).
+Last updated: 2026-08-14 (added account/guest checkout requirement; flagged
+Track Order page showing already-delivered orders as a discrepancy).
 
 ## Client
 
@@ -43,6 +44,12 @@ client confirmation (see open questions).
      data-model requirement (a distinct, offer-linkable QR/link) is confirmed
      now.**
    - Every future branch running on the same system.
+7. **Two ways to check out: account or guest.**
+   - **Account** — the customer's mobile number is their ID. Once logged in,
+     they can place an order and see their own past order history.
+   - **Guest** — no account needed. At checkout, ask for an email address;
+     that's where the live order-tracking link/details get sent, so a guest
+     can follow their order without ever logging in.
 
 ## Tentative technical direction (not locked in)
 
@@ -80,6 +87,20 @@ has since been elaborated into two distinct QR flows (counter QR + leaflet
 QR, see above); of the two, only the **counter QR** needs adding back to
 the prototype now — leaflet QR design is deferred (see above), so its
 absence from the prototype isn't a discrepancy.
+
+**⚠ Second discrepancy to resolve:** in prototype v2
+(`prototype/Cake Lake Ordering Prototype v2.dc.html`), the Track Order page
+pulls its list of trackable orders as `s.orders.slice(0,3)` — the first
+three orders regardless of status. Its sample data (`SEED_ORDERS`) has one
+live/in-progress order and three already-collected/delivered ones, so the
+Track Order page currently shows completed orders next to the live one.
+Per this session's chat feedback (2026-08-14): **Track Order should only
+ever show the current in-progress order plus anything scheduled for
+today/future collection or delivery — never orders that are already
+collected/delivered.** Already-completed orders belong in account order
+history (requirement #7), not on the tracking page. This is prototype logic,
+not just sample content, so it needs fixing in Claude Design rather than
+patched locally — see workflow note above.
 
 ## Open questions for client
 
@@ -123,3 +144,9 @@ through with the client.
   a **leaflet QR** (sent home with an order, short link, meant to drive
   reorders). Deliberately separate QRs/links so each can carry its own
   offer or promo code and be tracked independently.
+- **2026-08-14** (chat) — New requirement #7: account (mobile number as ID,
+  see own order history) vs. guest checkout (email address collected for
+  order-tracking updates only). Also flagged that prototype v2's Track Order
+  page incorrectly lists already-collected/delivered orders alongside the
+  live one — should only show current + upcoming (today/future), see
+  discrepancy note above.

@@ -39,13 +39,18 @@ all built and maintained there.
   this folder and the live project disagree, re-pull from Claude Design
   rather than hand-editing files here. See
   [`design-system/readme.md`](design-system/readme.md) for the full index.
-- [`prototype/`](prototype/) — the working ordering-flow prototype
-  (`Cake Lake Ordering Prototype.dc.html` + `support.js`), built in Claude
-  Design against the components in `design-system/` (its stylesheet/bundle
-  paths point at `../design-system/` rather than a separate copy). Open the
-  `.dc.html` file in a browser to view it. See [`github.md`](github.md) for
-  the sync notes on what it covers and what it reconciled against the
-  requirements doc.
+- [`prototype/`](prototype/) — the working ordering-flow prototype, built in
+  Claude Design against the components in `design-system/` (paths point at
+  `../design-system/` and `../docs/design/photos/` rather than separate
+  copies). Two versions: `Cake Lake Ordering Prototype.dc.html` (v1) and
+  `Cake Lake Ordering Prototype v2.dc.html` ("The Case" direction —
+  photography-led catalogue, sticky category rail, persistent order bar; the
+  current one). Open either `.dc.html` file in a browser to view it — v2
+  also needs `image-slot.js` alongside it, both need `support.js`.
+  [`prototype/explorations/`](prototype/explorations/) keeps the layout and
+  logo directions that were explored but not carried forward, for the
+  record. See [`github.md`](github.md) for the sync notes on what each
+  covers and what it reconciled against the requirements doc.
 
 Development does not start until the client signs off on this prototype.
 

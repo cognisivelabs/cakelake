@@ -437,11 +437,47 @@
           <div style="display:flex;flex-direction:column;gap:18px;">
             <div style="background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:22px;">
               <h3 style="font-family:'Fraunces',serif;font-weight:600;font-size:18px;margin:0 0 16px;">Who it's for</h3>
+              <div style="display:flex;gap:8px;margin-bottom:16px;">
+                <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Tab" active="{{ payAsGuest }}" on-click="{{ setGuest }}" hint-size="auto,40px">Continue as guest</x-import>
+                <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Tab" active="{{ payAsAccount }}" on-click="{{ setAccount }}" hint-size="auto,40px">Use my account</x-import>
+              </div>
+
+              <sc-if value="{{ payAsAccount }}">
+                <div style="margin-bottom:14px;">
+                  <sc-if value="{{ loggedIn }}">
+                    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;background:var(--pistachio-soft);border:1px solid var(--pistachio);border-radius:16px;padding:13px 16px;">
+                      <span style="font-size:13.5px;font-weight:600;color:var(--pistachio);">{{ accountLine }}</span>
+                      <button onClick="{{ signOut }}" style="background:none;border:none;padding:0;color:var(--ink-soft);font-size:11.5px;cursor:pointer;font-family:'JetBrains Mono',monospace;letter-spacing:.06em;">SIGN OUT</button>
+                    </div>
+                  </sc-if>
+                  <sc-if value="{{ notLoggedIn }}">
+                    <div style="border:1.5px dashed var(--line);border-radius:16px;padding:16px;">
+                      <p style="font-size:13px;color:var(--ink-soft);margin:0 0 12px;line-height:1.6;">Your mobile number is your account — no password. We text a code to verify it, and your order history stays on it.</p>
+                      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+                        <input type="tel" placeholder="+971 50 000 0000" value="{{ fPhone }}" onChange="{{ setPhone }}" style="flex:1;min-width:160px;padding:12px 16px;border-radius:100px;border:1.5px solid var(--line);font-size:14px;background:var(--cream);color:var(--ink);">
+                        <button onClick="{{ sendOtp }}" style="border:1.5px solid var(--ink);background:transparent;color:var(--ink);border-radius:100px;padding:11px 18px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">Send code</button>
+                      </div>
+                      <sc-if value="{{ otpSent }}">
+                        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;">
+                          <input type="text" placeholder="4-digit code" value="{{ otp }}" onChange="{{ setOtp }}" maxlength="4" style="flex:1;min-width:120px;padding:12px 16px;border-radius:100px;border:1.5px solid var(--line);font-size:14px;font-family:'JetBrains Mono',monospace;letter-spacing:.3em;background:var(--cream);color:var(--ink);">
+                          <button onClick="{{ verifyOtp }}" style="border:1.5px solid var(--ink);background:var(--ink);color:var(--cream);border-radius:100px;padding:11px 18px;font-size:13px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">Verify</button>
+                        </div>
+                      </sc-if>
+                    </div>
+                  </sc-if>
+                </div>
+              </sc-if>
+
               <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;">
                 <input type="text" placeholder="Full name" value="{{ fName }}" onChange="{{ setName }}" style="padding:12px 16px;border-radius:100px;border:1.5px solid var(--line);font-size:14px;background:var(--cream);color:var(--ink);">
-                <input type="tel" placeholder="+971 50 000 0000" value="{{ fPhone }}" onChange="{{ setPhone }}" style="padding:12px 16px;border-radius:100px;border:1.5px solid var(--line);font-size:14px;background:var(--cream);color:var(--ink);">
-                <input type="email" placeholder="Email (for the receipt)" value="{{ fEmail }}" onChange="{{ setEmail }}" style="padding:12px 16px;border-radius:100px;border:1.5px solid var(--line);font-size:14px;background:var(--cream);color:var(--ink);">
+                <sc-if value="{{ payAsGuest }}">
+                  <input type="tel" placeholder="+971 50 000 0000" value="{{ fPhone }}" onChange="{{ setPhone }}" style="padding:12px 16px;border-radius:100px;border:1.5px solid var(--line);font-size:14px;background:var(--cream);color:var(--ink);">
+                </sc-if>
+                <input type="email" placeholder="{{ emailLabel }}" value="{{ fEmail }}" onChange="{{ setEmail }}" style="padding:12px 16px;border-radius:100px;border:1.5px solid var(--line);font-size:14px;background:var(--cream);color:var(--ink);">
               </div>
+              <sc-if value="{{ payAsGuest }}">
+                <p style="font-size:12.5px;color:var(--ink-soft);margin:12px 0 0;line-height:1.6;">{{ guestNote }}</p>
+              </sc-if>
             </div>
             <div style="background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:22px;">
               <h3 style="font-family:'Fraunces',serif;font-weight:600;font-size:18px;margin:0 0 16px;">Pickup or delivery</h3>
@@ -559,6 +595,14 @@
             <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Tab" active="{{ o.active }}" on-click="{{ o.go }}" hint-size="auto,40px">{{ o.label }}</x-import>
           </sc-for>
         </div>
+        <sc-if value="{{ noTrackable }}">
+          <div style="background:var(--paper);border:1.5px dashed var(--line);border-radius:22px;padding:48px 24px;text-align:center;">
+            <b style="display:block;font-family:'Fraunces',serif;font-size:20px;margin-bottom:8px;">Nothing to track right now</b>
+            <p style="color:var(--ink-soft);font-size:14px;margin:0 0 22px;">Orders appear here while they're being made and until you collect them. Past orders are in your account history.</p>
+            <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Button" on-click="{{ goAccount }}" hint-size="auto,48px">See order history →</x-import>
+          </div>
+        </sc-if>
+        <sc-if value="{{ hasTrackable }}">
         <div style="background:var(--ink);border-radius:32px;padding:clamp(24px,3.5vw,40px);">
           <div style="background:var(--ink-raised);border-radius:var(--radius-inverse-inner);padding:32px;">
               <div style="display:flex;justify-content:space-between;margin-bottom:22px;font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--on-ink-muted);border-bottom:1px dashed var(--ink-line);padding-bottom:16px;">
@@ -606,6 +650,7 @@
             <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Button" variant="ghost" size="sm" on-click="{{ goLocations }}" hint-size="auto,36px">Directions</x-import>
           </div>
         </div>
+        </sc-if>
       </div>
     </sc-if>
 
@@ -613,8 +658,14 @@
     <sc-if value="{{ isAccount }}">
       <div style="padding:44px 0 0;">
         <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Eyebrow" hint-size="auto,18px">Your account</x-import>
-        <h1 style="font-family:'Fraunces',serif;font-weight:600;letter-spacing:-0.01em;font-size:clamp(1.9rem,3.6vw,2.8rem);margin:14px 0 14px;">Layla Haddad</h1>
-        <p style="color:var(--ink-soft);font-size:16px;line-height:1.6;margin:0 0 30px;">+971 50 441 8802 · layla@example.com</p>
+        <h1 style="font-family:'Fraunces',serif;font-weight:600;letter-spacing:-0.01em;font-size:clamp(1.9rem,3.6vw,2.8rem);margin:14px 0 14px;">{{ pName }}</h1>
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:30px;">
+          <p style="color:var(--ink-soft);font-size:16px;line-height:1.6;margin:0;">{{ pMobile }} · {{ pEmail }}</p>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Button" variant="ghost" size="sm" on-click="{{ editProfile }}" hint-size="auto,36px">Edit details</x-import>
+            <button onClick="{{ signOut }}" style="border:1.5px solid var(--line);background:var(--paper);color:var(--ink-soft);border-radius:100px;padding:8px 16px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">Sign out</button>
+          </div>
+        </div>
         <div style="display:flex;gap:28px;flex-wrap:wrap;margin-bottom:34px;">
           <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Stat" value="{{ orderCountLabel }}" label="Orders placed" hint-size="auto,44px"></x-import>
           <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Stat" value="{{ spendLabel }}" label="Spent with us" hint-size="auto,44px"></x-import>
@@ -635,6 +686,163 @@
               </div>
             </div>
           </sc-for>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ========== SIGN IN ========== -->
+    <sc-if value="{{ isSignin }}">
+      <div style="padding:44px 0 0;max-width:820px;">
+        <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Eyebrow" hint-size="auto,18px">Sign in</x-import>
+        <h1 style="font-family:'Fraunces',serif;font-weight:600;letter-spacing:-0.01em;font-size:clamp(1.9rem,3.6vw,2.8rem);margin:14px 0 14px;">No password to <em style="font-style:italic;color:var(--berry);font-weight:500;">forget</em>.</h1>
+        <p style="color:var(--ink-soft);font-size:16px;max-width:52ch;line-height:1.6;margin:0 0 30px;">Give us your mobile number or your email — whichever you'd rather use. We send a one-time code, you type it in, you're in.</p>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:22px;align-items:start;">
+          <div style="background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:26px;">
+
+            <sc-if value="{{ authAtId }}">
+              <div>
+                <div style="font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:10px;">Mobile or email</div>
+                <input type="text" placeholder="+971 50 000 0000 or you@email.com" value="{{ authId }}" onChange="{{ setAuthId }}" style="width:100%;padding:13px 18px;border-radius:100px;border:1.5px solid var(--line);font-size:15px;background:var(--cream);color:var(--ink);margin-bottom:14px;">
+                <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Button" on-click="{{ sendCode }}" style="{{ fullWidth }}" hint-size="100%,48px">Send my code →</x-import>
+                <p style="font-size:12.5px;color:var(--berry);margin:12px 0 0;min-height:18px;">{{ authErr }}</p>
+                <p style="font-size:12.5px;color:var(--ink-soft);margin:6px 0 0;line-height:1.6;">New here? The same step creates your account — there's nothing else to fill in until checkout.</p>
+              </div>
+            </sc-if>
+
+            <sc-if value="{{ authAtCode }}">
+              <div>
+                <div style="display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:16px;">
+                  <div>
+                    <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);">{{ authSentKind }} · {{ otpLen }}-digit code</div>
+                    <div style="font-size:14.5px;font-weight:600;margin-top:5px;">{{ authSentTo }}</div>
+                  </div>
+                  <button onClick="{{ changeId }}" style="background:none;border:none;padding:0;color:var(--ink-soft);font-size:11.5px;cursor:pointer;font-family:'JetBrains Mono',monospace;letter-spacing:.06em;">CHANGE</button>
+                </div>
+
+                <input type="text" inputmode="numeric" placeholder="{{ otpPlaceholder }}" value="{{ authCode }}" onChange="{{ setAuthCode }}" style="width:100%;padding:16px 18px;border-radius:16px;border:1.5px solid var(--line);font-size:26px;font-family:'JetBrains Mono',monospace;letter-spacing:.42em;text-align:center;background:var(--cream);color:var(--ink);margin-bottom:14px;">
+
+                <div style="height:4px;background:var(--line);border-radius:100px;overflow:hidden;margin-bottom:9px;">
+                  <div style="height:100%;width:{{ authBarWidth }};background:{{ authBarColor }};border-radius:100px;transition:width 1s linear;"></div>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px;">
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--ink-soft);">{{ authLeftLabel }}</span>
+                  <sc-if value="{{ authDead }}">
+                    <button onClick="{{ resendCode }}" style="border:1.5px solid var(--ink);background:transparent;color:var(--ink);border-radius:100px;padding:8px 16px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">Send a new code</button>
+                  </sc-if>
+                </div>
+
+                <sc-if value="{{ authLive }}">
+                  <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Button" on-click="{{ verifyCode }}" style="{{ fullWidth }}" hint-size="100%,48px">Verify and sign in →</x-import>
+                </sc-if>
+                <p style="font-size:12.5px;color:var(--berry);margin:12px 0 0;min-height:18px;">{{ authErr }}</p>
+                <div style="margin-top:14px;border:1.5px dashed var(--line);border-radius:14px;padding:12px 14px;">
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--ink-soft);">{{ authDemoCode }}</span>
+                </div>
+              </div>
+            </sc-if>
+
+          </div>
+
+          <div style="background:var(--ink);border-radius:32px;padding:26px;">
+            <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Eyebrow" tone="honey" hint-size="auto,18px">How this works</x-import>
+            <h3 style="font-family:'Fraunces',serif;font-weight:600;font-size:19px;color:var(--cream);margin:14px 0 16px;">We never store a password</h3>
+            <div style="display:flex;flex-direction:column;gap:14px;">
+              <sc-for list="{{ authFacts }}" as="f" hint-placeholder-count="4">
+                <div style="display:flex;gap:12px;align-items:flex-start;">
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--honey);flex:none;width:18px;">{{ f.n }}</span>
+                  <span style="color:var(--on-ink);font-size:13.5px;line-height:1.6;">{{ f.t }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+
+        <p style="color:var(--ink-soft);font-size:13.5px;line-height:1.6;margin:26px 0 0;max-width:56ch;">Don't want an account? You can <span onClick="{{ goMenu }}" style="color:var(--berry-deep);cursor:pointer;font-weight:500;">order as a guest</span> — we'll email you a tracking link instead.</p>
+      </div>
+    </sc-if>
+
+    <!-- ========== PROFILE ========== -->
+    <sc-if value="{{ isProfile }}">
+      <div style="padding:44px 0 0;">
+        <button onClick="{{ goAccount }}" style="background:none;border:none;padding:0;color:var(--ink-soft);font-size:13px;cursor:pointer;font-family:'JetBrains Mono',monospace;letter-spacing:.06em;text-transform:uppercase;">← Back to account</button>
+        <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Eyebrow" hint-size="auto,18px">Your details</x-import>
+        <h1 style="font-family:'Fraunces',serif;font-weight:600;letter-spacing:-0.01em;font-size:clamp(1.9rem,3.6vw,2.8rem);margin:14px 0 14px;">Keep it current.</h1>
+        <p style="color:var(--ink-soft);font-size:16px;max-width:52ch;line-height:1.6;margin:0 0 30px;">These are the details we use on your orders. Change them any time — nothing here is locked.</p>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:22px;align-items:start;">
+          <div style="display:flex;flex-direction:column;gap:18px;">
+            <div style="background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:22px;">
+              <h3 style="font-family:'Fraunces',serif;font-weight:600;font-size:18px;margin:0 0 16px;">You</h3>
+              <div style="display:flex;flex-direction:column;gap:14px;">
+                <div>
+                  <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:8px;">Name</div>
+                  <input type="text" placeholder="Full name" value="{{ dName }}" onChange="{{ setDName }}" style="width:100%;padding:12px 16px;border-radius:100px;border:1.5px solid var(--line);font-size:14px;background:var(--cream);color:var(--ink);">
+                </div>
+                <div>
+                  <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:8px;">Mobile</div>
+                  <input type="tel" placeholder="+971 50 000 0000" value="{{ dMobile }}" onChange="{{ setDMobile }}" style="width:100%;padding:12px 16px;border-radius:100px;border:1.5px solid var(--line);font-size:14px;background:var(--cream);color:var(--ink);">
+                </div>
+                <div>
+                  <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:8px;">Email</div>
+                  <input type="email" placeholder="you@email.com" value="{{ dEmail }}" onChange="{{ setDEmail }}" style="width:100%;padding:12px 16px;border-radius:100px;border:1.5px solid var(--line);font-size:14px;background:var(--cream);color:var(--ink);">
+                </div>
+              </div>
+              <p style="font-size:12.5px;color:var(--berry);margin:14px 0 0;min-height:18px;">{{ authErr }}</p>
+              <div style="margin-top:6px;">
+                <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Button" on-click="{{ saveProfile }}" hint-size="auto,48px">Save details</x-import>
+              </div>
+            </div>
+
+            <div style="background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:22px;">
+              <h3 style="font-family:'Fraunces',serif;font-weight:600;font-size:18px;margin:0 0 6px;">Saved addresses</h3>
+              <p style="color:var(--ink-soft);font-size:13.5px;line-height:1.6;margin:0 0 16px;">The default one is filled in for you at checkout.</p>
+              <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:18px;">
+                <sc-for list="{{ addresses }}" as="a" hint-placeholder-count="2">
+                  <div style="border:{{ a.border }};border-radius:16px;padding:16px;display:flex;justify-content:space-between;gap:14px;align-items:flex-start;flex-wrap:wrap;">
+                    <div>
+                      <div style="display:flex;align-items:center;gap:9px;margin-bottom:5px;">
+                        <b style="font-size:14.5px;">{{ a.label }}</b>
+                        <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Chip" hint-size="auto,20px">{{ a.tagLabel }}</x-import>
+                      </div>
+                      <span style="color:var(--ink-soft);font-size:13.5px;line-height:1.55;">{{ a.line }}</span>
+                    </div>
+                    <div style="display:flex;gap:14px;align-items:center;">
+                      <sc-if value="{{ a.canDefault }}">
+                        <button onClick="{{ a.makeDefault }}" style="background:none;border:none;padding:0;color:var(--berry-deep);font-size:11.5px;cursor:pointer;font-family:'JetBrains Mono',monospace;letter-spacing:.06em;">SET DEFAULT</button>
+                      </sc-if>
+                      <button onClick="{{ a.remove }}" style="background:none;border:none;padding:0;color:var(--ink-soft);font-size:11.5px;cursor:pointer;font-family:'JetBrains Mono',monospace;letter-spacing:.06em;">REMOVE</button>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="border-top:1px dashed var(--line);padding-top:16px;display:flex;flex-direction:column;gap:10px;">
+                <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);">Add another</div>
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;">
+                  <input type="text" placeholder="Label — Home, Office" value="{{ naLabel }}" onChange="{{ setNaLabel }}" style="padding:12px 16px;border-radius:100px;border:1.5px solid var(--line);font-size:14px;background:var(--cream);color:var(--ink);">
+                  <input type="text" placeholder="Building, street, area" value="{{ naLine }}" onChange="{{ setNaLine }}" style="padding:12px 16px;border-radius:100px;border:1.5px solid var(--line);font-size:14px;background:var(--cream);color:var(--ink);">
+                </div>
+                <div>
+                  <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Button" variant="ghost" size="sm" on-click="{{ addAddress }}" hint-size="auto,36px">Add address</x-import>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:18px;position:sticky;top:150px;">
+            <div style="background:var(--ink);border-radius:32px;padding:24px;">
+              <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Eyebrow" tone="honey" hint-size="auto,18px">Signing in</x-import>
+              <h3 style="font-family:'Fraunces',serif;font-weight:600;font-size:18px;color:var(--cream);margin:14px 0 10px;">One-time codes only</h3>
+              <p style="color:var(--on-ink);font-size:13.5px;line-height:1.65;margin:0 0 16px;">{{ signinWithLabel }}. There is no password on this account, so there's nothing to reset and nothing for us to leak.</p>
+              <div style="display:flex;flex-direction:column;gap:9px;border-top:1px solid var(--ink-line);padding-top:14px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--on-ink-dim);">
+                <div style="display:flex;justify-content:space-between;gap:10px;"><span>CODE LENGTH</span><span>{{ otpLen }} DIGITS</span></div>
+                <div style="display:flex;justify-content:space-between;gap:10px;"><span>VALID FOR</span><span>{{ ttlLabel }}</span></div>
+                <div style="display:flex;justify-content:space-between;gap:10px;"><span>ATTEMPTS</span><span>3 PER CODE</span></div>
+                <div style="display:flex;justify-content:space-between;gap:10px;"><span>STORED PASSWORD</span><span>NONE</span></div>
+              </div>
+            </div>
+            <button onClick="{{ signOut }}" style="border:1.5px solid var(--line);background:var(--paper);color:var(--ink);border-radius:100px;padding:13px 20px;font-size:14px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">Sign out</button>
+          </div>
         </div>
       </div>
     </sc-if>
@@ -676,6 +884,46 @@
               <div style="display:flex;justify-content:space-between;"><span>PARKING</span><span>PIER 7 BASEMENT</span></div>
             </div>
             <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Button" on-click="{{ goMenu }}" hint-size="auto,48px">Order for pickup →</x-import>
+          </div>
+        </div>
+
+        <div style="margin-top:22px;background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:26px;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:28px;align-items:center;">
+          <div style="display:flex;align-items:center;gap:18px;">
+            <div style="background:var(--cream);border:1px solid var(--line);border-radius:14px;padding:12px;flex:none;">
+              <svg width="76" height="76" viewBox="0 0 40 40" style="display:block;" aria-label="Counter QR code">
+                <rect width="40" height="40" rx="4" fill="#FBF6EC"></rect>
+                <rect x="4" y="4" width="10" height="10" fill="#2B241D"></rect>
+                <rect x="6.5" y="6.5" width="5" height="5" fill="#FBF6EC"></rect>
+                <rect x="26" y="4" width="10" height="10" fill="#2B241D"></rect>
+                <rect x="28.5" y="6.5" width="5" height="5" fill="#FBF6EC"></rect>
+                <rect x="4" y="26" width="10" height="10" fill="#2B241D"></rect>
+                <rect x="6.5" y="28.5" width="5" height="5" fill="#FBF6EC"></rect>
+                <rect x="18" y="4" width="3" height="3" fill="#2B241D"></rect>
+                <rect x="18" y="11" width="3" height="3" fill="#2B241D"></rect>
+                <rect x="18" y="18" width="3" height="3" fill="#C7355A"></rect>
+                <rect x="25" y="18" width="3" height="3" fill="#2B241D"></rect>
+                <rect x="32" y="18" width="3" height="3" fill="#2B241D"></rect>
+                <rect x="18" y="25" width="3" height="3" fill="#2B241D"></rect>
+                <rect x="25" y="25" width="3" height="3" fill="#2B241D"></rect>
+                <rect x="32" y="32" width="3" height="3" fill="#2B241D"></rect>
+                <rect x="25" y="32" width="3" height="3" fill="#2B241D"></rect>
+                <rect x="11" y="18" width="3" height="3" fill="#2B241D"></rect>
+                <rect x="4" y="18" width="3" height="3" fill="#2B241D"></rect>
+              </svg>
+            </div>
+            <div>
+              <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Eyebrow" hint-size="auto,18px">In the shop</x-import>
+              <h3 style="font-family:'Fraunces',serif;font-weight:600;font-size:20px;margin:12px 0 6px;">Skip the queue at the counter</h3>
+              <p style="color:var(--ink-soft);font-size:14px;line-height:1.6;margin:0;">Scan the code on the counter, order from your phone, and we'll call your number when it's boxed. Same menu, same live tracker.</p>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <sc-for list="{{ counterSteps }}" as="c" hint-placeholder-count="3">
+              <div style="display:flex;gap:12px;align-items:flex-start;">
+                <span style="font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--berry-deep);flex:none;width:18px;">{{ c.n }}</span>
+                <span style="font-size:13.5px;line-height:1.55;">{{ c.t }}</span>
+              </div>
+            </sc-for>
           </div>
         </div>
       </div>
@@ -856,7 +1104,7 @@
 </div>
 
 </x-dc>
-<script type="text/x-dc" data-dc-script data-props="{&quot;whatsappEnabled&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;WhatsApp&quot;},&quot;whatsappNumber&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;971500000000&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;WhatsApp&quot;},&quot;freeDeliveryOver&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:150,&quot;min&quot;:0,&quot;max&quot;:500,&quot;step&quot;:25,&quot;unit&quot;:&quot;AED&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Commerce&quot;}}">
+<script type="text/x-dc" data-dc-script data-props="{&quot;whatsappEnabled&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;WhatsApp&quot;},&quot;whatsappNumber&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;971500000000&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;WhatsApp&quot;},&quot;freeDeliveryOver&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:150,&quot;min&quot;:0,&quot;max&quot;:500,&quot;step&quot;:25,&quot;unit&quot;:&quot;AED&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Commerce&quot;},&quot;otpLength&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[4,6],&quot;default&quot;:6,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Sign in&quot;},&quot;otpSeconds&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:45,&quot;min&quot;:15,&quot;max&quot;:120,&quot;step&quot;:15,&quot;unit&quot;:&quot;s&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Sign in&quot;}}">
 const CAT_COLOR = {Birthday:'#C7355A', Wedding:'#E2A233', Cupcakes:'#6F9463', Cheesecakes:'#C7355A', Everyday:'#E2A233', Cookies:'#6F9463'};
 
 const ITEMS = [
@@ -905,11 +1153,14 @@ const STAGES = [
   {title:'Ready', sub:'Pickup at counter 2'}
 ];
 
+// state: 'live' = in the kitchen now · 'upcoming' = scheduled today or later
+// · 'done' = collected/delivered. Only live + upcoming are trackable.
 const SEED_ORDERS = [
-  {id:'LY-4471', items:'Chocolate Fudge Drip · 8 inch', total:223, when:'Today · 12:00 — 14:00', fulfil:'pickup', method:'Card', live:true},
-  {id:'LY-4402', items:'Salted Caramel Cups · Box of 12', total:132, when:'12 Aug · Collected', fulfil:'pickup', method:'WhatsApp', live:false},
-  {id:'LY-4310', items:'Three-Tier Blush', total:890, when:'2 Aug · Delivered', fulfil:'delivery', method:'Card', live:false},
-  {id:'LY-4188', items:'New York Baked, Date & Honey Loaf', total:205, when:'19 Jul · Collected', fulfil:'pickup', method:'Apple Pay', live:false}
+  {id:'LY-4471', items:'Chocolate Fudge Drip · 8 inch', total:223, when:'Today · 12:00 — 14:00', fulfil:'pickup', method:'Card', state:'live'},
+  {id:'LY-4465', items:'Ivory Rose Tier', total:950, when:'Sat 22 Aug · 10:00 — 12:00', fulfil:'delivery', method:'Card', state:'upcoming'},
+  {id:'LY-4402', items:'Salted Caramel Cups · Box of 12', total:132, when:'12 Aug · Collected', fulfil:'pickup', method:'WhatsApp', state:'done'},
+  {id:'LY-4310', items:'Three-Tier Blush', total:890, when:'2 Aug · Delivered', fulfil:'delivery', method:'Card', state:'done'},
+  {id:'LY-4188', items:'New York Baked, Date & Honey Loaf', total:205, when:'19 Jul · Collected', fulfil:'pickup', method:'Apple Pay', state:'done'}
 ];
 
 // Placeholder stock photos pulled from cognisivelabs/cakelake (docs/design/photos).
@@ -946,6 +1197,18 @@ class Component extends DCLogic {
       fulfil:'pickup', detailId:null, sizeIdx:0, qty:1, msg:'', candles:false, gift:false,
       builder:{tiers:'One tier', size:'8 inch', flavour:'Vanilla bean', frosting:'Swiss buttercream', msg:''},
       form:{name:'', phone:'', email:'', address:''}, day:'Today', slot:'12:00 — 14:00',
+      checkoutMode:'guest', loggedIn:false, otpSent:false, otp:'',
+      // Auth: no password is ever stored. The identifier (email or mobile) is the
+      // account, and a short-lived one-time code is the only credential.
+      authStep:'id', authId:'', authCode:'', authErr:'', authSent:null, authLeft:0, authTries:0,
+      profile:{
+        name:'Layla Haddad', mobile:'+971 50 441 8802', email:'layla@example.com',
+        addresses:[
+          {id:'a1', label:'Home', line:'Marina Gate 2, Apt 1204, Dubai Marina', primary:true},
+          {id:'a2', label:'Office', line:'Boulevard Plaza T1, Level 9, Downtown', primary:false}
+        ]
+      },
+      draft:null, newAddr:{label:'', line:''},
       pay:'card', err:'', orders:SEED_ORDERS, trackId:'LY-4471', stage:1,
       waOpen:false, waMsgs:[{from:'them', text:'Hi, this is Cake Lake on Marina Walk. You can order right here — I\u2019ll take you through it.'}],
       waUpdates:true, toast:'', noteSent:''
@@ -1086,7 +1349,14 @@ class Component extends DCLogic {
 
   placeOrder = () => {
     const f = this.state.form;
-    if(!f.name.trim() || !f.phone.trim()) return this.setState({err:'Add a name and a phone number so we can text you.'});
+    const guest = this.state.checkoutMode === 'guest';
+    if(!f.name.trim()) return this.setState({err:'Add a name for the order.'});
+    if(guest){
+      if(!f.phone.trim()) return this.setState({err:'Add a mobile number so we can text you.'});
+      if(!/.+@.+\..+/.test(f.email.trim())) return this.setState({err:'Guest orders need an email — that\u2019s where your tracking link goes.'});
+    } else if(!this.state.loggedIn){
+      return this.setState({err:'Verify your mobile number to use your account, or switch to guest checkout.'});
+    }
     if(this.state.fulfil==='delivery' && !f.address.trim()) return this.setState({err:'Add a delivery address.'});
     if(!this.state.cart.length) return this.setState({err:'Your cart is empty.'});
     return this.commitOrder(this.state.pay==='whatsapp' ? 'WhatsApp' : this.state.pay==='cash' ? 'Cash at counter' : this.state.pay==='tabby' ? 'Tabby' : 'Card');
@@ -1095,8 +1365,13 @@ class Component extends DCLogic {
   commitOrder(method){
     const id = 'LY-' + (4472 + this.state.orders.length);
     const items = this.state.cart.map(c => c.qty>1 ? c.qty+' × '+c.name : c.name).join(', ');
-    const order = {id, items, total:this.total(), when:this.state.day+' · '+this.state.slot, fulfil:this.state.fulfil, method, live:true};
-    const orders = [order].concat(this.state.orders.map(o => Object.assign({}, o, {live:false})));
+    const guest = this.state.checkoutMode === 'guest';
+    const order = {
+      id, items, total:this.total(), when:this.state.day+' · '+this.state.slot,
+      fulfil:this.state.fulfil, method, state:'live',
+      via: guest ? 'guest' : 'account', email:this.state.form.email
+    };
+    const orders = [order].concat(this.state.orders.map(o => o.state==='live' ? Object.assign({}, o, {state:'done'}) : o));
     this.setState({orders, trackId:id, stage:0, cart:[], applied:null, promo:'', promoNote:'One code per order.', err:'', route:'confirm', lastOrder:order});
     window.scrollTo(0,0);
     return order;
@@ -1133,6 +1408,90 @@ class Component extends DCLogic {
     this.setState({waMsgs:this.state.waMsgs.concat([{from:'them', text:reply}])});
   }
 
+  // ---- OTP auth (no password anywhere in the system) ----
+  otpLength(){ return this.props.otpLength === 4 ? 4 : 6; }
+  otpTtl(){ return this.props.otpSeconds ?? 45; }
+
+  idKind(v){
+    const t = (v||'').trim();
+    if(/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(t)) return 'email';
+    if(/^\+?[0-9\s-]{9,}$/.test(t)) return 'mobile';
+    return null;
+  }
+
+  startTimer(){
+    clearInterval(this._otpTimer);
+    this._otpTimer = setInterval(() => {
+      const left = this.state.authLeft - 1;
+      if(left <= 0){ clearInterval(this._otpTimer); this.setState({authLeft:0}); }
+      else this.setState({authLeft:left});
+    }, 1000);
+  }
+
+  componentWillUnmount(){ clearInterval(this._otpTimer); clearTimeout(this._t); }
+
+  sendCode = () => {
+    const id = (this.state.authId||'').trim();
+    const kind = this.idKind(id);
+    if(!kind) return this.setState({authErr:'Enter a valid mobile number or email address.'});
+    const n = this.otpLength();
+    const code = String(Math.floor(Math.random() * Math.pow(10, n))).padStart(n, '0');
+    this.setState({
+      authStep:'code', authCode:'', authErr:'', authTries:0,
+      authSent:{id, kind, code}, authLeft:this.otpTtl()
+    });
+    this.startTimer();
+  };
+
+  resendCode = () => {
+    const sent = this.state.authSent; if(!sent) return;
+    const n = this.otpLength();
+    const code = String(Math.floor(Math.random() * Math.pow(10, n))).padStart(n, '0');
+    this.setState({authSent:Object.assign({}, sent, {code}), authCode:'', authErr:'', authTries:0, authLeft:this.otpTtl()});
+    this.startTimer();
+    this.flash('New code sent');
+  };
+
+  verifyCode = () => {
+    const s = this.state, sent = s.authSent;
+    if(!sent) return;
+    if(s.authLeft <= 0) return this.setState({authErr:'That code has expired. Send a new one.'});
+    const entered = (s.authCode||'').replace(/\D/g,'');
+    if(entered.length !== this.otpLength()) return this.setState({authErr:'Enter the '+this.otpLength()+'-digit code.'});
+    if(entered !== sent.code){
+      const tries = s.authTries + 1;
+      if(tries >= 3) return this.setState({authTries:tries, authCode:'', authErr:'Too many wrong codes. Send a new one.', authLeft:0});
+      return this.setState({authTries:tries, authErr:'That code isn\u2019t right. '+(3-tries)+' attempt'+(3-tries===1?'':'s')+' left.'});
+    }
+    clearInterval(this._otpTimer);
+    const p = Object.assign({}, s.profile);
+    if(sent.kind === 'mobile') p.mobile = sent.id; else p.email = sent.id;
+    this.setState({
+      loggedIn:true, authStep:'id', authCode:'', authErr:'', authLeft:0, profile:p,
+      form:Object.assign({}, s.form, {name:s.form.name || p.name, phone:p.mobile, email:p.email}),
+      route:'account'
+    });
+    window.scrollTo(0,0);
+    this.flash('Signed in — no password needed');
+  };
+
+  signOut = () => {
+    clearInterval(this._otpTimer);
+    this.setState({loggedIn:false, authStep:'id', authId:'', authCode:'', authSent:null, authLeft:0, authErr:'', draft:null, route:'home'});
+    window.scrollTo(0,0);
+    this.flash('Signed out');
+  };
+
+  editProfile = () => this.setState({draft:Object.assign({}, this.state.profile), route:'profile'});
+
+  saveProfile = () => {
+    const d = this.state.draft; if(!d) return;
+    if(!(d.name||'').trim()) return this.setState({authErr:'Your name can\u2019t be empty.'});
+    if(!this.idKind(d.mobile) && !this.idKind(d.email)) return this.setState({authErr:'Keep at least a mobile number or an email on the account — that\u2019s how you sign in.'});
+    this.setState({profile:Object.assign({}, this.state.profile, d), draft:null, authErr:''});
+    this.flash('Details saved');
+  };
+
   renderVals(){
     const s = this.state;
     const waNumber = (this.props.whatsappNumber || '971500000000').replace(/[^0-9]/g,'');
@@ -1151,7 +1510,9 @@ class Component extends DCLogic {
     const it = this.detailItem();
     const detailPhoto = PHOTOS[it.id] || {};
     const sizes = SIZES[it.kind];
-    const live = s.orders.find(o => o.id === s.trackId) || s.orders[0];
+    // Trackable = in the kitchen now, or scheduled for today/later. Never completed.
+    const trackable = s.orders.filter(o => o.state === 'live' || o.state === 'upcoming');
+    const live = trackable.find(o => o.id === s.trackId) || trackable[0] || null;
     const b = s.builder;
     const bOpt = (key, opts) => opts.map(o => ({label:o, active:b[key]===o, go:() => this.setState({builder:Object.assign({}, this.state.builder, {[key]:o})})}));
     const cartRows = s.cart.map((c,i) => ({
@@ -1176,13 +1537,86 @@ class Component extends DCLogic {
         label, go:() => this.go(r), color: s.route===r ? 'var(--berry-deep)' : 'var(--ink)', underline: s.route===r ? 'var(--berry)' : 'transparent'
       })),
       goHome:() => this.go('home'), goMenu:() => this.go('menu'), goCart:() => this.go('cart'),
-      goCheckout:() => this.go('checkout'), goTrack:() => this.go('track'), goAccount:() => this.go('account'),
+      goCheckout:() => this.go('checkout'), goTrack:() => this.go('track'),
+      goAccount:() => this.go(s.loggedIn ? 'account' : 'signin'),
       goBuilder:() => this.go('builder'), goLocations:() => this.go('locations'), goContact:() => this.go('contact'),
       goOffers:() => this.go('offers'),
       isHome:s.route==='home', isMenu:s.route==='menu', isProduct:s.route==='product', isBuilder:s.route==='builder',
       isCart:s.route==='cart', isCheckout:s.route==='checkout', isConfirm:s.route==='confirm', isTrack:s.route==='track',
       isAccount:s.route==='account', isOffers:s.route==='offers', isLocations:s.route==='locations',
       isStory:s.route==='story', isContact:s.route==='contact', isCorporate:s.route==='corporate',
+      isSignin:s.route==='signin', isProfile:s.route==='profile',
+
+      // --- auth screens ---
+      authId:s.authId,
+      setAuthId:e => this.setState({authId:e.target.value, authErr:''}),
+      authAtId:s.authStep==='id', authAtCode:s.authStep==='code',
+      authErr:s.authErr,
+      authCode:s.authCode,
+      setAuthCode:e => this.setState({authCode:e.target.value.replace(/\D/g,'').slice(0,this.otpLength()), authErr:''}),
+      sendCode:this.sendCode, resendCode:this.resendCode, verifyCode:this.verifyCode,
+      otpLen:String(this.otpLength()),
+      otpPlaceholder:'0'.repeat(this.otpLength()),
+      authSentTo: s.authSent ? (s.authSent.kind==='mobile' ? 'Texted to '+s.authSent.id : 'Emailed to '+s.authSent.id) : '',
+      authSentKind: s.authSent ? (s.authSent.kind==='mobile' ? 'SMS' : 'EMAIL') : '',
+      authDemoCode: s.authSent ? 'Prototype only — your code is '+s.authSent.code : '',
+      authLeftLabel: s.authLeft > 0 ? 'Expires in 0:'+String(s.authLeft).padStart(2,'0') : 'Code expired',
+      authLive:s.authLeft > 0, authDead:s.authLeft <= 0,
+      authBarWidth: Math.round((s.authLeft / this.otpTtl()) * 100) + '%',
+      authBarColor: s.authLeft > 15 ? 'var(--pistachio)' : 'var(--berry)',
+      changeId:() => this.setState({authStep:'id', authCode:'', authErr:'', authLeft:0}),
+      goSignin:() => this.go('signin'),
+      ttlLabel:this.otpTtl()+' SECONDS',
+      authFacts:[
+        {n:'01', t:'Your mobile number or email is the account. Whichever you type, the code goes there.'},
+        {n:'02', t:'The code is '+this.otpLength()+' digits and lasts '+this.otpTtl()+' seconds. After that it stops working and you ask for another.'},
+        {n:'03', t:'Three wrong attempts and the code dies — a new one has to be sent.'},
+        {n:'04', t:'Nothing is stored to steal: no password field, no password reset, no security questions.'}
+      ],
+      signOut:this.signOut,
+      editProfile:this.editProfile,
+
+      // --- profile screen ---
+      pName:s.profile.name, pMobile:s.profile.mobile, pEmail:s.profile.email,
+      dName:s.draft ? s.draft.name : s.profile.name,
+      dMobile:s.draft ? s.draft.mobile : s.profile.mobile,
+      dEmail:s.draft ? s.draft.email : s.profile.email,
+      setDName:e => this.setState({draft:Object.assign({}, this.state.draft || this.state.profile, {name:e.target.value})}),
+      setDMobile:e => this.setState({draft:Object.assign({}, this.state.draft || this.state.profile, {mobile:e.target.value})}),
+      setDEmail:e => this.setState({draft:Object.assign({}, this.state.draft || this.state.profile, {email:e.target.value})}),
+      saveProfile:this.saveProfile,
+      profileDirty:!!s.draft,
+      signinWithLabel: this.idKind(s.profile.mobile) && this.idKind(s.profile.email)
+        ? 'Mobile or email — whichever you use, we send a code to it'
+        : this.idKind(s.profile.mobile) ? 'Mobile only — add an email as a backup' : 'Email only — add a mobile as a backup',
+      addresses:s.profile.addresses.map(a => ({
+        label:a.label, line:a.line,
+        tagLabel:a.primary ? 'Default' : 'Also saved',
+        border:a.primary ? '1.5px solid var(--berry)' : '1px solid var(--line)',
+        canDefault:!a.primary,
+        makeDefault:() => this.setState({profile:Object.assign({}, this.state.profile, {
+          addresses:this.state.profile.addresses.map(x => Object.assign({}, x, {primary:x.id===a.id}))
+        })}),
+        remove:() => {
+          const rest = this.state.profile.addresses.filter(x => x.id !== a.id);
+          if(rest.length && a.primary) rest[0] = Object.assign({}, rest[0], {primary:true});
+          this.setState({profile:Object.assign({}, this.state.profile, {addresses:rest})});
+          this.flash(a.label + ' removed');
+        }
+      })),
+      naLabel:s.newAddr.label, naLine:s.newAddr.line,
+      setNaLabel:e => this.setState({newAddr:Object.assign({}, this.state.newAddr, {label:e.target.value})}),
+      setNaLine:e => this.setState({newAddr:Object.assign({}, this.state.newAddr, {line:e.target.value})}),
+      addAddress:() => {
+        const na = this.state.newAddr;
+        if(!na.line.trim()) return this.setState({authErr:'Add the building, street and area.'});
+        const list = this.state.profile.addresses.concat([{
+          id:'a'+Date.now(), label:na.label.trim() || 'Saved', line:na.line.trim(),
+          primary:this.state.profile.addresses.length === 0
+        }]);
+        this.setState({profile:Object.assign({}, this.state.profile, {addresses:list}), newAddr:{label:'', line:''}, authErr:''});
+        this.flash('Address saved');
+      },
       showRail:s.route==='home' || s.route==='menu',
 
       cartCount:count, hasCart:count>0, cartEmpty:s.cart.length===0,
@@ -1198,7 +1632,7 @@ class Component extends DCLogic {
       channels:[
         {step:'One', title:'Order online', sub:'Full menu, live slots, card or Tabby. Same-day on most bakes.'},
         {step:'Two', title:'Or on WhatsApp', sub:'Send your cart in a chat and reply CONFIRM. Same queue, same tracker.'},
-        {step:'Three', title:'Or at the counter', sub:'Walk in on Marina Walk and pick straight from the case.'}
+        {step:'Three', title:'Or scan in the shop', sub:'Scan the QR on the counter and order from your phone instead of queuing.'}
       ],
 
       cats:cats.map(c => ({label:c, active:s.cat===c, go:() => { this.setState({cat:c}); if(s.route!=='menu') this.go('menu'); }})),
@@ -1239,6 +1673,28 @@ class Component extends DCLogic {
       promo:s.promo, setPromo:e => this.setState({promo:e.target.value}), applyPromo:this.applyPromo,
       promoNote:s.promoNote, promoColor:s.promoOk ? 'var(--pistachio)' : 'var(--ink-soft)',
 
+      payAsGuest:s.checkoutMode==='guest', payAsAccount:s.checkoutMode==='account',
+      setGuest:() => this.setState({checkoutMode:'guest', err:''}),
+      setAccount:() => this.setState({checkoutMode:'account', err:''}),
+      loggedIn:s.loggedIn, notLoggedIn:!s.loggedIn, otpSent:s.otpSent, otp:s.otp,
+      setOtp:e => this.setState({otp:e.target.value}),
+      sendOtp:() => {
+        if(!s.form.phone.trim()) return this.setState({err:'Enter your mobile number first.'});
+        this.setState({otpSent:true, err:''});
+        this.flash('Code sent to '+s.form.phone);
+      },
+      verifyOtp:() => {
+        if((s.otp||'').trim().length < 4) return this.setState({err:'Enter the 4-digit code we texted you.'});
+        this.setState({
+          loggedIn:true, err:'',
+          form:Object.assign({}, this.state.form, {name:this.state.form.name || 'Layla Haddad', email:this.state.form.email || 'layla@example.com'})
+        });
+        this.flash('Signed in — your order history is on your account');
+      },
+      accountLine:'Signed in as '+(s.profile.mobile || s.profile.email),
+      guestNote:'We\u2019ll email your tracking link here — no account needed.',
+      emailLabel: s.checkoutMode==='guest' ? 'Email (we send your tracking link here)' : 'Email (for the receipt)',
+
       fName:s.form.name, fPhone:s.form.phone, fEmail:s.form.email, fAddress:s.form.address,
       setName:e => this.setState({form:Object.assign({}, this.state.form, {name:e.target.value})}),
       setPhone:e => this.setState({form:Object.assign({}, this.state.form, {phone:e.target.value})}),
@@ -1258,16 +1714,21 @@ class Component extends DCLogic {
       payCta: s.pay==='whatsapp' ? 'Place order on WhatsApp →' : s.pay==='cash' ? 'Place order — pay at counter →' : 'Pay '+money(this.total())+' →',
       checkoutError:s.err, placeOrder:this.placeOrder,
 
-      confirmLine: order ? 'Order '+order.id+' · '+order.when+' · '+(order.fulfil==='delivery'?'delivery':'pickup at Marina Walk')+'. We text you at each stage.' : '',
+      confirmLine: order
+        ? 'Order '+order.id+' · '+order.when+' · '+(order.fulfil==='delivery'?'delivery':'pickup at Marina Walk')+'. '
+          + (order.via==='guest' && order.email ? 'Your tracking link is on its way to '+order.email+'.' : 'It\u2019s on your account, and we text you at each stage.')
+        : '',
       confirmRows: order ? [
         {k:'Order number', v:'#'+order.id},
         {k:'Items', v:order.items},
         {k:'When', v:order.when},
         {k:'How', v:order.fulfil==='delivery' ? 'Delivery' : 'Pickup — Marina Walk'},
+        {k:'Checked out as', v:order.via==='guest' ? 'Guest · '+(order.email||'') : 'Account'},
         {k:'Paid with', v:order.method},
         {k:'Total', v:money(order.total)}
       ] : [],
 
+      hasTrackable:!!live, noTrackable:!live,
       trackerStages:STAGES, stage:stageNow,
       trackerCake:this.trackerCake(stageNow),
       trackerRows:STAGES.map((z,i) => {
@@ -1281,11 +1742,17 @@ class Component extends DCLogic {
           rule: i === STAGES.length-1 ? 'none' : '1px solid var(--ink-line)'
         };
       }),
-      activeOrderLabel:'ORDER #'+(live? live.id : 'LY-4471'),
-      etaLabel: stageNow>=3 ? 'READY NOW' : 'ETA 12:40',
+      activeOrderLabel:'ORDER #'+(live? live.id : '—'),
+      etaLabel: live && live.state==='upcoming' ? 'SCHEDULED' : stageNow>=3 ? 'READY NOW' : 'ETA 12:40',
       advanceStage:() => this.setState({stage:(s.stage+1)%4}),
-      trackIntro: live ? live.items+' · '+live.when : '',
-      trackables:s.orders.slice(0,3).map(o => ({label:'#'+o.id, active:s.trackId===o.id, go:() => this.setState({trackId:o.id, stage:o.live?s.stage:3})})),
+      trackIntro: live
+        ? live.items+' · '+live.when + (live.state==='upcoming' ? ' · not started yet' : '')
+        : 'Nothing in the kitchen right now. Completed orders live in your account history.',
+      trackables:trackable.map(o => ({
+        label:'#'+o.id + (o.state==='upcoming' ? ' · scheduled' : ''),
+        active:s.trackId===o.id,
+        go:() => this.setState({trackId:o.id, stage:o.state==='upcoming' ? 0 : s.stage})
+      })),
       trackLog:[
         {t:'09:14', m:'Order placed and paid.'},
         {t:'11:02', m:'Sponge in the oven.'},
@@ -1297,14 +1764,26 @@ class Component extends DCLogic {
 
       orderCountLabel:String(s.orders.length),
       spendLabel:money(s.orders.reduce((n,o)=>n+o.total,0)),
-      orderRows:s.orders.map(o => ({
-        meta:'#'+o.id+' · '+o.when+' · '+o.method.toUpperCase(),
-        items:o.items, total:money(o.total),
-        status:o.live ? 'open' : 'soon', statusLabel:o.live ? 'In progress' : 'Completed',
-        actionLabel:o.live ? 'Track' : 'Reorder',
-        action:() => { if(o.live){ this.setState({trackId:o.id}); this.go('track'); } else { this.addToCart({key:'re|'+o.id, id:'re', name:o.items, meta:'Reorder of #'+o.id, unit:o.total, qty:1}); this.go('cart'); } }
-      })),
+      orderRows:s.orders.map(o => {
+        const open = o.state === 'live' || o.state === 'upcoming';
+        return {
+          meta:'#'+o.id+' · '+o.when+' · '+o.method.toUpperCase(),
+          items:o.items, total:money(o.total),
+          status: open ? 'open' : 'soon',
+          statusLabel: o.state==='live' ? 'In progress' : o.state==='upcoming' ? 'Scheduled' : 'Completed',
+          actionLabel: open ? 'Track' : 'Reorder',
+          action:() => {
+            if(open){ this.setState({trackId:o.id, stage:o.state==='upcoming'?0:s.stage}); this.go('track'); }
+            else { this.addToCart({key:'re|'+o.id, id:'re', name:o.items, meta:'Reorder of #'+o.id, unit:o.total, qty:1}); this.go('cart'); }
+          }
+        };
+      }),
 
+      counterSteps:[
+        {n:'01', t:'Scan the code on the counter — no app, it opens this menu.'},
+        {n:'02', t:'Order and pay on your phone, or pay cash at the till.'},
+        {n:'03', t:'Follow the tracker and collect when it says ready.'}
+      ],
       timeline:[
         {year:'2019', what:'One deck oven in a Marina kitchen, Friday-only order sheet.'},
         {year:'2021', what:'The shop opens on Marina Walk. The order sheet becomes a website.'},
@@ -1327,7 +1806,7 @@ class Component extends DCLogic {
       footCols:[
         {title:'Shop', links:[['Full menu','menu'],['Offers','offers'],['Custom cakes','builder'],['Track order','track']].map(([label,r])=>({label, go:()=>this.go(r)}))},
         {title:'Company', links:[['Our story','story'],['Visit the shop','locations'],['Corporate & bulk','corporate']].map(([label,r])=>({label, go:()=>this.go(r)}))},
-        {title:'Support', links:[['Contact','contact'],['Your account','account'],['Delivery info','locations']].map(([label,r])=>({label, go:()=>this.go(r)}))}
+        {title:'Support', links:[['Contact','contact'],['Sign in','signin'],['Your account','account'],['Delivery info','locations']].map(([label,r])=>({label, go:()=>this.go(r)}))}
       ],
 
       waEnabled:this.props.whatsappEnabled ?? true,

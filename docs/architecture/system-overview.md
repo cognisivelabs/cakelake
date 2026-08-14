@@ -143,22 +143,29 @@ without dedicated ops.
 ## 8. Admin Console
 
 ```
-Staff member logs in at /admin (separate auth from customer accounts
--- ADR-011, distinct from the mobile-number customer identity in ADR-005)
+Staff member logs in at /admin with a one-time code (mobile or email --
+same OTP style as customer login, but checked against a separate
+`team` collection, not customer accounts -- ADR-005, ADR-011)
       |
       v
-Same Next.js app, same Express API, same MongoDB -- just an
-authenticated, store-scoped route section:
-  - Catalogue CRUD (items, prices, photos, availability)
-  - Offers CRUD (create/edit/end time-limited promotions)
-  - Metrics view (orders + traffic, from section 7 above)
+Same Next.js app, same Express API, same MongoDB -- an authenticated,
+store-scoped, role-gated route section:
+  - Catalogue CRUD (items, prices, photos, availability)     [Owner, Catalogue manager]
+  - Offers CRUD (create/edit/end time-limited promotions)    [Owner, Catalogue manager]
+  - Team & access: invite staff, assign roles, suspend/remove [Owner only]
+  - Activity log: every catalogue/offer/team change, who + when
+  - Metrics view (orders + traffic, from section 7 above)     [not yet built]
 ```
 
-This is not a second application — see [ADR-011](../adr/ADR-011-admin-console.md)
-for why reusing the same app was chosen over splitting it out. The
-counter order-status taps (section 4, requirement #5's staff side) and the
-admin console are different route sections of the same app, usable by the
-same staff login.
+Three roles, most to least privileged: **Owner** (everything, plus who has
+access), **Catalogue manager** (items/offers/photos/orders, no team
+access), **Counter staff** (orders only, read-only menu). This is not a
+second application — see [ADR-011](../adr/ADR-011-admin-console.md) for why
+reusing the same app was chosen over splitting it out, and for the
+confirmation flag on this role/invite/audit-log scope (it's more than the
+original catalogue/offers CRUD ask). The counter order-status taps
+(section 4, requirement #5's staff side) and the admin console are
+different route sections of the same app, usable by the same staff login.
 
 ## 9. What's Deliberately Not Here (Yet)
 

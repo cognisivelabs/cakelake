@@ -5,8 +5,9 @@ still needs a client answer. As answers come in, move items from "Open
 questions" into the relevant confirmed section and note the date/source of
 the decision.
 
-Last updated: 2026-08-14 (added order confirmation email, admin console,
-logging, and metrics requirements).
+Last updated: 2026-08-14 (counter QR and Track Order discrepancies
+resolved in the prototype; new admin console + OTP login mechanism
+flagged for confirmation).
 
 ## Client
 
@@ -105,30 +106,36 @@ plus two more "opening 2026" — none of this is confirmed; see the open
 questions below and reconcile with the client rather than carrying it forward
 by default.
 
-**⚠ Discrepancy to resolve:** a newer working prototype (`prototype/`,
-2026-08-14) reconciled the mockup to a single shop, which is correct per
-scope — but it also **removed QR-code-at-table in-shop ordering**, making
-in-shop ordering counter-only. That conflicts with confirmed requirement #6
-above (order online while physically in the shop, QR-code style), which
-was not an open question — it was explicit, confirmed scope. Requirement #6
-has since been elaborated into two distinct QR flows (counter QR + leaflet
-QR, see above); of the two, only the **counter QR** needs adding back to
-the prototype now — leaflet QR design is deferred (see above), so its
-absence from the prototype isn't a discrepancy.
+**✅ Discrepancy resolved (2026-08-14):** the missing counter QR
+(requirement #6) has been restored in both prototypes — a "Skip the queue
+at the counter" panel with the counter QR now appears on the home ordering
+channels and the Visit screen in v2. Leaflet QR remains deliberately
+undesigned, per the deferral above.
 
-**⚠ Second discrepancy to resolve:** in prototype v2
-(`prototype/Cake Lake Ordering Prototype v2.dc.html`), the Track Order page
-pulls its list of trackable orders as `s.orders.slice(0,3)` — the first
-three orders regardless of status. Its sample data (`SEED_ORDERS`) has one
-live/in-progress order and three already-collected/delivered ones, so the
-Track Order page currently shows completed orders next to the live one.
-Per this session's chat feedback (2026-08-14): **Track Order should only
-ever show the current in-progress order plus anything scheduled for
-today/future collection or delivery — never orders that are already
-collected/delivered.** Already-completed orders belong in account order
-history (requirement #7), not on the tracking page. This is prototype logic,
-not just sample content, so it needs fixing in Claude Design rather than
-patched locally — see workflow note above.
+**✅ Second discrepancy resolved (2026-08-14):** the Track Order page (both
+v1 and v2) now filters trackable orders to `state === 'live' || state ===
+'upcoming'` — already-collected/delivered orders no longer appear on the
+tracking page. Verified directly in
+`prototype/Cake Lake Ordering Prototype v2.dc.html`.
+
+**⚠ New elaboration to confirm — login mechanism.** Prototype v2 implements
+account login (requirement #7) as a one-time code sent to mobile *or*
+email, the customer's choice — not mobile-only as originally decided in
+ADR-005. This is a reasonable middle ground (email OTP is free; mobile OTP
+still supports the phone-first flow) but does partially reopen the
+"no SMS/OTP cost" assumption ADR-005 made — confirm whether this is wanted,
+or whether OTP should be deferred/mobile-only as originally decided. See
+[ADR-005](../adr/ADR-005-customer-identity.md)'s flagged update.
+
+**⚠ New elaboration to confirm — admin console scope.** The new admin
+console prototype (`prototype/Cake Lake Admin.dc.html`, requirement #9)
+goes beyond simple catalogue/offer CRUD: it adds three roles (Owner,
+Catalogue manager, Counter staff) with different permissions, an
+invite-based onboarding flow, and an activity/audit log of who changed
+what. All reasonable, none of it was explicitly asked for — confirm this
+is the intended scope before treating it as settled. It does **not** yet
+include an orders view or the order/traffic metrics view from ADR-010. See
+[ADR-011](../adr/ADR-011-admin-console.md)'s flagged update.
 
 ## Open questions for client
 
@@ -185,3 +192,9 @@ through with the client.
   approach to each.
 - **2026-08-14** (chat) — Confirmed: admin authentication is separate from
   customer login (ADR-011 flipped from Proposed to Accepted on this point).
+- **2026-08-14** (Claude Design sync) — Both open prototype discrepancies
+  resolved: counter QR restored, Track Order filtered to live/upcoming
+  only. Two new elaborations flagged for confirmation rather than
+  auto-accepted: OTP login via mobile-or-email (was mobile-only in
+  ADR-005), and an admin console with roles/invites/audit-log beyond the
+  original catalogue/offers CRUD ask (ADR-011).

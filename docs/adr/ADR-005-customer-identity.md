@@ -37,6 +37,18 @@ Password strategy and whether account login requires OTP verification are
 implementation details left open for the development phase — this ADR
 fixes the *identifier*, not the full auth flow.
 
+**⚠ Prototype update, needs confirmation (2026-08-14):** the working
+prototype (`prototype/Cake Lake Ordering Prototype v2.dc.html`) implements
+account login as a **one-time code sent to mobile *or* email** — the
+customer picks either channel, not mobile number exclusively. This is a
+reasonable middle ground (email OTP costs nothing; mobile OTP still allows
+the phone-first experience) but it does partially reopen the "no SMS/OTP
+cost commitment" assumption in Rationale/Alternatives below — a customer
+who chooses mobile OTP does incur an SMS cost per login. Flagging rather
+than silently accepting: confirm whether email-or-mobile OTP is the
+intended flow, or whether mobile-only (deferring OTP entirely, as
+originally decided here) should be enforced instead.
+
 ## Rationale
 
 **Phone number matches how customers already think of themselves here.**

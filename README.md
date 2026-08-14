@@ -43,18 +43,21 @@ all built and maintained there.
   this folder and the live project disagree, re-pull from Claude Design
   rather than hand-editing files here. See
   [`design-system/readme.md`](design-system/readme.md) for the full index.
-- [`prototype/`](prototype/) — the working ordering-flow prototype, built in
-  Claude Design against the components in `design-system/` (paths point at
+- [`prototype/`](prototype/) — the working prototypes, built in Claude
+  Design against the components in `design-system/` (paths point at
   `../design-system/` and `../docs/design/photos/` rather than separate
-  copies). Two versions: `Cake Lake Ordering Prototype.dc.html` (v1) and
+  copies). `Cake Lake Ordering Prototype.dc.html` (v1) and
   `Cake Lake Ordering Prototype v2.dc.html` ("The Case" direction —
-  photography-led catalogue, sticky category rail, persistent order bar; the
-  current one). Open either `.dc.html` file in a browser to view it — v2
-  also needs `image-slot.js` alongside it, both need `support.js`.
-  [`prototype/explorations/`](prototype/explorations/) keeps the layout and
-  logo directions that were explored but not carried forward, for the
-  record. See [`github.md`](github.md) for the sync notes on what each
-  covers and what it reconciled against the requirements doc.
+  photography-led catalogue, sticky category rail, persistent order bar,
+  account/guest checkout, counter QR; the current customer-facing one), plus
+  `Cake Lake Admin.dc.html` — the staff-facing admin console (requirement
+  #9: catalogue/offers CRUD, invite-based team roles, activity log). Open
+  any `.dc.html` file in a browser to view it — all three need
+  `support.js`, and the two newer ones also need `image-slot.js` alongside
+  them. [`prototype/explorations/`](prototype/explorations/) keeps the
+  layout and logo directions that were explored but not carried forward,
+  for the record. See [`github.md`](github.md) for the sync notes on what
+  each covers and what it reconciled against the requirements doc.
 
 Development does not start until the client signs off on this prototype.
 

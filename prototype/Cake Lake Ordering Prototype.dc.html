@@ -1127,7 +1127,7 @@ class Component extends DCLogic {
       etaLabel: stageNow>=3 ? 'READY NOW' : 'ETA 12:40',
       advanceStage:() => this.setState({stage:(s.stage+1)%4}),
       trackIntro: live ? live.items+' · '+live.when : '',
-      trackables:s.orders.slice(0,3).map(o => ({label:'#'+o.id, active:s.trackId===o.id, go:() => this.setState({trackId:o.id, stage:o.live?s.stage:3})})),
+      trackables:s.orders.filter(o => o.live).map(o => ({label:'#'+o.id, active:s.trackId===o.id, go:() => this.setState({trackId:o.id})})),
       trackLog:[
         {t:'09:14', m:'Order placed and paid.'},
         {t:'11:02', m:'Sponge in the oven.'},

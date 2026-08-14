@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="../design-system/tokens/fonts.css">
+  <link rel="stylesheet" href="../design-system/tokens/colors.css">
+  <link rel="stylesheet" href="../design-system/tokens/typography.css">
+  <link rel="stylesheet" href="../design-system/tokens/spacing.css">
+  <link rel="stylesheet" href="../design-system/tokens/radius.css">
+  <link rel="stylesheet" href="../design-system/tokens/elevation.css">
+  <link rel="stylesheet" href="../design-system/tokens/motion.css">
+  <link rel="stylesheet" href="../design-system/styles.css">
+  <script src="../design-system/_ds_bundle.js"></script>
+  <script src="./image-slot.js"></script>
+  <style>
+    body{margin:0;background:var(--cream);color:var(--ink);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;}
+    a{color:var(--berry);text-decoration:none;}
+    a:hover{color:var(--berry-deep);}
+    input,select,textarea{font-family:'Inter',sans-serif;box-sizing:border-box;}
+    input:focus,select:focus,textarea:focus{outline:2px solid var(--honey);outline-offset:1px;}
+  </style>
+</helmet>
+
+<div style="min-height:100vh;background:var(--cream);">
+
+  <header style="position:sticky;top:0;z-index:60;background:rgba(251,246,236,0.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);">
+    <div style="max-width:1180px;margin:0 auto;padding:14px 24px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <span style="font-family:'Fraunces',serif;font-size:22px;font-weight:700;display:flex;align-items:center;gap:9px;">
+          <svg width="36" height="24" viewBox="0 0 120 80" fill="none" style="display:block;">
+            <path d="M12 60 H108 A4 4 0 0 1 112 64 V72 q-8.667 7 -17.333 0 q-8.667 7 -17.333 0 q-8.667 7 -17.333 0 q-8.667 7 -17.333 0 q-8.667 7 -17.333 0 q-8.667 7 -17.333 0 V64 A4 4 0 0 1 12 60 Z" fill="#856B62"></path>
+            <path d="M25 40 H95 A4 4 0 0 1 99 44 V51 q-7.8 6.5 -15.6 0 q-7.8 6.5 -15.6 0 q-7.8 6.5 -15.6 0 q-7.8 6.5 -15.6 0 q-7.8 6.5 -15.6 0 V44 A4 4 0 0 1 25 40 Z" fill="#E63C74"></path>
+            <path d="M37 21 H83 A4 4 0 0 1 87 25 V31 q-6.75 6 -13.5 0 q-6.75 6 -13.5 0 q-6.75 6 -13.5 0 q-6.75 6 -13.5 0 V25 A4 4 0 0 1 37 21 Z" fill="#3FB6C4"></path>
+            <path d="M60 12c3-4 7-5 10-4" stroke="#E0852A" stroke-width="3" stroke-linecap="round" fill="none"></path>
+            <circle cx="60" cy="14" r="7.5" fill="#E63C74"></circle>
+          </svg>
+          Cake Lake
+        </span>
+        <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);border-left:1px solid var(--line);padding-left:12px;">Admin</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+        <div style="text-align:right;">
+          <div style="font-size:13.5px;font-weight:600;">{{ meName }}</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);">{{ meRoleLabel }}</div>
+        </div>
+        <span style="width:38px;height:38px;border-radius:50%;background:var(--pistachio-soft);border:1.5px solid var(--pistachio);display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-weight:600;font-size:15px;color:var(--pistachio);">{{ meInitials }}</span>
+      </div>
+    </div>
+  </header>
+
+  <div style="background:var(--ink);">
+    <div style="max-width:1180px;margin:0 auto;padding:12px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;">
+      <span style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--honey);">Prototype — view the console as</span>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <sc-for list="{{ roleSwitch }}" as="r" hint-placeholder-count="3">
+          <button onClick="{{ r.go }}" style="border:1.5px solid {{ r.border }};background:{{ r.bg }};color:{{ r.color }};border-radius:100px;padding:7px 15px;font-size:12.5px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">{{ r.label }}</button>
+        </sc-for>
+      </div>
+    </div>
+  </div>
+
+  <div style="max-width:1180px;margin:0 auto;padding:28px 24px 80px;">
+
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:28px;">
+      <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="4">
+        <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Tab" active="{{ t.active }}" on-click="{{ t.go }}" hint-size="auto,40px">{{ t.label }}</x-import>
+      </sc-for>
+    </div>
+
+    <!-- ========== MENU ITEMS ========== -->
+    <sc-if value="{{ atItems }}" hint-placeholder-val="{{ true }}">
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:24px;">
+          <div>
+            <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Eyebrow" hint-size="auto,18px">Catalogue</x-import>
+            <h1 style="font-family:'Fraunces',serif;font-weight:600;letter-spacing:-0.01em;font-size:clamp(1.7rem,3.2vw,2.4rem);margin:14px 0 0;">Menu items</h1>
+          </div>
+          <div style="display:flex;gap:24px;flex-wrap:wrap;">
+            <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Stat" value="{{ itemCount }}" label="On the menu" hint-size="auto,44px"></x-import>
+            <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Stat" value="{{ hiddenCount }}" label="Hidden" hint-size="auto,44px"></x-import>
+            <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Stat" value="{{ noPhotoCount }}" label="No photo" hint-size="auto,44px"></x-import>
+          </div>
+        </div>
+
+        <sc-if value="{{ cannotEdit }}">
+          <div style="background:var(--paper);border:1.5px dashed var(--line);border-radius:22px;padding:22px;margin-bottom:22px;">
+            <b style="display:block;font-family:'Fraunces',serif;font-size:17px;margin-bottom:6px;">You can look, not change</b>
+            <span style="color:var(--ink-soft);font-size:13.5px;">Counter staff see the catalogue read-only. Ask an owner to give you catalogue access.</span>
+          </div>
+        </sc-if>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:22px;align-items:start;">
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <sc-if value="{{ canEdit }}">
+              <button onClick="{{ newItem }}" style="border:1.5px dashed var(--berry);background:transparent;color:var(--berry-deep);border-radius:16px;padding:14px;font-size:13.5px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">+ Add a new item</button>
+            </sc-if>
+            <sc-for list="{{ itemRows }}" as="r" hint-placeholder-count="6">
+              <div onClick="{{ r.open }}" style="background:var(--paper);border:{{ r.border }};border-radius:22px;padding:16px;display:flex;gap:14px;align-items:center;cursor:pointer;">
+                <div style="width:60px;height:60px;border-radius:12px;background:var(--pistachio-soft);flex:none;overflow:hidden;">{{ r.thumb }}</div>
+                <div style="flex:1;min-width:0;">
+                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                    <span style="font-weight:600;font-size:14.5px;">{{ r.name }}</span>
+                    <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.StatusPill" status="{{ r.status }}" hint-size="auto,24px">{{ r.statusLabel }}</x-import>
+                  </div>
+                  <div style="font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--ink-soft);margin-top:5px;">{{ r.meta }}</div>
+                </div>
+                <span style="font-family:'JetBrains Mono',monospace;font-weight:700;font-size:14px;flex:none;">{{ r.price }}</span>
+              </div>
+            </sc-for>
+          </div>
+
+          <sc-if value="{{ editingItem }}">
+            <div style="background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:22px;position:sticky;top:96px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px;">
+                <h3 style="font-family:'Fraunces',serif;font-weight:600;font-size:18px;margin:0;">{{ editorTitle }}</h3>
+                <button onClick="{{ closeItem }}" aria-label="Close" style="background:var(--cream);border:1px solid var(--line);color:var(--ink-soft);width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:14px;">×</button>
+              </div>
+
+              <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:8px;">Photo</div>
+              <div style="position:relative;height:170px;background:var(--pistachio-soft);border-radius:14px;overflow:hidden;margin-bottom:8px;">{{ editorPhoto }}</div>
+              <p style="font-size:12px;color:var(--ink-soft);margin:0 0 18px;line-height:1.5;">{{ photoHint }}</p>
+
+              <div style="display:flex;flex-direction:column;gap:14px;">
+                <div>
+                  <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:8px;">Name</div>
+                  <input type="text" placeholder="Classic Red Velvet" value="{{ dName }}" onChange="{{ setDName }}" style="width:100%;padding:11px 16px;border-radius:100px;border:1.5px solid var(--line);font-size:14px;background:var(--cream);color:var(--ink);">
+                </div>
+                <div>
+                  <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:8px;">Category</div>
+                  <div style="display:flex;gap:7px;flex-wrap:wrap;">
+                    <sc-for list="{{ catOptions }}" as="c" hint-placeholder-count="6">
+                      <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Tab" active="{{ c.active }}" on-click="{{ c.go }}" hint-size="auto,36px">{{ c.label }}</x-import>
+                    </sc-for>
+                  </div>
+                </div>
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:12px;">
+                  <div>
+                    <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:8px;">Price · AED</div>
+                    <input type="number" placeholder="145" value="{{ dPrice }}" onChange="{{ setDPrice }}" style="width:100%;padding:11px 16px;border-radius:100px;border:1.5px solid var(--line);font-size:14px;font-family:'JetBrains Mono',monospace;background:var(--cream);color:var(--ink);">
+                  </div>
+                  <div>
+                    <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:8px;">Lead time</div>
+                    <input type="text" placeholder="Ready in 4h" value="{{ dLead }}" onChange="{{ setDLead }}" style="width:100%;padding:11px 16px;border-radius:100px;border:1.5px solid var(--line);font-size:14px;background:var(--cream);color:var(--ink);">
+                  </div>
+                </div>
+                <div>
+                  <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:8px;">Sold as</div>
+                  <div style="display:flex;gap:7px;flex-wrap:wrap;">
+                    <sc-for list="{{ kindOptions }}" as="k" hint-placeholder-count="3">
+                      <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Tab" active="{{ k.active }}" on-click="{{ k.go }}" hint-size="auto,36px">{{ k.label }}</x-import>
+                    </sc-for>
+                  </div>
+                </div>
+                <div>
+                  <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:8px;">Short description</div>
+                  <textarea rows="2" placeholder="Cream cheese frosting, six inch round." value="{{ dDesc }}" onChange="{{ setDDesc }}" style="width:100%;padding:12px 16px;border-radius:16px;border:1.5px solid var(--line);font-size:14px;background:var(--cream);color:var(--ink);resize:vertical;"></textarea>
+                </div>
+                <div>
+                  <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:8px;">Labels</div>
+                  <div style="display:flex;gap:7px;flex-wrap:wrap;">
+                    <sc-for list="{{ tagOptions }}" as="t" hint-placeholder-count="5">
+                      <button onClick="{{ t.go }}" style="border:1.5px solid {{ t.border }};background:{{ t.bg }};color:{{ t.color }};border-radius:100px;padding:6px 13px;font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;">{{ t.label }}</button>
+                    </sc-for>
+                  </div>
+                </div>
+                <label style="display:flex;align-items:center;gap:10px;font-size:14px;cursor:pointer;border-top:1px dashed var(--line);padding-top:14px;">
+                  <input type="checkbox" checked="{{ dLive }}" onChange="{{ toggleLive }}" style="width:16px;height:16px;accent-color:var(--berry);">
+                  Show on the website
+                </label>
+              </div>
+
+              <p style="font-size:12.5px;color:var(--berry);margin:14px 0 0;min-height:18px;">{{ itemErr }}</p>
+              <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:6px;">
+                <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Button" on-click="{{ saveItem }}" hint-size="auto,48px">{{ saveLabel }}</x-import>
+                <sc-if value="{{ canDelete }}">
+                  <button onClick="{{ deleteItem }}" style="border:1.5px solid var(--line);background:transparent;color:var(--ink-soft);border-radius:100px;padding:12px 18px;font-size:13.5px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">Delete</button>
+                </sc-if>
+              </div>
+            </div>
+          </sc-if>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ========== OFFERS ========== -->
+    <sc-if value="{{ atOffers }}">
+      <div>
+        <div style="display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:24px;">
+          <div>
+            <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Eyebrow" hint-size="auto,18px">Promotions</x-import>
+            <h1 style="font-family:'Fraunces',serif;font-weight:600;letter-spacing:-0.01em;font-size:clamp(1.7rem,3.2vw,2.4rem);margin:14px 0 0;">Offers</h1>
+          </div>
+          <sc-if value="{{ canEdit }}">
+            <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Button" variant="ghost" on-click="{{ newOffer }}" hint-size="auto,48px">New offer</x-import>
+          </sc-if>
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:22px;align-items:start;">
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <sc-for list="{{ offerRows }}" as="o" hint-placeholder-count="4">
+              <div onClick="{{ o.open }}" style="background:var(--paper);border:{{ o.border }};border-radius:22px;padding:18px;cursor:pointer;">
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:10px;">
+                  <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                    <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Chip" hint-size="auto,20px">{{ o.tag }}</x-import>
+                    <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.StatusPill" status="{{ o.status }}" hint-size="auto,24px">{{ o.statusLabel }}</x-import>
+                  </div>
+                  <span style="font-family:'JetBrains Mono',monospace;font-size:12.5px;color:var(--berry-deep);">{{ o.code }}</span>
+                </div>
+                <div style="font-family:'Fraunces',serif;font-weight:600;font-size:17px;">{{ o.title }}</div>
+                <div style="color:var(--ink-soft);font-size:13.5px;margin-top:5px;line-height:1.55;">{{ o.desc }}</div>
+                <div style="font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--ink-soft);border-top:1px dashed var(--line);margin-top:12px;padding-top:10px;display:flex;justify-content:space-between;gap:10px;">
+                  <span>{{ o.value }}</span><span>{{ o.used }}</span>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+
+          <sc-if value="{{ editingOffer }}">
+            <div style="background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:22px;position:sticky;top:96px;">
+              <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:18px;">
+                <h3 style="font-family:'Fraunces',serif;font-weight:600;font-size:18px;margin:0;">{{ offerEditorTitle }}</h3>
+                <button onClick="{{ closeOffer }}" aria-label="Close" style="background:var(--cream);border:1px solid var(--line);color:var(--ink-soft);width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:14px;">×</button>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:14px;">
+                <div>
+                  <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:8px;">Headline</div>
+                  <input type="text" placeholder="20% off Eid orders" value="{{ oTitle }}" onChange="{{ setOTitle }}" style="width:100%;padding:11px 16px;border-radius:100px;border:1.5px solid var(--line);font-size:14px;background:var(--cream);color:var(--ink);">
+                </div>
+                <div>
+                  <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:8px;">The small print</div>
+                  <textarea rows="2" placeholder="Any celebration cake, when you order 48h ahead." value="{{ oDesc }}" onChange="{{ setODesc }}" style="width:100%;padding:12px 16px;border-radius:16px;border:1.5px solid var(--line);font-size:14px;background:var(--cream);color:var(--ink);resize:vertical;"></textarea>
+                </div>
+                <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;">
+                  <div>
+                    <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:8px;">Code</div>
+                    <input type="text" placeholder="EID20" value="{{ oCode }}" onChange="{{ setOCode }}" style="width:100%;padding:11px 16px;border-radius:100px;border:1.5px solid var(--line);font-size:14px;font-family:'JetBrains Mono',monospace;text-transform:uppercase;background:var(--cream);color:var(--ink);">
+                  </div>
+                  <div>
+                    <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:8px;">Badge</div>
+                    <input type="text" placeholder="Ends Fri" value="{{ oTag }}" onChange="{{ setOTag }}" style="width:100%;padding:11px 16px;border-radius:100px;border:1.5px solid var(--line);font-size:14px;background:var(--cream);color:var(--ink);">
+                  </div>
+                </div>
+                <div>
+                  <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:8px;">Discount</div>
+                  <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:10px;">
+                    <sc-for list="{{ offerKinds }}" as="k" hint-placeholder-count="3">
+                      <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Tab" active="{{ k.active }}" on-click="{{ k.go }}" hint-size="auto,36px">{{ k.label }}</x-import>
+                    </sc-for>
+                  </div>
+                  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;">
+                    <div>
+                      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:8px;">{{ amountLabel }}</div>
+                      <input type="number" placeholder="20" value="{{ oAmount }}" onChange="{{ setOAmount }}" style="width:100%;padding:11px 16px;border-radius:100px;border:1.5px solid var(--line);font-size:14px;font-family:'JetBrains Mono',monospace;background:var(--cream);color:var(--ink);">
+                    </div>
+                    <div>
+                      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:8px;">Min spend</div>
+                      <input type="number" placeholder="0" value="{{ oMin }}" onChange="{{ setOMin }}" style="width:100%;padding:11px 16px;border-radius:100px;border:1.5px solid var(--line);font-size:14px;font-family:'JetBrains Mono',monospace;background:var(--cream);color:var(--ink);">
+                    </div>
+                  </div>
+                </div>
+                <label style="display:flex;align-items:center;gap:10px;font-size:14px;cursor:pointer;border-top:1px dashed var(--line);padding-top:14px;">
+                  <input type="checkbox" checked="{{ oLive }}" onChange="{{ toggleOLive }}" style="width:16px;height:16px;accent-color:var(--berry);">
+                  Live on the site
+                </label>
+              </div>
+              <p style="font-size:12.5px;color:var(--berry);margin:14px 0 0;min-height:18px;">{{ offerErr }}</p>
+              <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:6px;">
+                <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Button" on-click="{{ saveOffer }}" hint-size="auto,48px">{{ offerSaveLabel }}</x-import>
+                <sc-if value="{{ canDeleteOffer }}">
+                  <button onClick="{{ deleteOffer }}" style="border:1.5px solid var(--line);background:transparent;color:var(--ink-soft);border-radius:100px;padding:12px 18px;font-size:13.5px;font-weight:600;cursor:pointer;font-family:'Inter',sans-serif;">Delete</button>
+                </sc-if>
+              </div>
+            </div>
+          </sc-if>
+        </div>
+      </div>
+    </sc-if>
+
+    <!-- ========== TEAM & ACCESS ========== -->
+    <sc-if value="{{ atTeam }}">
+      <div>
+        <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Eyebrow" hint-size="auto,18px">Access control</x-import>
+        <h1 style="font-family:'Fraunces',serif;font-weight:600;letter-spacing:-0.01em;font-size:clamp(1.7rem,3.2vw,2.4rem);margin:14px 0 14px;">Team &amp; access</h1>
+
+        <sc-if value="{{ cannotManage }}">
+          <div style="background:var(--paper);border:1.5px dashed var(--line);border-radius:22px;padding:40px 24px;text-align:center;max-width:560px;">
+            <b style="display:block;font-family:'Fraunces',serif;font-size:19px;margin-bottom:8px;">Owners only</b>
+            <p style="color:var(--ink-soft);font-size:14px;margin:0 0 6px;line-height:1.6;">{{ noAccessCopy }}</p>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);">Your role · {{ meRoleLabel }}</span>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ canManage }}">
+          <div>
+            <p style="color:var(--ink-soft);font-size:16px;max-width:56ch;line-height:1.6;margin:0 0 28px;">You decide who gets in and what they can touch. Everyone signs in with a one-time code, same as customers — no staff passwords.</p>
+
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:22px;align-items:start;margin-bottom:28px;">
+              <div style="display:flex;flex-direction:column;gap:12px;">
+                <sc-for list="{{ teamRows }}" as="u" hint-placeholder-count="4">
+                  <div style="background:var(--paper);border:{{ u.border }};border-radius:22px;padding:18px;">
+                    <div style="display:flex;justify-content:space-between;gap:14px;align-items:flex-start;flex-wrap:wrap;">
+                      <div style="display:flex;gap:13px;align-items:center;">
+                        <span style="width:40px;height:40px;border-radius:50%;background:{{ u.avatarBg }};border:1.5px solid {{ u.avatarBorder }};display:flex;align-items:center;justify-content:center;font-family:'Fraunces',serif;font-weight:600;font-size:15px;color:{{ u.avatarColor }};flex:none;">{{ u.initials }}</span>
+                        <div>
+                          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                            <span style="font-weight:600;font-size:14.5px;">{{ u.name }}</span>
+                            <sc-if value="{{ u.isMe }}">
+                              <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Chip" hint-size="auto,20px">You</x-import>
+                            </sc-if>
+                          </div>
+                          <div style="font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--ink-soft);margin-top:4px;">{{ u.contact }}</div>
+                        </div>
+                      </div>
+                      <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.StatusPill" status="{{ u.status }}" hint-size="auto,24px">{{ u.statusLabel }}</x-import>
+                    </div>
+
+                    <div style="border-top:1px dashed var(--line);margin-top:14px;padding-top:14px;">
+                      <div style="font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:9px;">Role</div>
+                      <div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px;">
+                        <sc-for list="{{ u.roleChoices }}" as="rc" hint-placeholder-count="3">
+                          <button onClick="{{ rc.go }}" disabled="{{ rc.locked }}" style="border:1.5px solid {{ rc.border }};background:{{ rc.bg }};color:{{ rc.color }};border-radius:100px;padding:7px 14px;font-size:12.5px;font-weight:600;cursor:{{ rc.cursor }};font-family:'Inter',sans-serif;opacity:{{ rc.opacity }};">{{ rc.label }}</button>
+                        </sc-for>
+                      </div>
+                      <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;">
+                        <sc-for list="{{ u.perms }}" as="p" hint-placeholder-count="3">
+                          <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:{{ p.color }};border:1px solid {{ p.border }};background:{{ p.bg }};border-radius:100px;padding:5px 10px;">{{ p.label }}</span>
+                        </sc-for>
+                      </div>
+                      <sc-if value="{{ u.actionable }}">
+                        <div style="display:flex;gap:16px;flex-wrap:wrap;">
+                          <button onClick="{{ u.toggleSuspend }}" style="background:none;border:none;padding:0;color:var(--ink-soft);font-size:11.5px;cursor:pointer;font-family:'JetBrains Mono',monospace;letter-spacing:.06em;">{{ u.suspendLabel }}</button>
+                          <button onClick="{{ u.remove }}" style="background:none;border:none;padding:0;color:var(--berry);font-size:11.5px;cursor:pointer;font-family:'JetBrains Mono',monospace;letter-spacing:.06em;">REMOVE</button>
+                        </div>
+                      </sc-if>
+                      <sc-if value="{{ u.isMe }}">
+                        <span style="font-size:12px;color:var(--ink-soft);">You can't change your own role — ask the other owner.</span>
+                      </sc-if>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+
+              <div style="display:flex;flex-direction:column;gap:18px;position:sticky;top:96px;">
+                <div style="background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:22px;">
+                  <h3 style="font-family:'Fraunces',serif;font-weight:600;font-size:18px;margin:0 0 6px;">Invite someone</h3>
+                  <p style="color:var(--ink-soft);font-size:13px;line-height:1.6;margin:0 0 16px;">They get a link and a one-time code. Access starts the moment they use it.</p>
+                  <div style="display:flex;flex-direction:column;gap:12px;">
+                    <input type="text" placeholder="Name" value="{{ inviteName }}" onChange="{{ setInviteName }}" style="width:100%;padding:11px 16px;border-radius:100px;border:1.5px solid var(--line);font-size:14px;background:var(--cream);color:var(--ink);">
+                    <input type="text" placeholder="Mobile or email" value="{{ inviteId }}" onChange="{{ setInviteId }}" style="width:100%;padding:11px 16px;border-radius:100px;border:1.5px solid var(--line);font-size:14px;background:var(--cream);color:var(--ink);">
+                    <div>
+                      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin-bottom:8px;">Give them</div>
+                      <div style="display:flex;gap:7px;flex-wrap:wrap;">
+                        <sc-for list="{{ inviteRoles }}" as="r" hint-placeholder-count="3">
+                          <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Tab" active="{{ r.active }}" on-click="{{ r.go }}" hint-size="auto,36px">{{ r.label }}</x-import>
+                        </sc-for>
+                      </div>
+                    </div>
+                    <p style="font-size:12.5px;color:var(--ink-soft);margin:0;line-height:1.6;">{{ inviteRoleNote }}</p>
+                    <p style="font-size:12.5px;color:var(--berry);margin:0;min-height:18px;">{{ inviteErr }}</p>
+                    <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Button" on-click="{{ sendInvite }}" style="{{ full }}" hint-size="100%,48px">Send invite →</x-import>
+                  </div>
+                </div>
+
+                <div style="background:var(--ink);border-radius:32px;padding:24px;">
+                  <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Eyebrow" tone="honey" hint-size="auto,18px">What each role can do</x-import>
+                  <div style="display:flex;flex-direction:column;gap:16px;margin-top:16px;">
+                    <sc-for list="{{ roleMatrix }}" as="m" hint-placeholder-count="3">
+                      <div>
+                        <b style="display:block;color:var(--cream);font-size:14.5px;margin-bottom:6px;">{{ m.name }}</b>
+                        <span style="color:var(--on-ink);font-size:13px;line-height:1.6;">{{ m.can }}</span>
+                      </div>
+                    </sc-for>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </sc-if>
+      </div>
+    </sc-if>
+
+    <!-- ========== ACTIVITY ========== -->
+    <sc-if value="{{ atLog }}">
+      <div>
+        <x-import component-from-global-scope="CakeLakeDesignSystem_0e660f.Eyebrow" hint-size="auto,18px">Audit</x-import>
+        <h1 style="font-family:'Fraunces',serif;font-weight:600;letter-spacing:-0.01em;font-size:clamp(1.7rem,3.2vw,2.4rem);margin:14px 0 14px;">Activity</h1>
+        <p style="color:var(--ink-soft);font-size:16px;max-width:52ch;line-height:1.6;margin:0 0 28px;">Every change to the menu, the offers or the team, and who made it.</p>
+        <div style="background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:8px 22px;max-width:760px;">
+          <sc-for list="{{ logRows }}" as="l" hint-placeholder-count="5">
+            <div style="display:flex;gap:16px;padding:16px 0;border-bottom:{{ l.rule }};align-items:flex-start;">
+              <span style="font-family:'JetBrains Mono',monospace;font-size:11.5px;color:var(--ink-soft);flex:none;width:52px;">{{ l.t }}</span>
+              <span style="font-family:'JetBrains Mono',monospace;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:{{ l.tagColor }};border:1px solid {{ l.tagBorder }};border-radius:100px;padding:4px 9px;flex:none;">{{ l.kind }}</span>
+              <div>
+                <div style="font-size:14px;">{{ l.what }}</div>
+                <div style="font-size:12px;color:var(--ink-soft);margin-top:3px;">{{ l.who }}</div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </sc-if>
+
+  </div>
+
+  <sc-if value="{{ toast }}">
+    <div style="position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:95;background:var(--ink);color:var(--cream);border:1px solid var(--ink-line-soft);border-radius:100px;padding:12px 22px;font-size:13.5px;font-weight:500;">{{ toast }}</div>
+  </sc-if>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1180,&quot;height&quot;:900}}">
+const money = n => 'AED ' + Math.round(n);
+const CATS = ['Birthday','Wedding','Cupcakes','Cheesecakes','Everyday','Cookies'];
+const KINDS = [{id:'cake', label:'Whole cake'},{id:'box', label:'By the piece'},{id:'loaf', label:'Loaf'}];
+const TAGS = ['Bestseller','New','Eggless option','Vegan option','Gluten-free','Pre-order 48h','Pre-order 72h'];
+
+// Roles, most privileged first. `manageAccess` is what separates the two admin levels.
+const ROLES = {
+  owner:   {label:'Owner', perms:['catalogue','offers','photos','orders','manageAccess'],
+            can:'Everything a catalogue manager can do, plus adding and removing people and changing what they\u2019re allowed to touch.'},
+  manager: {label:'Catalogue manager', perms:['catalogue','offers','photos','orders'],
+            can:'Create and edit menu items, upload photos, set prices, and run offers. Cannot see or change the team.'},
+  counter: {label:'Counter staff', perms:['orders'],
+            can:'Work the order queue and mark orders ready. Sees the menu read-only.'}
+};
+const PERM_LABEL = {catalogue:'Menu items', offers:'Offers', photos:'Photos', orders:'Orders', manageAccess:'Team & access'};
+
+const SEED_ITEMS = [
+  {id:'redvelvet', name:'Classic Red Velvet', cat:'Birthday', price:145, kind:'cake', desc:'Cream cheese frosting, six inch round.', tags:['Bestseller','Eggless option'], lead:'Ready in 4h', live:true, photo:'../docs/design/photos/berry-cream-layer-cake.jpg'},
+  {id:'fudge', name:'Chocolate Fudge Drip', cat:'Birthday', price:165, kind:'cake', desc:'Dark chocolate ganache drip, sprinkles.', tags:['Bestseller'], lead:'Ready in 4h', live:true, photo:'../docs/design/photos/dark-chocolate-fudge.jpg'},
+  {id:'blush', name:'Three-Tier Blush', cat:'Wedding', price:890, kind:'cake', desc:'Vanilla bean sponge, sugar florals.', tags:['Pre-order 72h'], lead:'Pre-order 72h ahead', live:true, photo:'../docs/design/photos/pistachio-celebration-cake.jpg'},
+  {id:'basque', name:'Basque Burnt', cat:'Cheesecakes', price:130, kind:'cake', desc:'Caramelised top, no crust.', tags:['New'], lead:'Ready in 6h', live:true, photo:'../docs/design/photos/basque-cheesecake.jpg'},
+  {id:'pistachio', name:'Pistachio Rose Cups', cat:'Cupcakes', price:14, kind:'box', desc:'Crushed pistachio, rose cream.', tags:['Gluten-free'], lead:'Ready in 2h', live:true, photo:'../docs/design/photos/pistachio-rose-cups.jpg'},
+  {id:'rolls', name:'Sourdough Cinnamon Rolls', cat:'Everyday', price:16, kind:'box', desc:'Cream cheese glaze, box of four.', tags:['New'], lead:'Ready in 2h', live:true, photo:'../docs/design/photos/sourdough-cinnamon-rolls.jpg'},
+  {id:'short', name:'Pistachio Shortbread', cat:'Cookies', price:11, kind:'box', desc:'Crushed pistachio edge.', tags:['Gluten-free'], lead:'Ready in 1h', live:false, photo:''}
+];
+
+const SEED_OFFERS = [
+  {id:'o1', tag:'Ends Fri', title:'20% off Eid orders', desc:'Any celebration cake, when you order 48h ahead.', code:'EID20', kind:'pct', amount:20, min:0, live:true, used:34},
+  {id:'o2', tag:'This week', title:'Buy 6, get 2 free', desc:'Mix-and-match cupcake boxes, online only.', code:'CUP8', kind:'pct', amount:15, min:0, live:true, used:12},
+  {id:'o3', tag:'New customers', title:'AED 25 off your first order', desc:'One per phone number, minimum AED 100.', code:'FIRST25', kind:'flat', amount:25, min:100, live:true, used:58},
+  {id:'o4', tag:'Always on', title:'Free delivery over AED 150', desc:'Marina, JBR and Al Sufouh, same-day slots.', code:'AUTO', kind:'ship', amount:0, min:150, live:false, used:0}
+];
+
+const SEED_TEAM = [
+  {id:'u1', name:'Rana Khalil', contact:'+971 50 118 2204', role:'owner', active:true},
+  {id:'u2', name:'Yusuf Adel', contact:'yusuf@cakelake.ae', role:'manager', active:true},
+  {id:'u3', name:'Mira Haddad', contact:'+971 55 902 7741', role:'manager', active:true},
+  {id:'u4', name:'Tariq Nour', contact:'+971 52 336 8890', role:'counter', active:false}
+];
+
+const clock = () => {
+  const d = new Date();
+  return String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+};
+const initials = n => n.split(' ').map(w => w[0]).join('').slice(0,2).toUpperCase();
+
+class Component extends DCLogic {
+  constructor(props){
+    super(props);
+    this.state = {
+      me:'u1', section:'items',
+      items:SEED_ITEMS, offers:SEED_OFFERS, team:SEED_TEAM,
+      itemDraft:null, itemErr:'', offerDraft:null, offerErr:'',
+      invite:{name:'', id:'', role:'manager'}, inviteErr:'',
+      log:[
+        {t:'09:12', kind:'menu', what:'Price on Three-Tier Blush changed to AED 890', who:'Yusuf Adel · Catalogue manager'},
+        {t:'08:47', kind:'offer', what:'EID20 set live', who:'Rana Khalil · Owner'},
+        {t:'08:30', kind:'menu', what:'Naked Fruit Tier removed from the menu', who:'Rana Khalil · Owner'},
+        {t:'Yest', kind:'access', what:'Tariq Nour suspended', who:'Rana Khalil · Owner'},
+        {t:'Yest', kind:'menu', what:'Photo added to Basque Burnt', who:'Mira Haddad · Catalogue manager'}
+      ],
+      toast:''
+    };
+  }
+
+  meUser(){ return this.state.team.find(u => u.id === this.state.me) || this.state.team[0]; }
+  role(){ return this.meUser().role; }
+  can(p){ return ROLES[this.role()].perms.indexOf(p) > -1; }
+
+  flash = t => { this.setState({toast:t}); clearTimeout(this._t); this._t = setTimeout(() => this.setState({toast:''}), 1900); };
+  componentWillUnmount(){ clearTimeout(this._t); }
+
+  note(kind, what){
+    const me = this.meUser();
+    this.setState({log:[{t:clock(), kind, what, who:me.name + ' · ' + ROLES[me.role].label}].concat(this.state.log)});
+  }
+
+  // ---- items ----
+  newItem = () => this.setState({itemDraft:{id:null, name:'', cat:'Birthday', price:'', kind:'cake', desc:'', tags:[], lead:'Ready in 4h', live:true, photo:''}, itemErr:''});
+  openItem = it => this.setState({itemDraft:Object.assign({}, it, {tags:it.tags.slice()}), itemErr:''});
+  closeItem = () => this.setState({itemDraft:null, itemErr:''});
+  patch = p => this.setState({itemDraft:Object.assign({}, this.state.itemDraft, p), itemErr:''});
+
+  saveItem = () => {
+    const d = this.state.itemDraft;
+    if(!d.name.trim()) return this.setState({itemErr:'Give it a name.'});
+    if(!(Number(d.price) > 0)) return this.setState({itemErr:'Set a price above zero.'});
+    if(!d.desc.trim()) return this.setState({itemErr:'Add the one-line description that shows on the card.'});
+    const clean = Object.assign({}, d, {price:Number(d.price)});
+    if(d.id){
+      this.setState({items:this.state.items.map(x => x.id === d.id ? clean : x), itemDraft:null});
+      this.note('menu', clean.name + ' updated');
+      this.flash('Saved — live on the site');
+    } else {
+      clean.id = 'i' + Date.now();
+      this.setState({items:this.state.items.concat([clean]), itemDraft:null});
+      this.note('menu', clean.name + ' added to the menu');
+      this.flash(clean.name + ' added');
+    }
+  };
+
+  deleteItem = () => {
+    const d = this.state.itemDraft; if(!d || !d.id) return;
+    this.setState({items:this.state.items.filter(x => x.id !== d.id), itemDraft:null});
+    this.note('menu', d.name + ' removed from the menu');
+    this.flash(d.name + ' removed');
+  };
+
+  // ---- offers ----
+  newOffer = () => this.setState({offerDraft:{id:null, tag:'', title:'', desc:'', code:'', kind:'pct', amount:'', min:0, live:false, used:0}, offerErr:''});
+  openOffer = o => this.setState({offerDraft:Object.assign({}, o), offerErr:''});
+  closeOffer = () => this.setState({offerDraft:null, offerErr:''});
+  patchO = p => this.setState({offerDraft:Object.assign({}, this.state.offerDraft, p), offerErr:''});
+
+  saveOffer = () => {
+    const d = this.state.offerDraft;
+    if(!d.title.trim()) return this.setState({offerErr:'Add a headline.'});
+    const code = (d.code||'').trim().toUpperCase();
+    if(!code) return this.setState({offerErr:'Offers need a code customers can type.'});
+    const clash = this.state.offers.find(o => o.code === code && o.id !== d.id);
+    if(clash) return this.setState({offerErr:code + ' is already used by "' + clash.title + '".'});
+    if(d.kind !== 'ship' && !(Number(d.amount) > 0)) return this.setState({offerErr:'Set the discount amount.'});
+    const clean = Object.assign({}, d, {code, amount:Number(d.amount) || 0, min:Number(d.min) || 0});
+    if(d.id){
+      this.setState({offers:this.state.offers.map(o => o.id === d.id ? clean : o), offerDraft:null});
+      this.note('offer', code + ' updated' + (clean.live ? ' and live' : ' (paused)'));
+      this.flash('Offer saved');
+    } else {
+      clean.id = 'o' + Date.now();
+      this.setState({offers:this.state.offers.concat([clean]), offerDraft:null});
+      this.note('offer', code + ' created');
+      this.flash(code + ' created');
+    }
+  };
+
+  deleteOffer = () => {
+    const d = this.state.offerDraft; if(!d || !d.id) return;
+    this.setState({offers:this.state.offers.filter(o => o.id !== d.id), offerDraft:null});
+    this.note('offer', d.code + ' deleted');
+    this.flash(d.code + ' deleted');
+  };
+
+  // ---- team ----
+  setRole(u, role){
+    this.setState({team:this.state.team.map(x => x.id === u.id ? Object.assign({}, x, {role}) : x)});
+    this.note('access', u.name + ' is now ' + ROLES[role].label.toLowerCase());
+    this.flash(u.name + ' → ' + ROLES[role].label);
+  }
+
+  sendInvite = () => {
+    const v = this.state.invite;
+    if(!v.name.trim()) return this.setState({inviteErr:'Who is it?'});
+    const id = v.id.trim();
+    const ok = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(id) || /^\+?[0-9\s-]{9,}$/.test(id);
+    if(!ok) return this.setState({inviteErr:'Add a mobile number or an email — that\u2019s how they sign in.'});
+    const u = {id:'u' + Date.now(), name:v.name.trim(), contact:id, role:v.role, active:true, pending:true};
+    this.setState({team:this.state.team.concat([u]), invite:{name:'', id:'', role:'manager'}, inviteErr:''});
+    this.note('access', v.name.trim() + ' invited as ' + ROLES[v.role].label.toLowerCase());
+    this.flash('Invite sent to ' + id);
+  };
+
+  renderVals(){
+    const s = this.state, me = this.meUser();
+    const canEdit = this.can('catalogue'), canManage = this.can('manageAccess');
+    const d = s.itemDraft, od = s.offerDraft;
+
+    // List thumbs are static — the only upload affordance is the editor's 170px well,
+    // so one item can never have two competing drop targets.
+    const thumb = it => it.photo
+      ? React.createElement('img', {src:it.photo, alt:'', style:{width:'100%', height:'100%', objectFit:'cover', display:'block'}})
+      : React.createElement('span', {style:{
+          width:'100%', height:'100%', display:'flex', alignItems:'center', justifyContent:'center',
+          fontFamily:"'JetBrains Mono', monospace", fontSize:9, letterSpacing:'.06em',
+          textTransform:'uppercase', color:'var(--pistachio)', textAlign:'center', lineHeight:1.3
+        }}, 'No photo');
+
+    const offerValue = o => o.kind === 'pct' ? o.amount + '% OFF' : o.kind === 'flat' ? money(o.amount) + ' OFF' : 'FREE DELIVERY';
+
+    return {
+      full:{width:'100%', justifyContent:'center'},
+      meName:me.name, meRoleLabel:ROLES[me.role].label, meInitials:initials(me.name),
+      roleSwitch:s.team.filter(u => ['u1','u2','u4'].indexOf(u.id) > -1).map(u => ({
+        label:ROLES[u.role].label, go:() => { this.setState({me:u.id, itemDraft:null, offerDraft:null, section:'items'}); this.flash('Viewing as ' + u.name); },
+        border: s.me === u.id ? 'var(--honey)' : 'var(--ink-line-soft)',
+        bg: s.me === u.id ? 'var(--honey)' : 'transparent',
+        color: s.me === u.id ? 'var(--on-honey)' : 'var(--on-ink)'
+      })),
+
+      tabs:[['items','Menu items'],['offers','Offers'],['team','Team & access'],['log','Activity']].map(([id,label]) => ({
+        label, active:s.section === id, go:() => this.setState({section:id})
+      })),
+      atItems:s.section === 'items', atOffers:s.section === 'offers', atTeam:s.section === 'team', atLog:s.section === 'log',
+      canEdit, cannotEdit:!canEdit, canManage, cannotManage:!canManage,
+      noAccessCopy: this.can('catalogue')
+        ? 'You can run the whole catalogue, but adding people and changing their access is an owner job.'
+        : 'Only owners can see the team list and change what people are allowed to do.',
+
+      itemCount:String(s.items.length),
+      hiddenCount:String(s.items.filter(i => !i.live).length),
+      noPhotoCount:String(s.items.filter(i => !i.photo).length),
+      itemRows:s.items.map(it => ({
+        name:it.name, price:it.kind === 'box' ? money(it.price) + ' /pc' : money(it.price),
+        meta:it.cat.toUpperCase() + ' · ' + it.lead.toUpperCase(),
+        status:it.live ? 'open' : 'soon', statusLabel:it.live ? 'Live' : 'Hidden',
+        border: d && d.id === it.id ? '1.5px solid var(--berry)' : '1px solid var(--line)',
+        thumb:thumb(it),
+        open:() => canEdit ? this.openItem(it) : this.flash('Read-only for counter staff')
+      })),
+
+      editingItem:!!d,
+      editorTitle: d && d.id ? 'Edit item' : 'New item',
+      saveLabel: d && d.id ? 'Save changes' : 'Add to the menu',
+      canDelete: !!(d && d.id),
+      editorPhoto: d ? (d.photo
+        ? React.createElement('img', {src:d.photo, alt:'', style:{width:'100%', height:'100%', objectFit:'cover', display:'block'}})
+        : React.createElement('image-slot', {id:'admin-editor-'+(d.id||'new'), shape:'rect', placeholder:'Drop the product photo here', style:{width:'100%', height:'100%'}})) : null,
+      photoHint: d && d.photo ? 'Drop a new file on the well to replace it. Square or 4:3 works best.' : 'Drag a photo in, or drop one later — the card falls back to the illustration well.',
+      dName: d ? d.name : '', dPrice: d ? d.price : '', dDesc: d ? d.desc : '', dLead: d ? d.lead : '', dLive: !!(d && d.live),
+      setDName:e => this.patch({name:e.target.value}),
+      setDPrice:e => this.patch({price:e.target.value}),
+      setDDesc:e => this.patch({desc:e.target.value}),
+      setDLead:e => this.patch({lead:e.target.value}),
+      toggleLive:() => this.patch({live:!this.state.itemDraft.live}),
+      catOptions:CATS.map(c => ({label:c, active:!!(d && d.cat === c), go:() => this.patch({cat:c})})),
+      kindOptions:KINDS.map(k => ({label:k.label, active:!!(d && d.kind === k.id), go:() => this.patch({kind:k.id})})),
+      tagOptions:TAGS.map(t => {
+        const on = !!(d && d.tags.indexOf(t) > -1);
+        return {
+          label:t, border: on ? 'var(--berry)' : 'var(--line)', bg: on ? 'var(--berry)' : 'transparent',
+          color: on ? '#fff' : 'var(--ink-soft)',
+          go:() => this.patch({tags: on ? d.tags.filter(x => x !== t) : d.tags.concat([t])})
+        };
+      }),
+      itemErr:s.itemErr, saveItem:this.saveItem, deleteItem:this.deleteItem,
+      newItem:this.newItem, closeItem:this.closeItem,
+
+      offerRows:s.offers.map(o => ({
+        tag:o.tag || 'Offer', title:o.title, desc:o.desc, code:o.code,
+        value:offerValue(o) + (o.min ? ' · MIN ' + money(o.min) : ''),
+        used:o.used + ' USED',
+        status:o.live ? 'open' : 'soon', statusLabel:o.live ? 'Live' : 'Paused',
+        border: od && od.id === o.id ? '1.5px solid var(--berry)' : '1px solid var(--line)',
+        open:() => canEdit ? this.openOffer(o) : this.flash('Read-only for counter staff')
+      })),
+      editingOffer:!!od,
+      offerEditorTitle: od && od.id ? 'Edit offer' : 'New offer',
+      offerSaveLabel: od && od.id ? 'Save offer' : 'Create offer',
+      canDeleteOffer: !!(od && od.id),
+      oTitle: od ? od.title : '', oDesc: od ? od.desc : '', oCode: od ? od.code : '',
+      oTag: od ? od.tag : '', oAmount: od ? od.amount : '', oMin: od ? od.min : '', oLive: !!(od && od.live),
+      setOTitle:e => this.patchO({title:e.target.value}),
+      setODesc:e => this.patchO({desc:e.target.value}),
+      setOCode:e => this.patchO({code:e.target.value.toUpperCase()}),
+      setOTag:e => this.patchO({tag:e.target.value}),
+      setOAmount:e => this.patchO({amount:e.target.value}),
+      setOMin:e => this.patchO({min:e.target.value}),
+      toggleOLive:() => this.patchO({live:!this.state.offerDraft.live}),
+      offerKinds:[{id:'pct', label:'% off'},{id:'flat', label:'Fixed amount'},{id:'ship', label:'Free delivery'}].map(k => ({
+        label:k.label, active:!!(od && od.kind === k.id), go:() => this.patchO({kind:k.id})
+      })),
+      amountLabel: od && od.kind === 'flat' ? 'Amount · AED' : od && od.kind === 'ship' ? 'Not used' : 'Percent',
+      offerErr:s.offerErr, saveOffer:this.saveOffer, deleteOffer:this.deleteOffer,
+      newOffer:this.newOffer, closeOffer:this.closeOffer,
+
+      teamRows:s.team.map(u => {
+        const isMe = u.id === s.me;
+        return {
+          name:u.name, contact:u.contact, initials:initials(u.name), isMe,
+          status: u.pending ? 'soon' : u.active ? 'open' : 'soon',
+          statusLabel: u.pending ? 'Invite sent' : u.active ? 'Active' : 'Suspended',
+          border: isMe ? '1.5px solid var(--pistachio)' : '1px solid var(--line)',
+          avatarBg: u.role === 'owner' ? 'var(--berry)' : u.role === 'manager' ? 'var(--honey)' : 'var(--pistachio-soft)',
+          avatarBorder: u.role === 'owner' ? 'var(--berry)' : u.role === 'manager' ? 'var(--honey)' : 'var(--pistachio)',
+          avatarColor: u.role === 'counter' ? 'var(--pistachio)' : '#fff',
+          roleChoices:Object.keys(ROLES).map(r => {
+            const on = u.role === r, locked = isMe;
+            return {
+              label:ROLES[r].label, locked,
+              border: on ? 'var(--ink)' : 'var(--line)',
+              bg: on ? 'var(--ink)' : 'transparent',
+              color: on ? 'var(--cream)' : 'var(--ink-soft)',
+              cursor: locked ? 'not-allowed' : 'pointer',
+              opacity: locked && !on ? '0.4' : '1',
+              go:() => { if(!locked && !on) this.setRole(u, r); }
+            };
+          }),
+          perms:ROLES[u.role].perms.map(p => ({
+            label:PERM_LABEL[p],
+            color: p === 'manageAccess' ? 'var(--berry-deep)' : 'var(--ink-soft)',
+            border: p === 'manageAccess' ? 'var(--berry)' : 'var(--line)',
+            bg: p === 'manageAccess' ? 'var(--cream)' : 'transparent'
+          })),
+          actionable:!isMe,
+          suspendLabel: u.active ? 'SUSPEND' : 'REINSTATE',
+          toggleSuspend:() => {
+            this.setState({team:this.state.team.map(x => x.id === u.id ? Object.assign({}, x, {active:!x.active, pending:false}) : x)});
+            this.note('access', u.name + (u.active ? ' suspended' : ' reinstated'));
+            this.flash(u.name + (u.active ? ' suspended' : ' reinstated'));
+          },
+          remove:() => {
+            this.setState({team:this.state.team.filter(x => x.id !== u.id)});
+            this.note('access', u.name + ' removed from the team');
+            this.flash(u.name + ' removed');
+          }
+        };
+      }),
+      inviteName:s.invite.name, inviteId:s.invite.id,
+      setInviteName:e => this.setState({invite:Object.assign({}, this.state.invite, {name:e.target.value}), inviteErr:''}),
+      setInviteId:e => this.setState({invite:Object.assign({}, this.state.invite, {id:e.target.value}), inviteErr:''}),
+      inviteRoles:Object.keys(ROLES).map(r => ({
+        label:ROLES[r].label, active:s.invite.role === r,
+        go:() => this.setState({invite:Object.assign({}, this.state.invite, {role:r})})
+      })),
+      inviteRoleNote:ROLES[s.invite.role].can,
+      inviteErr:s.inviteErr, sendInvite:this.sendInvite,
+      roleMatrix:Object.keys(ROLES).map(r => ({name:ROLES[r].label, can:ROLES[r].can})),
+
+      logRows:s.log.slice(0, 12).map((l, i, arr) => ({
+        t:l.t, what:l.what, who:l.who,
+        kind: l.kind === 'menu' ? 'MENU' : l.kind === 'offer' ? 'OFFER' : 'ACCESS',
+        tagColor: l.kind === 'access' ? 'var(--berry-deep)' : 'var(--ink-soft)',
+        tagBorder: l.kind === 'access' ? 'var(--berry)' : 'var(--line)',
+        rule: i === arr.length - 1 ? 'none' : '1px solid var(--line)'
+      })),
+      toast:s.toast
+    };
+  }
+}
+
+</script>
+</body>
+</html>

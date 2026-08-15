@@ -30,7 +30,7 @@ no backend.
 
 | Area | Decision | ADR |
 |---|---|---|
-| Site | Static site, no backend, no database | [ADR-001](docs/adr/ADR-001-tech-stack.md) |
+| Site | Static site (Next.js static export, TypeScript), no backend, no database | [ADR-001](docs/adr/ADR-001-tech-stack.md) |
 | Hosting/CI-CD | AWS (S3 + CloudFront), built and deployed via GitHub Actions | [ADR-002](docs/adr/ADR-002-hosting-and-deployment.md) |
 | Order handoff | `wa.me` click-to-chat link, customer-sent | [ADR-003](docs/adr/ADR-003-whatsapp-order-handoff.md) |
 | Content | Menu/catalogue content managed in-repo, no CMS | [ADR-004](docs/adr/ADR-004-content-management.md) |

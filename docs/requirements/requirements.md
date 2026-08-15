@@ -77,8 +77,8 @@ section in the approved PDF:
 Proposed, not yet built — see the ADRs in [`docs/adr/`](../adr/) for the
 reasoning behind each:
 
-- **Site:** a static site (no server, no database) — see
-  [ADR-001](../adr/ADR-001-tech-stack.md)
+- **Site:** a static site — Next.js in static export mode, TypeScript, no
+  server, no database — see [ADR-001](../adr/ADR-001-tech-stack.md)
 - **Hosting/deployment:** AWS (S3 + CloudFront), built and deployed via
   GitHub Actions on push — see
   [ADR-002](../adr/ADR-002-hosting-and-deployment.md)

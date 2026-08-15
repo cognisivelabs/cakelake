@@ -1,4 +1,4 @@
-# ADR-001: Tech Stack — Static Site, No Backend
+# ADR-001: Tech Stack — Static Site (Next.js, TypeScript), No Backend
 
 **Status:** Proposed
 **Date:** 2026-08-15
@@ -26,13 +26,16 @@ business can't carry.
 Build the site as a **static site**: HTML/CSS/JS generated at build time,
 served as files, with no server-side runtime and no database.
 
+- **Next.js**, run in static export mode (`output: 'export'`), as the
+  site generator. The build produces plain static files — no Node
+  server runs at request time, and nothing here changes
+  [ADR-002](ADR-002-hosting-and-deployment.md)'s S3 + CloudFront hosting.
+- **TypeScript** as the language, for the cart, order-summary, and
+  WhatsApp-link-assembly logic as well as the page/component code.
 - Menu/catalogue content lives in structured files in the repo (see
   [ADR-004](ADR-004-content-management.md)), read at build time.
 - The cart, order summary, and WhatsApp link assembly all run
   client-side, in the browser.
-- A lightweight build tool (e.g. Vite) compiles the site to static
-  output — chosen for a small, fast build with no framework-level
-  runtime cost, not for any specific framework preference.
 
 ## Rationale
 
@@ -49,11 +52,21 @@ support. What's in scope (show a catalogue, build a cart, generate a
 link) is exactly the kind of thing a static site with a little
 client-side JavaScript handles natively.
 
-**A small build tool keeps this simple to maintain.** The site doesn't
-need to be hand-written HTML with no build step — bundling/minification
-and being able to write the cart logic in a structured way (components,
-modules) is worth a lightweight toolchain, as long as that toolchain
-doesn't require its own server at runtime.
+**Next.js in static export mode gives structure without giving up
+"just files."** Routing, layouts, and component-based pages are worth
+having for a multi-page site (menu, item detail, contact, etc.) without
+hand-wiring an HTML build pipeline — and static export still produces
+exactly the plain HTML/CSS/JS output S3 + CloudFront serves, with no Node
+process needed at runtime. If a genuine need for server-side rendering or
+API routes ever shows up, Next.js supports that without a framework
+migration — but nothing in this scope calls for it now.
+
+**TypeScript catches the kind of bug this app is most exposed to.** The
+cart → order-summary → WhatsApp-link pipeline is the one place where a
+silent mistake (a wrong price, a dropped item, a malformed link) would
+reach a real customer with no server-side check to catch it. Static
+typing on that data flow is cheap insurance for exactly the part of the
+app that matters most, at no runtime cost since it's compiled away.
 
 ## Consequences
 
@@ -65,6 +78,10 @@ doesn't require its own server at runtime.
   [ADR-004](ADR-004-content-management.md)) rather than a live database
   write — acceptable at this scale, and explicitly the trade-off the
   client chose over paying for a dashboard/backend
+- Next.js features that need a live server (API routes, SSR,
+  middleware, image optimization at request time) aren't available in
+  static export mode — none of those are needed by this scope, but
+  worth knowing if a future feature seems to want one
 - If a genuine need for server-side logic shows up later (accounts,
   payment, live tracking), that's a new phase with its own ADR — nothing
   here should be read as ruling that out permanently, just as not needed
@@ -72,11 +89,25 @@ doesn't require its own server at runtime.
 
 ## Alternatives Considered
 
-**A full stack with a server and database (e.g. Next.js + Express + MongoDB)**
+**A full stack with a server and database (e.g. Next.js in server mode + Express + MongoDB)**
 Would support payment processing, accounts, order tracking, and an admin
 console if any of those were ever needed. Rejected for this phase — none
 of that is in scope, and building it anyway would mean paying for and
 maintaining a backend and database this scope has no use for.
+
+**A lighter build tool instead of Next.js (e.g. Vite with plain React, or vanilla HTML/CSS/JS)**
+Would produce a smaller, simpler toolchain for a site this size, with
+less framework surface to learn. Not chosen — Next.js's routing and
+page/component conventions are worth the modest extra weight for a
+multi-page site, and static export means none of Next.js's
+server-oriented features are paid for at runtime. Worth reconsidering
+only if the framework's conventions ever get in the way rather than help.
+
+**JavaScript instead of TypeScript**
+Slightly less setup, one less thing to learn. Rejected — the type safety
+is worth having specifically on the cart/order/WhatsApp-link logic (see
+Rationale), and the cost is small since it's a compile-time-only choice
+with no runtime overhead.
 
 **A CMS-backed static site (e.g. Next.js + a headless CMS)**
 Would give non-technical staff a way to edit the menu without a

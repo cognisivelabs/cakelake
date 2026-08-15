@@ -10,7 +10,7 @@ reasoning behind each piece.
 Customer's phone/browser
       |
       v
-Static site (HTML/CSS/JS, built by Vite or similar)
+Static site (Next.js static export, TypeScript)
   - Menu / catalogue (read from repo content at build time)
   - Cart (held in the browser, not persisted anywhere)
   - Menu PDF download

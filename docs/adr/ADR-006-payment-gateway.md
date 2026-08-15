@@ -102,11 +102,34 @@ through the whole codebase either way.
   PayTabs API in the meantime, and swap in ADCB later if it turns out to
   be available and worthwhile, without redesigning anything (see the thin
   interface point above)
+- **✅ Checkout payment methods rebuilt to match this decision
+  (2026-08-15):** `prototype/Cake Lake Ordering Prototype v2.dc.html`'s
+  `payOptions` now lists Apple Pay and Google Pay as separate options,
+  manual card entry is gone, and in-person reads "Tap your card at the
+  counter" instead of "Cash." Tabby is untouched — still the separate open
+  question below. Verified directly in the file.
 - **Open question, still needs explicit confirmation:** is Apple Pay/
   Google Pay-only checkout really intended, or should a card-entry
   fallback exist for customers without a compatible wallet (most desktop
   browsers, notably)? Unchanged from the prior round — not resolved by
-  the ADCB/PayTabs question
+  the ADCB/PayTabs question. **Claude Design's view, worth weighing
+  (2026-08-15):** wallet-only genuinely strands desktop customers — Apple
+  Pay needs Safari or a paired device, Google Pay needs a saved card in
+  Chrome; a Windows/Firefox visitor trying to order a wedding cake would
+  have no way to pay and no fallback, and would likely just leave.
+  Suggested pricing a hosted card-entry page from whichever gateway wins
+  (ADCB or PayTabs) before committing to wallet-only.
+- **⚠ New discrepancy, minor, found 2026-08-15:** the admin console
+  (`prototype/Cake Lake Admin.dc.html`) gained an unrequested,
+  Owner-only Payments settings page with a gateway picker offering
+  **Telr and PayTabs** — not ADCB, which superseded Telr as the
+  first-choice option under this ADR — and a payment-methods list still
+  showing "Cards" as a toggle and "Cash at the counter," missing Google
+  Pay entirely. Lower priority: this screen lives behind the `payments`
+  permission, part of the role system already deferred to a later phase
+  per [ADR-011](ADR-011-admin-console.md), so nothing is blocked — but
+  worth a fix pass whenever that phase happens, or sooner if it's
+  confusing to look at now. See requirements.md's fifth discrepancy note.
 - Apple Pay and Google Pay each need their own merchant/domain setup steps
   (Apple Pay merchant ID + domain verification; Google Pay merchant
   registration) regardless of which underlying gateway is used

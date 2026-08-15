@@ -5,8 +5,10 @@ still needs a client answer. As answers come in, move items from "Open
 questions" into the relevant confirmed section and note the date/source of
 the decision.
 
-Last updated: 2026-08-14 (re-confirmed WhatsApp is outbound-only; flagged
-the prototype's WhatsApp drawer placing unpaid orders as a discrepancy).
+Last updated: 2026-08-15 (synced latest Claude Design download: OTP-copy,
+WhatsApp-ordering, and checkout payment-method fixes confirmed landed;
+new minor discrepancy flagged in the admin console's Payments settings
+page).
 
 ## Client
 
@@ -158,26 +160,37 @@ v1 and v2) now filters trackable orders to `state === 'live' || state ===
 tracking page. Verified directly in
 `prototype/Cake Lake Ordering Prototype v2.dc.html`.
 
-**⚠ Third discrepancy to resolve:** prototype v2's login flow explicitly
-says **SMS** — `authSentKind` labels mobile OTP as `'SMS'`, and the code
-screen reads "the 4-digit code we texted you." Both now contradict the
-confirmed decision that mobile-path OTP goes by **WhatsApp**, never SMS
-(see requirement #7, [ADR-005](../adr/ADR-005-customer-identity.md)).
-Needs a copy/logic fix in Claude Design — not a local patch, per the usual
-workflow.
+**✅ Third discrepancy resolved (2026-08-15):** login now correctly labels
+mobile OTP `WHATSAPP` and reads "Sent on WhatsApp to …" — every "texted
+you"/SMS string is gone. Verified directly in
+`prototype/Cake Lake Ordering Prototype v2.dc.html`.
 
-**⚠ Fourth discrepancy to resolve — more serious:** prototype v2's
-WhatsApp drawer implements real ordering, not just notifications. Its
-`waSend`/`waReply` logic responds to quick-reply chips ("Send my cart",
-"Order a cake", "Custom cake"), and a "CONFIRM" reply calls
-`commitOrder('WhatsApp')` directly — placing a real order **with no
-payment step**. As built, this would let anyone push a free, unpaid order
-into the kitchen queue from the WhatsApp drawer alone. This directly
-contradicts requirement #10 above (WhatsApp is outbound-only) and needs
-removing entirely in Claude Design — the drawer should only ever display
-the two outbound notifications, never accept a reply that creates,
-modifies, or confirms an order. See
-[ADR-012](../adr/ADR-012-whatsapp-notifications.md).
+**✅ Fourth discrepancy resolved (2026-08-15):** `waSend`/`waReply` and the
+`CONFIRM` → `commitOrder('WhatsApp')` path are removed entirely — the
+WhatsApp drawer now only ever displays the two outbound notifications.
+Claude Design also caught two related paths I hadn't flagged and removed
+them too: the hero's "Order on WhatsApp" CTA and the cart's "Send this
+cart on WhatsApp" `wa.me` deep link. A plain "Message the shop on
+WhatsApp" contact link remains — that's fine, it's just a normal chat
+link, not an ordering path.
+
+**✅ Checkout payment methods rebuilt (2026-08-15):** Apple Pay and Google
+Pay as separate options, manual card entry removed, in-person now reads
+"Tap your card at the counter" instead of "Cash." Tabby untouched (still
+an open question). Matches [ADR-006](../adr/ADR-006-payment-gateway.md).
+
+**⚠ Fifth discrepancy, minor — new admin Payments settings page uses stale
+gateway info:** Claude Design added an Owner-only Payments settings screen
+to `Cake Lake Admin.dc.html` (not something asked for, but reasonable
+scope for that console). Its gateway picker offers **Telr and PayTabs**
+— not ADCB, which superseded Telr as the first-choice option (see
+[ADR-006](../adr/ADR-006-payment-gateway.md)) — and its payment-methods
+list still shows "Cards" as a toggle and "Cash at the counter," missing
+Google Pay entirely. Lower priority than the first four: this whole
+section lives behind the role system (`payments` permission) that's
+already deferred to a later phase per requirement #9, so it's not blocking
+anything — but worth a fix pass whenever that phase happens, or sooner if
+it's confusing to look at now.
 
 **✅ Login mechanism resolved (2026-08-14):** account login is email or
 mobile, customer's choice; the one-time code goes by email or **WhatsApp**
@@ -217,7 +230,13 @@ through with the client.
   Apple Pay/Google Pay *only*, or whether a manual card-entry option should
   exist as a fallback for customers without a wallet set up on their
   device or browser (e.g. most desktop checkouts). See
-  [ADR-006](../adr/ADR-006-payment-gateway.md).
+  [ADR-006](../adr/ADR-006-payment-gateway.md). **Claude Design's view,
+  worth weighing (2026-08-15):** wallet-only genuinely strands desktop
+  customers — Apple Pay needs Safari or a paired device, Google Pay needs
+  a saved card in Chrome; a Windows/Firefox visitor trying to order a
+  wedding cake would have no way to pay and no fallback, and would just
+  leave. Suggested pricing a hosted card-entry page from whichever gateway
+  wins (ADCB or PayTabs) before committing to wallet-only.
 - Also confirm whether a buy-now-pay-later option (e.g. Tabby, shown as a
   placeholder badge in the mockup) is actually wanted — that would be a
   separate integration from the ADCB gateway either way.
@@ -308,3 +327,20 @@ through with the client.
   actually commits real, unpaid orders via a "CONFIRM" reply — flagged as
   the fourth discrepancy to fix in Claude Design, not just a documentation
   clarification. See [ADR-012](../adr/ADR-012-whatsapp-notifications.md).
+- **2026-08-15** (Claude Design sync) — Synced the latest download from
+  `~/Downloads/Sample page designs/`. All four fixes requested from the
+  consolidated prompt landed and were verified directly in the files:
+  OTP copy now says WhatsApp not SMS/"texted"; the WhatsApp drawer's
+  order-placing paths (`waSend`/`waReply`/`commitOrder('WhatsApp')`) are
+  gone; checkout's "Confirm on WhatsApp" option is gone; `payOptions` now
+  lists Apple Pay and Google Pay separately, drops manual card entry, and
+  reads "Tap your card at the counter" in person. Claude Design also
+  removed two related WhatsApp-ordering paths that hadn't been explicitly
+  flagged (hero CTA, cart deep link), and left a design opinion on the
+  wallet-only checkout open question (folded into that question below).
+  One new minor discrepancy found: the admin console's new Payments
+  settings page uses stale Telr/PayTabs gateway options and is missing
+  Google Pay — see the fifth discrepancy note above. See
+  [ADR-006](../adr/ADR-006-payment-gateway.md) and
+  [ADR-012](../adr/ADR-012-whatsapp-notifications.md) for the updated
+  Consequences sections.

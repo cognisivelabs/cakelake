@@ -109,16 +109,23 @@ approved *before* launch, not discovered as a blocker during development.
   call (WhatsApp, alongside the SES email in ADR-008) — both failures
   should be logged ([ADR-009](ADR-009-logging-and-error-tracking.md)) but
   never block the order/status-update itself succeeding
-- **⚠ Discrepancy, confirmed 2026-08-14, needs fixing in Claude Design (not
-  a local patch):** prototype v2's WhatsApp drawer implements a real
-  ordering flow, not just notifications. `waSend`/`waReply` respond to
-  quick-reply chips ("Send my cart", "Order a cake", "Custom cake"), and a
-  "CONFIRM" reply calls `commitOrder('WhatsApp')` directly — placing a
-  real order **with no payment step at all**. As built, this would let
-  anyone push a free, unpaid order into the kitchen queue straight from
-  the WhatsApp drawer. This needs removing entirely: the WhatsApp drawer
-  should only ever *display* the two outbound notifications from this
-  ADR, never accept a reply that creates, modifies, or confirms an order
+- **✅ Discrepancy resolved (2026-08-15):** `waSend`/`waReply` and the
+  `CONFIRM` → `commitOrder('WhatsApp')` path are removed from
+  `prototype/Cake Lake Ordering Prototype v2.dc.html` — verified directly
+  in the file, no matches remain for any of the three. The drawer now only
+  ever displays the two outbound notifications from this ADR. Claude
+  Design also caught and removed two related paths that hadn't been
+  explicitly flagged: the hero's "Order on WhatsApp" CTA and the cart's
+  "Send this cart on WhatsApp" `wa.me` deep link — both were alternate
+  routes into the same unpaid-order problem. A plain "Message the shop on
+  WhatsApp" contact link remains, correctly — that's an ordinary chat
+  link, not an ordering path.
+- **✅ Checkout's "Confirm on WhatsApp" payment option also removed
+  (2026-08-15):** the same problem existed one step later, at checkout —
+  `{id:'whatsapp', title:'Confirm on WhatsApp', ...}` would have taken a
+  payment confirmation over chat instead of through the gateway. Removed
+  alongside the drawer fix; see [ADR-006](ADR-006-payment-gateway.md) for
+  the checkout payment method rebuild this was part of.
 
 ## Alternatives Considered
 

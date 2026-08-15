@@ -3,25 +3,27 @@ branch: main
 
 ## Last sync
 
-date: 2026-08-14T18:18:00Z
+date: 2026-08-15T00:00:00Z
 
 ### Updated in this project
 
-- **New: WhatsApp order notifications** (req #10) — v2's WhatsApp drawer now sends exactly two automated messages per order: a receipt when placed, a "ready" nudge when staff mark the order ready. Capped at two by design — see `waNotify()`/`receiptText()`/`readyText()` in v2 and [ADR-012](docs/adr/ADR-012-whatsapp-notifications.md).
-- **Counter QR restored** (req #6): in-shop "scan and skip the queue" flow on the home ordering channels and the Visit screen. Leaflet QR deliberately left out — design deferred per the requirements doc.
-- **Account vs guest checkout added** (req #7): guest collects an email for the tracking link; account uses mobile-or-email with a one-time code, then keeps order history.
-- **Track Order discrepancy fixed**: trackable orders are now filtered to live + upcoming only, never collected/delivered. Added a scheduled sample order and an empty state pointing at account history. Same filter applied to v1.
-- Logo redrawn from the client's own artwork and used in both prototypes' headers/footers; the order tracker now assembles that mark tier by tier as stages complete.
-- **New: admin console** (req #9) — `prototype/Cake Lake Admin.dc.html`. Catalogue CRUD, offers CRUD, an invite-based team/roles system (Owner / Catalogue manager / Counter staff), and an activity log. Doesn't yet include an orders view or the metrics view.
+- **All four requested fixes from the consolidated Claude Design prompt landed, verified directly in the files:**
+  1. Login OTP copy now says WhatsApp, not SMS/"texted" — `authSentKind`/`authSentTo` in v2.
+  2. WhatsApp drawer's order-placing paths removed entirely — no `waSend`/`waReply`/`commitOrder('WhatsApp')` left in v2; the drawer only displays the two outbound notifications from [ADR-012](docs/adr/ADR-012-whatsapp-notifications.md).
+  3. Checkout's "Confirm on WhatsApp" payment option removed.
+  4. `payOptions` rebuilt: Apple Pay and Google Pay as separate options, manual card entry gone, in-person reads "Tap your card at the counter." Tabby untouched. See [ADR-006](docs/adr/ADR-006-payment-gateway.md).
+- **Two bonus fixes, not explicitly asked for but the same underlying problem:** the hero's "Order on WhatsApp" CTA and the cart's "Send this cart on WhatsApp" `wa.me` deep link are both gone — both were alternate routes into placing an order over WhatsApp. A plain "Message the shop on WhatsApp" contact link remains, correctly (ordinary chat link, not an ordering path).
+- **New, unrequested: admin Payments settings page** in `Cake Lake Admin.dc.html` (Owner-only, behind the `payments` permission already deferred per [ADR-011](docs/adr/ADR-011-admin-console.md)) — reasonable scope for that console, but its gateway picker (`GATEWAYS = {telr, paytabs}`) and payment-methods list are stale against [ADR-006](docs/adr/ADR-006-payment-gateway.md): no ADCB option, missing Google Pay, still says "Cash at the counter." Flagged as a minor, non-blocking discrepancy — see requirements.md.
 
 ### Flagged for confirmation, not auto-accepted (see requirements.md)
 
-- OTP login is mobile-**or**-email, not mobile-only as ADR-005 originally decided — reopens the "no SMS/OTP cost" assumption for the mobile-OTP path.
-- Admin console scope (roles, invites, audit log) goes beyond the original catalogue/offers CRUD ask in requirement #9.
-- WhatsApp notification scope is intentionally limited to two messages (no full in-chat ordering) — see ADR-012's open question on whether the client's existing WhatsApp number gets migrated to the API or a second number is used.
+- Wallet-only checkout (Apple Pay/Google Pay, no card-entry fallback) still an open UX question — Claude Design weighed in this round that it risks stranding desktop customers with no compatible wallet, and suggested pricing a hosted card-entry page before committing. Not yet decided either way.
+- The new admin Payments settings page's stale gateway options (above) — low priority since it's behind the deferred role system, but worth a fix pass.
 
 ## Sync history
 
+- 2026-08-15T00:00:00Z — OTP-copy, WhatsApp-ordering, and checkout payment-method fixes confirmed landed; new Payments settings page flagged as a stale-data discrepancy.
+- 2026-08-14T18:18:00Z — WhatsApp notifications, counter QR, account/guest checkout, Track Order fix, logo redraw, admin console (first pass).
 - 2026-08-14T17:07:50Z — counter QR restored, Track Order fixed, admin console added, logo redrawn.
 - 2026-08-14T16:09:58Z — 10 more photos (16 total); Naked Fruit Tier removed from the menu.
 - 2026-08-14T15:45:33Z — first six placeholder photos wired into v2's photo slots.

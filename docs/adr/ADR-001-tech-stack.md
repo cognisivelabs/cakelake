@@ -11,7 +11,7 @@ Cake Lake needs:
 - A small staff-facing surface to update order status (placed → baking →
   decorating → ready) — likely a handful of taps on a phone or tablet at
   the counter, not a full back-office system
-- A payment gateway integration (ADCB if available, PayTabs as confirmed fallback; Apple Pay + Google Pay only — see [ADR-006](ADR-006-payment-gateway.md))
+- A payment gateway integration (Stripe or PayTabs, final pick pending; Apple Pay + Google Pay only — see [ADR-006](ADR-006-payment-gateway.md))
 - A data model that's store-scoped from day one so a second branch is a new
   `store` document, not a rewrite (see [ADR-007](ADR-007-store-scoped-data-model.md))
 
@@ -30,7 +30,7 @@ by one member of staff at a time, for that one order.
   staff order-status screen from the same codebase
 - **Backend:** Node.js / Express, a single REST API service
 - **Database:** MongoDB (hosted on Atlas, not self-managed)
-- **Payments:** ADCB if available, else PayTabs (confirmed fallback), Apple Pay + Google Pay only, called from the backend (see ADR-006)
+- **Payments:** Stripe or PayTabs (final pick pending), Apple Pay + Google Pay only, called from the backend (see ADR-006)
 
 ## Rationale
 

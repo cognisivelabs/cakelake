@@ -13,7 +13,8 @@ date: 2026-08-15T00:00:00Z
   3. Checkout's "Confirm on WhatsApp" payment option removed.
   4. `payOptions` rebuilt: Apple Pay and Google Pay as separate options, manual card entry gone, in-person reads "Tap your card at the counter." Tabby untouched. See [ADR-006](docs/adr/ADR-006-payment-gateway.md).
 - **Two bonus fixes, not explicitly asked for but the same underlying problem:** the hero's "Order on WhatsApp" CTA and the cart's "Send this cart on WhatsApp" `wa.me` deep link are both gone — both were alternate routes into placing an order over WhatsApp. A plain "Message the shop on WhatsApp" contact link remains, correctly (ordinary chat link, not an ordering path).
-- **New, unrequested: admin Payments settings page** in `Cake Lake Admin.dc.html` (Owner-only, behind the `payments` permission already deferred per [ADR-011](docs/adr/ADR-011-admin-console.md)) — reasonable scope for that console, but its gateway picker (`GATEWAYS = {telr, paytabs}`) and payment-methods list are stale against [ADR-006](docs/adr/ADR-006-payment-gateway.md): no ADCB option, missing Google Pay, still says "Cash at the counter." Flagged as a minor, non-blocking discrepancy — see requirements.md.
+- **New, unrequested: admin Payments settings page** in `Cake Lake Admin.dc.html` (Owner-only, behind the `payments` permission already deferred per [ADR-011](docs/adr/ADR-011-admin-console.md)) — reasonable scope for that console, but its gateway picker (`GATEWAYS = {telr, paytabs}`) and payment-methods list are stale against [ADR-006](docs/adr/ADR-006-payment-gateway.md): PayTabs is actually correct again as of the 2026-08-15 gateway direction change, but Telr isn't one of the two live candidates (Stripe is, and it's missing), and the payment-methods list is missing Google Pay and still says "Cash at the counter." Flagged as a minor, non-blocking discrepancy — see requirements.md.
+- **Payment gateway direction changed same day (2026-08-15, chat):** client confirmed the online gateway will be Stripe or PayTabs, final pick pending — ADCB dropped as a website-gateway candidate, stays in-person-only. See [ADR-006](docs/adr/ADR-006-payment-gateway.md) (rewritten as Round 5).
 
 ### Flagged for confirmation, not auto-accepted (see requirements.md)
 
@@ -38,7 +39,7 @@ date: 2026-08-15T00:00:00Z
 | Home / hero, ordering channels | docs/requirements/requirements.md (confirmed scope 1–6) |
 | Menu, product detail, custom cake builder | docs/requirements/requirements.md (catalogue — open question); design-system/ui_kits/cakelake-site/data.jsx |
 | Offers | docs/requirements/requirements.md (offer types — open question) |
-| Cart, checkout, confirmation | docs/requirements/requirements.md (req #7 account/guest; req #4 payments: ADCB if available, PayTabs as confirmed fallback, Apple Pay/Google Pay only; Tabby unconfirmed) |
+| Cart, checkout, confirmation | docs/requirements/requirements.md (req #7 account/guest; req #4 payments: Stripe or PayTabs, final pick pending, Apple Pay/Google Pay only; Tabby unconfirmed) |
 | Counter QR panel (home, Visit) | docs/requirements/requirements.md (req #6 counter QR) |
 | Track order | docs/requirements/requirements.md (live pickup status; current + upcoming only) |
 | Locations | docs/requirements/requirements.md (single store today, store-scoped model) |

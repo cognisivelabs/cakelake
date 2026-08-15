@@ -42,9 +42,9 @@ MongoDB Atlas  <------- catalogue items, orders, offers, customers —
                          every relevant document carries a storeId
                          (ADR-007), even with one store today
 
-Payment gateway (ADCB if available, else PayTabs as confirmed
-fallback; Apple Pay + Google Pay only, see ADR-006) — called from the
-Express API for checkout; webhook confirms payment back to the API.
+Payment gateway (Stripe or PayTabs, final pick pending; Apple Pay +
+Google Pay only, see ADR-006) — called from the Express API for
+checkout; webhook confirms payment back to the API.
 ```
 
 One compute node runs both the Next.js app and the Express API at launch
@@ -188,9 +188,9 @@ Matching the ADRs, these are explicitly deferred, not overlooked:
 - No WebSocket/real-time push layer (ADR-004)
 - No Redis, no background job queue (ADR-003)
 - No multi-node/load-balanced compute (ADR-003)
-- No finalized payment gateway — ADCB used if they have a web product,
-  PayTabs as the confirmed fallback otherwise; not blocking, since
-  development can proceed against PayTabs's API either way (ADR-006)
+- No finalized payment gateway — Stripe or PayTabs, final pick pending
+  the client's decision; not blocking, since development can proceed
+  against either API behind a thin interface either way (ADR-006)
 - No branch-selector UI — the data model supports it (ADR-007), but
   whether it's live at launch is still an open question in
   [requirements.md](../requirements/requirements.md)

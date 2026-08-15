@@ -5,10 +5,11 @@ still needs a client answer. As answers come in, move items from "Open
 questions" into the relevant confirmed section and note the date/source of
 the decision.
 
-Last updated: 2026-08-15 (synced latest Claude Design download: OTP-copy,
-WhatsApp-ordering, and checkout payment-method fixes confirmed landed;
-new minor discrepancy flagged in the admin console's Payments settings
-page).
+Last updated: 2026-08-15 (payment gateway direction changed to Stripe or
+PayTabs, final pick pending — ADCB dropped as the website gateway
+candidate; synced latest Claude Design download earlier the same day:
+OTP-copy, WhatsApp-ordering, and checkout payment-method fixes confirmed
+landed).
 
 ## Client
 
@@ -25,15 +26,13 @@ client confirmation (see open questions).
 3. **Fully mobile-friendly** — mobile is treated as the primary surface, not
    an adaptation of desktop.
 4. **Payment, online and in-person, two separate surfaces:**
-   - **Online:** **ADCB if they offer a web/e-commerce gateway, PayTabs as
-     the confirmed fallback otherwise** — either way settling into the
-     client's existing ADCB account (the gateway that processes a
-     transaction and the bank the money lands in don't have to be the same
-     institution). ADCB's physical card machine for the shop is a
-     different product from a website payment integration, so this needs
-     a direct yes/no from ADCB before it's finalized — see
-     [ADR-006](../adr/ADR-006-payment-gateway.md). Checkout is **Apple Pay
-     and Google Pay only** — no manual card-entry form is currently
+   - **Online:** **Stripe or PayTabs — final pick not yet decided** by the
+     client. ADCB was considered as the website's gateway in an earlier
+     round but is no longer a candidate for that role — its physical card
+     machine for the shop is a different product from a website payment
+     integration, and stays as the in-person tap/contactless method only.
+     See [ADR-006](../adr/ADR-006-payment-gateway.md). Checkout is **Apple
+     Pay and Google Pay only** — no manual card-entry form is currently
      planned (flagged UX question: customers without a wallet set up on
      their device/browser would have no way to pay online — still open).
    - **In-person:** the shop already takes **tap/contactless card
@@ -130,8 +129,8 @@ approved — not to be treated as a final decision:
 - **Frontend:** Next.js
 - **Backend:** Node/Express + MongoDB
 - **Hosting:** AWS, `me-central-1` region
-- **Payments:** ADCB if they have a web gateway, PayTabs as the confirmed
-  fallback — Apple Pay + Google Pay only, see requirement #4
+- **Payments:** Stripe or PayTabs, final pick pending — Apple Pay + Google
+  Pay only, see requirement #4
 
 ## Existing design-system context
 
@@ -182,15 +181,16 @@ an open question). Matches [ADR-006](../adr/ADR-006-payment-gateway.md).
 **⚠ Fifth discrepancy, minor — new admin Payments settings page uses stale
 gateway info:** Claude Design added an Owner-only Payments settings screen
 to `Cake Lake Admin.dc.html` (not something asked for, but reasonable
-scope for that console). Its gateway picker offers **Telr and PayTabs**
-— not ADCB, which superseded Telr as the first-choice option (see
-[ADR-006](../adr/ADR-006-payment-gateway.md)) — and its payment-methods
-list still shows "Cards" as a toggle and "Cash at the counter," missing
-Google Pay entirely. Lower priority than the first four: this whole
-section lives behind the role system (`payments` permission) that's
-already deferred to a later phase per requirement #9, so it's not blocking
-anything — but worth a fix pass whenever that phase happens, or sooner if
-it's confusing to look at now.
+scope for that console). Its gateway picker offers **Telr and PayTabs** —
+PayTabs is actually back in play as of the 2026-08-15 gateway direction
+change (see [ADR-006](../adr/ADR-006-payment-gateway.md)), but Telr isn't
+one of the two live candidates (Stripe is, and it's missing from the
+picker) — and its payment-methods list still shows "Cards" as a toggle
+and "Cash at the counter," missing Google Pay entirely. Lower priority
+than the first four: this whole section lives behind the role system
+(`payments` permission) that's already deferred to a later phase per
+requirement #9, so it's not blocking anything — but worth a fix pass once
+Stripe-vs-PayTabs is settled, or sooner if it's confusing to look at now.
 
 **✅ Login mechanism resolved (2026-08-14):** account login is email or
 mobile, customer's choice; the one-time code goes by email or **WhatsApp**
@@ -218,14 +218,12 @@ through with the client.
 - **Delivery:** Is delivery in scope for launch, or a phase 2 add-on to
   pickup-only ordering? If in scope, what are the delivery zones? (The
   mockup currently references Dubai-only, free over AED 200, as a placeholder.)
-- **Ask ADCB directly:** "Do you have a web/e-commerce payment gateway —
-  separate from our card machine — that supports Apple Pay and Google Pay
-  for online checkout?" A yes/no with enough detail to actually integrate
-  (API/SDK vs. hosted checkout, onboarding/KYC steps, timeline). Until
-  answered, **PayTabs is the confirmed fallback** — a known-good, already
-  Apple Pay/Google Pay-enabled UAE gateway — so this no longer blocks
-  starting development on the payment integration layer (see
-  [ADR-006](../adr/ADR-006-payment-gateway.md)).
+- **Stripe or PayTabs:** the client has confirmed the online gateway will
+  be one of these two (2026-08-15) — ADCB is no longer a candidate for
+  that role (see [ADR-006](../adr/ADR-006-payment-gateway.md)). The final
+  pick between the two is still pending; this doesn't block starting
+  development on the payment integration layer, which is being built
+  behind a thin interface either way.
 - **Card-entry fallback:** confirm whether checkout should really be
   Apple Pay/Google Pay *only*, or whether a manual card-entry option should
   exist as a fallback for customers without a wallet set up on their
@@ -236,10 +234,10 @@ through with the client.
   a saved card in Chrome; a Windows/Firefox visitor trying to order a
   wedding cake would have no way to pay and no fallback, and would just
   leave. Suggested pricing a hosted card-entry page from whichever gateway
-  wins (ADCB or PayTabs) before committing to wallet-only.
+  wins (Stripe or PayTabs) before committing to wallet-only.
 - Also confirm whether a buy-now-pay-later option (e.g. Tabby, shown as a
   placeholder badge in the mockup) is actually wanted — that would be a
-  separate integration from the ADCB gateway either way.
+  separate integration from the online gateway either way.
 - **Offer types:** Which promotion types does the client actually want to
   run at launch — percentage off, BOGO/bundle deals, delivery-threshold
   discounts, seasonal campaigns, first-order discounts, referral credits,
@@ -344,3 +342,13 @@ through with the client.
   [ADR-006](../adr/ADR-006-payment-gateway.md) and
   [ADR-012](../adr/ADR-012-whatsapp-notifications.md) for the updated
   Consequences sections.
+- **2026-08-15** (chat) — Payment gateway direction changed again: the
+  client confirmed the online gateway will be **Stripe or PayTabs**,
+  final pick not yet decided. ADCB is no longer a candidate for the
+  website's gateway — its card machine stays exactly what it's always
+  been, in-person tap payment only. This reopens the settlement-account
+  question (previously assumed to be ADCB regardless of gateway) and
+  reframes the admin console's stale Payments settings page discrepancy
+  (PayTabs is actually correct again; Telr and Google Pay are the actual
+  gaps now). See [ADR-006](../adr/ADR-006-payment-gateway.md), rewritten
+  as Round 5 of that decision.

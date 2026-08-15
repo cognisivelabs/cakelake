@@ -1,7 +1,7 @@
-# ADR-006: Payment Gateway — ADCB if Available, PayTabs as Confirmed Fallback
+# ADR-006: Payment Gateway — Stripe or PayTabs, Final Pick Pending
 
-**Status:** Proposed — fallback path confirmed; final pick pending ADCB's answer
-**Date:** 2026-08-14
+**Status:** Proposed — gateway narrowed to two candidates; final pick not yet decided
+**Date:** 2026-08-15
 
 ## Context
 
@@ -23,85 +23,70 @@ used at all — the client's own bank, ADCB, would be the gateway instead,
 based on their existing business account and the physical card machine
 ADCB had already provided the shop.
 
-**Round 4 (current):** working through what the ADCB card machine actually
-is clarified an important distinction — it's a **physical point-of-sale
-terminal**, which accepts an in-person NFC tap (including from an Apple
-Pay/Google Pay-loaded phone), completely separately from whatever a
-**website checkout** would need. A website has no terminal to tap; Apple
-Pay/Google Pay on the web work through Apple's/Google's JavaScript payment
-APIs, which hand an encrypted token to a **payment gateway** integrated
-into the site's backend — a software integration, not a hardware one. Bank
-card machines and web payment gateways are commonly separate products even
-within the same bank, so having one doesn't confirm the other exists.
+**Round 4 (superseded):** working through what the ADCB card machine
+actually is clarified an important distinction — it's a **physical
+point-of-sale terminal**, which accepts an in-person NFC tap (including
+from an Apple Pay/Google Pay-loaded phone), completely separately from
+whatever a **website checkout** would need. That produced a two-path plan:
+ask ADCB whether they have a separate web/e-commerce gateway, and use
+PayTabs as the confirmed fallback if not.
 
-That produced the current, practical two-path plan.
+**Round 5 (current, 2026-08-15):** the client has moved on from the ADCB
+question — **the online gateway will be either Stripe or PayTabs, final
+choice not yet decided.** ADCB's card machine remains exactly what it's
+always been (in-person tap payment, out of scope for this ADR); it's no
+longer a candidate for the *website's* gateway. Stripe is back in
+consideration despite being passed over in Round 1 — that was this ADR's
+own cost/approval reasoning at the time, not a client constraint, and the
+client has since chosen to reconsider it directly.
 
 ## Decision
 
-1. **Ask ADCB directly:** do they offer a separate web/e-commerce payment
-   gateway (API, SDK, or hosted checkout page) for the site — distinct
-   from the physical card machine — and does it support Apple Pay/Google
-   Pay for *web* checkout specifically? If yes, and it's not slow to set
-   up, **use it.**
-2. **If ADCB doesn't have this, or it's unclear/slow: use PayTabs.**
-   Confirmed as the fallback, not just "reconsider later" — PayTabs is a
-   well-documented UAE gateway with established Apple Pay/Google Pay web
-   support, so it's a known-good path rather than a second unknown.
-3. **Either way, settlement lands in the client's existing ADCB account.**
-   The gateway (whichever it turns out to be) and the bank account funds
-   settle into are separate concerns — PayTabs doesn't require banking
-   with PayTabs; it processes the transaction and deposits into whatever
-   account the merchant designates, which can be — and here, will be —
-   the client's ADCB account. So "we want the money in ADCB" is satisfied
-   regardless of which of the two gateways ends up doing the processing.
-4. **Checkout methods: Apple Pay and Google Pay only**, no manual
-   card-entry form currently planned — this part is unchanged from the
-   prior round and still flagged as needing explicit UX confirmation (see
-   Consequences); it doesn't depend on which gateway wins.
+1. **Online payment gateway: Stripe or PayTabs — not yet decided.** Both
+   are viable, established options with Apple Pay/Google Pay web support;
+   the specific pick is a client decision still pending, not a technical
+   blocker.
+2. **Checkout methods: Apple Pay and Google Pay only**, no manual
+   card-entry form currently planned — unchanged from prior rounds and
+   still flagged as needing explicit UX confirmation (see Consequences);
+   this doesn't depend on which gateway wins.
+3. **In-person payment is unaffected.** ADCB's physical card machine keeps
+   handling counter tap payments exactly as it does today — this ADR only
+   concerns the website's online gateway.
+4. **Settlement account reopened as a question.** The previous round
+   assumed funds would land in the client's ADCB account regardless of
+   gateway (a PSP can settle into any designated bank account). That
+   assumption hasn't been re-confirmed now that ADCB itself is out of the
+   gateway picture — see Consequences.
 
 ## Rationale
 
-**A confirmed fallback turns an open risk into a bounded one.** The
-previous version of this ADR left "what if ADCB doesn't have a web
-product" as an unresolved risk. Naming PayTabs as the specific,
-already-vetted fallback means the answer to "does ADCB work out" is never
-"start over" — it's "use the other known-good option," decided now rather
-than improvised later if ADCB's answer is disappointing.
-
-**The gateway/settlement-account distinction is what makes this
-low-risk.** Once it's clear that "money ends up at ADCB" doesn't require
-"ADCB processes the transaction," the two paths stop being in tension with
-the client's actual goal (their money, in their bank). This is the single
-fact that unblocks the decision — worth keeping explicit in this ADR
-rather than just in chat history, since it's easy to re-lose the thread on
-this later.
-
-**Ask ADCB a specific, answerable question, not a vague one.** "Do you
-support Apple Pay" is exactly the ambiguous framing that caused the
-confusion in Rounds 3–4 (a card machine "supports" Apple Pay, in a totally
-different sense than a web gateway does). The question to actually ask is
-specific: *"Do you have a web/e-commerce payment gateway, separate from
-our card machine, that supports Apple Pay and Google Pay for online
-checkout?"* — a question ADCB's business banking team can answer
-unambiguously, which is the point.
+**Two known-good options, decision left to the client.** Both Stripe and
+PayTabs are established payment gateways with documented Apple Pay/Google
+Pay web support — there's no technical reason to force the choice early.
+Building against a thin internal interface (see below) means development
+isn't blocked on which one the client eventually prefers.
 
 **Integrate behind a thin interface regardless of which gateway wins.**
 The Express backend (see [ADR-001](ADR-001-tech-stack.md)) should wrap
 payment calls behind a small internal interface (create-payment,
 verify-webhook, refund) rather than calling either gateway's SDK directly
 from route handlers — good practice for isolating a third-party dependency
-that touches money, and it means the ADCB-vs-PayTabs choice doesn't ripple
-through the whole codebase either way.
+that touches money, and it means the Stripe-vs-PayTabs choice doesn't
+ripple through the whole codebase either way.
 
 ## Consequences
 
-- **Open question, needs the client to ask ADCB directly (see the specific
-  question above):** whether ADCB has a web gateway product at all. This
-  is now a bounded question with a known fallback, not a blocking risk —
-  development on the payment integration layer can proceed against the
-  PayTabs API in the meantime, and swap in ADCB later if it turns out to
-  be available and worthwhile, without redesigning anything (see the thin
-  interface point above)
+- **Open question, needs a client decision:** Stripe or PayTabs — no
+  technical blocker either way; development on the payment integration
+  layer can proceed against either API behind the thin interface above,
+  and swap in the final choice without redesigning anything.
+- **Open question, reopened 2026-08-15:** which bank account settlement
+  lands in. Previously assumed to be the client's ADCB account regardless
+  of gateway (a PSP settles into whatever account the merchant
+  designates) — worth reconfirming with the client now that ADCB isn't
+  the gateway itself, rather than carrying the old assumption forward
+  unchecked.
 - **✅ Checkout payment methods rebuilt to match this decision
   (2026-08-15):** `prototype/Cake Lake Ordering Prototype v2.dc.html`'s
   `payOptions` now lists Apple Pay and Google Pay as separate options,
@@ -111,25 +96,26 @@ through the whole codebase either way.
 - **Open question, still needs explicit confirmation:** is Apple Pay/
   Google Pay-only checkout really intended, or should a card-entry
   fallback exist for customers without a compatible wallet (most desktop
-  browsers, notably)? Unchanged from the prior round — not resolved by
-  the ADCB/PayTabs question. **Claude Design's view, worth weighing
-  (2026-08-15):** wallet-only genuinely strands desktop customers — Apple
-  Pay needs Safari or a paired device, Google Pay needs a saved card in
-  Chrome; a Windows/Firefox visitor trying to order a wedding cake would
-  have no way to pay and no fallback, and would likely just leave.
-  Suggested pricing a hosted card-entry page from whichever gateway wins
-  (ADCB or PayTabs) before committing to wallet-only.
-- **⚠ New discrepancy, minor, found 2026-08-15:** the admin console
-  (`prototype/Cake Lake Admin.dc.html`) gained an unrequested,
-  Owner-only Payments settings page with a gateway picker offering
-  **Telr and PayTabs** — not ADCB, which superseded Telr as the
-  first-choice option under this ADR — and a payment-methods list still
-  showing "Cards" as a toggle and "Cash at the counter," missing Google
-  Pay entirely. Lower priority: this screen lives behind the `payments`
-  permission, part of the role system already deferred to a later phase
-  per [ADR-011](ADR-011-admin-console.md), so nothing is blocked — but
-  worth a fix pass whenever that phase happens, or sooner if it's
-  confusing to look at now. See requirements.md's fifth discrepancy note.
+  browsers, notably)? Unchanged from the prior round. **Claude Design's
+  view, worth weighing (2026-08-15):** wallet-only genuinely strands
+  desktop customers — Apple Pay needs Safari or a paired device, Google
+  Pay needs a saved card in Chrome; a Windows/Firefox visitor trying to
+  order a wedding cake would have no way to pay and no fallback, and
+  would likely just leave. Suggested pricing a hosted card-entry page
+  from whichever gateway wins before committing to wallet-only.
+- **⚠ Discrepancy, needs another look now that the gateway direction has
+  changed again (found 2026-08-15, gateway direction changed same day):**
+  the admin console (`prototype/Cake Lake Admin.dc.html`) has an
+  unrequested, Owner-only Payments settings page with a gateway picker
+  offering **Telr and PayTabs** — PayTabs is actually back in play under
+  this round, but Telr isn't (Stripe is, and it's missing from the
+  picker); the payment-methods list still shows "Cards" as a toggle and
+  "Cash at the counter," missing Google Pay entirely. Lower priority:
+  this screen lives behind the `payments` permission, part of the role
+  system already deferred to a later phase per
+  [ADR-011](ADR-011-admin-console.md), so nothing is blocked — but worth
+  a fix pass once Stripe-vs-PayTabs is settled. See requirements.md's
+  fifth discrepancy note.
 - Apple Pay and Google Pay each need their own merchant/domain setup steps
   (Apple Pay merchant ID + domain verification; Google Pay merchant
   registration) regardless of which underlying gateway is used
@@ -143,38 +129,22 @@ through the whole codebase either way.
   build, integrate, or decide here. It doesn't need to talk to whichever
   online gateway is chosen; an in-person sale is recorded as paid,
   independent of the online checkout flow
-- Once ADCB's answer comes back, this ADR's Status flips to Accepted with
-  the specific choice recorded — either "ADCB, confirmed web gateway
-  available" or "PayTabs, ADCB had no web product" — rather than left as
-  a two-path plan
+- Once the client decides between Stripe and PayTabs, this ADR's Status
+  flips to Accepted with the specific choice recorded
 
 ## Alternatives Considered
 
-**Committing to ADCB only, and treating "no web product" as a blocker to
-resolve later**
-The previous version of this ADR. Rejected in favor of naming the fallback
-now — there's no reason to let the whole payment integration wait on a
-single yes/no from one bank when a known-good alternative already exists.
-
-**Committing to PayTabs only, skipping the ADCB question entirely**
-Would remove the open question altogether and let development start
-immediately. Rejected because the client has a real, existing ADCB
-relationship and it's a reasonable preference to use it if it works
-technically — worth one direct question to ADCB before ruling it out,
-which costs little and might simplify things (one less third party in the
-money-movement chain).
+**ADCB as the website gateway (Rounds 3–4 of this ADR)**
+Rejected as of Round 5 — the client has moved the online-gateway decision
+to Stripe vs. PayTabs instead. ADCB's role is now confirmed as in-person
+tap payment only; nothing here prevents revisiting ADCB later if the
+client's plans change again, but it's not an active candidate now.
 
 **Telr**
 Same standing as PayTabs — established, well-documented UAE gateway with
-Apple Pay/Google Pay web support. Not chosen as *the* named fallback only
-because a single, concrete fallback is more useful than two — PayTabs was
-picked arbitrarily between two otherwise-equivalent options. Telr remains
-a perfectly viable substitute if PayTabs specifically hits a snag later.
-
-**Stripe**
-Ruled out earlier in the original scope — harder and more expensive UAE
-merchant approval for this business type. Not re-evaluated here; nothing
-about this round changes that calculus.
+Apple Pay/Google Pay web support. Not one of the two named candidates in
+this round; the client specifically named Stripe and PayTabs. Telr remains
+a viable substitute if both of those hit a snag later.
 
 **Card-entry checkout alongside wallets (still not adopted, not
 permanently rejected)**

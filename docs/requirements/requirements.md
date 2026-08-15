@@ -1,6 +1,6 @@
 # Cake Lake Bakery — Technical Requirements
 
-Status: **Planning — fresh start (2026-08-15).** This is the internal,
+Status: **Planning.** This is the internal,
 technical companion to the client-approved
 [`Cake-Lake-Bakery-Website-Requirements.pdf`](../../Cake-Lake-Bakery-Website-Requirements.pdf),
 which is the source of truth for what the client asked for. This document
@@ -93,11 +93,8 @@ reasoning behind each:
 
 ## Decisions log
 
-- **2026-08-15** (chat) — Client approved a business requirements
-  document describing a much smaller scope than the original plan: no
-  online payment, no accounts, orders handed off to WhatsApp via a
-  customer-sent click-to-chat link, downloadable menu, contact info,
-  mobile-friendly, installable as a PWA (native app store app explicitly
-  deferred). At the client's request, the entire prior planning-phase
-  repo content was cleared (kept in git history), and this document set
-  is being rebuilt from scratch against the new, approved scope.
+- **2026-08-15** (chat) — Client approved the business requirements
+  document: no online payment, no accounts, orders handed off to
+  WhatsApp via a customer-sent click-to-chat link, downloadable menu,
+  contact info, mobile-friendly, installable as a PWA (native app store
+  app explicitly deferred).

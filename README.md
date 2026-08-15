@@ -7,16 +7,6 @@ the menu and build an order themselves, handed off to the bakery's
 WhatsApp for confirmation and payment — no online payment, no accounts,
 no backend.
 
-## Fresh start (2026-08-15)
-
-The client approved a much smaller-scope business requirements document
-than what this project originally planned around. At the client's
-request, the prior planning-phase content (a heavier Next.js/Express/
-MongoDB plan with a payment gateway, customer accounts, and an admin
-console) was cleared from this repo — it's still recoverable from git
-history, but nothing in the current working tree reflects it. Everything
-below is being rebuilt from scratch against the new, approved scope.
-
 ## Project Phases
 
 1. **Requirements** — done. See

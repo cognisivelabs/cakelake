@@ -1,15 +1,9 @@
 # Architecture Decision Records — Cake Lake Bakery
 
-This is the current ADR set, rebuilt from scratch on 2026-08-15 against
-the client-approved, much smaller project scope (see
-[requirements.md](../requirements/requirements.md) and the approved
-[`Cake-Lake-Bakery-Website-Requirements.pdf`](../../Cake-Lake-Bakery-Website-Requirements.pdf)).
-
-The prior ADR set (payment gateway, customer accounts, order tracking,
-admin console, Next.js/Express/MongoDB) was deleted from the working tree
-at the client's request when the project scope changed — it's still
-recoverable from git history if that reasoning is ever needed again, but
-none of it reflects the current plan.
+Architecture decisions for the Cake Lake Bakery website, scoped to the
+client-approved
+[`Cake-Lake-Bakery-Website-Requirements.pdf`](../../Cake-Lake-Bakery-Website-Requirements.pdf)
+and its technical companion, [requirements.md](../requirements/requirements.md).
 
 | ADR | Title | Status |
 |---|---|---|

@@ -15,9 +15,7 @@ Nothing in that list needs a server. The cart lives entirely in the
 customer's browser; the "place order" action assembles a WhatsApp link
 client-side (see [ADR-003](ADR-003-whatsapp-order-handoff.md)) and hands
 off to WhatsApp — there's no step where the site needs to talk to a
-backend of its own. This is a sharp change from the previous plan
-(Next.js + Express + MongoDB, built around payment, accounts, and order
-tracking), all of which is gone from scope now.
+backend of its own.
 
 The client is early-stage and explicitly budget-constrained — the whole
 point of this phase's scope is to avoid ongoing hosting/compute costs the
@@ -45,11 +43,11 @@ costs pennies to host (see
 [ADR-002](ADR-002-hosting-and-deployment.md)) and has nothing to patch or
 keep alive.
 
-**The scope genuinely doesn't need server-side logic.** Every dynamic
-part of the old plan — payment, accounts, order tracking, admin CRUD —
-is the part that's been removed. What's left (show a catalogue, build a
-cart, generate a link) is exactly the kind of thing a static site with a
-little client-side JavaScript handles natively.
+**The scope genuinely doesn't need server-side logic.** There's no
+payment processing, no accounts, no order tracking, no admin CRUD to
+support. What's in scope (show a catalogue, build a cart, generate a
+link) is exactly the kind of thing a static site with a little
+client-side JavaScript handles natively.
 
 **A small build tool keeps this simple to maintain.** The site doesn't
 need to be hand-written HTML with no build step — bundling/minification
@@ -74,11 +72,11 @@ doesn't require its own server at runtime.
 
 ## Alternatives Considered
 
-**Next.js + Express + MongoDB (the original plan)**
-Rejected for this phase — built for a scope (payment gateway, accounts,
-order tracking, admin console) that no longer exists. Reintroducing that
-stack now would mean paying for and maintaining a backend and database
-this scope has no use for.
+**A full stack with a server and database (e.g. Next.js + Express + MongoDB)**
+Would support payment processing, accounts, order tracking, and an admin
+console if any of those were ever needed. Rejected for this phase — none
+of that is in scope, and building it anyway would mean paying for and
+maintaining a backend and database this scope has no use for.
 
 **A CMS-backed static site (e.g. Next.js + a headless CMS)**
 Would give non-technical staff a way to edit the menu without a

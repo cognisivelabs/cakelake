@@ -64,6 +64,15 @@ Use a **`wa.me` click-to-chat link**, built entirely client-side:
   "Prices reflect the menu as shown. If you add a cake message or
   request changes, the bakery will confirm final pricing with you on
   WhatsApp." It isn't repeated on every line item.
+- **Pickup vs. delivery stays on the Cart screen, because delivery
+  changes the price.** Pickup is free; delivery adds its own line to
+  the total (exact fee TBD — a flat rate vs. zone-based structure is
+  still an open question for the client, see
+  [requirements.md](../requirements/requirements.md)). If any item in
+  the cart is flagged as requiring delivery (see
+  [ADR-004](ADR-004-content-management.md)'s catalog data), Pickup isn't
+  offered as a choice for that order at all — Delivery is the only
+  option, with a short note explaining why.
 
 ## Rationale
 
@@ -191,3 +200,18 @@ phone, which is frequently not true, leading to a dead end (WhatsApp
 Web's own login QR, unrelated to the order) instead of a working
 handoff. The QR-code alternative sidesteps that assumption entirely by
 routing through the phone's already-logged-in WhatsApp instead.
+
+**Always negotiating delivery over WhatsApp chat, with no pickup/delivery
+choice or delivery line on the site**
+Would remove a field from the Cart screen. Rejected — delivery genuinely
+changes the price (pickup is free), so leaving it out would mean every
+delivery order under-shows its actual total, which is worse than the
+"estimate" labeling problem this same ADR already resolved above.
+
+**Letting customers choose Pickup for items that require delivery**
+Simpler UI — one fulfillment choice, no per-item exceptions. Rejected:
+this isn't a negotiable preference the way "when needed" sometimes is —
+a large or custom cake needing on-site installation isn't safe or
+sensible to hand over for the customer to transport themselves, so it's
+resolved on the site rather than left for the bakery to catch and
+correct after the fact.

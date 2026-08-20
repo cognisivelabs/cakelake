@@ -29,6 +29,12 @@ GitHub Actions build/deploy (see
 No admin dashboard, no CMS, no database-backed content editing for this
 phase.
 
+**Each item's data includes a `requiresDelivery` flag.** Most items
+default to false (pickup or delivery, customer's choice). Items that
+need on-site installation (large or custom cakes) are flagged true —
+see [ADR-003](ADR-003-whatsapp-order-handoff.md) for how the Cart screen
+uses this to remove Pickup as a choice for those orders.
+
 ## Rationale
 
 **Matches the confirmed scope exactly.** The client explicitly deferred a
@@ -60,6 +66,11 @@ not an oversight.
   that even a non-developer could technically edit it directly in
   GitHub's web UI in a pinch — worth keeping in mind when designing the
   format, even though that's not the primary supported workflow
+- The `requiresDelivery` flag needs to be set correctly whenever an item
+  is added or edited — getting it wrong either blocks pickup for
+  something that didn't need it, or lets an installation-required cake
+  through as pickup-eligible. Worth a one-line reminder in whatever
+  process/template is used for adding catalogue items
 
 ## Alternatives Considered
 

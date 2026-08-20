@@ -65,8 +65,11 @@ business-language version):
 These need an answer before they're locked in — see the equivalent
 section in the approved PDF:
 
-- **Delivery vs. pickup only:** does the website need to support delivery
-  orders at launch, or pickup only to start?
+- **Delivery fee structure:** delivery is confirmed in scope alongside
+  pickup — pickup is free, delivery is charged (see
+  [ADR-003](../adr/ADR-003-whatsapp-order-handoff.md)) — but the fee
+  itself (flat rate vs. by zone/distance) still needs the client's
+  input.
 - **Promotions/offers:** does the bakery want to advertise any
   time-limited offers or discounts on the site at launch?
 - **Menu content:** final list of items, categories, prices, photos, and
@@ -130,3 +133,11 @@ reasoning behind each:
   version's automatic tab-focus detection, since the phone — not the
   laptop's browser tab — is what sends the message. See
   [ADR-003](../adr/ADR-003-whatsapp-order-handoff.md).
+- **2026-08-15** (wireframe review) — Pickup vs. delivery stays on the
+  Cart screen: pickup is free, delivery is charged (exact fee still
+  open — see the open questions above), so removing it would under-show
+  the total for delivery orders. Items needing on-site installation
+  (large/custom cakes) get a `requiresDelivery` flag in the catalogue
+  data; when one's in the cart, Pickup isn't offered at all for that
+  order. See [ADR-003](../adr/ADR-003-whatsapp-order-handoff.md) and
+  [ADR-004](../adr/ADR-004-content-management.md).

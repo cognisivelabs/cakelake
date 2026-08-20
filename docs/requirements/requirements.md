@@ -7,9 +7,8 @@ which is the source of truth for what the client asked for. This document
 translates that approved scope into terms the build can work from, and
 tracks the open items still pending client input.
 
-Last updated: 2026-08-21 (resolved cart expiry, delivery fee structure,
-and cart breakpoint testing; sold-out real-time toggling scoped to a
-minimal serverless option, held open pending the client's answer).
+Last updated: 2026-08-21 (consolidated all outstanding client asks into
+a single content checklist, separated from open design decisions).
 
 ## Client
 
@@ -75,29 +74,66 @@ business-language version):
 
 ## Open questions for the client
 
-These need an answer before they're locked in — see the equivalent
-section in the approved PDF:
+These are decisions, not raw content — they need a choice, not a data
+dump (see the content checklist below for that):
 
-- **Delivery fee amount:** delivery is confirmed in scope alongside
-  pickup — pickup is free, delivery is a **flat fee** (see
-  [ADR-003](../adr/ADR-003-whatsapp-order-handoff.md)) — but the actual
-  number still needs the client's input.
 - **Promotions/offers:** does the bakery want to advertise any
   time-limited offers or discounts on the site at launch?
-- **Menu content:** final list of items, categories, prices, photos, and
-  any allergen/dietary info to publish.
-- **Real lead times:** which items need advance notice, how much, and
-  does it vary by size within an item (see
-  [ADR-004](../adr/ADR-004-content-management.md))? 72 hours is a
-  placeholder used in these docs, not a confirmed number.
 - **How often do items actually sell out same-day?** The site can mark
   an item "Sold out" (see [ADR-004](../adr/ADR-004-content-management.md)),
   but doing so requires a commit and a redeploy — fine for predictable
   unavailability, not fast enough for a mid-afternoon sellout at the
   counter. If this happens routinely rather than rarely, that's worth
-  knowing now, since it would justify a small, dedicated
-  availability-toggle mechanism rather than relying on WhatsApp to catch
-  the occasional edge case.
+  knowing now: it's what would justify building the small, dedicated
+  toggle mechanism already scoped (one serverless function, not a
+  running server or database — see
+  [ADR-003](../adr/ADR-003-whatsapp-order-handoff.md)) rather than
+  relying on WhatsApp to catch the occasional edge case.
+
+## Content checklist for the client
+
+Raw content and assets the build is genuinely blocked on — not design
+decisions, just things only the client can supply. Grouped by how
+urgent each one actually is:
+
+**Needed soon — affects whether the wireframes hold as designed:**
+
+- **Menu content, even a rough draft:** categories, item names, prices,
+  and — most importantly right now — **what options each item actually
+  has.** The wireframes assume every item is a size + flavour choice.
+  If some items have meaningfully different option types (a topping
+  choice, a dietary variant, a "message included" toggle), Item Detail
+  needs a more flexible structure than the current design assumes. A
+  rough list is enough to check this assumption before more wireframing
+  builds on top of it — it doesn't need to be final.
+- **Which items are delivery-only** (need on-site installation — large
+  or tiered cakes) and **which need advance notice, how long, and
+  whether it varies by size within an item.** 72 hours is a placeholder
+  used throughout these docs, not a confirmed number (see
+  [ADR-004](../adr/ADR-004-content-management.md)).
+- **Photography — status and ownership.** Is a photographer lined up,
+  and is there anything usable right now? Every screen leans on
+  photography, and the Menu list specifically breaks down if photos are
+  inconsistent in crop or lighting. If real photography isn't ready in
+  time for visual design, the fallback is a consistent, license-checked
+  placeholder set (the same approach used before) — but that needs
+  deciding now, not discovered as a gap during visual design.
+
+**Needed before launch, not blocking wireframes:**
+
+- **Delivery fee amount** — the fee structure is decided (a flat fee,
+  see [ADR-003](../adr/ADR-003-whatsapp-order-handoff.md)), just not
+  the number.
+- Full, final menu content (allergen/dietary info, final pricing,
+  final photos) once the rough draft above has validated the options
+  assumption.
+
+**Resolved, included for completeness:**
+
+- **Featured items ("this week" section on Home):** no owner named for
+  weekly updates, so it's cut from Home entirely rather than shipping
+  something that goes stale. Revisit only if someone is willing to own
+  it going forward.
 
 ## Tentative technical direction
 
@@ -222,3 +258,13 @@ reasoning behind each:
     Not built until that's confirmed needed. See
     [ADR-003](../adr/ADR-003-whatsapp-order-handoff.md) and
     [ADR-004](../adr/ADR-004-content-management.md).
+- **2026-08-21** (wireframe review) — Three content gaps flagged as
+  "content, not design": featured items' ownership question is resolved
+  (no owner, cut from Home); real catalogue data is needed soon
+  specifically to validate the wireframes' size+flavour options
+  assumption, not just for final content; photography ownership/status
+  needs a direct answer, with a placeholder-photo fallback if real
+  photography isn't ready in time. Restructured this document's open
+  items into "Open questions" (decisions) and a new "Content checklist"
+  (raw content/assets), consolidating everything outstanding into one
+  list for the client.

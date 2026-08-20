@@ -50,6 +50,12 @@ Use a **`wa.me` click-to-chat link**, built entirely client-side:
   templates, no Meta Business verification, no backend call.
 - **No Name field.** The bakery already sees who's messaging them once
   the order lands in WhatsApp.
+- **Prices and totals are shown plainly, not labeled "estimate."** Menu,
+  Item Detail, and Cart all show real catalog prices — there's nothing
+  estimated about them. One disclaimer appears near the Cart total only:
+  "Prices reflect the menu as shown. If you add a cake message or
+  request changes, the bakery will confirm final pricing with you on
+  WhatsApp." It isn't repeated on every line item.
 
 ## Rationale
 
@@ -112,6 +118,14 @@ right after the order lands anyway.
   the sender's WhatsApp profile name has no reliable relationship to
   what should be written on the cake, so it's always asked directly and
   never defaulted or guessed.
+- **Without a checkout step, the site's total and the bakery's final
+  price can genuinely disagree** — but only when something beyond the
+  listed menu changes (an add-on, a customization request). Labeling
+  every price "estimate" would undersell prices that are actually
+  correct. Resolved by keeping prices confident everywhere, and scoping
+  the one disclaimer specifically to the cake-message/customization path
+  that's the actual source of any difference — not a general hedge on
+  the site's own math.
 
 ## Alternatives Considered
 
@@ -145,3 +159,11 @@ WhatsApp profile name**
 Would save the customer a step. Rejected — the orderer and the name that
 belongs on the cake are frequently different people, so this would
 actively produce wrong output rather than just being unnecessary.
+
+**Labeling all prices "estimate," or showing no totals at all**
+Both were raised as ways to hedge against the site's total ever
+disagreeing with the bakery's final price. Rejected — most orders never
+involve anything that changes the price, so both options would
+undersell accurate numbers for every customer to hedge against the
+minority case. A single, specifically-scoped disclaimer on the Cart
+total does the same job without that cost.

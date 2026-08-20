@@ -116,3 +116,9 @@ reasoning behind each:
   inferred from the orderer's identity, since any family member can
   place an order for someone else. See
   [ADR-003](../adr/ADR-003-whatsapp-order-handoff.md).
+- **2026-08-15** (wireframe review) — Prices shown on the site (Menu,
+  Item Detail, Cart) are correct, real catalog numbers, not labeled
+  "estimate." A single disclaimer near the Cart total covers the one
+  actual source of price difference — the bakery confirming final
+  pricing if a cake message or other change is requested. See
+  [ADR-003](../adr/ADR-003-whatsapp-order-handoff.md).

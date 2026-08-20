@@ -7,7 +7,8 @@ which is the source of truth for what the client asked for. This document
 translates that approved scope into terms the build can work from, and
 tracks the open items still pending client input.
 
-Last updated: 2026-08-15.
+Last updated: 2026-08-15 (Home CTA hierarchy clarified — Browse Menu
+primary, PDF secondary, WhatsApp moved out of the CTA row).
 
 ## Client
 
@@ -21,7 +22,9 @@ Approved by the client 2026-08-15 (see the PDF above for the original,
 business-language version):
 
 1. **Browse the menu** — customers see the full range of items, with
-   photos, descriptions, and prices.
+   photos, descriptions, and prices. This is the site's primary
+   call-to-action on Home — it's the only one of the site's entry points
+   that actually leads to a structured order (see note under #6).
 2. **Build an order** — customers pick items, choose available options
    (e.g. size, flavour), and add them to a cart.
 3. **Place the order via WhatsApp, no online payment** — the site
@@ -37,9 +40,18 @@ business-language version):
 5. **No online payment of any kind.** Customers pay at the store or on
    delivery, arranged over WhatsApp — unchanged from today.
 6. **Downloadable menu** — a PDF of the full menu, downloadable from the
-   site.
+   site. This is a reference/decision-support tool, not an alternative
+   ordering path — a PDF can't hold a cart, so it should be styled as
+   secondary to "Browse Menu" on Home, not an equal, competing CTA.
+   It's also reachable from inside the Browse/Menu screen itself, not
+   only Home, since some customers want it partway through browsing
+   rather than before. The PDF itself should point back to the site to
+   order ("Ready to order? Visit [site]").
 7. **Contact details** — phone/WhatsApp number, location, opening hours,
-   displayed on the site.
+   displayed on the site. The WhatsApp contact link on Home is general
+   contact, not a shopping path — it should read as a simple text
+   link/icon (header or footer), not a CTA button competing with
+   "Browse Menu."
 8. **Mobile-friendly, primary surface** — most customers will use this on
    a phone; this isn't a desktop site with a mobile afterthought.
 9. **Installable, app-like on a phone (PWA)** — a customer can add the
@@ -141,3 +153,12 @@ reasoning behind each:
   data; when one's in the cart, Pickup isn't offered at all for that
   order. See [ADR-003](../adr/ADR-003-whatsapp-order-handoff.md) and
   [ADR-004](../adr/ADR-004-content-management.md).
+- **2026-08-15** (wireframe review) — Home's three CTAs ("Browse Menu,"
+  "Download PDF," "Message on WhatsApp") were styled as equal, competing
+  options — resolved by recognizing they're not the same kind of action.
+  "Browse Menu" stays primary (the only path to an actual order);
+  "Download PDF" stays secondary and is also reachable from inside the
+  Browse/Menu screen, with the PDF itself linking back to the site to
+  order; "Message on WhatsApp" moves out of the CTA row entirely (a
+  text link/icon, not a button), since it's general contact, not a
+  shopping path. See confirmed scope items #1, #6, #7 above.

@@ -122,3 +122,11 @@ reasoning behind each:
   actual source of price difference — the bakery confirming final
   pricing if a cake message or other change is requested. See
   [ADR-003](../adr/ADR-003-whatsapp-order-handoff.md).
+- **2026-08-15** (wireframe review) — Desktop gets a different order
+  handoff than mobile: a QR code (scan with your phone) instead of an
+  "Open WhatsApp" button, since desktop `wa.me` links assume WhatsApp
+  Web is already paired, which is often untrue. Desktop also gets a
+  manually-clicked "I've sent it" confirmation instead of the mobile
+  version's automatic tab-focus detection, since the phone — not the
+  laptop's browser tab — is what sends the message. See
+  [ADR-003](../adr/ADR-003-whatsapp-order-handoff.md).

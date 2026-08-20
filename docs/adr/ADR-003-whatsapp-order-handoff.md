@@ -46,6 +46,14 @@ Use a **`wa.me` click-to-chat link**, built entirely client-side:
 - Placing the order opens `https://wa.me/<bakery-number>?text=<encoded
   summary>` — this pre-fills the message in the customer's WhatsApp app;
   the customer sends it themselves.
+- **Desktop gets a different handoff than mobile.** On mobile, the
+  `wa.me` link opens the native app directly. On desktop, the same link
+  is shown as a **QR code** instead of a button — scanning it with a
+  phone opens the pre-filled chat there, since a `wa.me` link on desktop
+  otherwise routes through WhatsApp Web, which only works if that
+  browser is already paired with the customer's phone (often it isn't).
+  A smaller secondary "Or open WhatsApp Web" link remains for anyone who
+  does have it set up.
 - No WhatsApp Business Platform/Cloud API integration, no message
   templates, no Meta Business verification, no backend call.
 - **No Name field.** The bakery already sees who's messaging them once
@@ -84,12 +92,20 @@ right after the order lands anyway.
   pre-filled message — if they close WhatsApp without sending, the order
   never arrives. This is a known trade-off of Option B, not a bug to fix
 - **No truthful end state — the site cannot detect whether the message
-  was actually sent.** Resolved as: when the browser tab regains focus
-  after WhatsApp opens, prompt the customer directly — "Did you send
-  your order?" with **"Yes, sent it"** (clears the cart, shows a brief
-  acknowledgement) or **"No, take me back to my cart"** (returns to the
-  Cart screen with everything intact). This is the one honest signal
-  available, since there's no server-side confirmation to rely on.
+  was actually sent.** Resolved as: on mobile, when the browser tab
+  regains focus after WhatsApp opens, prompt the customer directly —
+  "Did you send your order?" with **"Yes, sent it"** (clears the cart,
+  shows a brief acknowledgement) or **"No, take me back to my cart"**
+  (returns to the Cart screen with everything intact). This is the one
+  honest signal available, since there's no server-side confirmation to
+  rely on.
+- **The mobile confirmation mechanism doesn't work on desktop.** The
+  focus/visibility-regained trigger assumes the same device opens
+  WhatsApp and comes back — but on desktop, the *phone* sends the
+  message via the QR code above, so the laptop's browser tab never loses
+  focus at all. Desktop instead shows an explicit, manually-clicked
+  **"I've sent it" / "Not yet"** pair with the same two outcomes,
+  triggered by the customer's own click rather than a focus event.
 - **Cart persistence for returning visitors:** if the customer leaves
   without answering that prompt, the pending order is kept as a
   recoverable snapshot for **2 hours**, then treated as abandoned. A
@@ -167,3 +183,11 @@ involve anything that changes the price, so both options would
 undersell accurate numbers for every customer to hedge against the
 minority case. A single, specifically-scoped disclaimer on the Cart
 total does the same job without that cost.
+
+**Showing the same "Open WhatsApp" button on desktop as mobile**
+Simpler — one component for every device. Rejected: on desktop this
+silently assumes WhatsApp Web is already paired with the customer's
+phone, which is frequently not true, leading to a dead end (WhatsApp
+Web's own login QR, unrelated to the order) instead of a working
+handoff. The QR-code alternative sidesteps that assumption entirely by
+routing through the phone's already-logged-in WhatsApp instead.

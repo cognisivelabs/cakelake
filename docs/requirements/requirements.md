@@ -86,6 +86,14 @@ section in the approved PDF:
   time-limited offers or discounts on the site at launch?
 - **Menu content:** final list of items, categories, prices, photos, and
   any allergen/dietary info to publish.
+- **How often do items actually sell out same-day?** The site can mark
+  an item "Sold out" (see [ADR-004](../adr/ADR-004-content-management.md)),
+  but doing so requires a commit and a redeploy — fine for predictable
+  unavailability, not fast enough for a mid-afternoon sellout at the
+  counter. If this happens routinely rather than rarely, that's worth
+  knowing now, since it would justify a small, dedicated
+  availability-toggle mechanism rather than relying on WhatsApp to catch
+  the occasional edge case.
 
 ## Tentative technical direction
 
@@ -162,3 +170,11 @@ reasoning behind each:
   order; "Message on WhatsApp" moves out of the CTA row entirely (a
   text link/icon, not a button), since it's general contact, not a
   shopping path. See confirmed scope items #1, #6, #7 above.
+- **2026-08-15** (wireframe review) — Added a sold-out state: items get
+  an `available` flag in the catalogue data (default true); when false,
+  the item stays visible but shows grayed out with a "Sold out" label,
+  and "Add to Cart" is disabled. This only solves *predictable*
+  unavailability, since toggling it is a commit-and-redeploy like any
+  other content change — same-day sellouts are flagged as an open
+  question for the client (see above), not solved yet. See
+  [ADR-004](../adr/ADR-004-content-management.md).

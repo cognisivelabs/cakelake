@@ -35,6 +35,12 @@ need on-site installation (large or custom cakes) are flagged true —
 see [ADR-003](ADR-003-whatsapp-order-handoff.md) for how the Cart screen
 uses this to remove Pickup as a choice for those orders.
 
+**Each item's data also includes an `available` flag,** defaulting to
+true. When false, the item stays visible on the Menu (not removed) but
+shows grayed out with a "Sold out" label, and "Add to Cart" is disabled
+on both the Menu list and Item Detail — without this, every sold-out
+item turns into a "sorry, none left" conversation on WhatsApp instead.
+
 ## Rationale
 
 **Matches the confirmed scope exactly.** The client explicitly deferred a
@@ -71,6 +77,17 @@ not an oversight.
   something that didn't need it, or lets an installation-required cake
   through as pickup-eligible. Worth a one-line reminder in whatever
   process/template is used for adding catalogue items
+- **The `available` flag inherits this ADR's core limitation: it's only
+  as fast as a commit and a redeploy.** That's fine for predictable
+  unavailability (an item retired, out of season, a multi-day restock
+  delay) — it does not solve a same-day, mid-afternoon sellout, since
+  nobody at the counter can realistically push a code change in the
+  moment. Whether that gap matters depends on how often it actually
+  happens — see the open question in
+  [requirements.md](../requirements/requirements.md). If it turns out to
+  be routine, that's the trigger for a small, dedicated
+  availability-toggle mechanism later, not a reason to build one now on
+  a guess
 
 ## Alternatives Considered
 

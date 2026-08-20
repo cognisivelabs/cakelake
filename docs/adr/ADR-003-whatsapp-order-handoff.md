@@ -47,7 +47,12 @@ Use a **`wa.me` click-to-chat link**, built entirely client-side:
   enabled:
   - **When needed — required.** A date field with presets (Today /
     Tomorrow / Pick a date), plus a "Not sure yet — I'll confirm on
-    WhatsApp" option.
+    WhatsApp" option. **This field enforces lead time, not just asks
+    for a date.** If any item in the cart has a `leadTimeHours`
+    requirement (see [ADR-004](ADR-004-content-management.md)), dates
+    that fall short of it are disabled rather than just flagged — e.g.
+    a 72-hour item greys out "Today" and "Tomorrow" — so the order can't
+    be composed with a date the bakery can't actually meet.
 - Placing the order opens `https://wa.me/<bakery-number>?text=<encoded
   summary>` — this pre-fills the message in the customer's WhatsApp app;
   the customer sends it themselves.
@@ -141,6 +146,13 @@ right after the order lands anyway.
   it. Leaving it as a blank in the pre-filled message risked customers
   sending it unfilled, recreating the exact back-and-forth the handoff
   is meant to avoid — so it's collected on the Cart screen instead.
+- **Lead time is enforced, not just displayed, for the same reason.**
+  Showing "requires 72 hours notice" as text and still letting the
+  customer pick "Today" doesn't prevent the round-trip — it just moves
+  the discovery to after the message is sent. Disabling infeasible
+  dates outright catches it at the one point the customer can still
+  easily change their mind (before sending), consistent with how
+  `requiresDelivery` removes Pickup rather than just warning about it.
 - **The cake-message field must never be inferred from the customer's
   WhatsApp identity.** Any family member can place an order, and the
   name that belongs on the cake is very often not the orderer's own
@@ -232,3 +244,11 @@ a large or custom cake needing on-site installation isn't safe or
 sensible to hand over for the customer to transport themselves, so it's
 resolved on the site rather than left for the bakery to catch and
 correct after the fact.
+
+**Displaying lead time as informational text only, without disabling
+infeasible dates**
+Simpler to build — no cross-referencing the cart against each item's
+`leadTimeHours`. Rejected for the same reason "when needed" is required
+in the first place: a customer can easily miss or ignore text next to a
+date field that still lets them pick that date, recreating the
+round-trip this ADR already spent effort avoiding elsewhere.

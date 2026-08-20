@@ -41,6 +41,15 @@ shows grayed out with a "Sold out" label, and "Add to Cart" is disabled
 on both the Menu list and Item Detail — without this, every sold-out
 item turns into a "sorry, none left" conversation on WhatsApp instead.
 
+**Each item's data also includes a `leadTimeHours` field,** defaulting
+to 0/none for standard items and a real number (e.g. 72) for custom or
+tiered cakes needing advance notice. It's shown on Item Detail for that
+specific item, and it's why Home and Contact both carry a short,
+general "custom cakes need advance notice" note — the site-wide framing
+lives in those two places while the specific number lives on Item
+Detail. See [ADR-003](ADR-003-whatsapp-order-handoff.md) for how the
+Cart screen enforces it against "when needed."
+
 ## Rationale
 
 **Matches the confirmed scope exactly.** The client explicitly deferred a
@@ -88,6 +97,9 @@ not an oversight.
   be routine, that's the trigger for a small, dedicated
   availability-toggle mechanism later, not a reason to build one now on
   a guess
+- The `leadTimeHours` field needs the same care as `requiresDelivery` —
+  set incorrectly, it either blocks a date that was actually fine, or
+  lets a customer select a date the bakery can't realistically meet
 
 ## Alternatives Considered
 

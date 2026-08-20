@@ -7,8 +7,8 @@ which is the source of truth for what the client asked for. This document
 translates that approved scope into terms the build can work from, and
 tracks the open items still pending client input.
 
-Last updated: 2026-08-15 (Home CTA hierarchy clarified — Browse Menu
-primary, PDF secondary, WhatsApp moved out of the CTA row).
+Last updated: 2026-08-21 (lead-time handling added — surfaced on Home,
+Item Detail, and Contact; enforced against "when needed" on Cart).
 
 ## Client
 
@@ -184,3 +184,12 @@ reasoning behind each:
   inscriptions). Moved to Item Detail, asked per item instead — each
   item's inscription now shows on its own Cart line for review before
   "Place Order." See [ADR-003](../adr/ADR-003-whatsapp-order-handoff.md).
+- **2026-08-21** (wireframe review) — Added lead-time handling: items
+  get a `leadTimeHours` field in the catalogue data (ADR-004), shown on
+  Item Detail for that item, with a general "custom cakes need advance
+  notice" note on Home and Contact. The Cart's "when needed" date field
+  now disables dates that fall short of any cart item's lead time,
+  rather than just displaying a warning — same reasoning as
+  `requiresDelivery` removing Pickup instead of just flagging it. See
+  [ADR-003](../adr/ADR-003-whatsapp-order-handoff.md) and
+  [ADR-004](../adr/ADR-004-content-management.md).

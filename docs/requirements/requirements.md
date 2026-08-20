@@ -7,8 +7,9 @@ which is the source of truth for what the client asked for. This document
 translates that approved scope into terms the build can work from, and
 tracks the open items still pending client input.
 
-Last updated: 2026-08-21 (lead-time handling added — surfaced on Home,
-Item Detail, and Contact; enforced against "when needed" on Cart).
+Last updated: 2026-08-21 (resolved cart expiry, delivery fee structure,
+and cart breakpoint testing; sold-out real-time toggling scoped to a
+minimal serverless option, held open pending the client's answer).
 
 ## Client
 
@@ -77,15 +78,18 @@ business-language version):
 These need an answer before they're locked in — see the equivalent
 section in the approved PDF:
 
-- **Delivery fee structure:** delivery is confirmed in scope alongside
-  pickup — pickup is free, delivery is charged (see
-  [ADR-003](../adr/ADR-003-whatsapp-order-handoff.md)) — but the fee
-  itself (flat rate vs. by zone/distance) still needs the client's
-  input.
+- **Delivery fee amount:** delivery is confirmed in scope alongside
+  pickup — pickup is free, delivery is a **flat fee** (see
+  [ADR-003](../adr/ADR-003-whatsapp-order-handoff.md)) — but the actual
+  number still needs the client's input.
 - **Promotions/offers:** does the bakery want to advertise any
   time-limited offers or discounts on the site at launch?
 - **Menu content:** final list of items, categories, prices, photos, and
   any allergen/dietary info to publish.
+- **Real lead times:** which items need advance notice, how much, and
+  does it vary by size within an item (see
+  [ADR-004](../adr/ADR-004-content-management.md))? 72 hours is a
+  placeholder used in these docs, not a confirmed number.
 - **How often do items actually sell out same-day?** The site can mark
   an item "Sold out" (see [ADR-004](../adr/ADR-004-content-management.md)),
   but doing so requires a commit and a redeploy — fine for predictable
@@ -193,3 +197,28 @@ reasoning behind each:
   `requiresDelivery` removing Pickup instead of just flagging it. See
   [ADR-003](../adr/ADR-003-whatsapp-order-handoff.md) and
   [ADR-004](../adr/ADR-004-content-management.md).
+- **2026-08-21** (wireframe review) — Resolved five of six remaining
+  open findings; held the sixth open pending client input:
+  - Cart expiry when the customer explicitly chooses to keep shopping
+    ("No, take me back to my cart") is **24 hours** — longer than the
+    2-hour unanswered-prompt case, since it's a deliberate choice, not
+    an ambiguous non-answer.
+  - Delivery is a **flat fee**, not zone-based, to keep the total
+    showable without a zone-selection step first (amount still needed
+    from the client — see open questions).
+  - `leadTimeHours` can be set per size/option, not just per item, since
+    a cake's smallest size may be same-day feasible while its largest
+    tier isn't.
+  - The Cart's mobile/desktop breakpoint gets tested at both 768px and
+    1024px rather than assumed, so tablets get whichever layout actually
+    fits.
+  - Empty states (empty cart, no search results, a fully-sold-out
+    category) are being wireframed — not solved by any of the above,
+    just newly in scope.
+  - **Held open:** real-time sold-out toggling. If the client confirms
+    same-day sellouts are routine (still an open question), the
+    minimum-cost fix is one serverless function writing a small overlay
+    file the site reads client-side — not a running server or database.
+    Not built until that's confirmed needed. See
+    [ADR-003](../adr/ADR-003-whatsapp-order-handoff.md) and
+    [ADR-004](../adr/ADR-004-content-management.md).

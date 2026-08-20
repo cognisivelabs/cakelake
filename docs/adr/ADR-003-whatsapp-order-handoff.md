@@ -75,11 +75,13 @@ Use a **`wa.me` click-to-chat link**, built entirely client-side:
   request changes, the bakery will confirm final pricing with you on
   WhatsApp." It isn't repeated on every line item.
 - **Pickup vs. delivery stays on the Cart screen, because delivery
-  changes the price.** Pickup is free; delivery adds its own line to
-  the total (exact fee TBD — a flat rate vs. zone-based structure is
-  still an open question for the client, see
-  [requirements.md](../requirements/requirements.md)). If any item in
-  the cart is flagged as requiring delivery (see
+  changes the price.** Pickup is free; delivery adds a **flat fee** as
+  its own line in the total — chosen over a zone-based structure to
+  keep the total showable immediately, with no zone-selection step
+  blocking it first. If the client's actual delivery costs vary enough
+  by area that a flat fee stops making sense, that's revisitable later
+  as a data change, not a redesign. If any item in the cart is flagged
+  as requiring delivery (see
   [ADR-004](ADR-004-content-management.md)'s catalog data), Pickup isn't
   offered as a choice for that order at all — Delivery is the only
   option, with a short note explaining why.
@@ -130,6 +132,14 @@ right after the order lands anyway.
   recoverable snapshot for **2 hours**, then treated as abandoned. A
   visit inside that window resumes the cart as left; a visit after it
   starts with an empty cart rather than surfacing a stale order.
+- **A different, longer expiry applies when the customer explicitly
+  taps "No, take me back to my cart."** That's a deliberate choice to
+  keep shopping, not an unanswered prompt — treating it the same as the
+  2-hour case above would be too aggressive for someone who fully
+  intends to come back later that day or the next. The cart survives
+  **24 hours** in that case. Past that, it clears to a plain empty-cart
+  state (not an error) rather than surfacing items with a "when needed"
+  date that may have already passed.
 - The bakery's number needs to be a live WhatsApp number configured to
   receive customer messages — no separate "automated messaging" number is
   needed, since nothing sends automatically
@@ -174,6 +184,20 @@ right after the order lands anyway.
   the one disclaimer specifically to the cake-message/customization path
   that's the actual source of any difference — not a general hedge on
   the site's own math.
+- **The mobile/desktop cart breakpoint is a build detail worth testing,
+  not assuming.** A portrait tablet has enough width for the desktop
+  right-column treatment, so the switch should be tested at both 768px
+  and 1024px rather than defaulting to 1024px for every device wider
+  than a phone — the goal is tablets getting whichever layout actually
+  looks right at that width, decided empirically during build, not
+  picked in advance here.
+- **Marking an item sold out in real time (not just via a commit and
+  redeploy) is still an open question, not decided.** See the same-day-
+  sellout question in [requirements.md](../requirements/requirements.md)
+  — if the client confirms this happens routinely, the minimum-cost
+  answer is one small serverless function writing a live overlay file
+  read by the site client-side, not a running server or a database.
+  Not building this until that's confirmed needed.
 
 ## Alternatives Considered
 
@@ -252,3 +276,30 @@ Simpler to build — no cross-referencing the cart against each item's
 in the first place: a customer can easily miss or ignore text next to a
 date field that still lets them pick that date, recreating the
 round-trip this ADR already spent effort avoiding elsewhere.
+
+**Zone-based delivery pricing**
+More accurate to actual delivery cost by area. Not chosen for now — it
+needs a zone-selection question answered before the total can even be
+shown, more UI and more content to maintain (a full zone table) for a
+single small shop's delivery area. A flat fee gets a showable total
+immediately; revisit only if the client's real delivery costs vary
+enough by area to make a flat number actively misleading.
+
+**Treating the "No, take me back to my cart" case the same as the
+2-hour unanswered-prompt case**
+Simpler — one expiry rule instead of two. Rejected: the two situations
+mean different things. Not answering the prompt at all is ambiguous;
+explicitly choosing to keep shopping is a clear signal the customer
+intends to come back, so it gets a longer, more forgiving window (24
+hours vs. 2).
+
+**A running server + database to support real-time sold-out toggling**
+Would make every one of these six items solvable the same way, plus
+open the door to anything else that needs live state later. Rejected
+for now — only one of the six actually needs anything beyond static
+content, and even that one is unconfirmed as a real need. Reintroducing
+always-on compute and a database to solve a single boolean toggle would
+be paying for exactly the kind of ongoing cost this whole project has
+been built to avoid. If live toggling turns out to be needed, a single
+serverless function writing to a small overlay file is the minimum
+viable version — see Consequences above.

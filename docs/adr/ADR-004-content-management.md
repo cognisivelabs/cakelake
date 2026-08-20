@@ -50,6 +50,14 @@ lives in those two places while the specific number lives on Item
 Detail. See [ADR-003](ADR-003-whatsapp-order-handoff.md) for how the
 Cart screen enforces it against "when needed."
 
+**`leadTimeHours` can be set per size/option within an item, not just
+once per item.** A cake's smallest size might be same-day feasible while
+its largest tier needs 72 hours — the field needs to live at whichever
+level (item or option) actually varies, rather than forcing one number
+for the whole item. The real numbers, and whether they vary by size,
+are still the client's to confirm — this just makes sure the data shape
+doesn't need to change again once those numbers come in.
+
 ## Rationale
 
 **Matches the confirmed scope exactly.** The client explicitly deferred a
@@ -100,6 +108,10 @@ not an oversight.
 - The `leadTimeHours` field needs the same care as `requiresDelivery` —
   set incorrectly, it either blocks a date that was actually fine, or
   lets a customer select a date the bakery can't realistically meet
+- Real lead-time numbers, and whether they vary by size within an item,
+  are still needed from the client — see the open question in
+  [requirements.md](../requirements/requirements.md). The 72-hour figure
+  used elsewhere in these docs is a placeholder, not a confirmed number
 
 ## Alternatives Considered
 

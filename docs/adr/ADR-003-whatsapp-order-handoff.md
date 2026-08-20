@@ -67,6 +67,18 @@ right after the order lands anyway.
 - The order only reaches the bakery if the customer actually sends the
   pre-filled message — if they close WhatsApp without sending, the order
   never arrives. This is a known trade-off of Option B, not a bug to fix
+- **No truthful end state — the site cannot detect whether the message
+  was actually sent.** Resolved as: when the browser tab regains focus
+  after WhatsApp opens, prompt the customer directly — "Did you send
+  your order?" with **"Yes, sent it"** (clears the cart, shows a brief
+  acknowledgement) or **"No, take me back to my cart"** (returns to the
+  Cart screen with everything intact). This is the one honest signal
+  available, since there's no server-side confirmation to rely on.
+- **Cart persistence for returning visitors:** if the customer leaves
+  without answering that prompt, the pending order is kept as a
+  recoverable snapshot for **2 hours**, then treated as abandoned. A
+  visit inside that window resumes the cart as left; a visit after it
+  starts with an empty cart rather than surfacing a stale order.
 - The bakery's number needs to be a live WhatsApp number configured to
   receive customer messages — no separate "automated messaging" number is
   needed, since nothing sends automatically

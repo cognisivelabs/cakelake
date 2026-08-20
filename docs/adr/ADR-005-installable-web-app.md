@@ -49,6 +49,16 @@ decision forecloses.
 
 - Needs an app icon set (multiple sizes) and a short manifest — a small,
   one-time addition to the build, not ongoing cost
+- **The install prompt is not one experience — it's two, by platform
+  constraint, not choice.** Android/Chromium browsers fire an
+  install-capable event the site can hook a real **"Install"** button
+  to, triggering the native install dialog in one tap. iOS Safari never
+  fires that event — there is no API to trigger installation there at
+  all — so the same banner's action opens **instructions** instead
+  ("Tap the Share icon, then 'Add to Home Screen'"). The banner should
+  not appear at all once the site is already installed, and is
+  suppressed on platforms that can do neither (e.g. iOS Chrome, which
+  inherits the same WebKit restriction as iOS Safari).
 - The service worker's asset-caching strategy needs to be simple and
   conservative (cache static assets, not any dynamic behaviour — there
   isn't any) to avoid customers seeing stale menu content after an update

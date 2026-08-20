@@ -98,3 +98,13 @@ reasoning behind each:
   WhatsApp via a customer-sent click-to-chat link, downloadable menu,
   contact info, mobile-friendly, installable as a PWA (native app store
   app explicitly deferred).
+- **2026-08-15** (wireframe review) — Two open questions surfaced from
+  the wireframes resolved: (1) the WhatsApp handoff has no truthful
+  "sent" confirmation, so the site prompts "Did you send your order?"
+  when the tab regains focus, and an unanswered pending order is kept
+  for 2 hours before being treated as abandoned; (2) the Add-to-Home-
+  Screen banner splits into two platform variants — a real "Install"
+  button on Android/Chromium, instructions-only on iOS Safari, since iOS
+  has no API to trigger installation. See
+  [ADR-003](../adr/ADR-003-whatsapp-order-handoff.md) and
+  [ADR-005](../adr/ADR-005-installable-web-app.md).

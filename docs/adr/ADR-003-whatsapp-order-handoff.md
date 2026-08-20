@@ -35,11 +35,21 @@ Use a **`wa.me` click-to-chat link**, built entirely client-side:
 
 - The cart contents (items, options, quantities) are formatted into a
   readable order summary.
+- The Cart screen also collects two more things before "Place Order" is
+  enabled:
+  - **When needed — required.** A date field with presets (Today /
+    Tomorrow / Pick a date), plus a "Not sure yet — I'll confirm on
+    WhatsApp" option.
+  - **What to write on the cake — always asked, optional to fill in.**
+    A short free-text field for a cake inscription. Left blank, it's
+    simply omitted from the message.
 - Placing the order opens `https://wa.me/<bakery-number>?text=<encoded
   summary>` — this pre-fills the message in the customer's WhatsApp app;
   the customer sends it themselves.
 - No WhatsApp Business Platform/Cloud API integration, no message
   templates, no Meta Business verification, no backend call.
+- **No Name field.** The bakery already sees who's messaging them once
+  the order lands in WhatsApp.
 
 ## Rationale
 
@@ -89,6 +99,19 @@ right after the order lands anyway.
 - The message text needs to stay within WhatsApp's URL length practical
   limits — keep the order summary concise (items, quantities, options),
   not a full formatted invoice
+- **"When needed" is required to avoid a round-trip.** Unlike a cake
+  message, this is fulfillment-critical — the bakery can't confirm
+  feasibility (same-day capacity, lead time for a custom cake) without
+  it. Leaving it as a blank in the pre-filled message risked customers
+  sending it unfilled, recreating the exact back-and-forth the handoff
+  is meant to avoid — so it's collected on the Cart screen instead.
+- **The cake-message field must never be inferred from the customer's
+  WhatsApp identity.** Any family member can place an order, and the
+  name that belongs on the cake is very often not the orderer's own
+  name (a parent ordering for a child, a spouse for a partner, etc.) —
+  the sender's WhatsApp profile name has no reliable relationship to
+  what should be written on the cake, so it's always asked directly and
+  never defaulted or guessed.
 
 ## Alternatives Considered
 
@@ -106,3 +129,19 @@ email is straightforward and near-free via a service like SES). Rejected
 because the client's whole existing relationship and workflow with
 customers is on WhatsApp, not email — moving order intake to email would
 be a bigger process change for the business than the website itself.
+
+**Leaving "when needed" and the cake message as blanks in the pre-filled
+message, for the customer to fill in themselves**
+Zero additional UI on the Cart screen. Rejected for "when needed"
+specifically — it's the one piece of information that determines whether
+the bakery can even take the order, and an unfilled blank just moves the
+round-trip from "the site asks" to "the bakery asks after the fact,"
+which is worse. Kept as the actual approach for anything beyond a short
+cake message (photos, detailed design requests) — those still belong in
+the WhatsApp conversation, not a form field.
+
+**Auto-filling the cake message (or a "Name") from the customer's
+WhatsApp profile name**
+Would save the customer a step. Rejected — the orderer and the name that
+belongs on the cake are frequently different people, so this would
+actively produce wrong output rather than just being unnecessary.

@@ -108,3 +108,11 @@ reasoning behind each:
   has no API to trigger installation. See
   [ADR-003](../adr/ADR-003-whatsapp-order-handoff.md) and
   [ADR-005](../adr/ADR-005-installable-web-app.md).
+- **2026-08-15** (wireframe review) — Cart screen gets two more fields:
+  a required "when needed" date (with a "not sure yet" option) to avoid
+  a fulfillment round-trip, and an always-asked, optional "what to write
+  on the cake" field. No Name field — the bakery already sees who's
+  messaging via WhatsApp, and in any case the cake message must never be
+  inferred from the orderer's identity, since any family member can
+  place an order for someone else. See
+  [ADR-003](../adr/ADR-003-whatsapp-order-handoff.md).

@@ -178,3 +178,9 @@ reasoning behind each:
   other content change — same-day sellouts are flagged as an open
   question for the client (see above), not solved yet. See
   [ADR-004](../adr/ADR-004-content-management.md).
+- **2026-08-15** (wireframe review) — Corrected the cake-message field:
+  it started as one order-level field on the Cart screen, but that
+  breaks for a two-cake order (one message can't hold two different
+  inscriptions). Moved to Item Detail, asked per item instead — each
+  item's inscription now shows on its own Cart line for review before
+  "Place Order." See [ADR-003](../adr/ADR-003-whatsapp-order-handoff.md).

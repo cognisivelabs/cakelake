@@ -33,16 +33,21 @@ trade-off, and **the client chose Option B.**
 
 Use a **`wa.me` click-to-chat link**, built entirely client-side:
 
-- The cart contents (items, options, quantities) are formatted into a
-  readable order summary.
-- The Cart screen also collects two more things before "Place Order" is
+- The cart contents (items, options, quantities, and each item's own
+  cake-inscription text if provided) are formatted into a readable order
+  summary.
+- **What to write on the cake — asked per item, on Item Detail, not
+  the Cart.** A short free-text field, optional, asked when the
+  customer is choosing that specific cake — not once for the whole
+  order. Left blank, it's simply omitted for that item. Each item's
+  inscription (if any) is shown on its Cart line alongside its other
+  details, so it stays visible for review before "Place Order," not
+  hidden until it reaches WhatsApp.
+- The Cart screen collects one more thing before "Place Order" is
   enabled:
   - **When needed — required.** A date field with presets (Today /
     Tomorrow / Pick a date), plus a "Not sure yet — I'll confirm on
     WhatsApp" option.
-  - **What to write on the cake — always asked, optional to fill in.**
-    A short free-text field for a cake inscription. Left blank, it's
-    simply omitted from the message.
 - Placing the order opens `https://wa.me/<bakery-number>?text=<encoded
   summary>` — this pre-fills the message in the customer's WhatsApp app;
   the customer sends it themselves.
@@ -143,6 +148,12 @@ right after the order lands anyway.
   the sender's WhatsApp profile name has no reliable relationship to
   what should be written on the cake, so it's always asked directly and
   never defaulted or guessed.
+- **Corrected from an earlier round: the cake message started as one
+  order-level field on the Cart screen, not per-item.** That broke down
+  for a two-cake order — one field can't hold two different
+  inscriptions for two different cakes. Moved to Item Detail, per item,
+  which handles both the single- and multi-cake case correctly; the
+  order-level version is no longer part of this design.
 - **Without a checkout step, the site's total and the bakery's final
   price can genuinely disagree** — but only when something beyond the
   listed menu changes (an add-on, a customization request). Labeling
@@ -171,13 +182,19 @@ be a bigger process change for the business than the website itself.
 
 **Leaving "when needed" and the cake message as blanks in the pre-filled
 message, for the customer to fill in themselves**
-Zero additional UI on the Cart screen. Rejected for "when needed"
-specifically — it's the one piece of information that determines whether
-the bakery can even take the order, and an unfilled blank just moves the
-round-trip from "the site asks" to "the bakery asks after the fact,"
-which is worse. Kept as the actual approach for anything beyond a short
-cake message (photos, detailed design requests) — those still belong in
-the WhatsApp conversation, not a form field.
+Zero additional UI. Rejected for "when needed" specifically — it's the
+one piece of information that determines whether the bakery can even
+take the order, and an unfilled blank just moves the round-trip from
+"the site asks" to "the bakery asks after the fact," which is worse.
+Kept as the actual approach for anything beyond a short cake message
+(photos, detailed design requests) — those still belong in the WhatsApp
+conversation, not a form field.
+
+**A single order-level cake-message field (the original design)**
+Simpler — one field, asked once on the Cart screen. Rejected once a
+two-cake order was considered: one message can't represent two different
+inscriptions for two different cakes in the same order, so this was
+corrected to a per-item field on Item Detail instead.
 
 **Auto-filling the cake message (or a "Name") from the customer's
 WhatsApp profile name**

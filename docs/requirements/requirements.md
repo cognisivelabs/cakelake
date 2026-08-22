@@ -140,10 +140,10 @@ urgent each one actually is:
 
 **Resolved, included for completeness:**
 
-- **Featured items ("this week" section on Home):** no owner named for
-  weekly updates, so it's cut from Home entirely rather than shipping
-  something that goes stale. Revisit only if someone is willing to own
-  it going forward.
+- **Featured items ("this week" section on Home):** client-confirmed
+  2026-08-21 — no owner for weekly updates, so it's cut from Home
+  entirely rather than shipping something that goes stale. Revisit only
+  if someone is willing to own it going forward.
 
 ## Tentative technical direction
 
@@ -298,3 +298,8 @@ reasoning behind each:
   pipeline), not a separately hand-designed document that could drift
   out of sync. See [ADR-003](../adr/ADR-003-whatsapp-order-handoff.md)
   and [ADR-004](../adr/ADR-004-content-management.md).
+- **2026-08-21** (chat) — Client confirmed dropping the Home "featured
+  items" section: no owner for weekly updates, so it's left out rather
+  than shipping something that goes stale. This was already the
+  recommended default in the content checklist above; now client-
+  confirmed rather than assumed.

@@ -33,9 +33,30 @@ trade-off, and **the client chose Option B.**
 
 Use a **`wa.me` click-to-chat link**, built entirely client-side:
 
-- The cart contents (items, options, quantities, and each item's own
-  cake-inscription text if provided) are formatted into a readable order
-  summary.
+- **The order summary follows a fixed template, not an ad hoc format:**
+
+  ```
+  Order from the Cake Lake website 🎂
+
+  1. Chocolate Truffle Cake (Large, Chocolate) x1 — "Happy Birthday Sarah"
+  2. Vanilla Cupcake Box of 6 x2
+  3. Red Velvet Slice x3
+
+  Delivery (AED 25)
+  Needed: Tomorrow, Aug 22
+  Total: AED 245
+
+  Sent via the website
+  ```
+
+  One line per item always — name, options, quantity, and the
+  inscription (if any) appended on the same line rather than a separate
+  one, so a realistic order (6–8 items) stays well within a safe,
+  readable length without needing truncation logic. Fulfillment,
+  when-needed, and total each get their own line, since those are what
+  the bakery needs to act on first. Exact wording (the emoji, "Sent via
+  the website") is easy to adjust later — it's a string template, not
+  an architectural choice.
 - **What to write on the cake — asked per item, on Item Detail, not
   the Cart.** A short free-text field, optional, asked when the
   customer is choosing that specific cake — not once for the whole
@@ -198,6 +219,15 @@ right after the order lands anyway.
   answer is one small serverless function writing a live overlay file
   read by the site client-side, not a running server or a database.
   Not building this until that's confirmed needed.
+- **An item can go sold out while sitting in a returning customer's
+  saved cart** (the 2-hour or 24-hour persistence above). Resolved the
+  same way as every other infeasible-order case in this ADR: the item's
+  Cart row shows the same "Sold out" treatment as Menu/Item Detail
+  (see [ADR-004](ADR-004-content-management.md)'s `available` flag),
+  **"Place Order" is disabled while it's present**, and the row gets a
+  one-tap **"Remove"** action rather than making the customer hunt for
+  the problem item. Letting it through and leaving the bakery to catch
+  it in chat was considered and rejected — see Alternatives.
 
 ## Alternatives Considered
 
@@ -303,3 +333,10 @@ be paying for exactly the kind of ongoing cost this whole project has
 been built to avoid. If live toggling turns out to be needed, a single
 serverless function writing to a small overlay file is the minimum
 viable version — see Consequences above.
+
+**Letting a now-sold-out item in a saved cart go through to WhatsApp,
+leaving the bakery to catch and correct it in chat**
+Zero additional UI. Rejected — this is the exact round-trip pattern
+`requiresDelivery` and `leadTimeHours` enforcement were already built to
+avoid; there's no reason to make an exception for sold-out items sitting
+in a stale cart when the site already knows the item is unavailable.

@@ -68,6 +68,16 @@ than a hardcoded size+flavour pattern — most add-ons don't follow that
 shape at all (a knife or cap likely has no options; balloons might have
 a colour or quantity choice).
 
+**The downloadable menu PDF is generated from this same catalogue data,
+not a separately hand-designed document.** A dedicated print-styled
+template (real branding/typography work, applied to data rather than
+hand-crafted per version) reads the same catalogue used by the site,
+and is rendered to an actual static PDF file **at build time** — a
+headless-browser step added to the existing GitHub Actions pipeline
+(see [ADR-002](ADR-002-hosting-and-deployment.md)), not generated
+per-request and not relying on each customer's own browser print
+dialog. The PDF's closing line points back to the site to order.
+
 ## Rationale
 
 **Matches the confirmed scope exactly.** The client explicitly deferred a
@@ -122,6 +132,12 @@ not an oversight.
   are still needed from the client — see the open question in
   [requirements.md](../requirements/requirements.md). The 72-hour figure
   used elsewhere in these docs is a placeholder, not a confirmed number
+- **The PDF build step adds one thing to the pipeline that isn't just a
+  file sync:** a headless-browser render step in GitHub Actions,
+  producing a static PDF file alongside the site's own build output.
+  Still zero ongoing runtime cost (build-time only, same as the rest of
+  the pipeline) — just worth naming as a real, if small, addition to
+  what "the build" does, not assumed to be free to add
 
 ## Alternatives Considered
 
@@ -139,3 +155,20 @@ tailored to this catalogue's shape. Rejected for the same reason as
 [ADR-001](ADR-001-tech-stack.md) rejected a backend generally — real
 ongoing hosting cost for a need the client explicitly said isn't needed
 this phase.
+
+**A separately hand-designed PDF menu, updated manually alongside the
+site**
+Would allow more one-off visual polish than a data-driven template.
+Rejected — it creates exactly the duplicate-content problem this ADR
+otherwise avoids: every menu/price change would need updating in two
+places (the site's catalogue data and a separately maintained document)
+instead of one, and drift between them is the same kind of risk that
+made the Featured Items section not worth keeping.
+
+**Relying on each customer's browser print dialog instead of a
+build-time-generated PDF**
+Zero new build tooling. Rejected — output consistency (margins, page
+breaks, headers/footers) depends on the customer's own browser and OS
+print settings, which isn't good enough for a document meant to look
+like an actual menu. A build-time render step costs a little pipeline
+complexity but guarantees the same output for everyone.

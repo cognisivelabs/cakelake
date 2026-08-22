@@ -285,3 +285,16 @@ reasoning behind each:
   shape, options structure, and cart/checkout flow as cakes — no new
   mechanism needed. See confirmed scope #1–#2 and
   [ADR-004](../adr/ADR-004-content-management.md).
+- **2026-08-21** (wireframe review) — Settled three remaining items:
+  (1) the WhatsApp order summary now follows a fixed template — one
+  line per item (name, options, quantity, inscription), then
+  fulfillment, when-needed, and total each on their own line; (2) a
+  sold-out item in a returning customer's saved cart shows the same
+  "Sold out" treatment as elsewhere, disables "Place Order," and gets a
+  one-tap "Remove" — resolved the same way as every other
+  infeasible-order case rather than letting it reach WhatsApp;
+  (3) the downloadable menu PDF is generated from the same catalogue
+  data at build time (a headless-browser step in the existing CI
+  pipeline), not a separately hand-designed document that could drift
+  out of sync. See [ADR-003](../adr/ADR-003-whatsapp-order-handoff.md)
+  and [ADR-004](../adr/ADR-004-content-management.md).

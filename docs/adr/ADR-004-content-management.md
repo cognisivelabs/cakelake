@@ -58,6 +58,16 @@ for the whole item. The real numbers, and whether they vary by size,
 are still the client's to confirm — this just makes sure the data shape
 doesn't need to change again once those numbers come in.
 
+**The catalogue isn't cakes-only.** Party/event add-ons (candles, a
+cake knife, a party cap, balloons — a backdrop was raised but is out of
+scope for now) are just items in the same catalogue, in their own Menu
+category, using the same `available`/`requiresDelivery`/`leadTimeHours`
+flags and the same options structure as cakes. This is exactly why
+options needed to be a flexible, generic set of groups per item rather
+than a hardcoded size+flavour pattern — most add-ons don't follow that
+shape at all (a knife or cap likely has no options; balloons might have
+a colour or quantity choice).
+
 ## Rationale
 
 **Matches the confirmed scope exactly.** The client explicitly deferred a

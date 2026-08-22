@@ -24,9 +24,17 @@ business-language version):
 1. **Browse the menu** — customers see the full range of items, with
    photos, descriptions, and prices. This is the site's primary
    call-to-action on Home — it's the only one of the site's entry points
-   that actually leads to a structured order (see note under #6).
+   that actually leads to a structured order (see note under #6). The
+   catalogue isn't cakes-only: it also includes party/event add-ons
+   (candles, a cake knife, a party cap, balloons — see
+   [ADR-004](../adr/ADR-004-content-management.md)), shown as their own
+   Menu category, browsed and ordered exactly the same way as cakes. A
+   backdrop was also raised by the client but is left out for now.
 2. **Build an order** — customers pick items, choose available options
-   (e.g. size, flavour), and add them to a cart.
+   (e.g. size, flavour for cakes; colour or quantity for some add-ons),
+   and add them to a cart. Not every item has the same kind of options —
+   Item Detail supports a flexible, generic set of option groups per
+   item rather than assuming every item is a size+flavour choice.
 3. **Place the order via WhatsApp, no online payment** — the site
    assembles the cart into a clear order summary and hands it to a
    pre-filled WhatsApp message addressed to the bakery's number. The
@@ -100,12 +108,14 @@ urgent each one actually is:
 
 - **Menu content, even a rough draft:** categories, item names, prices,
   and — most importantly right now — **what options each item actually
-  has.** The wireframes assume every item is a size + flavour choice.
-  If some items have meaningfully different option types (a topping
-  choice, a dietary variant, a "message included" toggle), Item Detail
-  needs a more flexible structure than the current design assumes. A
-  rough list is enough to check this assumption before more wireframing
-  builds on top of it — it doesn't need to be final.
+  has.** Confirmed as a real issue, not just a risk: add-ons (candles,
+  cake knife, party cap, balloons — see confirmed scope #1) clearly
+  don't follow the same size+flavour pattern cakes do, so Item Detail
+  needs the flexible, generic option-group structure already noted
+  under #2, not the size+flavour assumption the wireframes started
+  with. A rough list of items and their real options (cakes and
+  add-ons both) is enough to check this before more wireframing builds
+  on top of it — it doesn't need to be final.
 - **Which items are delivery-only** (need on-site installation — large
   or tiered cakes) and **which need advance notice, how long, and
   whether it varies by size within an item.** 72 hours is a placeholder
@@ -268,3 +278,10 @@ reasoning behind each:
   items into "Open questions" (decisions) and a new "Content checklist"
   (raw content/assets), consolidating everything outstanding into one
   list for the client.
+- **2026-08-21** (chat) — Client confirmed the catalogue also includes
+  party/event add-ons: candles, a cake knife, a party cap, and balloons.
+  A backdrop was also raised but is left out of scope for now. Add-ons
+  are just another Menu category using the exact same catalogue data
+  shape, options structure, and cart/checkout flow as cakes — no new
+  mechanism needed. See confirmed scope #1–#2 and
+  [ADR-004](../adr/ADR-004-content-management.md).

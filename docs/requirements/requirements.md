@@ -87,16 +87,6 @@ dump (see the content checklist below for that):
 
 - **Promotions/offers:** does the bakery want to advertise any
   time-limited offers or discounts on the site at launch?
-- **How often do items actually sell out same-day?** The site can mark
-  an item "Sold out" (see [ADR-004](../adr/ADR-004-content-management.md)),
-  but doing so requires a commit and a redeploy — fine for predictable
-  unavailability, not fast enough for a mid-afternoon sellout at the
-  counter. If this happens routinely rather than rarely, that's worth
-  knowing now: it's what would justify building the small, dedicated
-  toggle mechanism already scoped (one serverless function, not a
-  running server or database — see
-  [ADR-003](../adr/ADR-003-whatsapp-order-handoff.md)) rather than
-  relying on WhatsApp to catch the occasional edge case.
 
 ## Content checklist for the client
 
@@ -144,6 +134,16 @@ urgent each one actually is:
   2026-08-21 — no owner for weekly updates, so it's cut from Home
   entirely rather than shipping something that goes stale. Revisit only
   if someone is willing to own it going forward.
+- **Same-day sellout frequency:** client-confirmed 2026-08-21 — the
+  bakery runs a live-kitchen model (items made fresh/to-order rather
+  than pulled from fixed display stock), so items generally don't sell
+  out mid-day. The `available` flag stays as a safety valve for genuine
+  exceptions (an item discontinued, seasonal, or paused for an
+  ingredient issue) — see [ADR-004](../adr/ADR-004-content-management.md)
+  — but the real-time serverless-toggle contingency scoped in
+  [ADR-003](../adr/ADR-003-whatsapp-order-handoff.md) is not needed: the
+  existing commit-and-redeploy workflow is fast enough for how
+  infrequently this actually happens.
 
 ## Tentative technical direction
 
@@ -303,3 +303,13 @@ reasoning behind each:
   than shipping something that goes stale. This was already the
   recommended default in the content checklist above; now client-
   confirmed rather than assumed.
+- **2026-08-21** (chat) — Client confirmed the bakery runs a
+  live-kitchen model (items made fresh/to-order, not pulled from fixed
+  display stock), so items generally don't sell out mid-day. This
+  resolves the same-day-sellout open question: the `available` flag
+  stays as a safety valve for genuine exceptions (discontinued,
+  seasonal, ingredient issues), but the real-time serverless-toggle
+  contingency scoped earlier is not being built — the existing
+  commit-and-redeploy workflow is fast enough for how rarely this
+  happens. See [ADR-003](../adr/ADR-003-whatsapp-order-handoff.md) and
+  [ADR-004](../adr/ADR-004-content-management.md).

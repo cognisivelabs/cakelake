@@ -213,14 +213,17 @@ right after the order lands anyway.
   looks right at that width, decided empirically during build, not
   picked in advance here.
 - **Marking an item sold out in real time (not just via a commit and
-  redeploy) is still an open question, not decided.** See the same-day-
-  sellout question in [requirements.md](../requirements/requirements.md)
-  — if the client confirms this happens routinely, the minimum-cost
-  answer is one small serverless function writing a live overlay file
-  read by the site client-side, not a running server or a database.
-  Not building this until that's confirmed needed.
-- **An item can go sold out while sitting in a returning customer's
-  saved cart** (the 2-hour or 24-hour persistence above). Resolved the
+  redeploy) — resolved as not needed.** The client confirmed 2026-08-21:
+  the bakery runs a live-kitchen model (made fresh/to-order, not pulled
+  from fixed display stock), so items generally don't sell out mid-day.
+  The commit-and-redeploy workflow is fast enough for how rarely this
+  actually happens; the serverless-toggle contingency once scoped here
+  isn't being built. See
+  [requirements.md](../requirements/requirements.md).
+- **An item can still, rarely, go sold out while sitting in a returning
+  customer's saved cart** (the 2-hour or 24-hour persistence above) —
+  a discontinued item, a seasonal one, or an ingredient issue, not a
+  routine occurrence given the live-kitchen model above. Resolved the
   same way as every other infeasible-order case in this ADR: the item's
   Cart row shows the same "Sold out" treatment as Menu/Item Detail
   (see [ADR-004](ADR-004-content-management.md)'s `available` flag),
@@ -325,14 +328,21 @@ hours vs. 2).
 
 **A running server + database to support real-time sold-out toggling**
 Would make every one of these six items solvable the same way, plus
-open the door to anything else that needs live state later. Rejected
-for now — only one of the six actually needs anything beyond static
-content, and even that one is unconfirmed as a real need. Reintroducing
-always-on compute and a database to solve a single boolean toggle would
-be paying for exactly the kind of ongoing cost this whole project has
-been built to avoid. If live toggling turns out to be needed, a single
-serverless function writing to a small overlay file is the minimum
-viable version — see Consequences above.
+open the door to anything else that needs live state later. Rejected —
+only one of the six needed anything beyond static content, and the
+client has since confirmed (live-kitchen model, see Consequences) that
+same-day sellouts aren't routine enough to justify it either.
+Reintroducing always-on compute and a database to solve an
+infrequent boolean toggle would be paying for exactly the kind of
+ongoing cost this whole project has been built to avoid.
+
+**A single serverless function + overlay file for real-time sold-out
+toggling (the contingency this ADR once scoped)**
+Would have been the minimum viable version if real-time toggling turned
+out to be needed. Not built — the client confirmed 2026-08-21 that the
+live-kitchen model means items generally don't sell out mid-day, so the
+question this was meant to answer resolved itself before the
+contingency needed building.
 
 **Letting a now-sold-out item in a saved cart go through to WhatsApp,
 leaving the bakery to catch and correct it in chat**

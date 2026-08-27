@@ -1,0 +1,84 @@
+.section {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.section h2 {
+  font-size: 1rem;
+  margin-bottom: 4px;
+}
+
+.radioRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.95rem;
+}
+
+.totals {
+  margin-top: 24px;
+  border-top: 1px solid #ddd;
+  padding-top: 16px;
+}
+
+.totalRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.95rem;
+  padding: 2px 0;
+}
+
+.grandTotal {
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-top: 6px;
+}
+
+.disclaimer {
+  margin-top: 10px;
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.placeOrderButton {
+  margin-top: 20px;
+  width: 100%;
+  padding: 14px;
+  border-radius: 8px;
+  border: none;
+  background: #222;
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.preview {
+  white-space: pre-wrap;
+  background: #f6f6f6;
+  border-radius: 8px;
+  padding: 16px;
+  font-size: 0.85rem;
+  font-family: inherit;
+}
+
+.handoffActions {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.handoffActions button {
+  padding: 10px 16px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background: #fff;
+  cursor: pointer;
+}
+
+.primaryButton {
+  background: #222 !important;
+  color: #fff;
+  border: none !important;
+}

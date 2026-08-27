@@ -1,0 +1,125 @@
+.card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.soldOut {
+  opacity: 0.55;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.header h3 {
+  margin: 0;
+  font-size: 1.05rem;
+}
+
+.price {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.soldOutBadge {
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #eee;
+  color: #555;
+}
+
+.description {
+  margin: 0;
+  color: #555;
+  font-size: 0.9rem;
+}
+
+.leadTime {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #8a5a00;
+}
+
+.optionGroup {
+  border: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.optionGroup legend {
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0;
+  margin-bottom: 2px;
+}
+
+.optionChoice {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.9rem;
+}
+
+.cakeMessage {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.85rem;
+  color: #444;
+}
+
+.cakeMessage input {
+  padding: 6px 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.quantityStepper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.quantityStepper button {
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  background: #fff;
+  cursor: pointer;
+}
+
+.addButton {
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: none;
+  background: #222;
+  color: #fff;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.addButton:disabled {
+  background: #aaa;
+  cursor: not-allowed;
+}

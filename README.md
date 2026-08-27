@@ -15,7 +15,11 @@ no backend.
 2. **Planning** — in progress. Technical requirements, architecture
    decisions (ADRs), and system design, scoped to the approved
    requirements.
-3. **Development** — not started. `app/` is currently empty.
+3. **Development** — proof-of-concept underway in [`app/`](app/): the
+   core generate-order → send-to-WhatsApp flow, built as real,
+   continuing code (not throwaway), deployed to GitHub Pages for now
+   instead of AWS to validate the mechanism cheaply before committing to
+   full infrastructure. See [`app/README.md`](app/README.md).
 
 ## Documentation
 
@@ -44,5 +48,6 @@ docs/
   requirements/   Technical requirements
   adr/            Architecture Decision Records
   architecture/   System overview
-app/              Site source (empty — development not yet started)
+app/              Next.js/TypeScript site source (see app/README.md)
+.github/workflows/deploy.yml   Build + deploy to GitHub Pages
 ```

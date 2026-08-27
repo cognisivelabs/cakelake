@@ -1,80 +1,100 @@
 .line {
   display: flex;
-  justify-content: space-between;
-  gap: 16px;
-  padding: 16px 0;
-  border-bottom: 1px solid #eee;
+  gap: 11px;
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  padding: 12px;
+  box-shadow: var(--shadow-card);
+  position: relative;
+}
+
+.photo {
+  flex: 0 0 56px;
+  height: 56px;
+  border-radius: 7px;
+  background: var(--color-photo-bg);
+  border: 1px dashed var(--color-placeholder-border);
 }
 
 .info {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 5px;
+  min-width: 0;
 }
 
-.nameRow {
-  display: flex;
-  justify-content: space-between;
-  gap: 8px;
-}
-
-.options {
-  margin: 0;
+.nameRow strong {
+  font-family: var(--font-heading);
+  font-weight: 700;
   font-size: 0.85rem;
-  color: #666;
+  color: var(--color-ink);
+}
+
+.detail {
+  margin: 0;
+  font-size: 0.72rem;
+  color: var(--color-ink-muted);
 }
 
 .inscription {
   margin: 0;
-  font-size: 0.85rem;
+  align-self: flex-start;
+  background: var(--color-warn-bg);
+  color: var(--color-warn-ink);
+  border-radius: 6px;
+  padding: 5px 8px;
   font-style: italic;
-  color: #444;
+  font-size: 0.72rem;
 }
 
-.editMessage {
-  margin-top: 6px;
+.footerRow {
   display: flex;
-  flex-direction: column;
-  gap: 4px;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 2px;
+}
+
+.price {
+  font-weight: 700;
   font-size: 0.8rem;
-  color: #666;
-}
-
-.editMessage input {
-  padding: 5px 7px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  font-size: 0.85rem;
-}
-
-.controls {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 8px;
+  color: var(--color-ink);
 }
 
 .quantityStepper {
   display: flex;
   align-items: center;
-  gap: 8px;
+  background: var(--color-surface-muted);
+  border-radius: 7px;
+  overflow: hidden;
 }
 
 .quantityStepper button {
-  width: 26px;
-  height: 26px;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-  background: #fff;
+  width: 30px;
+  height: 30px;
+  border: none;
+  background: none;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--color-ink);
   cursor: pointer;
 }
 
+.quantityStepper span {
+  width: 22px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 0.75rem;
+}
+
 .remove {
+  position: absolute;
+  top: 10px;
+  right: 12px;
   border: none;
   background: none;
   color: #a33;
-  font-size: 0.8rem;
+  font-size: 0.7rem;
   cursor: pointer;
   padding: 0;
 }

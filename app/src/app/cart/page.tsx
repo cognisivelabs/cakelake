@@ -1,20 +1,24 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import { getCatalog } from "@/lib/catalog";
-import { orderTotal, formatAed } from "@/lib/pricing";
+import { orderTotal, hasUnpricedLines, formatAed } from "@/lib/pricing";
 import { buildOrderMessage, buildWhatsAppUrl } from "@/lib/whatsapp";
 import { CartLineItem } from "@/components/CartLineItem";
 import type { WhenNeeded } from "@/types/order";
 import styles from "./cart.module.css";
 
+type Stage = "review" | "handoff" | "confirming" | "acknowledged";
+
 export default function CartPage() {
-  const { order, setFulfillment, setWhenNeeded, clearCart } = useCart();
+  const { order, setFulfillment, setWhenNeeded, setCustomerName, clearCart } = useCart();
   const catalog = getCatalog();
-  const [handoff, setHandoff] = useState<{ message: string; url: string } | null>(
-    null,
-  );
+  const [stage, setStage] = useState<Stage>("review");
+  const [sentMessage, setSentMessage] = useState("");
+  const [sentUrl, setSentUrl] = useState("");
+  const [ackSummary, setAckSummary] = useState<{ lines: string; total: string } | null>(null);
 
   const resolvedLines = order.lines
     .map((line) => {
@@ -38,104 +42,206 @@ export default function CartPage() {
     setWhenNeeded(next);
   }
 
-  function handlePlaceOrder() {
-    const message = buildOrderMessage(order, catalog);
-    const url = buildWhatsAppUrl(message);
-    window.open(url, "_blank", "noopener,noreferrer");
-    setHandoff({ message, url });
+  function goToHandoff() {
+    setSentMessage(buildOrderMessage(order, catalog));
+    setStage("handoff");
   }
 
-  if (handoff) {
+  function openWhatsApp() {
+    const url = buildWhatsAppUrl(sentMessage);
+    setSentUrl(url);
+    window.open(url, "_blank", "noopener,noreferrer");
+    setStage("confirming");
+  }
+
+  function confirmSent() {
+    setAckSummary({
+      lines: resolvedLines
+        .map(({ item, line }) => {
+          const tier = item.weightTiers.find((t) => t.id === line.weightTierId);
+          const flavour = item.flavours.find((f) => f.id === line.flavourId);
+          const descriptors = [tier?.label, flavour?.label].filter(Boolean).join(", ");
+          return descriptors ? `${item.name}, ${descriptors}` : item.name;
+        })
+        .join(" · "),
+      total: formatAed(orderTotal(order, catalog)),
+    });
+    clearCart();
+    setStage("acknowledged");
+  }
+
+  // — Acknowledged —
+  if (stage === "acknowledged" && ackSummary) {
     return (
-      <div>
-        <h1>Sending your order to WhatsApp</h1>
-        <p>
-          We&apos;ve opened WhatsApp with your order ready to send. Your
-          order is only confirmed once you actually send that message.
+      <div className={styles.centered}>
+        <div className={styles.checkCircle}>✓</div>
+        <h1>Order sent</h1>
+        <p className={styles.muted}>
+          We&apos;ll confirm the details and the price in WhatsApp, usually within
+          the hour during opening times.
         </p>
-        <pre className={styles.preview}>{handoff.message}</pre>
-        <p>
-          Didn&apos;t open?{" "}
-          <a href={handoff.url} target="_blank" rel="noopener noreferrer">
-            Open WhatsApp
-          </a>
-        </p>
-        <div className={styles.handoffActions}>
-          <button
-            type="button"
-            className={styles.primaryButton}
-            onClick={() => {
-              clearCart();
-              setHandoff(null);
-            }}
+        <div className={styles.recapCard}>
+          <div className={styles.sectionLabel}>WHAT YOU SENT</div>
+          <p className={styles.recapText}>
+            {ackSummary.lines}
+            <br />
+            Total: {ackSummary.total}
+          </p>
+        </div>
+        <div className={styles.stackedActions}>
+          <Link href="/menu" className={styles.primaryButton}>
+            BACK TO MENU
+          </Link>
+          <a
+            href={sentUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.tealOutlineButton}
           >
-            Yes, sent it
-          </button>
-          <button type="button" onClick={() => setHandoff(null)}>
-            No, take me back to my cart
-          </button>
+            OPEN THE CHAT AGAIN
+          </a>
         </div>
       </div>
     );
   }
 
+  // — Handoff review + "did you send it?" —
+  if (stage === "handoff" || stage === "confirming") {
+    return (
+      <div className={styles.handoffWrap}>
+        <div className={stage === "confirming" ? styles.dimmed : undefined}>
+          <h1>This is the message we&apos;ll send</h1>
+          <p className={styles.muted}>
+            WhatsApp opens with it already typed. You still press send.
+          </p>
+          <pre className={styles.preview}>{sentMessage}</pre>
+          <div className={styles.infoNote}>
+            Your order opens in WhatsApp. Come back here and confirm you sent it.
+          </div>
+          {stage === "handoff" && (
+            <button type="button" className={styles.tealButton} onClick={openWhatsApp}>
+              OPEN WHATSAPP
+            </button>
+          )}
+        </div>
+
+        {stage === "confirming" && (
+          <div className={styles.confirmModal}>
+            <h2>Did you send it?</h2>
+            <p className={styles.muted}>
+              We can&apos;t see your WhatsApp, so tell us and we&apos;ll clear your
+              cart.
+            </p>
+            <div className={styles.stackedActions}>
+              <button type="button" className={styles.primaryButton} onClick={confirmSent}>
+                YES, SENT
+              </button>
+              <button
+                type="button"
+                className={styles.outlineButton}
+                onClick={() => setStage("review")}
+              >
+                NOT YET — BACK TO MY ORDER
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // — Review (default cart) —
   if (resolvedLines.length === 0) {
     return (
-      <div>
-        <h1>Your cart</h1>
-        <p>Your cart is empty. Head to the menu to add something.</p>
+      <div className={styles.centered}>
+        <h1>Nothing in your order yet</h1>
+        <p className={styles.muted}>
+          Add a cake and it&apos;ll show up here.
+        </p>
+        <Link href="/menu" className={styles.primaryButton}>
+          BROWSE MENU
+        </Link>
       </div>
     );
   }
 
   return (
     <div>
-      <h1>Your cart</h1>
+      <h1 className={styles.pageTitle}>Your order</h1>
 
-      <div>
+      <div className={styles.lineList}>
         {resolvedLines.map(({ item, line }) => (
           <CartLineItem key={line.lineId} item={item} line={line} />
         ))}
       </div>
 
       <section className={styles.section}>
-        <h2>Pickup or delivery?</h2>
-        <label className={styles.radioRow}>
-          <input
-            type="radio"
-            name="fulfillment"
-            checked={order.fulfillment === "pickup"}
-            onChange={() => setFulfillment("pickup")}
-          />
-          Pickup
-        </label>
-        <label className={styles.radioRow}>
-          <input
-            type="radio"
-            name="fulfillment"
-            checked={order.fulfillment === "delivery"}
-            onChange={() => setFulfillment("delivery")}
-          />
-          Delivery
-        </label>
+        <div className={styles.sectionLabel}>WHEN DO YOU NEED IT?</div>
+        <div className={styles.pillRow}>
+          <button
+            type="button"
+            className={styles.pillOption}
+            data-selected={whenNeededValue === "today"}
+            onClick={() => handleWhenNeededChange("today")}
+          >
+            Today
+          </button>
+          <button
+            type="button"
+            className={styles.pillOption}
+            data-selected={whenNeededValue === "tomorrow"}
+            onClick={() => handleWhenNeededChange("tomorrow")}
+          >
+            Tomorrow
+          </button>
+          <button
+            type="button"
+            className={styles.pillOption}
+            data-selected={whenNeededValue === "unsure"}
+            onClick={() => handleWhenNeededChange("unsure")}
+          >
+            Not sure yet
+          </button>
+        </div>
+      </section>
+
+      <section className={styles.section}>
+        <div className={styles.sectionLabel}>PICKUP OR DELIVERY</div>
+        <div className={styles.pillRow}>
+          <button
+            type="button"
+            className={styles.pillOption}
+            data-selected={order.fulfillment === "pickup"}
+            onClick={() => setFulfillment("pickup")}
+          >
+            Pickup
+          </button>
+          <button
+            type="button"
+            className={styles.pillOption}
+            data-selected={order.fulfillment === "delivery"}
+            onClick={() => setFulfillment("delivery")}
+          >
+            Delivery
+          </button>
+        </div>
         {order.fulfillment === "delivery" && (
           <p className={styles.deliveryNote}>
-            We&apos;ll confirm the delivery fee with you on WhatsApp — it
-            isn&apos;t priced on the site.
+            We&apos;ll confirm the delivery fee with you on WhatsApp — it isn&apos;t
+            priced on the site.
           </p>
         )}
       </section>
 
       <section className={styles.section}>
-        <h2>When do you need this?</h2>
-        <select
-          value={whenNeededValue}
-          onChange={(e) => handleWhenNeededChange(e.target.value)}
-        >
-          <option value="today">Today</option>
-          <option value="tomorrow">Tomorrow</option>
-          <option value="unsure">Not sure yet — I&apos;ll confirm on WhatsApp</option>
-        </select>
+        <div className={styles.sectionLabel}>YOUR NAME</div>
+        <input
+          type="text"
+          className={styles.nameInput}
+          value={order.customerName}
+          onChange={(e) => setCustomerName(e.target.value)}
+          placeholder="Full Name"
+        />
       </section>
 
       <section className={styles.totals}>
@@ -143,19 +249,21 @@ export default function CartPage() {
           <span>Total</span>
           <span>{formatAed(orderTotal(order, catalog))}</span>
         </div>
+        {hasUnpricedLines(order, catalog) && (
+          <p className={styles.disclaimer}>
+            One or more items need a price confirmed with the bakery — the total
+            above doesn&apos;t include those yet.
+          </p>
+        )}
         <p className={styles.disclaimer}>
-          Prices reflect the menu as shown and don&apos;t include delivery.
-          If you add a cake message, request changes, or choose delivery,
-          the bakery will confirm final pricing with you on WhatsApp.
+          Prices reflect the menu as shown and don&apos;t include delivery. If you
+          add a cake message, request changes, or choose delivery, the bakery
+          will confirm final pricing with you on WhatsApp.
         </p>
       </section>
 
-      <button
-        type="button"
-        className={styles.placeOrderButton}
-        onClick={handlePlaceOrder}
-      >
-        Place Order via WhatsApp
+      <button type="button" className={styles.tealButtonBlock} onClick={goToHandoff}>
+        SEND ORDER ON WHATSAPP
       </button>
     </div>
   );

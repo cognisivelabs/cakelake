@@ -1,13 +1,47 @@
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=DM+Sans:wght@400;700;800&display=swap");
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+:root {
+  --color-bg: #fbf4e4;
+  --color-surface: #ffffff;
+  --color-surface-muted: #f6efe0;
+  --color-surface-alt: #f3ecdc;
+  --color-photo-bg: #f3e7cf;
+  --color-border: #ece0c8;
+  --color-border-strong: #e6d8bd;
+  --color-placeholder-border: #cbb89a;
+
+  --color-ink: #4f352f;
+  --color-ink-muted: #7b6049;
+  --color-ink-faint: #a89a88;
+
+  --color-accent: #efd400; /* primary action colour (yellow) */
+  --color-accent-shadow: #c9b400;
+  --color-accent-ink: #4f352f; /* text on the accent colour */
+
+  --color-pink: #cd346f;
+  --color-pink-bg: #fce8ef;
+  --color-berry: #91134b;
+  --color-berry-bg: #f7e4ec;
+
+  --color-teal: #228883; /* WhatsApp / communication actions */
+  --color-teal-bg: #e2f5f4;
+  --color-teal-2: #2eb4b0;
+
+  --color-warn-bg: #fdf6d9;
+  --color-warn-ink: #8a7038;
+
+  --color-unavailable-bg: #7b6049;
+
+  --font-heading: "Bricolage Grotesque", system-ui, sans-serif;
+  --font-body: "DM Sans", system-ui, sans-serif;
+  --font-mono: ui-monospace, Menlo, monospace;
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+
+  --shadow-card: 0 1px 3px rgba(58, 42, 36, 0.08);
+  --shadow-modal: 0 6px 24px rgba(58, 42, 36, 0.24);
 }
 
 html {
@@ -20,13 +54,18 @@ body {
   overflow-x: hidden;
 }
 
+* {
+  box-sizing: border-box;
+}
+
 body {
   min-height: 100%;
+  margin: 0;
   display: flex;
   flex-direction: column;
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  color: var(--color-ink);
+  background: var(--color-bg);
+  font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -36,22 +75,33 @@ main {
   width: 100%;
   max-width: 720px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 0 0 32px;
 }
 
-* {
-  box-sizing: border-box;
-  padding: 0;
+h1,
+h2,
+h3 {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  letter-spacing: -0.02em;
   margin: 0;
 }
 
 a {
   color: inherit;
-  text-decoration: none;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
+/* Small uppercase status/tag text — badges, ready-time pills, clock,
+   cart count. A deliberate pairing with the heading/body fonts, not a
+   fallback. */
+.mono-tag {
+  font-family: var(--font-mono);
+  font-weight: 700;
+}
+
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
 }

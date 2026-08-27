@@ -1,28 +1,29 @@
 import type { CatalogItem } from "@/types/catalog";
 import type { CartLine, Order, WhenNeeded } from "@/types/order";
 import { CONFIG } from "@/lib/config";
-import { orderTotal, formatAed } from "@/lib/pricing";
+import { lineTotal, orderTotal, formatAed } from "@/lib/pricing";
 
-// Exact template from docs/adr/ADR-003-whatsapp-order-handoff.md — one
-// line per item (name, options, quantity, inscription), then
-// fulfillment, when-needed, and total each on their own line.
+// Matches docs/adr/ADR-003-whatsapp-order-handoff.md's template, updated
+// for the weight/flavour pricing model and the optional name field.
 
-function formatOptions(item: CatalogItem, line: CartLine): string {
-  const labels = item.optionGroups
-    .map((group) => {
-      const chosenId = line.selectedOptions[group.id];
-      return group.choices.find((c) => c.id === chosenId)?.label;
-    })
-    .filter((label): label is string => Boolean(label));
-  return labels.length > 0 ? ` (${labels.join(", ")})` : "";
-}
+function formatItemLine(item: CatalogItem, line: CartLine): string {
+  const tier = item.weightTiers.find((t) => t.id === line.weightTierId);
+  const flavour = item.flavours.find((f) => f.id === line.flavourId);
+  const descriptors = [tier?.label, flavour?.label].filter(Boolean).join(", ");
+  const namePart = descriptors ? `${item.name}, ${descriptors}` : item.name;
 
-function formatLine(item: CatalogItem, line: CartLine, index: number): string {
-  const options = formatOptions(item, line);
-  const inscription = line.cakeMessage
-    ? ` — "${line.cakeMessage.trim()}"`
-    : "";
-  return `${index + 1}. ${item.name}${options} x${line.quantity}${inscription}`;
+  const total = lineTotal(item, line);
+  const priceText = total === undefined ? "price to confirm" : formatAed(total);
+
+  const detailLines: string[] = [];
+  if (line.customDescription?.trim()) {
+    detailLines.push(`   Design: ${line.customDescription.trim()}`);
+  }
+  if (line.cakeMessage?.trim()) {
+    detailLines.push(`   Message: "${line.cakeMessage.trim()}"`);
+  }
+
+  return [`${line.quantity}× ${namePart} — ${priceText}`, ...detailLines].join("\n");
 }
 
 function formatWhenNeeded(whenNeeded: WhenNeeded): string {
@@ -30,9 +31,8 @@ function formatWhenNeeded(whenNeeded: WhenNeeded): string {
     d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 
   switch (whenNeeded.kind) {
-    case "today": {
+    case "today":
       return `Needed: Today, ${shortDate(new Date())}`;
-    }
     case "tomorrow": {
       const tomorrow = new Date();
       tomorrow.setDate(tomorrow.getDate() + 1);
@@ -56,19 +56,17 @@ export function buildOrderMessage(order: Order, catalog: CatalogItem[]): string 
     })
     .filter((x): x is { item: CatalogItem; line: CartLine } => x !== null);
 
-  const itemLines = resolvedLines.map(({ item, line }, i) =>
-    formatLine(item, line, i),
-  );
+  const itemLines = resolvedLines.map(({ item, line }) => formatItemLine(item, line));
 
-  // Delivery cost isn't priced on the site — it's confirmed with the
-  // customer over WhatsApp, not shown as a fee here. See ADR-003.
-  const fulfillmentLine =
-    order.fulfillment === "delivery"
-      ? "Delivery (fee to be confirmed on WhatsApp)"
-      : "Pickup";
+  // Client-confirmed: keep the name field, but never send a placeholder —
+  // if it's blank, the header just reads "New order" with no name.
+  const name = order.customerName.trim();
+  const header = name ? `New order — ${name}` : "New order";
+
+  const fulfillmentLine = order.fulfillment === "delivery" ? "Delivery" : "Pickup";
 
   const lines = [
-    "Order from the Cake Lake website 🎂",
+    header,
     "",
     ...itemLines,
     "",

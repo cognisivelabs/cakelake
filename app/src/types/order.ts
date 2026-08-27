@@ -1,19 +1,19 @@
-export type SelectedOptions = {
-  /** Maps OptionGroup.id -> chosen OptionChoice.id */
-  [groupId: string]: string;
-};
-
 export type CartLine = {
-  /** Unique per distinct item+options combination, not just per item. */
+  /** Unique per line, not per item — the same item can appear twice
+   * with different weight/flavour/message combinations. */
   lineId: string;
   itemId: string;
   quantity: number;
-  selectedOptions: SelectedOptions;
+  weightTierId: string;
+  /** Empty string if the item has no flavour choice. */
+  flavourId: string;
   /**
    * Cake inscription — per item, per ADR-003. Optional, always asked at
    * the point of adding the item, never inferred from the customer.
    */
   cakeMessage?: string;
+  /** For items with needsCustomDescription — what the cake should look like. */
+  customDescription?: string;
 };
 
 export type Fulfillment = "pickup" | "delivery";
@@ -28,4 +28,10 @@ export type Order = {
   lines: CartLine[];
   fulfillment: Fulfillment;
   whenNeeded: WhenNeeded;
+  /**
+   * Optional — client-confirmed: keep the name field, but omit it from
+   * the WhatsApp message entirely if left blank, rather than sending a
+   * placeholder.
+   */
+  customerName: string;
 };

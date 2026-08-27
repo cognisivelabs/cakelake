@@ -11,11 +11,14 @@ export function Header() {
   return (
     <header className={styles.header}>
       <Link href="/" className={styles.brand}>
-        Cake Lake Bakery
+        Cake Lake
       </Link>
       <nav className={styles.nav}>
         <Link href="/menu">Menu</Link>
-        <Link href="/cart">Cart{itemCount > 0 ? ` (${itemCount})` : ""}</Link>
+        <Link href="/contact">Find us</Link>
+        <Link href="/cart" className={`${styles.cartPill} mono-tag`}>
+          CART {itemCount}
+        </Link>
       </nav>
     </header>
   );

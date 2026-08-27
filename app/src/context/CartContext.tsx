@@ -6,20 +6,15 @@ import {
   useSyncExternalStore,
   type ReactNode,
 } from "react";
-import type {
-  CartLine,
-  Fulfillment,
-  Order,
-  SelectedOptions,
-  WhenNeeded,
-} from "@/types/order";
+import type { CartLine, Fulfillment, Order, WhenNeeded } from "@/types/order";
 
-const STORAGE_KEY = "cakelake-cart-v1";
+const STORAGE_KEY = "cakelake-cart-v2";
 
 const EMPTY_ORDER: Order = {
   lines: [],
   fulfillment: "pickup",
   whenNeeded: { kind: "unsure" },
+  customerName: "",
 };
 
 /**
@@ -64,25 +59,30 @@ if (typeof window !== "undefined") {
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
     const parsed = raw ? (JSON.parse(raw) as Order) : null;
-    if (parsed?.lines) currentOrder = parsed;
+    if (parsed?.lines) currentOrder = { ...EMPTY_ORDER, ...parsed };
   } catch {
     // Corrupt or inaccessible storage — fall back to an empty cart.
   }
 }
 
+export type NewLineInput = {
+  itemId: string;
+  quantity: number;
+  weightTierId: string;
+  flavourId: string;
+  cakeMessage?: string;
+  customDescription?: string;
+};
+
 type CartContextValue = {
   order: Order;
-  addLine: (
-    itemId: string,
-    selectedOptions: SelectedOptions,
-    quantity: number,
-    cakeMessage?: string,
-  ) => void;
+  addLine: (input: NewLineInput) => void;
   updateQuantity: (lineId: string, quantity: number) => void;
   removeLine: (lineId: string) => void;
   updateCakeMessage: (lineId: string, cakeMessage: string) => void;
   setFulfillment: (fulfillment: Fulfillment) => void;
   setWhenNeeded: (whenNeeded: WhenNeeded) => void;
+  setCustomerName: (customerName: string) => void;
   clearCart: () => void;
 };
 
@@ -93,13 +93,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const value: CartContextValue = {
     order,
-    addLine: (itemId, selectedOptions, quantity, cakeMessage) => {
+    addLine: (input) => {
       const line: CartLine = {
-        lineId: `${itemId}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-        itemId,
-        quantity,
-        selectedOptions,
-        cakeMessage,
+        lineId: `${input.itemId}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+        ...input,
       };
       commit({ ...currentOrder, lines: [...currentOrder.lines, line] });
     },
@@ -130,6 +127,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
     },
     setWhenNeeded: (whenNeeded) => {
       commit({ ...currentOrder, whenNeeded });
+    },
+    setCustomerName: (customerName) => {
+      commit({ ...currentOrder, customerName });
     },
     clearCart: () => commit(EMPTY_ORDER),
   };

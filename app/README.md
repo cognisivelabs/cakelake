@@ -6,59 +6,64 @@ the cart lives in the browser (`localStorage`), and placing an order
 hands off to WhatsApp per
 [ADR-003](../docs/adr/ADR-003-whatsapp-order-handoff.md).
 
-## Status: proof-of-concept
+## Status
 
-This is real, continuing code — not a throwaway spike — but it's
-deliberately scoped to prove the two things that mattered before
-investing in the rest of the build: **can a customer generate an order,
-and does it actually reach WhatsApp correctly?**
+Real, continuing code — not a throwaway spike. Restyled and restructured
+against the client's Hi-Fi design (`CLB Hi-Fi Screens.dc.html`, Claude
+Design), which is now the visual/content reference — colours, type
+(Bricolage Grotesque / DM Sans), and copy throughout come from there,
+not invented.
+
+**Scope, client-confirmed:** only cakes are ordered online, in two
+categories — Cakes (Classic/Premium/Exotic/Premium Exotic/Hammer/Pull
+Me Up/Pinata) and Custom Cakes (Photo/Cheese/Shape/3D, priced per kg,
+delivery-only, 24h notice, no flavour choice — a free-text description
+instead). Cupcakes, cookies, pastries, desserts, and savoury items
+aren't taken online at all.
+
+**Pricing model:** each item is priced by weight tier (not a single
+price) — flavour is a free choice that never changes price. A weight
+tier can have no fixed price at all ("Ask us"), for the largest custom
+sizes; the cart and WhatsApp message both handle that case honestly
+("price to confirm") rather than showing AED 0.
 
 **Built:**
 
-- Menu, grouped by category, reading from a single catalogue source
-  (`src/lib/catalog.ts`) — see below, this is placeholder content
-- Flexible, generic option groups per item (not hardcoded to
-  size+flavour — see [ADR-004](../docs/adr/ADR-004-content-management.md))
-- Cart: quantity, remove, per-item cake-message field
-- Pickup/delivery choice (flat fee) and a "when needed" field
-- The exact WhatsApp order-message template from ADR-003, with a working
-  `wa.me` handoff
-- A manual "Yes, sent it" / "No, take me back to my cart" confirmation
-  after handoff (see below — this is a POC simplification of ADR-003's
-  full design)
+- Home, Menu (2 categories, weight-tiered pricing, flavour-count
+  badges), a dedicated Item Detail page per item
+  (`/menu/[itemId]`) with flavour picker / weight tiers / cake
+  message / custom-cake description, Cart, and Contact
+- The full three-stage WhatsApp handoff from the Hi-Fi: review the
+  exact message → "OPEN WHATSAPP" → a "Did you send it?" confirmation
+  → an acknowledged screen with a recap and next actions
+- An optional customer name field — client-confirmed: kept, but never
+  sent as a placeholder; omitted from the message entirely if left blank
+- Real contact details (address, phone numbers) and the confirmed
+  ordering WhatsApp number
 
-**Deliberately deferred** (noted here so it's not mistaken for
-forgotten):
+**Deliberately deferred** (noted so it's not mistaken for forgotten):
 
-- The mobile auto-detect "did you send it?" prompt (tab-focus-based) and
-  the desktop QR-code handoff — this POC uses one manually-confirmed
-  flow on every device instead of ADR-003's device-split behaviour
-- Cart expiry (2-hour/24-hour rules from ADR-003) — the cart persists
-  indefinitely in this POC
-- Lead-time enforcement (disabling infeasible dates) — `leadTimeHours`
-  exists in the data model and displays on Menu, but the "when needed"
-  field doesn't yet cross-reference it
-- Sold-out state and sold-out-in-cart handling (ADR-004) — the
-  `available` flag exists in the data model but isn't rendered yet
-- `requiresDelivery` forcing Delivery as the only choice
-- The downloadable PDF menu (ADR-004)
-- PWA installability (ADR-005)
+- Lead-time enforcement (disabling infeasible "when needed" dates)
+- Sold-out state rendering (the `available` flag exists in the data
+  model, the unavailable branch is built in `ItemDetailView`, but no
+  placeholder item is marked unavailable yet to exercise it)
+- `requiresDelivery` forcing Delivery as the only fulfillment choice
+- The downloadable PDF menu (ADR-004), PWA installability (ADR-005)
+- Desktop-specific layouts (category sidebar, 3-up grid, cart right
+  column) — the Hi-Fi designs these; this pass is mobile-first only
 - Real catalogue content and photography — see below
 
-None of the above needs a rewrite to add — the data model
-(`src/types/catalog.ts`, `src/types/order.ts`) already carries the
-fields (`available`, `requiresDelivery`, `leadTimeHours`); the UI just
-doesn't act on all of them yet.
+None of the above needs a rewrite to add — the data model already
+carries the fields; the UI just doesn't act on all of them yet.
 
 ## Placeholder content
 
-`src/lib/catalog.ts` is **not client-approved menu data** — it exists so
-the flow above has something real to click through. Every screen reads
-from `getCatalog()`; swapping in real content is a data change, not a
-code change. `src/lib/config.ts` holds the placeholder WhatsApp number
-and delivery fee, both still pending the client (see the "Content
-checklist" in
-[requirements.md](../docs/requirements/requirements.md)).
+`src/lib/catalog.ts` is **not the real catalogue** — the client will
+provide the actual items/prices/flavours (see the "Content checklist"
+in [requirements.md](../docs/requirements/requirements.md)). Every
+screen reads from `getCatalog()`/`getCategories()`; swapping in real
+data is a data change, not a code change. `src/lib/config.ts` holds the
+real contact numbers and address already confirmed by the client.
 
 ## Local development
 

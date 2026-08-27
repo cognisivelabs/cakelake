@@ -1,46 +1,50 @@
 // Catalogue data shape — see docs/adr/ADR-004-content-management.md.
 // Content lives as structured data read at build time; this file is the
 // contract that real content will eventually be dropped into.
+//
+// Pricing model (client-confirmed): each item is priced by category and
+// weight — a weight tier list, not a single price. Flavour is a free
+// choice within an item and never changes the price. A weight tier can
+// have no fixed price at all ("Ask us"), for the largest custom sizes.
 
-export type OptionChoice = {
+export type WeightTier = {
   id: string;
-  label: string;
-  /** Added to the item's base price when this choice is selected. */
-  priceDelta?: number;
-  /**
-   * Hours of advance notice needed if this choice is selected, overriding
-   * the item's own leadTimeHours (see ADR-004 — lead time can vary by
-   * size/option, not just per item).
-   */
-  leadTimeHours?: number;
+  label: string; // "½ kg", "1 kg", "3 kg+"
+  /** AED. Omitted means "Ask us" — no fixed price at this weight. */
+  price?: number;
 };
 
-export type OptionGroup = {
+export type Flavour = {
   id: string;
   label: string;
-  choices: OptionChoice[];
-  /** Whether picking one of `choices` is required before adding to cart. */
-  required: boolean;
+};
+
+export type Category = {
+  id: string;
+  label: string;
+  /** Accent colour for chips/headers, matching the Hi-Fi design. */
+  accent: string;
 };
 
 export type CatalogItem = {
   id: string;
   name: string;
+  categoryId: string;
   description: string;
-  category: string;
-  /** Base price in AED, before any option price deltas. */
-  price: number;
-  photo?: string;
-  /**
-   * Flexible, generic option groups — deliberately not hardcoded to
-   * size+flavour. Cakes commonly have them; most add-ons (candles, a
-   * knife, a cap) commonly don't. See ADR-004.
-   */
-  optionGroups: OptionGroup[];
+  weightTiers: WeightTier[];
+  /** Free choice, no price impact. Empty = no flavour choice needed. */
+  flavours: Flavour[];
+  /** Free-text ready-time badge, e.g. "Ready in 1 hour" — not always a
+   *  clean function of leadTimeHours, so kept as its own field. */
+  readyLabel: string;
+  /** Advance notice needed, in hours. 0 = same-day is fine. */
+  leadTimeHours: number;
+  /** Max length for the optional per-item cake inscription; 0 = not offered. */
+  cakeMessageMaxLength: number;
+  /** Custom cakes ask the customer to describe what they want — see ADR-003. */
+  needsCustomDescription: boolean;
   /** Sold-out flag — see ADR-004. Safety valve, not a routine toggle. */
   available: boolean;
-  /** Needs on-site installation — see ADR-003 (removes Pickup as a choice). */
+  /** Needs on-site installation/delivery — see ADR-003 (removes Pickup as a choice). */
   requiresDelivery: boolean;
-  /** Advance notice needed, in hours. 0 = same-day is fine. See ADR-004. */
-  leadTimeHours: number;
 };

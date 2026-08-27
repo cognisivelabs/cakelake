@@ -1,0 +1,80 @@
+.intro {
+  padding: 24px 20px 4px;
+}
+
+.intro p {
+  color: var(--color-ink-muted);
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.section {
+  padding: 12px 20px 0;
+}
+
+.categoryHeading {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 1.05rem;
+  border-bottom: 2.5px solid;
+  padding-bottom: 6px;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.count {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 0.75rem;
+  opacity: 0.55;
+}
+
+.grid {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  margin-bottom: 24px;
+}
+
+.cartBar {
+  position: sticky;
+  bottom: 0;
+  margin: 24px -20px -32px;
+  background: var(--color-ink);
+  padding: 14px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.cartBarInfo {
+  display: flex;
+  flex-direction: column;
+}
+
+.cartBarCount {
+  font-weight: 700;
+  font-size: 0.75rem;
+  color: #e8dcc6;
+}
+
+.cartBarTotal {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 1.05rem;
+  color: var(--color-accent);
+}
+
+.viewCartButton {
+  background: var(--color-accent);
+  color: var(--color-ink);
+  border-radius: var(--radius-md);
+  padding: 12px 18px;
+  font-weight: 800;
+  font-size: 0.8rem;
+  box-shadow: 0 2px 0 var(--color-accent-shadow);
+}

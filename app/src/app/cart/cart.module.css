@@ -17,6 +17,12 @@
   font-size: 0.95rem;
 }
 
+.deliveryNote {
+  margin: 0;
+  font-size: 0.8rem;
+  color: #666;
+}
+
 .totals {
   margin-top: 24px;
   border-top: 1px solid #ddd;

@@ -1,7 +1,7 @@
 import type { CatalogItem } from "@/types/catalog";
 import type { CartLine, Order, WhenNeeded } from "@/types/order";
 import { CONFIG } from "@/lib/config";
-import { deliveryFee, orderTotal, formatAed } from "@/lib/pricing";
+import { orderTotal, formatAed } from "@/lib/pricing";
 
 // Exact template from docs/adr/ADR-003-whatsapp-order-handoff.md — one
 // line per item (name, options, quantity, inscription), then
@@ -60,10 +60,11 @@ export function buildOrderMessage(order: Order, catalog: CatalogItem[]): string 
     formatLine(item, line, i),
   );
 
-  const fee = deliveryFee(order);
+  // Delivery cost isn't priced on the site — it's confirmed with the
+  // customer over WhatsApp, not shown as a fee here. See ADR-003.
   const fulfillmentLine =
     order.fulfillment === "delivery"
-      ? `Delivery (${formatAed(fee)})`
+      ? "Delivery (fee to be confirmed on WhatsApp)"
       : "Pickup";
 
   const lines = [

@@ -7,7 +7,10 @@ which is the source of truth for what the client asked for. This document
 translates that approved scope into terms the build can work from, and
 tracks the open items still pending client input.
 
-Last updated: 2026-08-21 (consolidated all outstanding client asks into
+Last updated: 2026-08-27 (delivery cost moved off the site entirely —
+negotiated over WhatsApp instead of a flat fee; POC updated to match).
+
+Previously: 2026-08-21 (consolidated all outstanding client asks into
 a single content checklist, separated from open design decisions).
 
 ## Client
@@ -121,9 +124,6 @@ urgent each one actually is:
 
 **Needed before launch, not blocking wireframes:**
 
-- **Delivery fee amount** — the fee structure is decided (a flat fee,
-  see [ADR-003](../adr/ADR-003-whatsapp-order-handoff.md)), just not
-  the number.
 - Full, final menu content (allergen/dietary info, final pricing,
   final photos) once the rough draft above has validated the options
   assumption.
@@ -144,6 +144,11 @@ urgent each one actually is:
   [ADR-003](../adr/ADR-003-whatsapp-order-handoff.md) is not needed: the
   existing commit-and-redeploy workflow is fast enough for how
   infrequently this actually happens.
+- **Delivery fee amount:** client-confirmed 2026-08-27 — delivery
+  charges are discussed with the customer over WhatsApp, not priced on
+  the site at all. This removes the need to gather a number from the
+  client entirely, superseding the earlier flat-fee plan. See
+  [ADR-003](../adr/ADR-003-whatsapp-order-handoff.md).
 
 ## Tentative technical direction
 
@@ -313,3 +318,12 @@ reasoning behind each:
   commit-and-redeploy workflow is fast enough for how rarely this
   happens. See [ADR-003](../adr/ADR-003-whatsapp-order-handoff.md) and
   [ADR-004](../adr/ADR-004-content-management.md).
+- **2026-08-27** (chat) — Client confirmed delivery charges are
+  discussed with the customer over WhatsApp, not priced on the site.
+  Supersedes the flat-delivery-fee design in ADR-003: the Pickup/
+  Delivery choice stays on the Cart screen (still useful information
+  for the bakery), but no fee is shown or added to the total — choosing
+  Delivery now shows "fee to be confirmed on WhatsApp" instead. Updated
+  the POC to match (removed `deliveryFeeAed`/`deliveryFee()`, updated
+  the order-message template and Cart totals). See
+  [ADR-003](../adr/ADR-003-whatsapp-order-handoff.md).

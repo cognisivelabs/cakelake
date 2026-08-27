@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useCart } from "@/context/CartContext";
 import { getCatalog } from "@/lib/catalog";
-import { deliveryFee, orderTotal, subtotal, formatAed } from "@/lib/pricing";
+import { orderTotal, formatAed } from "@/lib/pricing";
 import { buildOrderMessage, buildWhatsAppUrl } from "@/lib/whatsapp";
 import { CartLineItem } from "@/components/CartLineItem";
 import type { WhenNeeded } from "@/types/order";
@@ -107,7 +107,7 @@ export default function CartPage() {
             checked={order.fulfillment === "pickup"}
             onChange={() => setFulfillment("pickup")}
           />
-          Pickup — free
+          Pickup
         </label>
         <label className={styles.radioRow}>
           <input
@@ -116,8 +116,14 @@ export default function CartPage() {
             checked={order.fulfillment === "delivery"}
             onChange={() => setFulfillment("delivery")}
           />
-          Delivery — {formatAed(25)}
+          Delivery
         </label>
+        {order.fulfillment === "delivery" && (
+          <p className={styles.deliveryNote}>
+            We&apos;ll confirm the delivery fee with you on WhatsApp — it
+            isn&apos;t priced on the site.
+          </p>
+        )}
       </section>
 
       <section className={styles.section}>
@@ -133,24 +139,14 @@ export default function CartPage() {
       </section>
 
       <section className={styles.totals}>
-        <div className={styles.totalRow}>
-          <span>Subtotal</span>
-          <span>{formatAed(subtotal(order, catalog))}</span>
-        </div>
-        {order.fulfillment === "delivery" && (
-          <div className={styles.totalRow}>
-            <span>Delivery</span>
-            <span>{formatAed(deliveryFee(order))}</span>
-          </div>
-        )}
         <div className={`${styles.totalRow} ${styles.grandTotal}`}>
           <span>Total</span>
           <span>{formatAed(orderTotal(order, catalog))}</span>
         </div>
         <p className={styles.disclaimer}>
-          Prices reflect the menu as shown. If you add a cake message or
-          request changes, the bakery will confirm final pricing with you on
-          WhatsApp.
+          Prices reflect the menu as shown and don&apos;t include delivery.
+          If you add a cake message, request changes, or choose delivery,
+          the bakery will confirm final pricing with you on WhatsApp.
         </p>
       </section>
 

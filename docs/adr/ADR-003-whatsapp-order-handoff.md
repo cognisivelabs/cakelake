@@ -42,7 +42,7 @@ Use a **`wa.me` click-to-chat link**, built entirely client-side:
   2. Vanilla Cupcake Box of 6 x2
   3. Red Velvet Slice x3
 
-  Delivery (AED 25)
+  Delivery (fee to be confirmed on WhatsApp)
   Needed: Tomorrow, Aug 22
   Total: AED 245
 
@@ -95,14 +95,14 @@ Use a **`wa.me` click-to-chat link**, built entirely client-side:
   "Prices reflect the menu as shown. If you add a cake message or
   request changes, the bakery will confirm final pricing with you on
   WhatsApp." It isn't repeated on every line item.
-- **Pickup vs. delivery stays on the Cart screen, because delivery
-  changes the price.** Pickup is free; delivery adds a **flat fee** as
-  its own line in the total — chosen over a zone-based structure to
-  keep the total showable immediately, with no zone-selection step
-  blocking it first. If the client's actual delivery costs vary enough
-  by area that a flat fee stops making sense, that's revisitable later
-  as a data change, not a redesign. If any item in the cart is flagged
-  as requiring delivery (see
+- **Pickup vs. delivery stays on the Cart screen, but the delivery fee
+  doesn't.** Superseded 2026-08-27 — the site's total shows items only;
+  choosing Delivery adds a note ("fee to be confirmed on WhatsApp")
+  instead of a priced line. The Pickup/Delivery choice itself is kept
+  (still useful for the bakery to know intent going in), just not
+  priced on the site. See Alternatives for the flat-fee approach this
+  replaces and why it was reconsidered. If any item in the cart is
+  flagged as requiring delivery (see
   [ADR-004](ADR-004-content-management.md)'s catalog data), Pickup isn't
   offered as a choice for that order at all — Delivery is the only
   option, with a short note explaining why.
@@ -198,13 +198,14 @@ right after the order lands anyway.
   which handles both the single- and multi-cake case correctly; the
   order-level version is no longer part of this design.
 - **Without a checkout step, the site's total and the bakery's final
-  price can genuinely disagree** — but only when something beyond the
-  listed menu changes (an add-on, a customization request). Labeling
-  every price "estimate" would undersell prices that are actually
-  correct. Resolved by keeping prices confident everywhere, and scoping
-  the one disclaimer specifically to the cake-message/customization path
-  that's the actual source of any difference — not a general hedge on
-  the site's own math.
+  price can genuinely disagree** — when something beyond the listed
+  menu changes (an add-on, a customization request), and, as of
+  2026-08-27, whenever delivery is chosen (see above). Labeling every
+  price "estimate" would undersell prices that are actually correct.
+  Resolved by keeping item prices confident everywhere, and scoping the
+  disclaimer specifically to the two actual sources of difference
+  (customization, delivery) — not a general hedge on the site's own
+  math.
 - **The mobile/desktop cart breakpoint is a build detail worth testing,
   not assuming.** A portrait tablet has enough width for the desktop
   right-column treatment, so the switch should be tested at both 768px
@@ -289,10 +290,22 @@ routing through the phone's already-logged-in WhatsApp instead.
 
 **Always negotiating delivery over WhatsApp chat, with no pickup/delivery
 choice or delivery line on the site**
-Would remove a field from the Cart screen. Rejected — delivery genuinely
-changes the price (pickup is free), so leaving it out would mean every
-delivery order under-shows its actual total, which is worse than the
-"estimate" labeling problem this same ADR already resolved above.
+Originally rejected outright — see the flat-fee reasoning below. **Partly
+adopted 2026-08-27:** the client confirmed delivery charges should be
+discussed over WhatsApp rather than priced on the site, so the fee
+itself is now negotiated there. The other half of this alternative
+(dropping the Pickup/Delivery choice from the Cart entirely) wasn't
+adopted — the choice stays, since it's still useful information for the
+bakery going into that conversation; only the price disappeared.
+
+**A flat delivery fee shown on the site (the original design in this
+ADR)**
+Kept the total fully priced with no WhatsApp follow-up needed for
+delivery specifically. Superseded 2026-08-27 by the client's own
+preference to negotiate delivery cost over WhatsApp rather than commit
+to a flat number on the site — not a technical reversal, a business
+one. The reasoning for flat-over-zone below still explains why, if the
+site ever prices delivery again, flat is the right default.
 
 **Letting customers choose Pickup for items that require delivery**
 Simpler UI — one fulfillment choice, no per-item exceptions. Rejected:
@@ -311,12 +324,12 @@ date field that still lets them pick that date, recreating the
 round-trip this ADR already spent effort avoiding elsewhere.
 
 **Zone-based delivery pricing**
-More accurate to actual delivery cost by area. Not chosen for now — it
-needs a zone-selection question answered before the total can even be
-shown, more UI and more content to maintain (a full zone table) for a
-single small shop's delivery area. A flat fee gets a showable total
-immediately; revisit only if the client's real delivery costs vary
-enough by area to make a flat number actively misleading.
+More accurate to actual delivery cost by area. Not chosen — it needs a
+zone-selection question answered before the total can even be shown,
+more UI and more content to maintain (a full zone table) for a single
+small shop's delivery area. Moot as of 2026-08-27 now that delivery
+isn't priced on the site at all, but the reasoning stands if that ever
+changes: flat would still beat zone-based for the same reasons.
 
 **Treating the "No, take me back to my cart" case the same as the
 2-hour unanswered-prompt case**

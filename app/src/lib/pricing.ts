@@ -24,12 +24,11 @@ export function subtotal(order: Order, catalog: CatalogItem[]): number {
   }, 0);
 }
 
-export function deliveryFee(order: Order): number {
-  return order.fulfillment === "delivery" ? CONFIG.deliveryFeeAed : 0;
-}
-
+// Delivery cost isn't priced on the site — see ADR-003's Round 2:
+// it's confirmed with the customer over WhatsApp, not shown as a line
+// item here. orderTotal is therefore just the items subtotal.
 export function orderTotal(order: Order, catalog: CatalogItem[]): number {
-  return subtotal(order, catalog) + deliveryFee(order);
+  return subtotal(order, catalog);
 }
 
 export function formatAed(amount: number): string {

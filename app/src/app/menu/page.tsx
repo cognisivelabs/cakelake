@@ -30,89 +30,91 @@ export default function MenuPage() {
   const hasResults = visibleCatalog.length > 0;
 
   return (
-    <div>
+    <div className={styles.page}>
       <PageHeader title="Menu" backHref="/" backLabel="BACK" />
 
-      <div className={styles.intro}>
-        <p>
-          We only take cake orders through the website — for anything else
-          (cupcakes, cookies, pastries), message us on WhatsApp directly.
-        </p>
-      </div>
-
-      <div className={styles.searchRow}>
-        <div className={`${styles.searchField} ${query ? styles.searchFieldActive : ""}`}>
-          <input
-            type="text"
-            className={styles.searchInput}
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search items…"
-          />
-          {query && (
-            <button
-              type="button"
-              className={styles.clearButton}
-              onClick={() => setQuery("")}
-              aria-label="Clear search"
-            >
-              ×
-            </button>
-          )}
-        </div>
-        {/* PDF export isn't built yet (ADR-004) — placeholder to match the Hi-Fi. */}
-        <button type="button" className={`${styles.pdfButton} mono-tag`} disabled>
-          PDF
-        </button>
-      </div>
-
-      {!hasResults && (
-        <div className={styles.noResults}>
-          <div className={styles.noResultsTitle}>No {query.trim()} — yet</div>
-          <p className={styles.noResultsText}>
-            We bake to order, so if you want it, ask. We take on custom bakes
-            most weeks.
+      <div className={styles.body}>
+        <div className={styles.intro}>
+          <p>
+            We only take cake orders through the website — for anything else
+            (cupcakes, cookies, pastries), message us on WhatsApp directly.
           </p>
-          <a
-            href={`https://wa.me/${CONFIG.bakeryWhatsAppNumber}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.askButton}
-          >
-            ASK US ABOUT {query.trim().toUpperCase()}
-          </a>
         </div>
-      )}
 
-      {categories.map((category) => {
-        const items = visibleCatalog.filter((item) => item.categoryId === category.id);
-        if (items.length === 0) return null;
-        return (
-          <section key={category.id} className={styles.section}>
-            <h2 className={styles.categoryHeading} style={{ borderColor: category.accent, color: category.accent }}>
-              {category.label}
-              <span className={styles.count}>{items.length} ranges</span>
-            </h2>
-            <div className={styles.grid}>
-              {items.map((item) => (
-                <ItemCard key={item.id} item={item} />
-              ))}
-            </div>
-          </section>
-        );
-      })}
+        <div className={styles.searchRow}>
+          <div className={`${styles.searchField} ${query ? styles.searchFieldActive : ""}`}>
+            <input
+              type="text"
+              className={styles.searchInput}
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Search items…"
+            />
+            {query && (
+              <button
+                type="button"
+                className={styles.clearButton}
+                onClick={() => setQuery("")}
+                aria-label="Clear search"
+              >
+                ×
+              </button>
+            )}
+          </div>
+          {/* PDF export isn't built yet (ADR-004) — placeholder to match the Hi-Fi. */}
+          <button type="button" className={`${styles.pdfButton} mono-tag`} disabled>
+            PDF
+          </button>
+        </div>
 
-      {itemCount > 0 && (
-        <Link href="/cart" className={styles.cartBar}>
-          <span className={styles.cartBarInfo}>
-            <span className={styles.cartBarCount}>
-              {itemCount} item{itemCount === 1 ? "" : "s"}
+        {!hasResults && (
+          <div className={styles.noResults}>
+            <div className={styles.noResultsTitle}>No {query.trim()} — yet</div>
+            <p className={styles.noResultsText}>
+              We bake to order, so if you want it, ask. We take on custom bakes
+              most weeks.
+            </p>
+            <a
+              href={`https://wa.me/${CONFIG.bakeryWhatsAppNumber}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.askButton}
+            >
+              ASK US ABOUT {query.trim().toUpperCase()}
+            </a>
+          </div>
+        )}
+
+        {categories.map((category) => {
+          const items = visibleCatalog.filter((item) => item.categoryId === category.id);
+          if (items.length === 0) return null;
+          return (
+            <section key={category.id} className={styles.section}>
+              <h2 className={styles.categoryHeading} style={{ borderColor: category.accent, color: category.accent }}>
+                {category.label}
+                <span className={styles.count}>{items.length} ranges</span>
+              </h2>
+              <div className={styles.grid}>
+                {items.map((item) => (
+                  <ItemCard key={item.id} item={item} />
+                ))}
+              </div>
+            </section>
+          );
+        })}
+
+        {itemCount > 0 && (
+          <Link href="/cart" className={styles.cartBar}>
+            <span className={styles.cartBarInfo}>
+              <span className={styles.cartBarCount}>
+                {itemCount} item{itemCount === 1 ? "" : "s"}
+              </span>
+              <span className={styles.cartBarTotal}>{formatAed(total)}</span>
             </span>
-            <span className={styles.cartBarTotal}>{formatAed(total)}</span>
-          </span>
-          <span className={styles.viewCartButton}>VIEW CART</span>
-        </Link>
-      )}
+            <span className={styles.viewCartButton}>VIEW CART</span>
+          </Link>
+        )}
+      </div>
     </div>
   );
 }

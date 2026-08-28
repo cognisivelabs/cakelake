@@ -7,7 +7,6 @@ import { getCatalog } from "@/lib/catalog";
 import { orderTotal, hasUnpricedLines, formatAed } from "@/lib/pricing";
 import { buildOrderMessage, buildWhatsAppUrl } from "@/lib/whatsapp";
 import { CartLineItem } from "@/components/CartLineItem";
-import { ItemCard } from "@/components/ItemCard";
 import { CONFIG } from "@/lib/config";
 import type { WhenNeeded } from "@/types/order";
 import styles from "./cart.module.css";
@@ -154,40 +153,24 @@ export default function CartPage() {
 
   // — Review (default cart) —
   if (resolvedLines.length === 0) {
-    // "Ready today" — a same-day item (no advance notice needed) to
-    // cross-sell here. Only cakes and custom cakes are ordered online
-    // (see requirements.md), so this is never a cupcake/cookie/pastry.
-    const readyTodayItem = catalog.find(
-      (item) => item.available && item.leadTimeHours === 0,
-    );
-
     return (
-      <div>
-        <div className={styles.centered}>
-          <div className={styles.emptyCircle}>0</div>
-          <h1>Nothing in your order yet</h1>
-          <p className={styles.muted}>Add a cake and it&apos;ll show up here.</p>
-          <div className={styles.stackedActions}>
-            <Link href="/menu" className={styles.primaryButton}>
-              BROWSE MENU
-            </Link>
-            <a
-              href={`https://wa.me/${CONFIG.bakeryWhatsAppNumber}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className={styles.tealOutlineButton}
-            >
-              ASK US FOR SOMETHING CUSTOM
-            </a>
-          </div>
+      <div className={styles.centered}>
+        <div className={styles.emptyCircle}>0</div>
+        <h1>Nothing in your order yet</h1>
+        <p className={styles.muted}>Add a cake and it&apos;ll show up here.</p>
+        <div className={styles.stackedActions}>
+          <Link href="/menu" className={styles.primaryButton}>
+            BROWSE MENU
+          </Link>
+          <a
+            href={`https://wa.me/${CONFIG.bakeryWhatsAppNumber}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={styles.tealOutlineButton}
+          >
+            ASK US FOR SOMETHING CUSTOM
+          </a>
         </div>
-
-        {readyTodayItem && (
-          <div className={styles.readyToday}>
-            <div className={styles.sectionLabel}>READY TODAY</div>
-            <ItemCard item={readyTodayItem} />
-          </div>
-        )}
       </div>
     );
   }

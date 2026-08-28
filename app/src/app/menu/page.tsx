@@ -7,6 +7,7 @@ import { ItemCard } from "@/components/ItemCard";
 import { useCart } from "@/context/CartContext";
 import { orderTotal, formatAed } from "@/lib/pricing";
 import { CONFIG } from "@/lib/config";
+import { PageHeader } from "@/components/PageHeader";
 import styles from "./menu.module.css";
 
 function matches(query: string, item: ReturnType<typeof getCatalog>[number]): boolean {
@@ -30,8 +31,9 @@ export default function MenuPage() {
 
   return (
     <div>
+      <PageHeader title="Menu" backHref="/" backLabel="BACK" />
+
       <div className={styles.intro}>
-        <h1>Menu</h1>
         <p>
           We only take cake orders through the website — for anything else
           (cupcakes, cookies, pastries), message us on WhatsApp directly.

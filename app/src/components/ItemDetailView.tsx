@@ -2,16 +2,18 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import type { CatalogItem } from "@/types/catalog";
 import { useCart } from "@/context/CartContext";
 import { formatAed } from "@/lib/pricing";
+import { getCategory } from "@/lib/catalog";
 import { CONFIG } from "@/lib/config";
+import { PageHeader } from "@/components/PageHeader";
 import styles from "./ItemDetailView.module.css";
 
 export function ItemDetailView({ item }: { item: CatalogItem }) {
   const router = useRouter();
   const { addLine } = useCart();
+  const categoryLabel = getCategory(item.categoryId)?.label ?? "Menu";
 
   const [weightTierId, setWeightTierId] = useState(item.weightTiers[0]?.id ?? "");
   const [flavourId, setFlavourId] = useState(item.flavours[0]?.id ?? "");
@@ -41,6 +43,7 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
   if (!item.available) {
     return (
       <div>
+        <PageHeader title={categoryLabel} backHref="/menu" backLabel="MENU" />
         <div className={styles.photo}>
           <span className={`${styles.unavailableBadge} mono-tag`}>UNAVAILABLE</span>
         </div>
@@ -68,6 +71,7 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
 
   return (
     <div>
+      <PageHeader title={categoryLabel} backHref="/menu" backLabel="MENU" />
       <div className={styles.photo}>
         {item.flavours.length > 0 && (
           <span className={styles.photoLabel}>
@@ -190,10 +194,6 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
           ADD{total !== undefined ? ` · ${formatAed(total)}` : ""}
         </button>
       </div>
-
-      <Link href="/menu" className={styles.backLink}>
-        ← Menu
-      </Link>
     </div>
   );
 }

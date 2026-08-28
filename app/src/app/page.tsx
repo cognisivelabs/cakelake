@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getCatalog, getCategories } from "@/lib/catalog";
 import { CONFIG } from "@/lib/config";
+import { Header } from "@/components/Header";
 import styles from "./home.module.css";
 
 export default function HomePage() {
@@ -9,6 +10,7 @@ export default function HomePage() {
 
   return (
     <div>
+      <Header />
       <div className={styles.hero}>
         <div className={styles.logoPlaceholder}>logo</div>
         <h1>

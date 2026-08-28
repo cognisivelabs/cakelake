@@ -1,10 +1,11 @@
 import { CONFIG } from "@/lib/config";
+import { PageHeader } from "@/components/PageHeader";
 import styles from "./contact.module.css";
 
 export default function ContactPage() {
   return (
     <div>
-      <h1 className={styles.pageTitle}>Find us</h1>
+      <PageHeader title="Find us" backHref="/" backLabel="BACK" />
       <iframe
         className={styles.map}
         src={CONFIG.mapsEmbedSrc}

@@ -281,11 +281,3 @@
   text-decoration: none;
 }
 
-.backLink {
-  display: block;
-  padding: 16px 20px 0;
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: var(--color-ink-muted);
-  text-decoration: none;
-}

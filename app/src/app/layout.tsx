@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { CartProvider } from "@/context/CartContext";
-import { Header } from "@/components/Header";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -14,8 +13,10 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en">
       <body>
+        {/* No shared header — the Hi-Fi uses a different header per
+            screen (Home: hamburger/wordmark/WhatsApp; sub-pages: a
+            back link + page title), so each page renders its own. */}
         <CartProvider>
-          <Header />
           <main>{children}</main>
         </CartProvider>
       </body>

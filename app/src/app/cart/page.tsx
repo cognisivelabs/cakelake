@@ -8,6 +8,8 @@ import { orderTotal, hasUnpricedLines, formatAed } from "@/lib/pricing";
 import { buildOrderMessage, buildWhatsAppUrl } from "@/lib/whatsapp";
 import { CartLineItem } from "@/components/CartLineItem";
 import { CONFIG } from "@/lib/config";
+import { Header } from "@/components/Header";
+import { PageHeader } from "@/components/PageHeader";
 import type { WhenNeeded } from "@/types/order";
 import styles from "./cart.module.css";
 
@@ -74,33 +76,36 @@ export default function CartPage() {
   // — Acknowledged —
   if (stage === "acknowledged" && ackSummary) {
     return (
-      <div className={styles.centered}>
-        <div className={styles.checkCircle}>✓</div>
-        <h1>Order sent</h1>
-        <p className={styles.muted}>
-          We&apos;ll confirm the details and the price in WhatsApp, usually within
-          the hour during opening times.
-        </p>
-        <div className={styles.recapCard}>
-          <div className={styles.sectionLabel}>WHAT YOU SENT</div>
-          <p className={styles.recapText}>
-            {ackSummary.lines}
-            <br />
-            Total: {ackSummary.total}
+      <div>
+        <Header />
+        <div className={styles.centered}>
+          <div className={styles.checkCircle}>✓</div>
+          <h1>Order sent</h1>
+          <p className={styles.muted}>
+            We&apos;ll confirm the details and the price in WhatsApp, usually
+            within the hour during opening times.
           </p>
-        </div>
-        <div className={styles.stackedActions}>
-          <Link href="/menu" className={styles.primaryButton}>
-            BACK TO MENU
-          </Link>
-          <a
-            href={sentUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.tealOutlineButton}
-          >
-            OPEN THE CHAT AGAIN
-          </a>
+          <div className={styles.recapCard}>
+            <div className={styles.sectionLabel}>WHAT YOU SENT</div>
+            <p className={styles.recapText}>
+              {ackSummary.lines}
+              <br />
+              Total: {ackSummary.total}
+            </p>
+          </div>
+          <div className={styles.stackedActions}>
+            <Link href="/menu" className={styles.primaryButton}>
+              BACK TO MENU
+            </Link>
+            <a
+              href={sentUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.tealOutlineButton}
+            >
+              OPEN THE CHAT AGAIN
+            </a>
+          </div>
         </div>
       </div>
     );
@@ -109,44 +114,48 @@ export default function CartPage() {
   // — Handoff review + "did you send it?" —
   if (stage === "handoff" || stage === "confirming") {
     return (
-      <div className={styles.handoffWrap}>
-        <div className={stage === "confirming" ? styles.dimmed : undefined}>
-          <h1>This is the message we&apos;ll send</h1>
-          <p className={styles.muted}>
-            WhatsApp opens with it already typed. You still press send.
-          </p>
-          <pre className={styles.preview}>{sentMessage}</pre>
-          <div className={styles.infoNote}>
-            Your order opens in WhatsApp. Come back here and confirm you sent it.
+      <div>
+        <PageHeader title="Send order" backLabel="CART" onBack={() => setStage("review")} />
+        <div className={styles.handoffWrap}>
+          <div className={stage === "confirming" ? styles.dimmed : undefined}>
+            <h1>This is the message we&apos;ll send</h1>
+            <p className={styles.muted}>
+              WhatsApp opens with it already typed. You still press send.
+            </p>
+            <pre className={styles.preview}>{sentMessage}</pre>
+            <div className={styles.infoNote}>
+              Your order opens in WhatsApp. Come back here and confirm you sent
+              it.
+            </div>
+            {stage === "handoff" && (
+              <button type="button" className={styles.tealButton} onClick={openWhatsApp}>
+                OPEN WHATSAPP
+              </button>
+            )}
           </div>
-          {stage === "handoff" && (
-            <button type="button" className={styles.tealButton} onClick={openWhatsApp}>
-              OPEN WHATSAPP
-            </button>
+
+          {stage === "confirming" && (
+            <div className={styles.confirmModal}>
+              <h2>Did you send it?</h2>
+              <p className={styles.muted}>
+                We can&apos;t see your WhatsApp, so tell us and we&apos;ll clear
+                your cart.
+              </p>
+              <div className={styles.stackedActions}>
+                <button type="button" className={styles.primaryButton} onClick={confirmSent}>
+                  YES, SENT
+                </button>
+                <button
+                  type="button"
+                  className={styles.outlineButton}
+                  onClick={() => setStage("review")}
+                >
+                  NOT YET — BACK TO MY ORDER
+                </button>
+              </div>
+            </div>
           )}
         </div>
-
-        {stage === "confirming" && (
-          <div className={styles.confirmModal}>
-            <h2>Did you send it?</h2>
-            <p className={styles.muted}>
-              We can&apos;t see your WhatsApp, so tell us and we&apos;ll clear your
-              cart.
-            </p>
-            <div className={styles.stackedActions}>
-              <button type="button" className={styles.primaryButton} onClick={confirmSent}>
-                YES, SENT
-              </button>
-              <button
-                type="button"
-                className={styles.outlineButton}
-                onClick={() => setStage("review")}
-              >
-                NOT YET — BACK TO MY ORDER
-              </button>
-            </div>
-          </div>
-        )}
       </div>
     );
   }
@@ -154,22 +163,25 @@ export default function CartPage() {
   // — Review (default cart) —
   if (resolvedLines.length === 0) {
     return (
-      <div className={styles.centered}>
-        <div className={styles.emptyCircle}>0</div>
-        <h1>Nothing in your order yet</h1>
-        <p className={styles.muted}>Add a cake and it&apos;ll show up here.</p>
-        <div className={styles.stackedActions}>
-          <Link href="/menu" className={styles.primaryButton}>
-            BROWSE MENU
-          </Link>
-          <a
-            href={`https://wa.me/${CONFIG.bakeryWhatsAppNumber}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.tealOutlineButton}
-          >
-            ASK US FOR SOMETHING CUSTOM
-          </a>
+      <div>
+        <PageHeader title="Your order" backHref="/menu" backLabel="MENU" />
+        <div className={styles.centered}>
+          <div className={styles.emptyCircle}>0</div>
+          <h1>Nothing in your order yet</h1>
+          <p className={styles.muted}>Add a cake and it&apos;ll show up here.</p>
+          <div className={styles.stackedActions}>
+            <Link href="/menu" className={styles.primaryButton}>
+              BROWSE MENU
+            </Link>
+            <a
+              href={`https://wa.me/${CONFIG.bakeryWhatsAppNumber}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={styles.tealOutlineButton}
+            >
+              ASK US FOR SOMETHING CUSTOM
+            </a>
+          </div>
         </div>
       </div>
     );
@@ -177,7 +189,7 @@ export default function CartPage() {
 
   return (
     <div>
-      <h1 className={styles.pageTitle}>Your order</h1>
+      <PageHeader title="Your order" backHref="/menu" backLabel="MENU" />
 
       <div className={styles.lineList}>
         {resolvedLines.map(({ item, line }) => (

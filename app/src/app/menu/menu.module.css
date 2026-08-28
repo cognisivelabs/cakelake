@@ -14,19 +14,48 @@
   padding: 12px 20px 0;
 }
 
-.searchInput {
+.searchField {
   flex: 1;
   height: 38px;
-  border: none;
+  border: 2px solid transparent;
   border-radius: var(--radius-md);
   background: var(--color-surface);
-  padding: 0 12px;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  box-sizing: border-box;
+}
+
+.searchFieldActive {
+  border-color: var(--color-accent);
+}
+
+.searchInput {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  border: none;
+  background: none;
+  padding: 0;
   font-size: 0.8rem;
   color: var(--color-ink);
+  outline: none;
 }
 
 .searchInput::placeholder {
   color: var(--color-ink-faint);
+}
+
+.clearButton {
+  flex: none;
+  border: none;
+  background: none;
+  padding: 0 0 0 8px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--color-ink-faint);
+  cursor: pointer;
 }
 
 .pdfButton {
@@ -43,28 +72,45 @@
 }
 
 .noResults {
-  margin: 16px 20px 0;
-  padding: 14px;
-  background: var(--color-surface-muted);
-  border-radius: var(--radius-md);
+  padding: 40px 30px 0;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
 }
 
-.noResults p {
+.noResultsTitle {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 1.25rem;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--color-ink);
+}
+
+.noResultsText {
   margin: 0;
-  font-size: 0.8rem;
-  line-height: 1.5;
+  max-width: 260px;
+  font-size: 0.78rem;
+  line-height: 1.65;
   color: var(--color-ink-muted);
 }
 
-.askLink {
-  align-self: flex-start;
-  color: var(--color-teal);
-  font-weight: 700;
+.askButton {
+  width: 100%;
+  max-width: 260px;
+  margin-top: 8px;
+  background: var(--color-teal);
+  color: #fff;
+  border-radius: var(--radius-md);
+  padding: 14px;
+  text-align: center;
+  font-weight: 800;
   font-size: 0.78rem;
+  letter-spacing: 0.03em;
   text-decoration: none;
+  box-sizing: border-box;
 }
 
 .section {

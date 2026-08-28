@@ -41,13 +41,25 @@ export default function MenuPage() {
       </div>
 
       <div className={styles.searchRow}>
-        <input
-          type="text"
-          className={styles.searchInput}
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search items…"
-        />
+        <div className={`${styles.searchField} ${query ? styles.searchFieldActive : ""}`}>
+          <input
+            type="text"
+            className={styles.searchInput}
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search items…"
+          />
+          {query && (
+            <button
+              type="button"
+              className={styles.clearButton}
+              onClick={() => setQuery("")}
+              aria-label="Clear search"
+            >
+              ×
+            </button>
+          )}
+        </div>
         {/* PDF export isn't built yet (ADR-004) — placeholder to match the Hi-Fi. */}
         <button type="button" className={`${styles.pdfButton} mono-tag`} disabled>
           PDF
@@ -56,17 +68,18 @@ export default function MenuPage() {
 
       {!hasResults && (
         <div className={styles.noResults}>
-          <p>
-            No &ldquo;{query.trim()}&rdquo; — yet. We bake to order, so if you
-            want it, ask.
+          <div className={styles.noResultsTitle}>No {query.trim()} — yet</div>
+          <p className={styles.noResultsText}>
+            We bake to order, so if you want it, ask. We take on custom bakes
+            most weeks.
           </p>
           <a
             href={`https://wa.me/${CONFIG.bakeryWhatsAppNumber}`}
             target="_blank"
             rel="noopener noreferrer"
-            className={styles.askLink}
+            className={styles.askButton}
           >
-            Ask us about it
+            ASK US ABOUT {query.trim().toUpperCase()}
           </a>
         </div>
       )}

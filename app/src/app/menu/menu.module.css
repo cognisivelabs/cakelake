@@ -100,7 +100,7 @@
 .cartBar {
   position: sticky;
   bottom: 0;
-  margin: 24px -20px -32px;
+  margin: 24px 0 -32px;
   background: var(--color-ink);
   padding: 14px 20px;
   display: flex;

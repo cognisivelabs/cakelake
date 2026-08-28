@@ -5,7 +5,14 @@ export default function ContactPage() {
   return (
     <div>
       <h1 className={styles.pageTitle}>Find us</h1>
-      <div className={styles.map}>map</div>
+      <iframe
+        className={styles.map}
+        src={CONFIG.mapsEmbedSrc}
+        title="Cake Lake Bakery location"
+        loading="lazy"
+        referrerPolicy="strict-origin-when-cross-origin"
+        allowFullScreen
+      />
 
       <div className={styles.content}>
         <section>

@@ -18,6 +18,13 @@ export const CONFIG = {
     line2: "Al Karama, Sheikh Hamdan Colony",
     line3: "Dubai, United Arab Emirates",
   },
+  /**
+   * The bakery's own Google Maps share link for their place listing —
+   * links straight to it (shows the business name/pin) rather than a
+   * generic address-text search, which doesn't reliably surface the
+   * business name.
+   */
+  mapsUrl: "https://maps.app.goo.gl/fPX8GrNBURWDAaWo8",
   /** Client-provided. Grouped by the two distinct schedules across the week. */
   openingHours: [
     { days: "Monday - Thursday", hours: "10 am - 12 am" },

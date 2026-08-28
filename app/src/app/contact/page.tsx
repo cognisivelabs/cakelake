@@ -2,10 +2,6 @@ import { CONFIG } from "@/lib/config";
 import styles from "./contact.module.css";
 
 export default function ContactPage() {
-  const mapsQuery = encodeURIComponent(
-    `${CONFIG.address.line1}, ${CONFIG.address.line2}, ${CONFIG.address.line3}`,
-  );
-
   return (
     <div>
       <h1 className={styles.pageTitle}>Find us</h1>
@@ -62,7 +58,7 @@ export default function ContactPage() {
           MESSAGE US ON WHATSAPP
         </a>
         <a
-          href={`https://maps.google.com/?q=${mapsQuery}`}
+          href={CONFIG.mapsUrl}
           target="_blank"
           rel="noopener noreferrer"
           className={styles.outlineButton}

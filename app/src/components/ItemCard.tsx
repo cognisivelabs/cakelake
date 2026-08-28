@@ -33,7 +33,6 @@ export function ItemCard({ item }: { item: CatalogItem }) {
   return (
     <Link href={`/menu/${item.id}`} className={styles.card}>
       <div className={styles.photo}>
-        <span className={`${styles.readyTag} mono-tag`}>{item.readyLabel}</span>
         {item.flavours.length > 0 && (
           <span className={`${styles.flavourCount} mono-tag`}>
             {item.flavours.length} FLAVOUR{item.flavours.length === 1 ? "" : "S"}
@@ -50,6 +49,7 @@ export function ItemCard({ item }: { item: CatalogItem }) {
                 .join(" · ") + (item.flavours.length > 3 ? ` · ${item.flavours.length - 3} more` : "")
             : item.description}
         </div>
+        <span className={`${styles.readyTag} mono-tag`}>{item.readyLabel}</span>
         <div className={styles.footer}>
           <span className={styles.price}>{priceFrom(item)}</span>
           <span className={styles.viewButton}>VIEW</span>

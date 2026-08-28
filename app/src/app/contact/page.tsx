@@ -25,7 +25,14 @@ export default function ContactPage() {
 
         <section>
           <div className={styles.sectionLabel}>WHEN</div>
-          <p className={styles.mutedBox}>{CONFIG.openingHours}</p>
+          <div className={styles.mutedBox}>
+            {CONFIG.openingHours.map((entry) => (
+              <div key={entry.days} className={styles.hoursRow}>
+                <span>{entry.days}</span>
+                <span>{entry.hours}</span>
+              </div>
+            ))}
+          </div>
         </section>
 
         <section>

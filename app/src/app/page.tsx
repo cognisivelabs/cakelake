@@ -67,8 +67,14 @@ export default function HomePage() {
           {CONFIG.address.line1}
           <br />
           {CONFIG.address.line2}
-          <br />
-          <span className={styles.footerMuted}>{CONFIG.openingHours}</span>
+        </p>
+        <p className={styles.footerText}>
+          {CONFIG.openingHours.map((entry) => (
+            <span key={entry.days} className={styles.footerMuted}>
+              {entry.days}: {entry.hours}
+              <br />
+            </span>
+          ))}
         </p>
         <a
           href={`https://wa.me/${CONFIG.contactWhatsAppNumber}`}

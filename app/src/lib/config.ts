@@ -14,11 +14,14 @@ export const CONFIG = {
   /** Shop landline — display only, not a WhatsApp number. */
   shopPhone: "04 221 7761",
   address: {
-    line1: "Building B8, Shop No. 05",
-    line2: "Sheikh Hamdan Colony, Karama",
-    line3: "Dubai, UAE",
+    line1: "Shop No. 5, 8C Street",
+    line2: "Al Karama, Sheikh Hamdan Colony",
+    line3: "Dubai, United Arab Emirates",
   },
-  /** Still pending the client — see the open questions in requirements.md. */
-  openingHours: "Opening hours to confirm with the bakery.",
+  /** Client-provided. Grouped by the two distinct schedules across the week. */
+  openingHours: [
+    { days: "Monday - Thursday", hours: "10 am - 12 am" },
+    { days: "Friday - Sunday", hours: "10 am - 1 am" },
+  ],
   currency: "AED",
 } as const;

@@ -7,6 +7,8 @@ import path from "node:path";
 const isGithubPages = process.env.GITHUB_PAGES === "true";
 const repoName = "cakelake";
 
+const basePath = isGithubPages ? `/${repoName}` : "";
+
 const nextConfig: NextConfig = {
   output: "export",
   trailingSlash: true,
@@ -16,6 +18,12 @@ const nextConfig: NextConfig = {
   },
   basePath: isGithubPages ? `/${repoName}` : undefined,
   assetPrefix: isGithubPages ? `/${repoName}/` : undefined,
+  // Client code (the service worker registration) needs the basePath at
+  // runtime and can't read the server-only GITHUB_PAGES var, so it's
+  // inlined at build time under this name instead.
+  env: {
+    NEXT_PUBLIC_BASE_PATH: basePath,
+  },
   // Pins the workspace root to this directory — otherwise Turbopack walks
   // up looking for a lockfile and can pick up an unrelated one outside
   // the repo (e.g. in a parent directory).

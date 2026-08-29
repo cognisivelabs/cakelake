@@ -100,6 +100,11 @@
   background: var(--color-surface);
   font-size: 0.8rem;
   color: var(--color-ink);
+  outline: none;
+}
+
+.nameInputActive {
+  border-color: var(--color-accent);
 }
 
 .totals {

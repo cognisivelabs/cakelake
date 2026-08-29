@@ -275,7 +275,7 @@ export default function CartPage() {
         <div className={styles.sectionLabel}>YOUR NAME</div>
         <input
           type="text"
-          className={styles.nameInput}
+          className={`${styles.nameInput} ${order.customerName ? styles.nameInputActive : ""}`}
           value={order.customerName}
           onChange={(e) => setCustomerName(e.target.value)}
           placeholder="Full Name"

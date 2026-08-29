@@ -24,6 +24,16 @@ function estimatedReadyTime(): string {
   return d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
 }
 
+// toISOString() converts to UTC first, which rolls back to the previous
+// calendar day for part of the day in any timezone ahead of UTC (e.g. any
+// time before 4am in UAE, UTC+4) — this stays in the viewer's local date.
+function todayIsoDate(): string {
+  const d = new Date();
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${d.getFullYear()}-${month}-${day}`;
+}
+
 export default function CartPage() {
   const { order, setFulfillment, setWhenNeeded, setCustomerName, setPendingHandoff, clearCart } =
     useCart();
@@ -59,13 +69,15 @@ export default function CartPage() {
         ? { kind: "today" }
         : value === "tomorrow"
           ? { kind: "tomorrow" }
-          : { kind: "date", date: value };
+          // Some browsers let a date be typed in rather than only picked
+          // from the min-constrained widget — clamp rather than trust that.
+          : { kind: "date", date: value < todayIsoDate() ? todayIsoDate() : value };
     setWhenNeeded(next);
   }
 
   function pickADate() {
     if (order.whenNeeded.kind === "date") return;
-    setWhenNeeded({ kind: "date", date: new Date().toISOString().slice(0, 10) });
+    setWhenNeeded({ kind: "date", date: todayIsoDate() });
   }
 
   function pickupSummary(): string {
@@ -277,7 +289,7 @@ export default function CartPage() {
             type="date"
             className={styles.dateInput}
             value={order.whenNeeded.date}
-            min={new Date().toISOString().slice(0, 10)}
+            min={todayIsoDate()}
             onChange={(e) => handleWhenNeededChange(e.target.value)}
           />
         )}

@@ -5,7 +5,6 @@
   border-radius: var(--radius-lg);
   padding: 12px;
   box-shadow: var(--shadow-card);
-  position: relative;
 }
 
 .photo {
@@ -24,7 +23,16 @@
   min-width: 0;
 }
 
+.nameRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
 .nameRow strong {
+  flex: 1;
+  min-width: 0;
   font-family: var(--font-heading);
   font-weight: 700;
   font-size: 0.85rem;
@@ -88,13 +96,12 @@
 }
 
 .remove {
-  position: absolute;
-  top: 10px;
-  right: 12px;
+  flex: none;
   border: none;
   background: none;
   color: #a33;
   font-size: 0.7rem;
   cursor: pointer;
   padding: 0;
+  white-space: nowrap;
 }

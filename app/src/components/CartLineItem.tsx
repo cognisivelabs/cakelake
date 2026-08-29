@@ -23,6 +23,9 @@ export function CartLineItem({ item, line }: { item: CatalogItem; line: CartLine
             {item.name}
             {descriptors ? ` · ${descriptors}` : ""}
           </strong>
+          <button type="button" className={styles.remove} onClick={() => removeLine(line.lineId)}>
+            Remove
+          </button>
         </div>
         {line.customDescription && (
           <p className={styles.detail}>{line.customDescription}</p>
@@ -51,9 +54,6 @@ export function CartLineItem({ item, line }: { item: CatalogItem; line: CartLine
           </div>
         </div>
       </div>
-      <button type="button" className={styles.remove} onClick={() => removeLine(line.lineId)}>
-        Remove
-      </button>
     </div>
   );
 }

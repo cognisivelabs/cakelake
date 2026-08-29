@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useSyncExternalStore } from "react";
 
-export type InstallPlatform = "none" | "ios" | "android";
+export type InstallPlatform = "none" | "ios" | "android" | "android-manual";
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -33,6 +33,10 @@ function isIOSSafari(): boolean {
   // Chrome/Firefox/Edge on iOS all render with WebKit but can't install
   // to the home screen the way Safari can (ADR-005) — exclude them.
   return isIOSDevice() && !/CriOS|FxiOS|EdgiOS|OPiOS|mercury/i.test(ua);
+}
+
+function isAndroidDevice(): boolean {
+  return /Android/i.test(window.navigator.userAgent);
 }
 
 // Static export prerenders this with no window, so the client's first paint
@@ -88,7 +92,13 @@ export function useInstallPrompt() {
   // this effect's own listener attached, in addition to one it hands us
   // live via setDeferredPrompt above.
   const activePrompt = deferredPrompt ?? window.__cakelakeInstallPrompt ?? null;
-  const platform: InstallPlatform = activePrompt ? "android" : isIOSSafari() ? "ios" : "none";
+  const platform: InstallPlatform = activePrompt
+    ? "android"
+    : isIOSSafari()
+      ? "ios"
+      : isAndroidDevice()
+        ? "android-manual"
+        : "none";
 
   async function triggerInstall(): Promise<"accepted" | "dismissed" | "unavailable"> {
     if (!activePrompt) return "unavailable";

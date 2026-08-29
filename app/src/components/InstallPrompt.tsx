@@ -37,7 +37,7 @@ export function InstallPrompt() {
       <div className={styles.badge}>CL</div>
       <div className={styles.body}>
         <div className={styles.title}>Keep Cake Lake on your home screen</div>
-        {platform === "ios" && showSteps ? (
+        {showSteps && platform === "ios" && (
           <ol className={styles.steps}>
             <li>
               Tap the <b>Share</b> icon in Safari&apos;s toolbar.
@@ -47,15 +47,32 @@ export function InstallPrompt() {
             </li>
             <li>Tap Add.</li>
           </ol>
-        ) : (
+        )}
+        {showSteps && platform === "android-manual" && (
+          <ol className={styles.steps}>
+            <li>
+              Tap the <b>⋮</b> menu in your browser&apos;s toolbar.
+            </li>
+            <li>
+              Tap <b>Add to Home screen</b> (or <b>Install app</b>).
+            </li>
+            <li>Tap Add.</li>
+          </ol>
+        )}
+        {!showSteps && (
           <div className={styles.text}>
-            {platform === "ios" ? (
+            {platform === "ios" && (
               <>
                 Tap <b>Share</b>, then <b>Add to Home Screen</b>. No app to install.
               </>
-            ) : (
-              <>Add Cake Lake to your home screen. No app to install.</>
             )}
+            {platform === "android-manual" && (
+              <>
+                Tap your browser&apos;s <b>⋮</b> menu, then <b>Add to Home screen</b>. No app to
+                install.
+              </>
+            )}
+            {platform === "android" && <>Add Cake Lake to your home screen. No app to install.</>}
           </div>
         )}
         {!showSteps && (

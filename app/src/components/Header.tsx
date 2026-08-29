@@ -73,13 +73,27 @@ export function Header() {
             (showInstallSteps ? (
               <div className={styles.installSteps}>
                 <ol>
-                  <li>
-                    Tap the <b>Share</b> icon in Safari&apos;s toolbar.
-                  </li>
-                  <li>
-                    Scroll down and tap <b>Add to Home Screen</b>.
-                  </li>
-                  <li>Tap Add.</li>
+                  {platform === "android-manual" ? (
+                    <>
+                      <li>
+                        Tap the <b>⋮</b> menu in your browser&apos;s toolbar.
+                      </li>
+                      <li>
+                        Tap <b>Add to Home screen</b> (or <b>Install app</b>).
+                      </li>
+                      <li>Tap Add.</li>
+                    </>
+                  ) : (
+                    <>
+                      <li>
+                        Tap the <b>Share</b> icon in Safari&apos;s toolbar.
+                      </li>
+                      <li>
+                        Scroll down and tap <b>Add to Home Screen</b>.
+                      </li>
+                      <li>Tap Add.</li>
+                    </>
+                  )}
                 </ol>
                 <button type="button" onClick={closeMenu}>
                   Got it

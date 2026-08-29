@@ -11,7 +11,6 @@ export function CartLineItem({ item, line }: { item: CatalogItem; line: CartLine
 
   const tier = item.weightTiers.find((t) => t.id === line.weightTierId);
   const flavour = item.flavours.find((f) => f.id === line.flavourId);
-  const descriptors = [tier?.label, flavour?.label].filter(Boolean).join(", ");
   const total = lineTotal(item, line);
 
   return (
@@ -21,12 +20,13 @@ export function CartLineItem({ item, line }: { item: CatalogItem; line: CartLine
         <div className={styles.nameRow}>
           <strong>
             {item.name}
-            {descriptors ? ` · ${descriptors}` : ""}
+            {tier ? ` · ${tier.label}` : ""}
           </strong>
           <button type="button" className={styles.remove} onClick={() => removeLine(line.lineId)}>
             Remove
           </button>
         </div>
+        {flavour && <p className={styles.flavourLine}>{flavour.label}</p>}
         {line.customDescription && (
           <p className={styles.detail}>{line.customDescription}</p>
         )}

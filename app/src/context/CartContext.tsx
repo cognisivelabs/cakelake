@@ -13,7 +13,7 @@ const STORAGE_KEY = "cakelake-cart-v2";
 const EMPTY_ORDER: Order = {
   lines: [],
   fulfillment: "pickup",
-  whenNeeded: { kind: "unsure" },
+  whenNeeded: { kind: "today" },
   customerName: "",
   pendingHandoff: false,
 };

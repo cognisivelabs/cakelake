@@ -15,10 +15,20 @@ import styles from "./cart.module.css";
 
 type Stage = "review" | "handoff" | "confirming" | "acknowledged";
 
+// A rough same-day estimate — every standard range is "ready in 1 hour".
+// Items that need real advance notice aren't meant to be ordered for
+// today in the first place, so this doesn't try to account for those.
+function estimatedReadyTime(): string {
+  const d = new Date();
+  d.setHours(d.getHours() + 1);
+  return d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+}
+
 export default function CartPage() {
   const { order, setFulfillment, setWhenNeeded, setCustomerName, setPendingHandoff, clearCart } =
     useCart();
   const catalog = getCatalog();
+  const readyTime = estimatedReadyTime();
   // Not plain local state: an installed PWA can navigate its one window
   // away to wa.me instead of opening a separate tab, wiping in-memory
   // state entirely. order.pendingHandoff is persisted, so a customer who
@@ -40,7 +50,8 @@ export default function CartPage() {
     .filter((x): x is NonNullable<typeof x> => x !== null);
 
   const whenNeededValue =
-    order.whenNeeded.kind === "date" ? order.whenNeeded.date : order.whenNeeded.kind;
+    order.whenNeeded.kind === "date" ? "date" : order.whenNeeded.kind;
+  const itemCount = order.lines.reduce((sum, l) => sum + l.quantity, 0);
 
   function handleWhenNeededChange(value: string) {
     const next: WhenNeeded =
@@ -48,10 +59,29 @@ export default function CartPage() {
         ? { kind: "today" }
         : value === "tomorrow"
           ? { kind: "tomorrow" }
-          : value === "unsure"
-            ? { kind: "unsure" }
-            : { kind: "date", date: value };
+          : { kind: "date", date: value };
     setWhenNeeded(next);
+  }
+
+  function pickADate() {
+    if (order.whenNeeded.kind === "date") return;
+    setWhenNeeded({ kind: "date", date: new Date().toISOString().slice(0, 10) });
+  }
+
+  function pickupSummary(): string {
+    switch (order.whenNeeded.kind) {
+      case "today":
+        return `Today, from ${readyTime}`;
+      case "tomorrow":
+        return "Tomorrow";
+      case "date":
+        return new Date(`${order.whenNeeded.date}T00:00:00`).toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+        });
+      case "unsure":
+        return "Not sure yet";
+    }
   }
 
   function goToHandoff() {
@@ -223,6 +253,7 @@ export default function CartPage() {
             onClick={() => handleWhenNeededChange("today")}
           >
             Today
+            <span className={styles.pillSubtext}>from {readyTime}</span>
           </button>
           <button
             type="button"
@@ -235,11 +266,24 @@ export default function CartPage() {
           <button
             type="button"
             className={styles.pillOption}
-            data-selected={whenNeededValue === "unsure"}
-            onClick={() => handleWhenNeededChange("unsure")}
+            data-selected={whenNeededValue === "date"}
+            onClick={pickADate}
           >
-            Not sure yet
+            Pick a date
           </button>
+        </div>
+        {order.whenNeeded.kind === "date" && (
+          <input
+            type="date"
+            className={styles.dateInput}
+            value={order.whenNeeded.date}
+            min={new Date().toISOString().slice(0, 10)}
+            onChange={(e) => handleWhenNeededChange(e.target.value)}
+          />
+        )}
+        <div className={styles.infoBox}>
+          Everything here is ready within the hour. Pick a later slot if
+          you&apos;d rather — delivery runs on top and is confirmed in chat.
         </div>
       </section>
 
@@ -283,6 +327,16 @@ export default function CartPage() {
       </section>
 
       <section className={styles.totals}>
+        <div className={`${styles.totalRow} ${styles.totalRowMuted}`}>
+          <span>
+            Items ({itemCount})
+          </span>
+          <span>{formatAed(orderTotal(order, catalog))}</span>
+        </div>
+        <div className={`${styles.totalRow} ${styles.totalRowMuted}`}>
+          <span>{order.fulfillment === "delivery" ? "Delivery" : "Pickup"}</span>
+          <span>{order.fulfillment === "delivery" ? "Confirmed in chat" : pickupSummary()}</span>
+        </div>
         <div className={`${styles.totalRow} ${styles.grandTotal}`}>
           <span>Total</span>
           <span>{formatAed(orderTotal(order, catalog))}</span>

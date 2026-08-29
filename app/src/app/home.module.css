@@ -33,8 +33,15 @@
 }
 
 .hero h1 {
-  font-size: 1.8rem;
-  line-height: 1.05;
+  font-size: 1.6rem;
+  line-height: 1.1;
+}
+
+.heroSubtitle {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--color-ink-muted);
 }
 
 .badges {

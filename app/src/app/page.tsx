@@ -16,11 +16,8 @@ export default function HomePage() {
       <div className={styles.body}>
         <div className={styles.hero}>
           <div className={styles.logoPlaceholder}>logo</div>
-          <h1>
-            Fresh cakes,
-            <br />
-            ready in an hour
-          </h1>
+          <h1>Cake Lake Bakery</h1>
+          <p className={styles.heroSubtitle}>Fresh cakes, ready in an hour</p>
           <div className={styles.badges}>
             <span className={styles.badgeTeal}>EGGLESS ONLY</span>
             <span className={styles.badgeTeal}>PURE VEG</span>

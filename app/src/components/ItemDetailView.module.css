@@ -110,6 +110,11 @@
   color: var(--color-teal);
 }
 
+.tagNotice {
+  background: var(--color-warn-bg);
+  color: var(--color-warn-ink);
+}
+
 .title {
   font-size: 1.35rem;
   line-height: 1.15;

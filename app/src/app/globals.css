@@ -100,6 +100,7 @@ a {
 .mono-tag {
   font-family: var(--font-mono);
   font-weight: 700;
+  text-transform: uppercase;
 }
 
 button,

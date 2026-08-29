@@ -13,7 +13,9 @@ import styles from "./ItemDetailView.module.css";
 export function ItemDetailView({ item }: { item: CatalogItem }) {
   const router = useRouter();
   const { addLine } = useCart();
-  const categoryLabel = getCategory(item.categoryId)?.label ?? "Menu";
+  const category = getCategory(item.categoryId);
+  const categoryLabel = category?.label ?? "Menu";
+  const baseWeightPrice = item.weightTiers[0]?.price;
 
   const [weightTierId, setWeightTierId] = useState(item.weightTiers[0]?.id ?? "");
   const [flavourId, setFlavourId] = useState(item.flavours[0]?.id ?? "");
@@ -48,6 +50,14 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
           <span className={`${styles.unavailableBadge} mono-tag`}>UNAVAILABLE</span>
         </div>
         <div className={styles.content}>
+          {category && (
+            <span
+              className={`${styles.tag} mono-tag`}
+              style={{ background: `${category.accent}1a`, color: category.accent, alignSelf: "flex-start" }}
+            >
+              {category.label}
+            </span>
+          )}
           <h1 className={styles.title}>{item.name}</h1>
           <p className={styles.description}>{item.description}</p>
           <div className={styles.infoBox}>
@@ -109,7 +119,23 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
 
       <div className={styles.content}>
         <div className={styles.tags}>
-          <span className={`${styles.tag} ${styles.tagReady} mono-tag`}>{item.readyLabel}</span>
+          {category && (
+            <span
+              className={`${styles.tag} mono-tag`}
+              style={{ background: `${category.accent}1a`, color: category.accent }}
+            >
+              {category.label}
+            </span>
+          )}
+          {item.requiresDelivery && (
+            <span className={`${styles.tag} ${styles.tagReady} mono-tag`}>Delivery only</span>
+          )}
+          <span
+            className={`${styles.tag} ${item.leadTimeHours > 0 ? styles.tagNotice : styles.tagReady} mono-tag`}
+          >
+            {item.readyLabel}
+          </span>
+          <span className={`${styles.tag} ${styles.tagReady} mono-tag`}>Eggless</span>
         </div>
         <h1 className={styles.title}>
           {item.name}
@@ -121,7 +147,11 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
       </div>
 
       <div className={styles.content}>
-        <div className={styles.sectionLabel}>{item.needsCustomDescription ? "WEIGHT" : "SIZE"}</div>
+        <div className={styles.sectionLabel}>
+          {item.needsCustomDescription
+            ? `WEIGHT${baseWeightPrice !== undefined ? ` · ${formatAed(baseWeightPrice)} PER KG` : ""}`
+            : "SIZE"}
+        </div>
         <div className={styles.weightRow}>
           {item.weightTiers.map((tier) => (
             <button

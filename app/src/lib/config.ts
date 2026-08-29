@@ -4,13 +4,10 @@
  */
 export const CONFIG = {
   /**
-   * The number the site's WhatsApp order handoff (ADR-003) sends to —
-   * client-confirmed. Distinct from the general contact number below.
+   * The bakery's one WhatsApp number, client-confirmed — used for both
+   * the order handoff (ADR-003) and every general "message us" link.
    */
   bakeryWhatsAppNumber: "971529811358",
-  /** General "message us" contact number, shown on Home/Contact — not
-   * used for the order handoff itself. */
-  contactWhatsAppNumber: "971503287761",
   /** Shop landline — display only, not a WhatsApp number. */
   shopPhone: "04 221 7761",
   address: {

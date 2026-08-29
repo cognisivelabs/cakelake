@@ -79,7 +79,7 @@ export default function HomePage() {
             ))}
           </p>
           <a
-            href={`https://wa.me/${CONFIG.contactWhatsAppNumber}`}
+            href={`https://wa.me/${CONFIG.bakeryWhatsAppNumber}`}
             target="_blank"
             rel="noopener noreferrer"
             className={styles.footerLink}

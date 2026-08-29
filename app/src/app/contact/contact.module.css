@@ -57,10 +57,6 @@
   font-size: 0.8rem;
 }
 
-.rowMuted {
-  color: var(--color-ink-faint);
-}
-
 .actions {
   padding: 20px 20px 24px;
   display: flex;

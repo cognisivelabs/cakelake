@@ -47,10 +47,6 @@ export default function ContactPage() {
           </div>
           <div className={styles.row}>
             <span>WhatsApp</span>
-            <span>{formatDisplay(CONFIG.contactWhatsAppNumber)}</span>
-          </div>
-          <div className={`${styles.row} ${styles.rowMuted}`}>
-            <span>Orders</span>
             <span>{formatDisplay(CONFIG.bakeryWhatsAppNumber)}</span>
           </div>
         </section>
@@ -58,7 +54,7 @@ export default function ContactPage() {
 
       <div className={styles.actions}>
         <a
-          href={`https://wa.me/${CONFIG.contactWhatsAppNumber}`}
+          href={`https://wa.me/${CONFIG.bakeryWhatsAppNumber}`}
           target="_blank"
           rel="noopener noreferrer"
           className={styles.tealButton}

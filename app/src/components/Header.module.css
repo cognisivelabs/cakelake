@@ -71,17 +71,14 @@
 }
 
 .waBadge {
-  width: 26px;
-  height: 26px;
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
-  background: var(--color-ink);
-  color: var(--color-accent) !important;
+  background: var(--color-teal);
+  color: #fff !important;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: 0.68rem;
   text-decoration: none !important;
 }
 

@@ -61,10 +61,6 @@ export default function MenuPage() {
               </button>
             )}
           </div>
-          {/* PDF export isn't built yet (ADR-004) — placeholder to match the Hi-Fi. */}
-          <button type="button" className={`${styles.pdfButton} mono-tag`} disabled>
-            PDF
-          </button>
         </div>
 
         {!hasResults && (

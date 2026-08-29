@@ -188,9 +188,14 @@
   background: var(--color-surface);
 }
 
+.messageFieldActive {
+  border-color: var(--color-accent);
+}
+
 .messageField input {
   border: none;
   padding: 11px 0;
+  outline: none;
 }
 
 .charCount {

@@ -124,3 +124,52 @@
 .dropdown a:hover {
   background: var(--color-surface-muted);
 }
+
+.installItem {
+  display: block;
+  width: 100%;
+  text-align: left;
+  border: none;
+  background: none;
+  padding: 13px 18px;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--color-ink);
+  cursor: pointer;
+}
+
+.installItem:hover {
+  background: var(--color-surface-muted);
+}
+
+.installSteps {
+  padding: 13px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.installSteps ol {
+  margin: 0;
+  padding-left: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--color-ink-muted);
+}
+
+.installSteps button {
+  align-self: flex-start;
+  border: none;
+  background: var(--color-accent);
+  color: var(--color-ink);
+  border-radius: var(--radius-sm);
+  padding: 7px 12px;
+  font-weight: 800;
+  font-size: 0.7rem;
+  box-shadow: 0 2px 0 var(--color-accent-shadow);
+  cursor: pointer;
+}

@@ -3,13 +3,30 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
+import { useInstallPrompt } from "@/hooks/useInstallPrompt";
 import { CONFIG } from "@/lib/config";
 import styles from "./Header.module.css";
 
 export function Header() {
   const { order } = useCart();
+  const { platform, triggerInstall } = useInstallPrompt();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [showInstallSteps, setShowInstallSteps] = useState(false);
   const itemCount = order.lines.reduce((sum, l) => sum + l.quantity, 0);
+
+  function closeMenu() {
+    setMenuOpen(false);
+    setShowInstallSteps(false);
+  }
+
+  async function handleInstallClick() {
+    if (platform === "android") {
+      await triggerInstall();
+      closeMenu();
+      return;
+    }
+    setShowInstallSteps(true);
+  }
 
   return (
     <header className={styles.wrap}>
@@ -24,7 +41,7 @@ export function Header() {
           <span className={styles.menuIcon} />
         </button>
 
-        <Link href="/" className={styles.brand} onClick={() => setMenuOpen(false)}>
+        <Link href="/" className={styles.brand} onClick={closeMenu}>
           Cake Lake
         </Link>
 
@@ -46,12 +63,33 @@ export function Header() {
 
       {menuOpen && (
         <nav className={styles.dropdown}>
-          <Link href="/menu" onClick={() => setMenuOpen(false)}>
+          <Link href="/menu" onClick={closeMenu}>
             Menu
           </Link>
-          <Link href="/contact" onClick={() => setMenuOpen(false)}>
+          <Link href="/contact" onClick={closeMenu}>
             Find us
           </Link>
+          {platform !== "none" &&
+            (showInstallSteps ? (
+              <div className={styles.installSteps}>
+                <ol>
+                  <li>
+                    Tap the <b>Share</b> icon in Safari&apos;s toolbar.
+                  </li>
+                  <li>
+                    Scroll down and tap <b>Add to Home Screen</b>.
+                  </li>
+                  <li>Tap Add.</li>
+                </ol>
+                <button type="button" onClick={closeMenu}>
+                  Got it
+                </button>
+              </div>
+            ) : (
+              <button type="button" className={styles.installItem} onClick={handleInstallClick}>
+                Add to Home Screen
+              </button>
+            ))}
         </nav>
       )}
     </header>

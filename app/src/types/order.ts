@@ -34,4 +34,13 @@ export type Order = {
    * placeholder.
    */
   customerName: string;
+  /**
+   * Set right before handing off to WhatsApp, cleared once the customer
+   * answers "did you send it?". Persisted (not just component state) so
+   * the "did you send it?" screen survives a reload — in an installed
+   * PWA, opening the wa.me link can navigate the app's own single window
+   * instead of a separate tab, wiping in-memory state when the customer
+   * returns.
+   */
+  pendingHandoff: boolean;
 };

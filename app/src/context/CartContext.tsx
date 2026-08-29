@@ -15,6 +15,7 @@ const EMPTY_ORDER: Order = {
   fulfillment: "pickup",
   whenNeeded: { kind: "unsure" },
   customerName: "",
+  pendingHandoff: false,
 };
 
 /**
@@ -83,6 +84,7 @@ type CartContextValue = {
   setFulfillment: (fulfillment: Fulfillment) => void;
   setWhenNeeded: (whenNeeded: WhenNeeded) => void;
   setCustomerName: (customerName: string) => void;
+  setPendingHandoff: (pendingHandoff: boolean) => void;
   clearCart: () => void;
 };
 
@@ -130,6 +132,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
     },
     setCustomerName: (customerName) => {
       commit({ ...currentOrder, customerName });
+    },
+    setPendingHandoff: (pendingHandoff) => {
+      commit({ ...currentOrder, pendingHandoff });
     },
     clearCart: () => commit(EMPTY_ORDER),
   };

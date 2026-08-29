@@ -85,3 +85,22 @@ export function buildWhatsAppUrl(message: string): string {
     message,
   )}`;
 }
+
+/**
+ * An installed PWA has a single window — window.open(url, "_blank") has
+ * nowhere to open a new tab into, so it can navigate that one window away
+ * to the wa.me URL instead, wiping the app's in-memory state. A real
+ * anchor click is handled the same way a link tap would be, which mobile
+ * platforms are more consistent about routing to an external app/tab
+ * rather than the PWA's own window.
+ */
+export function openWhatsAppUrl(url: string): void {
+  const link = document.createElement("a");
+  link.href = url;
+  link.target = "_blank";
+  link.rel = "noopener noreferrer";
+  link.style.display = "none";
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}

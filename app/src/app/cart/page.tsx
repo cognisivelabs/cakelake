@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import { getCatalog } from "@/lib/catalog";
 import { orderTotal, hasUnpricedLines, formatAed } from "@/lib/pricing";
-import { buildOrderMessage, buildWhatsAppUrl } from "@/lib/whatsapp";
+import { buildOrderMessage, buildWhatsAppUrl, openWhatsAppUrl } from "@/lib/whatsapp";
 import { CartLineItem } from "@/components/CartLineItem";
 import { CONFIG } from "@/lib/config";
 import { Header } from "@/components/Header";
@@ -16,12 +16,21 @@ import styles from "./cart.module.css";
 type Stage = "review" | "handoff" | "confirming" | "acknowledged";
 
 export default function CartPage() {
-  const { order, setFulfillment, setWhenNeeded, setCustomerName, clearCart } = useCart();
+  const { order, setFulfillment, setWhenNeeded, setCustomerName, setPendingHandoff, clearCart } =
+    useCart();
   const catalog = getCatalog();
-  const [stage, setStage] = useState<Stage>("review");
+  // Not plain local state: an installed PWA can navigate its one window
+  // away to wa.me instead of opening a separate tab, wiping in-memory
+  // state entirely. order.pendingHandoff is persisted, so a customer who
+  // comes back to a blank/reloaded app still lands on "did you send it?"
+  // instead of a reset cart. manualStage overrides it once the customer
+  // takes an explicit action in this session.
+  const [manualStage, setManualStage] = useState<Stage | null>(null);
+  const stage: Stage = manualStage ?? (order.pendingHandoff ? "confirming" : "review");
   const [sentMessage, setSentMessage] = useState("");
   const [sentUrl, setSentUrl] = useState("");
   const [ackSummary, setAckSummary] = useState<{ lines: string; total: string } | null>(null);
+  const displayMessage = sentMessage || buildOrderMessage(order, catalog);
 
   const resolvedLines = order.lines
     .map((line) => {
@@ -47,17 +56,28 @@ export default function CartPage() {
 
   function goToHandoff() {
     setSentMessage(buildOrderMessage(order, catalog));
-    setStage("handoff");
+    setManualStage("handoff");
   }
 
   function openWhatsApp() {
-    const url = buildWhatsAppUrl(sentMessage);
+    const url = buildWhatsAppUrl(displayMessage);
     setSentUrl(url);
-    window.open(url, "_blank", "noopener,noreferrer");
-    setStage("confirming");
+    // Persist before navigating — see the pendingHandoff comment above.
+    setPendingHandoff(true);
+    openWhatsAppUrl(url);
+    setManualStage("confirming");
+  }
+
+  function backToReview() {
+    setPendingHandoff(false);
+    setManualStage("review");
   }
 
   function confirmSent() {
+    // Freeze the chat link before clearing — if we recovered straight into
+    // "confirming" after a reload, openWhatsApp() (which normally sets
+    // this) never ran this session.
+    setSentUrl((current) => current || buildWhatsAppUrl(displayMessage));
     setAckSummary({
       lines: resolvedLines
         .map(({ item, line }) => {
@@ -70,7 +90,7 @@ export default function CartPage() {
       total: formatAed(orderTotal(order, catalog)),
     });
     clearCart();
-    setStage("acknowledged");
+    setManualStage("acknowledged");
   }
 
   // — Acknowledged —
@@ -115,14 +135,14 @@ export default function CartPage() {
   if (stage === "handoff" || stage === "confirming") {
     return (
       <div>
-        <PageHeader title="Send order" backLabel="CART" onBack={() => setStage("review")} />
+        <PageHeader title="Send order" backLabel="CART" onBack={backToReview} />
         <div className={styles.handoffWrap}>
           <div className={stage === "confirming" ? styles.dimmed : undefined}>
             <h1>This is the message we&apos;ll send</h1>
             <p className={styles.muted}>
               WhatsApp opens with it already typed. You still press send.
             </p>
-            <pre className={styles.preview}>{sentMessage}</pre>
+            <pre className={styles.preview}>{displayMessage}</pre>
             <div className={styles.infoNote}>
               Your order opens in WhatsApp. Come back here and confirm you sent
               it.
@@ -145,11 +165,7 @@ export default function CartPage() {
                 <button type="button" className={styles.primaryButton} onClick={confirmSent}>
                   YES, SENT
                 </button>
-                <button
-                  type="button"
-                  className={styles.outlineButton}
-                  onClick={() => setStage("review")}
-                >
+                <button type="button" className={styles.outlineButton} onClick={backToReview}>
                   NOT YET — BACK TO MY ORDER
                 </button>
               </div>

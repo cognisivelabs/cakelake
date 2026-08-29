@@ -9,6 +9,15 @@ interface BeforeInstallPromptEvent extends Event {
   userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
 }
 
+declare global {
+  interface Window {
+    // Stashed by the beforeInteractive script in layout.tsx — Android can
+    // fire beforeinstallprompt before this hook's own listener attaches,
+    // and a missed event can't be replayed later.
+    __cakelakeInstallPrompt?: BeforeInstallPromptEvent | null;
+  }
+}
+
 function isStandalone(): boolean {
   const nav = window.navigator as Navigator & { standalone?: boolean };
   return window.matchMedia("(display-mode: standalone)").matches || nav.standalone === true;
@@ -51,10 +60,12 @@ export function useInstallPrompt() {
   useEffect(() => {
     function handleBeforeInstallPrompt(event: Event) {
       event.preventDefault();
+      window.__cakelakeInstallPrompt = event as BeforeInstallPromptEvent;
       setDeferredPrompt(event as BeforeInstallPromptEvent);
     }
 
     function handleAppInstalled() {
+      window.__cakelakeInstallPrompt = null;
       setInstalled(true);
     }
 
@@ -73,14 +84,18 @@ export function useInstallPrompt() {
     };
   }
 
-  const platform: InstallPlatform = deferredPrompt ? "android" : isIOSSafari() ? "ios" : "none";
+  // Pick up an event the beforeInteractive script already caught before
+  // this effect's own listener attached, in addition to one it hands us
+  // live via setDeferredPrompt above.
+  const activePrompt = deferredPrompt ?? window.__cakelakeInstallPrompt ?? null;
+  const platform: InstallPlatform = activePrompt ? "android" : isIOSSafari() ? "ios" : "none";
 
   async function triggerInstall(): Promise<"accepted" | "dismissed" | "unavailable"> {
-    if (!deferredPrompt) return "unavailable";
-    const prompt = deferredPrompt;
+    if (!activePrompt) return "unavailable";
+    window.__cakelakeInstallPrompt = null;
     setDeferredPrompt(null);
-    await prompt.prompt();
-    const { outcome } = await prompt.userChoice;
+    await activePrompt.prompt();
+    const { outcome } = await activePrompt.userChoice;
     return outcome;
   }
 

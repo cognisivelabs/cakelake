@@ -26,7 +26,7 @@ const CATALOG: CatalogItem[] = [
     id: "classic-cakes",
     name: "Classic Cakes",
     categoryId: "cakes",
-    description: "Our everyday cake range — a light sponge with buttercream.",
+    description: "Ultra moist cake with each bite having a creamy butterscotch mouthfeel.",
     weightTiers: [
       { id: "half-kg", label: "½ kg", price: 55 },
       { id: "1kg", label: "1 kg", price: 100 },

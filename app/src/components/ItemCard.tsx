@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { CatalogItem } from "@/types/catalog";
 import { formatAed } from "@/lib/pricing";
+import { withBasePath } from "@/lib/assets";
 import styles from "./ItemCard.module.css";
 
 function priceFrom(item: CatalogItem): string {
@@ -37,7 +38,7 @@ export function ItemCard({ item }: { item: CatalogItem }) {
       <div className={styles.photo}>
         {previewImage && (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={previewImage} alt="" className={styles.photoImage} />
+          <img src={withBasePath(previewImage)} alt="" className={styles.photoImage} />
         )}
         {item.flavours.length > 0 && (
           <span className={`${styles.flavourCount} mono-tag`}>

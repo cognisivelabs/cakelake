@@ -7,6 +7,7 @@ import { useCart } from "@/context/CartContext";
 import { formatAed } from "@/lib/pricing";
 import { getCategory } from "@/lib/catalog";
 import { CONFIG } from "@/lib/config";
+import { withBasePath } from "@/lib/assets";
 import { PageHeader } from "@/components/PageHeader";
 import styles from "./ItemDetailView.module.css";
 
@@ -86,7 +87,7 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
       <div className={styles.photo}>
         {selectedFlavour?.imageUrl && (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={selectedFlavour.imageUrl} alt="" className={styles.photoImage} />
+          <img src={withBasePath(selectedFlavour.imageUrl)} alt="" className={styles.photoImage} />
         )}
         {item.flavours.length > 0 && (
           <span className={styles.photoLabel}>{selectedFlavour?.label}</span>
@@ -107,7 +108,11 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
                 <span className={styles.flavourSwatch} data-selected={flavour.id === flavourId}>
                   {flavour.imageUrl && (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={flavour.imageUrl} alt="" className={styles.flavourSwatchImage} />
+                    <img
+                      src={withBasePath(flavour.imageUrl)}
+                      alt=""
+                      className={styles.flavourSwatchImage}
+                    />
                   )}
                 </span>
                 <span

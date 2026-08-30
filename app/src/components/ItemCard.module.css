@@ -27,6 +27,14 @@
   padding: 5px;
 }
 
+.photoImage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
 .soldOut .photo {
   background: var(--color-surface-alt);
   border-style: solid;

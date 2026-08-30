@@ -24,6 +24,7 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
   const [customDescription, setCustomDescription] = useState("");
 
   const selectedTier = item.weightTiers.find((t) => t.id === weightTierId);
+  const selectedFlavour = item.flavours.find((f) => f.id === flavourId);
   const unitPrice = selectedTier?.price;
   const total = unitPrice === undefined ? undefined : unitPrice * quantity;
 
@@ -83,10 +84,12 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
     <div>
       <PageHeader title={categoryLabel} backHref="/menu" backLabel="MENU" />
       <div className={styles.photo}>
+        {selectedFlavour?.imageUrl && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={selectedFlavour.imageUrl} alt="" className={styles.photoImage} />
+        )}
         {item.flavours.length > 0 && (
-          <span className={styles.photoLabel}>
-            {item.flavours.find((f) => f.id === flavourId)?.label}
-          </span>
+          <span className={styles.photoLabel}>{selectedFlavour?.label}</span>
         )}
       </div>
 
@@ -101,10 +104,12 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
                 className={styles.flavourOption}
                 onClick={() => setFlavourId(flavour.id)}
               >
-                <span
-                  className={styles.flavourSwatch}
-                  data-selected={flavour.id === flavourId}
-                />
+                <span className={styles.flavourSwatch} data-selected={flavour.id === flavourId}>
+                  {flavour.imageUrl && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={flavour.imageUrl} alt="" className={styles.flavourSwatchImage} />
+                  )}
+                </span>
                 <span
                   className={styles.flavourLabel}
                   data-selected={flavour.id === flavourId}

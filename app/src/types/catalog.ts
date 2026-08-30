@@ -17,6 +17,8 @@ export type WeightTier = {
 export type Flavour = {
   id: string;
   label: string;
+  /** Real photo, when we have one — falls back to the placeholder box. */
+  imageUrl?: string;
 };
 
 export type Category = {

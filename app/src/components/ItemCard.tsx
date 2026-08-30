@@ -30,9 +30,15 @@ export function ItemCard({ item }: { item: CatalogItem }) {
     );
   }
 
+  const previewImage = item.flavours.find((f) => f.imageUrl)?.imageUrl;
+
   return (
     <Link href={`/menu/${item.id}`} className={styles.card}>
       <div className={styles.photo}>
+        {previewImage && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={previewImage} alt="" className={styles.photoImage} />
+        )}
         {item.flavours.length > 0 && (
           <span className={`${styles.flavourCount} mono-tag`}>
             {item.flavours.length} FLAVOUR{item.flavours.length === 1 ? "" : "S"}

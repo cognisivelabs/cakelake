@@ -31,7 +31,10 @@ const CATALOG: CatalogItem[] = [
       { id: "half-kg", label: "½ kg", price: 55 },
       { id: "1kg", label: "1 kg", price: 100 },
     ],
-    flavours: flavours("Butterscotch", "Black Forest", "Pineapple"),
+    flavours: [
+      { id: "butterscotch", label: "Butterscotch", imageUrl: "/images/classic-butterscotch.jpg" },
+      ...flavours("Black Forest", "Pineapple"),
+    ],
     readyLabel: "Ready in 1 hour",
     leadTimeHours: 0,
     cakeMessageMaxLength: 40,

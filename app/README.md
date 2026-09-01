@@ -81,6 +81,17 @@ GITHUB_PAGES=true npm run build   # matches the deployed GitHub Pages build
 
 Output is a static export in `out/`.
 
+## Testing
+
+```bash
+npm test
+```
+
+Unit tests (Vitest) cover the pure business logic in `src/lib/` —
+pricing, the WhatsApp message/order-line helpers, date handling, and
+catalogue lookups. No component/UI tests yet; those are still verified
+manually in-browser per change.
+
 ## Deployment
 
 Deployed to **GitHub Pages** for this POC phase, not AWS — see

@@ -30,7 +30,7 @@ function estimatedReadyTime(): string {
 }
 
 export default function CartPage() {
-  const { order, setFulfillment, setWhenNeeded, setCustomerName, setPendingHandoff, clearCart } =
+  const { order, setFulfillment, setWhenNeeded, setCustomerName, startHandoff, declineHandoff, clearCart } =
     useCart();
   const catalog = getCatalog();
   const readyTime = estimatedReadyTime();
@@ -92,13 +92,17 @@ export default function CartPage() {
     const url = buildWhatsAppUrl(displayMessage);
     setSentUrl(url);
     // Persist before navigating — see the pendingHandoff comment above.
-    setPendingHandoff(true);
+    startHandoff();
     openWhatsAppUrl(url);
     setManualStage("confirming");
   }
 
   function backToReview() {
-    setPendingHandoff(false);
+    // Only an explicit decline from the "did you send it?" prompt counts
+    // as ADR-003's 24-hour case — this same handler also runs for the
+    // "Send order" screen's plain back button, before a handoff was ever
+    // attempted, which shouldn't start any abandonment clock at all.
+    if (order.pendingHandoff) declineHandoff();
     setManualStage("review");
   }
 

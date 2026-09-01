@@ -43,4 +43,13 @@ export type Order = {
    * returns.
    */
   pendingHandoff: boolean;
+  /**
+   * Epoch ms — per ADR-003, an unanswered "did you send it?" is treated
+   * as abandoned after 2 hours, while an explicit "not yet, back to my
+   * cart" gets a more forgiving 24 hours. Absent for a cart that hasn't
+   * reached either point yet (an ordinary in-progress cart has no
+   * expiry). Checked once per visit, not live while a tab sits open —
+   * see lib/cartExpiry.ts.
+   */
+  expiresAt?: number;
 };

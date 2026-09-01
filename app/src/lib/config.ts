@@ -52,6 +52,13 @@ export const CONFIG = {
   /** Max length for the optional per-item cake inscription — every
    * catalog item uses this same client-confirmed limit. */
   cakeMessageMaxLength: 40,
+  /** ADR-003: an unanswered "did you send it?" prompt is treated as
+   * abandoned after this long, resetting to an empty cart. */
+  pendingHandoffExpiryHours: 2,
+  /** ADR-003: explicitly tapping "not yet, back to my cart" gets a
+   * longer, more forgiving window than an unanswered prompt — that's a
+   * deliberate choice to keep shopping, not an ambiguous no-response. */
+  declinedHandoffExpiryHours: 24,
   /**
    * The deployed site's origin (no path) — feeds metadataBase for Open
    * Graph/Twitter image resolution. GitHub Pages for this POC phase (see

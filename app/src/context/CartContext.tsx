@@ -10,6 +10,7 @@ import type { CartLine, Fulfillment, Order, WhenNeeded } from "@/types/order";
 import { STORAGE_KEYS } from "@/lib/storageKeys";
 import { safeGetItem, safeSetItem } from "@/lib/safeStorage";
 import { getCatalog } from "@/lib/catalog";
+import { isOrderExpired, pendingHandoffExpiresAt, declinedHandoffExpiresAt } from "@/lib/cartExpiry";
 
 const STORAGE_KEY = STORAGE_KEYS.cart;
 
@@ -76,9 +77,18 @@ if (typeof window !== "undefined") {
     const raw = safeGetItem(STORAGE_KEY);
     const parsed = raw ? (JSON.parse(raw) as Order) : null;
     if (parsed?.lines) {
-      const reconciled = dropDiscontinuedLines({ ...EMPTY_ORDER, ...parsed });
-      currentOrder = reconciled;
-      if (reconciled.lines.length !== parsed.lines.length) persist(reconciled);
+      const merged = { ...EMPTY_ORDER, ...parsed };
+      if (isOrderExpired(merged, Date.now())) {
+        // ADR-003: an unanswered or explicitly-declined handoff attempt
+        // expires to a plain empty cart, not a stale order with a
+        // "when needed" date that may have already passed.
+        currentOrder = EMPTY_ORDER;
+        persist(EMPTY_ORDER);
+      } else {
+        const reconciled = dropDiscontinuedLines(merged);
+        currentOrder = reconciled;
+        if (reconciled.lines.length !== merged.lines.length) persist(reconciled);
+      }
     }
   } catch {
     // Corrupt storage contents — fall back to an empty cart.
@@ -103,7 +113,13 @@ type CartContextValue = {
   setFulfillment: (fulfillment: Fulfillment) => void;
   setWhenNeeded: (whenNeeded: WhenNeeded) => void;
   setCustomerName: (customerName: string) => void;
-  setPendingHandoff: (pendingHandoff: boolean) => void;
+  /** Call right before opening the wa.me link — ADR-003's 2-hour
+   * abandonment window starts from this moment. */
+  startHandoff: () => void;
+  /** Call only for an explicit "not yet, back to my cart" — ADR-003's
+   * more forgiving 24-hour window. Not for merely navigating back
+   * before a handoff was ever attempted. */
+  declineHandoff: () => void;
   clearCart: () => void;
 };
 
@@ -152,8 +168,19 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setCustomerName: (customerName) => {
       commit({ ...currentOrder, customerName });
     },
-    setPendingHandoff: (pendingHandoff) => {
-      commit({ ...currentOrder, pendingHandoff });
+    startHandoff: () => {
+      commit({
+        ...currentOrder,
+        pendingHandoff: true,
+        expiresAt: pendingHandoffExpiresAt(Date.now()),
+      });
+    },
+    declineHandoff: () => {
+      commit({
+        ...currentOrder,
+        pendingHandoff: false,
+        expiresAt: declinedHandoffExpiresAt(Date.now()),
+      });
     },
     clearCart: () => commit(EMPTY_ORDER),
   };

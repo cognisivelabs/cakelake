@@ -43,6 +43,16 @@ function commit(next: Order) {
   for (const listener of listeners) listener();
 }
 
+// Any edit — adding an item, changing quantity, picking a date — is real
+// engagement, not the inactivity ADR-003's expiry windows are meant to
+// catch. Without this, a cart that was declined once (24h stamp) and
+// then actively used the next day could still get wiped mid-session once
+// the original stamp's clock ran out, even though nothing about it was
+// actually abandoned.
+function commitActive(next: Order) {
+  commit({ ...next, expiresAt: undefined });
+}
+
 function getSnapshot(): Order {
   return currentOrder;
 }
@@ -135,10 +145,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
         lineId: `${input.itemId}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
         ...input,
       };
-      commit({ ...currentOrder, lines: [...currentOrder.lines, line] });
+      commitActive({ ...currentOrder, lines: [...currentOrder.lines, line] });
     },
     updateQuantity: (lineId, quantity) => {
-      commit({
+      commitActive({
         ...currentOrder,
         lines: currentOrder.lines
           .map((l) => (l.lineId === lineId ? { ...l, quantity } : l))
@@ -146,13 +156,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
       });
     },
     removeLine: (lineId) => {
-      commit({
+      commitActive({
         ...currentOrder,
         lines: currentOrder.lines.filter((l) => l.lineId !== lineId),
       });
     },
     updateCakeMessage: (lineId, cakeMessage) => {
-      commit({
+      commitActive({
         ...currentOrder,
         lines: currentOrder.lines.map((l) =>
           l.lineId === lineId ? { ...l, cakeMessage } : l,
@@ -160,13 +170,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
       });
     },
     setFulfillment: (fulfillment) => {
-      commit({ ...currentOrder, fulfillment });
+      commitActive({ ...currentOrder, fulfillment });
     },
     setWhenNeeded: (whenNeeded) => {
-      commit({ ...currentOrder, whenNeeded });
+      commitActive({ ...currentOrder, whenNeeded });
     },
     setCustomerName: (customerName) => {
-      commit({ ...currentOrder, customerName });
+      commitActive({ ...currentOrder, customerName });
     },
     startHandoff: () => {
       commit({

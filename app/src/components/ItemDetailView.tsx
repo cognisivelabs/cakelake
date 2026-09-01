@@ -92,6 +92,11 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
         {selectedFlavour?.imageUrl && (
           // eslint-disable-next-line @next/next/no-img-element
           <img
+            // Keyed by src so switching to a flavour with a working photo
+            // always gets a fresh DOM node — otherwise a prior flavour's
+            // onError (which hides this element directly, outside React's
+            // own prop diffing) would stay applied to the reused node.
+            key={selectedFlavour.imageUrl}
             src={withBasePath(selectedFlavour.imageUrl)}
             alt={`${item.name}, ${selectedFlavour.label}`}
             className={styles.photoImage}

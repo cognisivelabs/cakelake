@@ -36,4 +36,20 @@ export const CONFIG = {
     { days: "Friday - Sunday", hours: "10 am - 1 am" },
   ],
   currency: "AED",
+  /**
+   * PWA brand colours — must match `--color-accent`/`--color-bg` in
+   * globals.css (CSS custom properties can't read from this file, so
+   * that match has to be kept by hand), and are otherwise the single
+   * source for the manifest's theme/background colour and the root
+   * layout's viewport theme-color meta tag.
+   */
+  themeColor: "#EFD400",
+  backgroundColor: "#FBF4E4",
+  /** Same-day items are all "ready in an hour" — feeds the cart's "ready
+   * by" estimate. Independent of each catalog item's own readyLabel
+   * copy, which the client may phrase differently later. */
+  sameDayPrepHours: 1,
+  /** Max length for the optional per-item cake inscription — every
+   * catalog item uses this same client-confirmed limit. */
+  cakeMessageMaxLength: 40,
 } as const;

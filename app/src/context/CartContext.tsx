@@ -7,8 +7,9 @@ import {
   type ReactNode,
 } from "react";
 import type { CartLine, Fulfillment, Order, WhenNeeded } from "@/types/order";
+import { STORAGE_KEYS } from "@/lib/storageKeys";
 
-const STORAGE_KEY = "cakelake-cart-v2";
+const STORAGE_KEY = STORAGE_KEYS.cart;
 
 const EMPTY_ORDER: Order = {
   lines: [],

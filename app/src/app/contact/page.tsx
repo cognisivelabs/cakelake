@@ -1,4 +1,5 @@
 import { CONFIG } from "@/lib/config";
+import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import { PageHeader } from "@/components/PageHeader";
 import styles from "./contact.module.css";
 
@@ -54,7 +55,7 @@ export default function ContactPage() {
 
       <div className={styles.actions}>
         <a
-          href={`https://wa.me/${CONFIG.bakeryWhatsAppNumber}`}
+          href={buildWhatsAppUrl()}
           target="_blank"
           rel="noopener noreferrer"
           className={styles.tealButton}

@@ -80,10 +80,14 @@ export function buildOrderMessage(order: Order, catalog: CatalogItem[]): string 
   return lines.join("\n");
 }
 
-export function buildWhatsAppUrl(message: string): string {
-  return `https://wa.me/${CONFIG.bakeryWhatsAppNumber}?text=${encodeURIComponent(
-    message,
-  )}`;
+/**
+ * The bakery's wa.me link — with a pre-filled message for the order
+ * handoff, or bare for every general "message us" link across the site,
+ * so the URL format only exists in one place.
+ */
+export function buildWhatsAppUrl(message?: string): string {
+  const base = `https://wa.me/${CONFIG.bakeryWhatsAppNumber}`;
+  return message ? `${base}?text=${encodeURIComponent(message)}` : base;
 }
 
 /**

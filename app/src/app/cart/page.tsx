@@ -6,8 +6,8 @@ import { useCart } from "@/context/CartContext";
 import { getCatalog } from "@/lib/catalog";
 import { orderTotal, hasUnpricedLines, formatAed } from "@/lib/pricing";
 import { buildOrderMessage, buildWhatsAppUrl, openWhatsAppUrl } from "@/lib/whatsapp";
-import { CartLineItem } from "@/components/CartLineItem";
 import { CONFIG } from "@/lib/config";
+import { CartLineItem } from "@/components/CartLineItem";
 import { Header } from "@/components/Header";
 import { PageHeader } from "@/components/PageHeader";
 import type { WhenNeeded } from "@/types/order";
@@ -15,12 +15,13 @@ import styles from "./cart.module.css";
 
 type Stage = "review" | "handoff" | "confirming" | "acknowledged";
 
-// A rough same-day estimate — every standard range is "ready in 1 hour".
-// Items that need real advance notice aren't meant to be ordered for
-// today in the first place, so this doesn't try to account for those.
+// A rough same-day estimate — every standard range is "ready in an hour"
+// (CONFIG.sameDayPrepHours). Items that need real advance notice aren't
+// meant to be ordered for today in the first place, so this doesn't try
+// to account for those.
 function estimatedReadyTime(): string {
   const d = new Date();
-  d.setHours(d.getHours() + 1);
+  d.setHours(d.getHours() + CONFIG.sameDayPrepHours);
   return d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
 }
 
@@ -232,7 +233,7 @@ export default function CartPage() {
               BROWSE MENU
             </Link>
             <a
-              href={`https://wa.me/${CONFIG.bakeryWhatsAppNumber}`}
+              href={buildWhatsAppUrl()}
               target="_blank"
               rel="noopener noreferrer"
               className={styles.tealOutlineButton}

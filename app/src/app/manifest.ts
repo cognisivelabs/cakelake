@@ -1,4 +1,5 @@
 import type { MetadataRoute } from "next";
+import { CONFIG } from "@/lib/config";
 
 export const dynamic = "force-static";
 
@@ -13,8 +14,8 @@ export default function manifest(): MetadataRoute.Manifest {
     start_url: ".",
     scope: ".",
     display: "standalone",
-    background_color: "#FBF4E4",
-    theme_color: "#EFD400",
+    background_color: CONFIG.backgroundColor,
+    theme_color: CONFIG.themeColor,
     icons: [
       {
         src: "icons/icon-192.png",

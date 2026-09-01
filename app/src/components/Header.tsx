@@ -5,7 +5,7 @@ import Link from "next/link";
 import { FaWhatsapp } from "react-icons/fa";
 import { useCart } from "@/context/CartContext";
 import { useInstallPrompt } from "@/hooks/useInstallPrompt";
-import { CONFIG } from "@/lib/config";
+import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import styles from "./Header.module.css";
 
 export function Header() {
@@ -48,7 +48,7 @@ export function Header() {
 
         <div className={styles.actions}>
           <a
-            href={`https://wa.me/${CONFIG.bakeryWhatsAppNumber}`}
+            href={buildWhatsAppUrl()}
             target="_blank"
             rel="noopener noreferrer"
             className={styles.waBadge}

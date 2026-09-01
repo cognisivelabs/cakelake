@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getCatalog, getCategories } from "@/lib/catalog";
 import { CONFIG } from "@/lib/config";
+import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import { Header } from "@/components/Header";
 import { InstallPrompt } from "@/components/InstallPrompt";
 import styles from "./home.module.css";
@@ -79,7 +80,7 @@ export default function HomePage() {
             ))}
           </p>
           <a
-            href={`https://wa.me/${CONFIG.bakeryWhatsAppNumber}`}
+            href={buildWhatsAppUrl()}
             target="_blank"
             rel="noopener noreferrer"
             className={styles.footerLink}

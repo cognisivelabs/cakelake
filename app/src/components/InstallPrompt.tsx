@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import { useInstallPrompt } from "@/hooks/useInstallPrompt";
+import { STORAGE_KEYS } from "@/lib/storageKeys";
 import styles from "./InstallPrompt.module.css";
 
-const DISMISSED_KEY = "cakelake-install-dismissed";
+const DISMISSED_KEY = STORAGE_KEYS.installDismissed;
 
 export function InstallPrompt() {
   const { platform, triggerInstall } = useInstallPrompt();

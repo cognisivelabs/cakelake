@@ -6,7 +6,7 @@ import type { CatalogItem } from "@/types/catalog";
 import { useCart } from "@/context/CartContext";
 import { formatAed } from "@/lib/pricing";
 import { getCategory } from "@/lib/catalog";
-import { CONFIG } from "@/lib/config";
+import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import { withBasePath } from "@/lib/assets";
 import { PageHeader } from "@/components/PageHeader";
 import styles from "./ItemDetailView.module.css";
@@ -69,7 +69,7 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
         </div>
         <div className={styles.footer}>
           <a
-            href={`https://wa.me/${CONFIG.bakeryWhatsAppNumber}`}
+            href={buildWhatsAppUrl()}
             target="_blank"
             rel="noopener noreferrer"
             className={styles.askButton}

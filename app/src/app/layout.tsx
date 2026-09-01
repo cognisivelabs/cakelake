@@ -3,6 +3,8 @@ import type { ReactNode } from "react";
 import Script from "next/script";
 import { CartProvider } from "@/context/CartContext";
 import { ServiceWorkerRegister } from "@/components/ServiceWorkerRegister";
+import { CONFIG } from "@/lib/config";
+import { INSTALL_PROMPT_EVENT, APP_INSTALLED_EVENT } from "@/lib/installEvents";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -17,7 +19,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#EFD400",
+  themeColor: CONFIG.themeColor,
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
@@ -31,11 +33,11 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <Script id="install-prompt-capture" strategy="beforeInteractive">
           {`
             window.__cakelakeInstallPrompt = null;
-            window.addEventListener("beforeinstallprompt", function (e) {
+            window.addEventListener("${INSTALL_PROMPT_EVENT}", function (e) {
               e.preventDefault();
               window.__cakelakeInstallPrompt = e;
             });
-            window.addEventListener("appinstalled", function () {
+            window.addEventListener("${APP_INSTALLED_EVENT}", function () {
               window.__cakelakeInstallPrompt = null;
             });
           `}

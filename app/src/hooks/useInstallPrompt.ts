@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useSyncExternalStore } from "react";
+import { INSTALL_PROMPT_EVENT, APP_INSTALLED_EVENT } from "@/lib/installEvents";
 
 export type InstallPlatform = "none" | "ios" | "android" | "android-manual";
 
@@ -73,11 +74,11 @@ export function useInstallPrompt() {
       setInstalled(true);
     }
 
-    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
-    window.addEventListener("appinstalled", handleAppInstalled);
+    window.addEventListener(INSTALL_PROMPT_EVENT, handleBeforeInstallPrompt);
+    window.addEventListener(APP_INSTALLED_EVENT, handleAppInstalled);
     return () => {
-      window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
-      window.removeEventListener("appinstalled", handleAppInstalled);
+      window.removeEventListener(INSTALL_PROMPT_EVENT, handleBeforeInstallPrompt);
+      window.removeEventListener(APP_INSTALLED_EVENT, handleAppInstalled);
     };
   }, []);
 

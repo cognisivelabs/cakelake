@@ -6,7 +6,7 @@ import { getCatalog, getCategories } from "@/lib/catalog";
 import { ItemCard } from "@/components/ItemCard";
 import { useCart } from "@/context/CartContext";
 import { orderTotal, formatAed } from "@/lib/pricing";
-import { CONFIG } from "@/lib/config";
+import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import { PageHeader } from "@/components/PageHeader";
 import styles from "./menu.module.css";
 
@@ -71,7 +71,7 @@ export default function MenuPage() {
               most weeks.
             </p>
             <a
-              href={`https://wa.me/${CONFIG.bakeryWhatsAppNumber}`}
+              href={buildWhatsAppUrl()}
               target="_blank"
               rel="noopener noreferrer"
               className={styles.askButton}

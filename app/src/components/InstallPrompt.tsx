@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useInstallPrompt } from "@/hooks/useInstallPrompt";
 import { STORAGE_KEYS } from "@/lib/storageKeys";
+import { INSTALL_STEPS } from "@/components/installSteps";
 import styles from "./InstallPrompt.module.css";
 
 const DISMISSED_KEY = STORAGE_KEYS.installDismissed;
@@ -38,26 +39,11 @@ export function InstallPrompt() {
       <div className={styles.badge}>CL</div>
       <div className={styles.body}>
         <div className={styles.title}>Keep Cake Lake on your home screen</div>
-        {showSteps && platform === "ios" && (
+        {showSteps && (platform === "ios" || platform === "android-manual") && (
           <ol className={styles.steps}>
-            <li>
-              Tap the <b>Share</b> icon in Safari&apos;s toolbar.
-            </li>
-            <li>
-              Scroll down and tap <b>Add to Home Screen</b>.
-            </li>
-            <li>Tap Add.</li>
-          </ol>
-        )}
-        {showSteps && platform === "android-manual" && (
-          <ol className={styles.steps}>
-            <li>
-              Tap the <b>⋮</b> menu in your browser&apos;s toolbar.
-            </li>
-            <li>
-              Tap <b>Add to Home screen</b> (or <b>Install app</b>).
-            </li>
-            <li>Tap Add.</li>
+            {INSTALL_STEPS[platform].map((step, i) => (
+              <li key={i}>{step}</li>
+            ))}
           </ol>
         )}
         {!showSteps && (

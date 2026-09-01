@@ -7,6 +7,8 @@ import { getCatalog } from "@/lib/catalog";
 import { orderTotal, hasUnpricedLines, formatAed } from "@/lib/pricing";
 import { buildOrderMessage, buildWhatsAppUrl, openWhatsAppUrl } from "@/lib/whatsapp";
 import { CONFIG } from "@/lib/config";
+import { EXTERNAL_LINK_PROPS } from "@/lib/externalLink";
+import { ROUTES } from "@/lib/routes";
 import { CartLineItem } from "@/components/CartLineItem";
 import { Header } from "@/components/Header";
 import { PageHeader } from "@/components/PageHeader";
@@ -157,13 +159,12 @@ export default function CartPage() {
             </p>
           </div>
           <div className={styles.stackedActions}>
-            <Link href="/menu" className={styles.primaryButton}>
+            <Link href={ROUTES.menu} className={styles.primaryButton}>
               BACK TO MENU
             </Link>
             <a
               href={sentUrl}
-              target="_blank"
-              rel="noopener noreferrer"
+              {...EXTERNAL_LINK_PROPS}
               className={styles.tealOutlineButton}
             >
               OPEN THE CHAT AGAIN
@@ -223,19 +224,18 @@ export default function CartPage() {
   if (resolvedLines.length === 0) {
     return (
       <div>
-        <PageHeader title="Your order" backHref="/menu" backLabel="MENU" />
+        <PageHeader title="Your order" backHref={ROUTES.menu} backLabel="MENU" />
         <div className={styles.centered}>
           <div className={styles.emptyCircle}>0</div>
           <h1>Nothing in your order yet</h1>
           <p className={styles.muted}>Add a cake and it&apos;ll show up here.</p>
           <div className={styles.stackedActions}>
-            <Link href="/menu" className={styles.primaryButton}>
+            <Link href={ROUTES.menu} className={styles.primaryButton}>
               BROWSE MENU
             </Link>
             <a
               href={buildWhatsAppUrl()}
-              target="_blank"
-              rel="noopener noreferrer"
+              {...EXTERNAL_LINK_PROPS}
               className={styles.tealOutlineButton}
             >
               ASK US FOR SOMETHING CUSTOM
@@ -248,7 +248,7 @@ export default function CartPage() {
 
   return (
     <div>
-      <PageHeader title="Your order" backHref="/menu" backLabel="MENU" />
+      <PageHeader title="Your order" backHref={ROUTES.menu} backLabel="MENU" />
 
       <div className={styles.lineList}>
         {resolvedLines.map(({ item, line }) => (

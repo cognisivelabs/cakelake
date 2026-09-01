@@ -1,12 +1,14 @@
 import { CONFIG } from "@/lib/config";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
+import { EXTERNAL_LINK_PROPS } from "@/lib/externalLink";
+import { ROUTES } from "@/lib/routes";
 import { PageHeader } from "@/components/PageHeader";
 import styles from "./contact.module.css";
 
 export default function ContactPage() {
   return (
     <div>
-      <PageHeader title="Find us" backHref="/" backLabel="BACK" />
+      <PageHeader title="Find us" backHref={ROUTES.home} backLabel="BACK" />
       <iframe
         className={styles.map}
         src={CONFIG.mapsEmbedSrc}
@@ -56,16 +58,14 @@ export default function ContactPage() {
       <div className={styles.actions}>
         <a
           href={buildWhatsAppUrl()}
-          target="_blank"
-          rel="noopener noreferrer"
+          {...EXTERNAL_LINK_PROPS}
           className={styles.tealButton}
         >
           MESSAGE US ON WHATSAPP
         </a>
         <a
           href={CONFIG.mapsUrl}
-          target="_blank"
-          rel="noopener noreferrer"
+          {...EXTERNAL_LINK_PROPS}
           className={styles.outlineButton}
         >
           OPEN IN MAPS

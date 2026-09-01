@@ -8,6 +8,8 @@ import { formatAed } from "@/lib/pricing";
 import { getCategory } from "@/lib/catalog";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import { withBasePath } from "@/lib/assets";
+import { EXTERNAL_LINK_PROPS } from "@/lib/externalLink";
+import { ROUTES } from "@/lib/routes";
 import { PageHeader } from "@/components/PageHeader";
 import styles from "./ItemDetailView.module.css";
 
@@ -41,13 +43,13 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
       cakeMessage: cakeMessage.trim() || undefined,
       customDescription: customDescription.trim() || undefined,
     });
-    router.push("/menu");
+    router.push(ROUTES.menu);
   }
 
   if (!item.available) {
     return (
       <div>
-        <PageHeader title={categoryLabel} backHref="/menu" backLabel="MENU" />
+        <PageHeader title={categoryLabel} backHref={ROUTES.menu} backLabel="MENU" />
         <div className={styles.photo}>
           <span className={`${styles.unavailableBadge} mono-tag`}>UNAVAILABLE</span>
         </div>
@@ -70,8 +72,7 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
         <div className={styles.footer}>
           <a
             href={buildWhatsAppUrl()}
-            target="_blank"
-            rel="noopener noreferrer"
+            {...EXTERNAL_LINK_PROPS}
             className={styles.askButton}
           >
             ASK US ABOUT THIS CAKE
@@ -83,7 +84,7 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
 
   return (
     <div>
-      <PageHeader title={categoryLabel} backHref="/menu" backLabel="MENU" />
+      <PageHeader title={categoryLabel} backHref={ROUTES.menu} backLabel="MENU" />
       <div className={styles.photo}>
         {selectedFlavour?.imageUrl && (
           // eslint-disable-next-line @next/next/no-img-element

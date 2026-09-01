@@ -2,6 +2,8 @@ import Link from "next/link";
 import { getCatalog, getCategories } from "@/lib/catalog";
 import { CONFIG } from "@/lib/config";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
+import { EXTERNAL_LINK_PROPS } from "@/lib/externalLink";
+import { ROUTES } from "@/lib/routes";
 import { Header } from "@/components/Header";
 import { InstallPrompt } from "@/components/InstallPrompt";
 import styles from "./home.module.css";
@@ -31,7 +33,7 @@ export default function HomePage() {
         </div>
 
         <div className={styles.ctas}>
-          <Link href="/menu" className={styles.primaryCta}>
+          <Link href={ROUTES.menu} className={styles.primaryCta}>
             BROWSE MENU
           </Link>
           {/* Secondary to Browse Menu — a PDF can't hold a cart, so it's
@@ -49,7 +51,7 @@ export default function HomePage() {
               return (
                 <Link
                   key={category.id}
-                  href="/menu"
+                  href={ROUTES.menu}
                   className={styles.categoryCard}
                   style={{ background: `${category.accent}1a` }}
                 >
@@ -81,8 +83,7 @@ export default function HomePage() {
           </p>
           <a
             href={buildWhatsAppUrl()}
-            target="_blank"
-            rel="noopener noreferrer"
+            {...EXTERNAL_LINK_PROPS}
             className={styles.footerLink}
           >
             MESSAGE US ON WHATSAPP →

@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
+import { ROUTES } from "@/lib/routes";
 import styles from "./PageHeader.module.css";
 
 type PageHeaderProps = {
@@ -27,7 +28,7 @@ export function PageHeader(props: PageHeaderProps) {
 
       <h1 className={styles.title}>{props.title}</h1>
 
-      <Link href="/cart" className={`${styles.cartPill} mono-tag`}>
+      <Link href={ROUTES.cart} className={`${styles.cartPill} mono-tag`}>
         CART {itemCount}
       </Link>
     </header>

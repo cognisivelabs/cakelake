@@ -7,6 +7,8 @@ import { ItemCard } from "@/components/ItemCard";
 import { useCart } from "@/context/CartContext";
 import { orderTotal, formatAed } from "@/lib/pricing";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
+import { EXTERNAL_LINK_PROPS } from "@/lib/externalLink";
+import { ROUTES } from "@/lib/routes";
 import { PageHeader } from "@/components/PageHeader";
 import styles from "./menu.module.css";
 
@@ -31,7 +33,7 @@ export default function MenuPage() {
 
   return (
     <div className={styles.page}>
-      <PageHeader title="Menu" backHref="/" backLabel="BACK" />
+      <PageHeader title="Menu" backHref={ROUTES.home} backLabel="BACK" />
 
       <div className={styles.body}>
         <div className={styles.intro}>
@@ -72,8 +74,7 @@ export default function MenuPage() {
             </p>
             <a
               href={buildWhatsAppUrl()}
-              target="_blank"
-              rel="noopener noreferrer"
+              {...EXTERNAL_LINK_PROPS}
               className={styles.askButton}
             >
               ASK US ABOUT {query.trim().toUpperCase()}
@@ -100,7 +101,7 @@ export default function MenuPage() {
         })}
 
         {itemCount > 0 && (
-          <Link href="/cart" className={styles.cartBar}>
+          <Link href={ROUTES.cart} className={styles.cartBar}>
             <span className={styles.cartBarInfo}>
               <span className={styles.cartBarCount}>
                 {itemCount} item{itemCount === 1 ? "" : "s"}

@@ -1,9 +1,27 @@
+import type { Metadata } from "next";
 import { CONFIG } from "@/lib/config";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import { EXTERNAL_LINK_PROPS } from "@/lib/externalLink";
 import { ROUTES } from "@/lib/routes";
+import { withBasePath } from "@/lib/assets";
+import { SITE_NAME, DEFAULT_OG_IMAGE } from "@/lib/og";
 import { PageHeader } from "@/components/PageHeader";
 import styles from "./contact.module.css";
+
+const DESCRIPTION = `${CONFIG.address.line1}, ${CONFIG.address.line2}, ${CONFIG.address.line3}.`;
+
+export const metadata: Metadata = {
+  title: "Find us",
+  description: DESCRIPTION,
+  // See lib/og.ts: openGraph doesn't deep-merge with the root layout's,
+  // so siteName/type/image are repeated here rather than inherited.
+  openGraph: {
+    siteName: SITE_NAME,
+    type: "website",
+    url: withBasePath(ROUTES.contact),
+    images: [DEFAULT_OG_IMAGE],
+  },
+};
 
 export default function ContactPage() {
   return (

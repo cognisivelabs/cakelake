@@ -52,4 +52,10 @@ export const CONFIG = {
   /** Max length for the optional per-item cake inscription — every
    * catalog item uses this same client-confirmed limit. */
   cakeMessageMaxLength: 40,
+  /**
+   * The deployed site's origin (no path) — feeds metadataBase for Open
+   * Graph/Twitter image resolution. GitHub Pages for this POC phase (see
+   * ADR-002); update this when the site moves to its own domain.
+   */
+  siteUrl: "https://cognisivelabs.github.io",
 } as const;

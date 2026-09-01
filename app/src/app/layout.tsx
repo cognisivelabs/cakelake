@@ -5,16 +5,35 @@ import { CartProvider } from "@/context/CartContext";
 import { ServiceWorkerRegister } from "@/components/ServiceWorkerRegister";
 import { CONFIG } from "@/lib/config";
 import { INSTALL_PROMPT_EVENT, APP_INSTALLED_EVENT } from "@/lib/installEvents";
+import { withBasePath } from "@/lib/assets";
+import { SITE_NAME, DEFAULT_DESCRIPTION, DEFAULT_OG_IMAGE } from "@/lib/og";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Cake Lake Bakery",
-  description:
-    "Browse the menu, build an order, and send it to us on WhatsApp.",
+  metadataBase: new URL(CONFIG.siteUrl),
+  title: {
+    default: SITE_NAME,
+    template: `%s · ${SITE_NAME}`,
+  },
+  description: DEFAULT_DESCRIPTION,
   appleWebApp: {
     capable: true,
     title: "Cake Lake",
     statusBarStyle: "default",
+  },
+  openGraph: {
+    type: "website",
+    siteName: SITE_NAME,
+    title: SITE_NAME,
+    description: DEFAULT_DESCRIPTION,
+    url: withBasePath("/"),
+    images: [DEFAULT_OG_IMAGE],
+  },
+  twitter: {
+    card: "summary",
+    title: SITE_NAME,
+    description: DEFAULT_DESCRIPTION,
+    images: [DEFAULT_OG_IMAGE.url],
   },
 };
 

@@ -18,14 +18,16 @@ const CATEGORIES: Category[] = [
   { id: "custom-cakes", label: "Custom Cakes", accent: "#91134B" },
 ];
 
-function flavours(...entries: (string | { label: string; description?: string })[]) {
+type FlavourEntry = string | { label: string; description?: string; imageUrl?: string };
+
+function flavours(...entries: FlavourEntry[]) {
   return entries.map((entry) => {
-    const label = typeof entry === "string" ? entry : entry.label;
-    const description = typeof entry === "string" ? undefined : entry.description;
+    const { label, description, imageUrl } = typeof entry === "string" ? { label: entry } : entry;
     return {
       id: label.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
       label,
       ...(description ? { description } : {}),
+      ...(imageUrl ? { imageUrl } : {}),
     };
   });
 }
@@ -51,10 +53,12 @@ const CATALOG: CatalogItem[] = [
         {
           label: "Black Forest",
           description: "A divine combination of chocolate, cherries and whipped cream in every layer.",
+          imageUrl: "/images/classic-black-forest.jpg",
         },
         {
           label: "Pineapple",
           description: "A light and airy cake with tropical, fresh pineapple in every bite.",
+          imageUrl: "/images/classic-pineapple.jpg",
         },
       ),
     ],
@@ -83,6 +87,7 @@ const CATALOG: CatalogItem[] = [
         label: "Milk Chocolate Truffle",
         description:
           "A chocolate layer cake recipe with dense, moist chocolate cake, silky chocolate truffle frosting.",
+        imageUrl: "/images/premium-milk-chocolate-truffle.jpg",
       },
       {
         label: "Chocolate Vanilla",
@@ -97,19 +102,23 @@ const CATALOG: CatalogItem[] = [
         label: "Dark Chocolate Strawberry",
         description:
           "Made with moist and rich dark chocolate cake layers, silky smooth strawberry cream, dark chocolate ganache.",
+        imageUrl: "/images/premium-dark-chocolate-strawberry.jpg",
       },
       {
         label: "Strawberry",
         description: "Strawberry cake in combination of vanilla sponge with strawberry filling with nice presentation.",
+        imageUrl: "/images/premium-strawberry.jpg",
       },
       {
         label: "Blueberry",
         description: "Tangy, tart and sweet. Creamy blueberry reduction in between layers of vanilla cake.",
+        imageUrl: "/images/premium-blueberry.jpg",
       },
       {
         label: "Fresh Fruit",
         description:
           "Subtle, delectable vanilla cake with fresh, fruity goodness in every bite. Made of fresh fruit with less sugar.",
+        imageUrl: "/images/premium-fresh-fruit.jpg",
       },
     ),
     readyLabel: "Ready in 1 hour",
@@ -136,6 +145,7 @@ const CATALOG: CatalogItem[] = [
       {
         label: "Chocolate Brownie",
         description: "Dense brownie sponge topped with chocolate ganache and decorated with chocolate brownie balls.",
+        imageUrl: "/images/exotic-chocolate-brownie.jpg",
       },
       {
         label: "Hazelnut Crunch",
@@ -150,10 +160,12 @@ const CATALOG: CatalogItem[] = [
       {
         label: "Cafe Latte",
         description: "A coffee lover's delight — a light and airy vanilla-based cake with a coffee frosting.",
+        imageUrl: "/images/exotic-cafe-latte.jpg",
       },
       {
         label: "Mango",
         description: "Moist and spongy mango cake layered with mango cream, topped with fresh mango pieces.",
+        imageUrl: "/images/exotic-mango.jpg",
       },
       {
         label: "Caramel Chocolate",
@@ -188,6 +200,7 @@ const CATALOG: CatalogItem[] = [
       {
         label: "Oreo",
         description: "The perfect combo of an incredibly moist chocolate cake with crushed Oreo cookies.",
+        imageUrl: "/images/exotic-premium-oreo.jpg",
       },
       {
         label: "Snickers",

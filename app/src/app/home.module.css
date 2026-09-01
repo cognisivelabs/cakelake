@@ -83,6 +83,17 @@
   max-width: 300px;
 }
 
+.taglineDesktop {
+  display: none;
+}
+
+.counterOnlyNote {
+  margin: 6px 0 0;
+  font-size: 0.71875rem;
+  line-height: 1.55;
+  color: var(--color-ink-muted);
+}
+
 .ctas {
   /* No side padding — .ctas now sits inside .hero (unwrapped via
      .heroText's display:contents at mobile), which already provides it;
@@ -130,6 +141,10 @@
 
 .sectionLabel {
   composes: section-label from global;
+  /* Source text is natural case ("Shop by category") — uppercased here
+     for mobile's small eyebrow-label look; desktop turns this off and
+     sizes it up into a real heading instead (Hi-Fi's desktop Home). */
+  text-transform: uppercase;
 }
 
 .categoryGrid {
@@ -224,29 +239,55 @@
     max-width: 540px;
   }
 
-  .heroText h1 {
+  /* Hi-Fi's desktop hero has no logo mark and leads with the badges,
+     not the heading — reordered via flex `order` rather than moving
+     the JSX, so mobile's DOM/source order (logo, heading, badges) stays
+     untouched. */
+  .logoPlaceholder {
+    display: none;
+  }
+
+  .hero h1 {
+    order: 2;
     font-size: 3.5rem;
     text-transform: none;
   }
 
+  .heroSubtitle {
+    order: 2;
+  }
+
   .badges {
+    order: 1;
     justify-content: flex-start;
   }
 
   .tagline {
-    max-width: none;
+    display: none;
+  }
+
+  .taglineDesktop {
+    order: 3;
+    display: block;
+    margin: 0;
     font-size: 1rem;
+    line-height: 1.65;
+    color: var(--color-ink-muted);
   }
 
   .ctas {
+    order: 4;
     width: auto;
     flex-direction: row;
     margin-top: 4px;
   }
 
-  .primaryCta,
-  .secondaryCta {
+  .primaryCta {
     padding: 16px 28px;
+  }
+
+  .secondaryCta {
+    padding: 14.5px 26px;
   }
 
   .heroPhoto {
@@ -271,6 +312,7 @@
     font-size: 1.5rem;
     letter-spacing: -0.02em;
     color: var(--color-ink);
+    text-transform: none;
   }
 
   .categoryGrid {
@@ -296,6 +338,11 @@
     display: inline;
     font-weight: 700;
     color: var(--color-ink-muted);
+  }
+
+  .counterOnlyNote {
+    margin-top: 14px;
+    font-size: 0.8125rem;
   }
 
   .footer {

@@ -20,6 +20,12 @@ function priceFrom(items: CatalogItem[]): string | null {
   return prices.length === 0 ? null : formatAed(Math.min(...prices));
 }
 
+const listFormatter = new Intl.ListFormat("en-GB", { style: "long", type: "conjunction" });
+
+function formatList(items: readonly string[]): string {
+  return listFormatter.format(items);
+}
+
 export default function HomePage() {
   const categories = getCategories();
   const catalog = getCatalog();
@@ -43,6 +49,13 @@ export default function HomePage() {
               A live bakery in Karama — our cake ranges are baked to order and
               ready about an hour after you confirm. Custom cakes need a day.
             </p>
+            {/* Desktop gets its own longer copy (more room) — see the
+                Hi-Fi's desktop Home screen. */}
+            <p className={styles.taglineDesktop}>
+              A live bakery in Karama — everything eggless, everything pure
+              veg. Our cake ranges are baked to order and ready about an hour
+              after you confirm; custom cakes need a day&apos;s notice.
+            </p>
             <div className={styles.ctas}>
               <Link href={ROUTES.menu} className={styles.primaryCta}>
                 BROWSE MENU
@@ -61,11 +74,15 @@ export default function HomePage() {
         </div>
 
         <div className={styles.categorySection}>
-          <div className={styles.sectionLabel}>SHOP BY CATEGORY</div>
+          <div className={styles.sectionLabel}>Shop by category</div>
           <div className={styles.categoryGrid}>
             {categories.map((category) => {
               const items = catalog.filter((item) => item.categoryId === category.id);
-              const from = priceFrom(items);
+              // Cakes get a starting price; Custom Cakes is priced per kg
+              // across the board (up to "Ask us" for the largest sizes),
+              // so a single "from" price is less honest there — matches
+              // the Hi-Fi's per-category treatment, not a generic formula.
+              const from = category.id === "custom-cakes" ? null : priceFrom(items);
               return (
                 <Link
                   key={category.id}
@@ -80,11 +97,18 @@ export default function HomePage() {
                   <span className={styles.categoryCount}>
                     {items.length} ranges
                     {from && <span className={styles.categoryPriceFrom}> · from {from}</span>}
+                    {category.id === "custom-cakes" && (
+                      <span className={styles.categoryPriceFrom}> · per kg</span>
+                    )}
                   </span>
                 </Link>
               );
             })}
           </div>
+          <p className={styles.counterOnlyNote}>
+            Cupcakes, cookies and pastries are sold at the counter only —
+            ask us on WhatsApp.
+          </p>
         </div>
 
         <div className={styles.footer}>
@@ -132,7 +156,7 @@ export default function HomePage() {
             <p className={styles.footerText}>
               Orders are confirmed in WhatsApp.
               <br />
-              Also on {CONFIG.alsoOnPlatforms.join(", ")}.
+              Also on {formatList(CONFIG.alsoOnPlatforms)}.
             </p>
           </div>
           <a href={buildWhatsAppUrl()} {...EXTERNAL_LINK_PROPS} className={styles.desktopWaButton}>

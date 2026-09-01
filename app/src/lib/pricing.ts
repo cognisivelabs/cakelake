@@ -22,17 +22,13 @@ export function hasUnpricedLines(order: Order, catalog: CatalogItem[]): boolean 
   );
 }
 
-export function subtotal(order: Order, catalog: CatalogItem[]): number {
+// Delivery cost isn't priced on the site — see ADR-003: it's confirmed
+// with the customer over WhatsApp, not shown as a line item here.
+export function orderTotal(order: Order, catalog: CatalogItem[]): number {
   return resolveOrderLines(order, catalog).reduce((sum, { item, line }) => {
     const total = lineTotal(item, line);
     return total === undefined ? sum : sum + total;
   }, 0);
-}
-
-// Delivery cost isn't priced on the site — see ADR-003: it's confirmed
-// with the customer over WhatsApp, not shown as a line item here.
-export function orderTotal(order: Order, catalog: CatalogItem[]): number {
-  return subtotal(order, catalog);
 }
 
 export function formatAed(amount: number): string {

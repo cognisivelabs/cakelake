@@ -3,7 +3,7 @@
 import { useEffect, useState, useSyncExternalStore } from "react";
 import { INSTALL_PROMPT_EVENT, APP_INSTALLED_EVENT } from "@/lib/installEvents";
 
-export type InstallPlatform = "none" | "ios" | "android" | "android-manual";
+type InstallPlatform = "none" | "ios" | "android" | "android-manual";
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;

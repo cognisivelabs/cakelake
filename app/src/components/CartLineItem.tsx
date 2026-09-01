@@ -4,13 +4,13 @@ import type { CatalogItem } from "@/types/catalog";
 import type { CartLine } from "@/types/order";
 import { useCart } from "@/context/CartContext";
 import { lineTotal, formatAed } from "@/lib/pricing";
+import { resolveSelection } from "@/lib/order";
 import styles from "./CartLineItem.module.css";
 
 export function CartLineItem({ item, line }: { item: CatalogItem; line: CartLine }) {
   const { updateQuantity, removeLine } = useCart();
 
-  const tier = item.weightTiers.find((t) => t.id === line.weightTierId);
-  const flavour = item.flavours.find((f) => f.id === line.flavourId);
+  const { tier, flavour } = resolveSelection(item, line);
   const total = lineTotal(item, line);
 
   return (

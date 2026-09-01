@@ -76,11 +76,7 @@
 }
 
 .quantityStepper {
-  display: flex;
-  align-items: center;
-  background: var(--color-surface-muted);
-  border-radius: 7px;
-  overflow: hidden;
+  composes: quantity-stepper from global;
 }
 
 .quantityStepper button {

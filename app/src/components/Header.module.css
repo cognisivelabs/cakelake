@@ -83,12 +83,7 @@
 }
 
 .cartPill {
-  background: var(--color-ink);
-  color: var(--color-accent) !important;
-  border-radius: var(--radius-sm);
-  padding: 6px 10px;
-  font-size: 0.7rem !important;
-  text-decoration: none !important;
+  composes: cart-pill from global;
 }
 
 .dropdown {

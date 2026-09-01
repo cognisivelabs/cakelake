@@ -1,13 +1,9 @@
 .page {
-  display: flex;
-  flex-direction: column;
-  min-height: 100dvh;
+  composes: page-shell from global;
 }
 
 .body {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
+  composes: page-body from global;
 }
 
 .intro {

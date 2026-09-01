@@ -9,6 +9,8 @@ import { buildOrderMessage, buildWhatsAppUrl, openWhatsAppUrl } from "@/lib/what
 import { CONFIG } from "@/lib/config";
 import { EXTERNAL_LINK_PROPS } from "@/lib/externalLink";
 import { ROUTES } from "@/lib/routes";
+import { describeLine, resolveOrderLines, orderItemCount } from "@/lib/order";
+import { formatShortDate, parseIsoDateLocal, todayIsoDate } from "@/lib/dates";
 import { CartLineItem } from "@/components/CartLineItem";
 import { Header } from "@/components/Header";
 import { PageHeader } from "@/components/PageHeader";
@@ -25,16 +27,6 @@ function estimatedReadyTime(): string {
   const d = new Date();
   d.setHours(d.getHours() + CONFIG.sameDayPrepHours);
   return d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
-}
-
-// toISOString() converts to UTC first, which rolls back to the previous
-// calendar day for part of the day in any timezone ahead of UTC (e.g. any
-// time before 4am in UAE, UTC+4) — this stays in the viewer's local date.
-function todayIsoDate(): string {
-  const d = new Date();
-  const month = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
-  return `${d.getFullYear()}-${month}-${day}`;
 }
 
 export default function CartPage() {
@@ -55,16 +47,11 @@ export default function CartPage() {
   const [ackSummary, setAckSummary] = useState<{ lines: string; total: string } | null>(null);
   const displayMessage = sentMessage || buildOrderMessage(order, catalog);
 
-  const resolvedLines = order.lines
-    .map((line) => {
-      const item = catalog.find((c) => c.id === line.itemId);
-      return item ? { item, line } : null;
-    })
-    .filter((x): x is NonNullable<typeof x> => x !== null);
+  const resolvedLines = resolveOrderLines(order, catalog);
 
   const whenNeededValue =
     order.whenNeeded.kind === "date" ? "date" : order.whenNeeded.kind;
-  const itemCount = order.lines.reduce((sum, l) => sum + l.quantity, 0);
+  const itemCount = orderItemCount(order);
 
   function handleWhenNeededChange(value: string) {
     const next: WhenNeeded =
@@ -90,10 +77,7 @@ export default function CartPage() {
       case "tomorrow":
         return "Tomorrow";
       case "date":
-        return new Date(`${order.whenNeeded.date}T00:00:00`).toLocaleDateString("en-US", {
-          month: "short",
-          day: "numeric",
-        });
+        return formatShortDate(parseIsoDateLocal(order.whenNeeded.date));
       case "unsure":
         return "Not sure yet";
     }
@@ -125,12 +109,7 @@ export default function CartPage() {
     setSentUrl((current) => current || buildWhatsAppUrl(displayMessage));
     setAckSummary({
       lines: resolvedLines
-        .map(({ item, line }) => {
-          const tier = item.weightTiers.find((t) => t.id === line.weightTierId);
-          const flavour = item.flavours.find((f) => f.id === line.flavourId);
-          const descriptors = [tier?.label, flavour?.label].filter(Boolean).join(", ");
-          return descriptors ? `${item.name}, ${descriptors}` : item.name;
-        })
+        .map(({ item, line }) => describeLine(item, line))
         .join(" · "),
       total: formatAed(orderTotal(order, catalog)),
     });

@@ -1,6 +1,7 @@
 import type { CatalogItem } from "@/types/catalog";
 import type { CartLine, Order } from "@/types/order";
 import { CONFIG } from "@/lib/config";
+import { resolveOrderLines } from "@/lib/order";
 
 /** The selected weight tier's price, or undefined if it's an "Ask us" tier. */
 export function unitPrice(item: CatalogItem, line: CartLine): number | undefined {
@@ -16,16 +17,14 @@ export function lineTotal(item: CatalogItem, line: CartLine): number | undefined
 /** True if any line in the cart has an "Ask us" (unpriced) weight tier —
  * the total shown is a partial total, not the full order cost. */
 export function hasUnpricedLines(order: Order, catalog: CatalogItem[]): boolean {
-  return order.lines.some((line) => {
-    const item = catalog.find((c) => c.id === line.itemId);
-    return item ? unitPrice(item, line) === undefined : false;
-  });
+  return resolveOrderLines(order, catalog).some(
+    ({ item, line }) => unitPrice(item, line) === undefined
+  );
 }
 
 export function subtotal(order: Order, catalog: CatalogItem[]): number {
-  return order.lines.reduce((sum, line) => {
-    const item = catalog.find((c) => c.id === line.itemId);
-    const total = item ? lineTotal(item, line) : undefined;
+  return resolveOrderLines(order, catalog).reduce((sum, { item, line }) => {
+    const total = lineTotal(item, line);
     return total === undefined ? sum : sum + total;
   }, 0);
 }

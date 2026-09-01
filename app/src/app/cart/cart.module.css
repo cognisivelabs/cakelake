@@ -57,10 +57,7 @@
 }
 
 .sectionLabel {
-  font-weight: 700;
-  font-size: 0.72rem;
-  letter-spacing: 0.08em;
-  color: var(--color-ink-muted);
+  composes: section-label from global;
 }
 
 .pillRow {
@@ -97,7 +94,7 @@
   opacity: 0.75;
 }
 
-.dateInput {
+.textField {
   border: 1px solid var(--color-border-strong);
   border-radius: var(--radius-md);
   padding: 11px;
@@ -105,6 +102,10 @@
   font-size: 0.8rem;
   color: var(--color-ink);
   outline: none;
+}
+
+.dateInput {
+  composes: textField;
 }
 
 .infoBox {
@@ -123,13 +124,7 @@
 }
 
 .nameInput {
-  border: 1px solid var(--color-border-strong);
-  border-radius: var(--radius-md);
-  padding: 11px;
-  background: var(--color-surface);
-  font-size: 0.8rem;
-  color: var(--color-ink);
-  outline: none;
+  composes: textField;
 }
 
 .nameInputActive {

@@ -2,16 +2,13 @@ import type { CatalogItem } from "@/types/catalog";
 import type { CartLine, Order, WhenNeeded } from "@/types/order";
 import { CONFIG } from "@/lib/config";
 import { lineTotal, orderTotal, formatAed } from "@/lib/pricing";
+import { describeLine, resolveOrderLines } from "@/lib/order";
+import { formatShortDate, parseIsoDateLocal } from "@/lib/dates";
 
 // Matches docs/adr/ADR-003-whatsapp-order-handoff.md's template, updated
 // for the weight/flavour pricing model and the optional name field.
 
 function formatItemLine(item: CatalogItem, line: CartLine): string {
-  const tier = item.weightTiers.find((t) => t.id === line.weightTierId);
-  const flavour = item.flavours.find((f) => f.id === line.flavourId);
-  const descriptors = [tier?.label, flavour?.label].filter(Boolean).join(", ");
-  const namePart = descriptors ? `${item.name}, ${descriptors}` : item.name;
-
   const total = lineTotal(item, line);
   const priceText = total === undefined ? "price to confirm" : formatAed(total);
 
@@ -23,40 +20,32 @@ function formatItemLine(item: CatalogItem, line: CartLine): string {
     detailLines.push(`   Message: "${line.cakeMessage.trim()}"`);
   }
 
-  return [`${line.quantity}× ${namePart} — ${priceText}`, ...detailLines].join("\n");
+  return [
+    `${line.quantity}× ${describeLine(item, line)} — ${priceText}`,
+    ...detailLines,
+  ].join("\n");
 }
 
 function formatWhenNeeded(whenNeeded: WhenNeeded): string {
-  const shortDate = (d: Date) =>
-    d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-
   switch (whenNeeded.kind) {
     case "today":
-      return `Needed: Today, ${shortDate(new Date())}`;
+      return `Needed: Today, ${formatShortDate(new Date())}`;
     case "tomorrow": {
       const tomorrow = new Date();
       tomorrow.setDate(tomorrow.getDate() + 1);
-      return `Needed: Tomorrow, ${shortDate(tomorrow)}`;
+      return `Needed: Tomorrow, ${formatShortDate(tomorrow)}`;
     }
-    case "date": {
-      // whenNeeded.date is an ISO yyyy-mm-dd string from a <input type="date">.
-      const d = new Date(`${whenNeeded.date}T00:00:00`);
-      return `Needed: ${shortDate(d)}`;
-    }
+    case "date":
+      return `Needed: ${formatShortDate(parseIsoDateLocal(whenNeeded.date))}`;
     case "unsure":
       return "Needed: Not sure yet — I'll confirm on WhatsApp";
   }
 }
 
 export function buildOrderMessage(order: Order, catalog: CatalogItem[]): string {
-  const resolvedLines = order.lines
-    .map((line) => {
-      const item = catalog.find((c) => c.id === line.itemId);
-      return item ? { item, line } : null;
-    })
-    .filter((x): x is { item: CatalogItem; line: CartLine } => x !== null);
-
-  const itemLines = resolvedLines.map(({ item, line }) => formatItemLine(item, line));
+  const itemLines = resolveOrderLines(order, catalog).map(({ item, line }) =>
+    formatItemLine(item, line)
+  );
 
   // Client-confirmed: keep the name field, but never send a placeholder —
   // if it's blank, the header just reads "New order" with no name.

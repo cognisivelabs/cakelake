@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import type { CatalogItem } from "@/types/catalog";
 import { useCart } from "@/context/CartContext";
 import { formatAed } from "@/lib/pricing";
+import { resolveSelection } from "@/lib/order";
 import { getCategory } from "@/lib/catalog";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import { withBasePath } from "@/lib/assets";
@@ -26,8 +27,10 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
   const [cakeMessage, setCakeMessage] = useState("");
   const [customDescription, setCustomDescription] = useState("");
 
-  const selectedTier = item.weightTiers.find((t) => t.id === weightTierId);
-  const selectedFlavour = item.flavours.find((f) => f.id === flavourId);
+  const { tier: selectedTier, flavour: selectedFlavour } = resolveSelection(item, {
+    weightTierId,
+    flavourId,
+  });
   const unitPrice = selectedTier?.price;
   const total = unitPrice === undefined ? undefined : unitPrice * quantity;
 
@@ -150,9 +153,7 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
         </div>
         <h1 className={styles.title}>
           {item.name}
-          {item.flavours.length > 0 && flavourId
-            ? ` · ${item.flavours.find((f) => f.id === flavourId)?.label}`
-            : ""}
+          {item.flavours.length > 0 && flavourId ? ` · ${selectedFlavour?.label}` : ""}
         </h1>
         <p className={styles.description}>{item.description}</p>
       </div>

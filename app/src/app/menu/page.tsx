@@ -10,6 +10,7 @@ import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import { EXTERNAL_LINK_PROPS } from "@/lib/externalLink";
 import { ROUTES } from "@/lib/routes";
 import { PageHeader } from "@/components/PageHeader";
+import { orderItemCount } from "@/lib/order";
 import styles from "./menu.module.css";
 
 function matches(query: string, item: ReturnType<typeof getCatalog>[number]): boolean {
@@ -25,7 +26,7 @@ export default function MenuPage() {
   const { order } = useCart();
   const [query, setQuery] = useState("");
 
-  const itemCount = order.lines.reduce((sum, l) => sum + l.quantity, 0);
+  const itemCount = orderItemCount(order);
   const total = orderTotal(order, catalog);
 
   const visibleCatalog = catalog.filter((item) => matches(query, item));

@@ -103,6 +103,44 @@ a {
   text-transform: uppercase;
 }
 
+/* Shared across pages/components via CSS Modules `composes: ... from
+   global` — kept here instead of duplicated per-file. */
+.page-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
+.page-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.cart-pill {
+  background: var(--color-ink);
+  color: var(--color-accent) !important;
+  border-radius: var(--radius-sm);
+  padding: 6px 10px;
+  font-size: 0.7rem !important;
+  text-decoration: none !important;
+}
+
+.section-label {
+  font-weight: 700;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: var(--color-ink-muted);
+}
+
+.quantity-stepper {
+  display: flex;
+  align-items: center;
+  background: var(--color-surface-muted);
+  border-radius: 7px;
+  overflow: hidden;
+}
+
 button,
 input,
 select,

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import { ROUTES } from "@/lib/routes";
+import { orderItemCount } from "@/lib/order";
 import styles from "./PageHeader.module.css";
 
 type PageHeaderProps = {
@@ -12,7 +13,7 @@ type PageHeaderProps = {
 
 export function PageHeader(props: PageHeaderProps) {
   const { order } = useCart();
-  const itemCount = order.lines.reduce((sum, l) => sum + l.quantity, 0);
+  const itemCount = orderItemCount(order);
 
   return (
     <header className={styles.header}>

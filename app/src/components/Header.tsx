@@ -9,6 +9,7 @@ import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import { EXTERNAL_LINK_PROPS } from "@/lib/externalLink";
 import { ROUTES } from "@/lib/routes";
 import { INSTALL_STEPS } from "@/components/installSteps";
+import { orderItemCount } from "@/lib/order";
 import styles from "./Header.module.css";
 
 export function Header() {
@@ -16,7 +17,7 @@ export function Header() {
   const { platform, triggerInstall } = useInstallPrompt();
   const [menuOpen, setMenuOpen] = useState(false);
   const [showInstallSteps, setShowInstallSteps] = useState(false);
-  const itemCount = order.lines.reduce((sum, l) => sum + l.quantity, 0);
+  const itemCount = orderItemCount(order);
 
   function closeMenu() {
     setMenuOpen(false);

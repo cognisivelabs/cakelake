@@ -33,13 +33,8 @@
 }
 
 .cartPill {
+  composes: cart-pill from global;
   flex: 0 0 auto;
   min-width: 52px;
   text-align: right;
-  background: var(--color-ink);
-  color: var(--color-accent) !important;
-  border-radius: var(--radius-sm);
-  padding: 6px 10px;
-  font-size: 0.7rem !important;
-  text-decoration: none !important;
 }

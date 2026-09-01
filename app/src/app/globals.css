@@ -147,3 +147,17 @@ select,
 textarea {
   font-family: inherit;
 }
+
+/* Several form fields set outline: none to hide the browser's default
+   focus ring (it clashed with the field's own border styling) — that
+   left keyboard users with no visible indicator of which field is
+   focused. This restores one. */
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  /* !important: several fields set outline: none at the same selector
+     specificity (a class + element, same as :focus-visible + element) —
+     without it, cascade order rather than intent decides the winner. */
+  outline: 2px solid var(--color-accent) !important;
+  outline-offset: 1px;
+}

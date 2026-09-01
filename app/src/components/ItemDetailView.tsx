@@ -91,7 +91,11 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
       <div className={styles.photo}>
         {selectedFlavour?.imageUrl && (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={withBasePath(selectedFlavour.imageUrl)} alt="" className={styles.photoImage} />
+          <img
+            src={withBasePath(selectedFlavour.imageUrl)}
+            alt={`${item.name}, ${selectedFlavour.label}`}
+            className={styles.photoImage}
+          />
         )}
         {item.flavours.length > 0 && (
           <span className={styles.photoLabel}>{selectedFlavour?.label}</span>

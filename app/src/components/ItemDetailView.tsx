@@ -170,7 +170,7 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
           {item.name}
           {item.flavours.length > 0 && flavourId ? ` · ${selectedFlavour?.label}` : ""}
         </h1>
-        <p className={styles.description}>{item.description}</p>
+        <p className={styles.description}>{selectedFlavour?.description ?? item.description}</p>
       </div>
 
       <div className={styles.content}>

@@ -19,6 +19,10 @@ export type Flavour = {
   label: string;
   /** Real photo, when we have one — falls back to the placeholder box. */
   imageUrl?: string;
+  /** What this specific flavour tastes/looks like — not every flavour
+   * has one yet (real content is being filled in incrementally). Falls
+   * back to the item's own description when absent. */
+  description?: string;
 };
 
 export type Category = {

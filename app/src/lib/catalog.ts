@@ -18,8 +18,16 @@ const CATEGORIES: Category[] = [
   { id: "custom-cakes", label: "Custom Cakes", accent: "#91134B" },
 ];
 
-function flavours(...labels: string[]) {
-  return labels.map((label) => ({ id: label.toLowerCase().replace(/[^a-z0-9]+/g, "-"), label }));
+function flavours(...entries: (string | { label: string; description?: string })[]) {
+  return entries.map((entry) => {
+    const label = typeof entry === "string" ? entry : entry.label;
+    const description = typeof entry === "string" ? undefined : entry.description;
+    return {
+      id: label.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+      label,
+      ...(description ? { description } : {}),
+    };
+  });
 }
 
 const CATALOG: CatalogItem[] = [
@@ -33,8 +41,22 @@ const CATALOG: CatalogItem[] = [
       { id: "1kg", label: "1 kg", price: 100 },
     ],
     flavours: [
-      { id: "butterscotch", label: "Butterscotch", imageUrl: "/images/classic-butterscotch.jpg" },
-      ...flavours("Black Forest", "Pineapple"),
+      {
+        id: "butterscotch",
+        label: "Butterscotch",
+        imageUrl: "/images/classic-butterscotch.jpg",
+        description: "Ultra moist cake with each bite having a creamy butterscotch mouthfeel.",
+      },
+      ...flavours(
+        {
+          label: "Black Forest",
+          description: "A divine combination of chocolate, cherries and whipped cream in every layer.",
+        },
+        {
+          label: "Pineapple",
+          description: "A light and airy cake with tropical, fresh pineapple in every bite.",
+        },
+      ),
     ],
     readyLabel: "Ready in 1 hour",
     leadTimeHours: 0,
@@ -53,14 +75,42 @@ const CATALOG: CatalogItem[] = [
       { id: "1kg", label: "1 kg", price: 115 },
     ],
     flavours: flavours(
-      "Dark Chocolate Truffle",
-      "Milk Chocolate Truffle",
-      "Chocolate Vanilla",
-      "Chocolate Chips Loaded",
-      "Dark Chocolate Strawberry",
-      "Strawberry",
-      "Blueberry",
-      "Fresh Fruit",
+      {
+        label: "Dark Chocolate Truffle",
+        description: "Love dark chocolate? This luxurious, ganache based cake is for you.",
+      },
+      {
+        label: "Milk Chocolate Truffle",
+        description:
+          "A chocolate layer cake recipe with dense, moist chocolate cake, silky chocolate truffle frosting.",
+      },
+      {
+        label: "Chocolate Vanilla",
+        description:
+          "Soft, buttery, fluffy, moist, and filled with rich chocolate and vanilla flavor with zebra design.",
+      },
+      {
+        label: "Chocolate Chips Loaded",
+        description: "Delicious taste of chocolate cake with chocolate chips, moist and fluffy. Kids' favourite.",
+      },
+      {
+        label: "Dark Chocolate Strawberry",
+        description:
+          "Made with moist and rich dark chocolate cake layers, silky smooth strawberry cream, dark chocolate ganache.",
+      },
+      {
+        label: "Strawberry",
+        description: "Strawberry cake in combination of vanilla sponge with strawberry filling with nice presentation.",
+      },
+      {
+        label: "Blueberry",
+        description: "Tangy, tart and sweet. Creamy blueberry reduction in between layers of vanilla cake.",
+      },
+      {
+        label: "Fresh Fruit",
+        description:
+          "Subtle, delectable vanilla cake with fresh, fruity goodness in every bite. Made of fresh fruit with less sugar.",
+      },
     ),
     readyLabel: "Ready in 1 hour",
     leadTimeHours: 0,
@@ -79,14 +129,41 @@ const CATALOG: CatalogItem[] = [
       { id: "1kg", label: "1 kg", price: 140 },
     ],
     flavours: flavours(
-      "Chocolate Mousse",
-      "Chocolate Brownie",
-      "Hazelnut Crunch",
-      "White Chocolate Coconut",
-      "Cafe Latte",
-      "Mango",
-      "Caramel Chocolate",
-      "Triple Chocolate Indulgence",
+      {
+        label: "Chocolate Mousse",
+        description: "A classic with layers of moist chocolate cake and creamy chocolate mousse.",
+      },
+      {
+        label: "Chocolate Brownie",
+        description: "Dense brownie sponge topped with chocolate ganache and decorated with chocolate brownie balls.",
+      },
+      {
+        label: "Hazelnut Crunch",
+        description:
+          "A rich hazelnut ganache in between layers of velvety chocolate sponge. A favourite with those who like a little crunch and texture in every bite.",
+      },
+      {
+        label: "White Chocolate Coconut",
+        description:
+          "Layered with white chocolate ganache and coconut flakes, garnished with white chocolate coconut truffle balls.",
+      },
+      {
+        label: "Cafe Latte",
+        description: "A coffee lover's delight — a light and airy vanilla-based cake with a coffee frosting.",
+      },
+      {
+        label: "Mango",
+        description: "Moist and spongy mango cake layered with mango cream, topped with fresh mango pieces.",
+      },
+      {
+        label: "Caramel Chocolate",
+        description: "Moist chocolate cake layered with delicious chocolate caramel and crunchy bits.",
+      },
+      {
+        label: "Triple Chocolate Indulgence",
+        description:
+          "Three different chocolate frostings — white, milk and dark — creating an ombre effect. Every chocoholic's dream come true.",
+      },
       "Lush Berries",
       "Raspberry & White Chocolate",
       "Ragi Cake (Dry Fruits & Banana)",
@@ -108,13 +185,34 @@ const CATALOG: CatalogItem[] = [
       { id: "1kg", label: "1 kg", price: 160 },
     ],
     flavours: flavours(
-      "Oreo",
-      "Snickers",
+      {
+        label: "Oreo",
+        description: "The perfect combo of an incredibly moist chocolate cake with crushed Oreo cookies.",
+      },
+      {
+        label: "Snickers",
+        description: "A cake reminiscent of a Snickers bar, with a peanut nougat, salted caramel filling.",
+      },
       "Red Velvet",
-      "Pinacolada",
-      "Kinder Bueno",
-      "Lotus Biscoff",
-      "Nutella Rocher",
+      {
+        label: "Pinacolada",
+        description:
+          "This unique, alcohol-free cake pays homage to the classic beverage — coconut, pineapple bits and whipped cream.",
+      },
+      {
+        label: "Kinder Bueno",
+        description:
+          "A perfect celebration cake smothered in chocolate hazelnut cream and decorated with an array of Kinder Bueno chocolates.",
+      },
+      {
+        label: "Lotus Biscoff",
+        description: "The ultimate cake for Biscoff lovers — made with both crushed Biscoff biscuits and Biscoff spread.",
+      },
+      {
+        label: "Nutella Rocher",
+        description:
+          "Chocolate sponge layers sandwiched with Nutella cream and Ferrero Rocher bits. Recommended for all Nutella lovers out there.",
+      },
       "KitKat & Gems",
       "Rose & Pistachio",
     ),

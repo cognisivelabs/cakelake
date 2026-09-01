@@ -206,13 +206,25 @@ right after the order lands anyway.
   disclaimer specifically to the two actual sources of difference
   (customization, delivery) — not a general hedge on the site's own
   math.
-- **The mobile/desktop cart breakpoint is a build detail worth testing,
-  not assuming.** A portrait tablet has enough width for the desktop
-  right-column treatment, so the switch should be tested at both 768px
-  and 1024px rather than defaulting to 1024px for every device wider
-  than a phone — the goal is tablets getting whichever layout actually
-  looks right at that width, decided empirically during build, not
-  picked in advance here.
+- **Superseded — the mobile/desktop breakpoint is 1024px, decided, not
+  open.** This entry originally left the breakpoint as a build-time
+  question to be tested empirically at both 768px and 1024px. That
+  conflated two different numbers: **1512pt is the desktop canvas
+  size** the Hi-Fi is drawn at (14" MacBook) — a design target, not a
+  breakpoint — while **1024px is the actual breakpoint**, decided in
+  the project's step-1 planning and recorded as the source of truth in
+  `CLAUDE.md` ("Breakpoint stays 1024px"). Below 1024px: mobile layout.
+  At or above it: desktop.
+  768px isn't a candidate breakpoint to test against 1024px — it's
+  structurally incapable of holding the desktop layout at all. The
+  desktop Menu screen alone is a ~210px category rail + a 3-up card
+  grid + a ~340px cart column, summing to the full 1512px canvas; that
+  cannot lay out in a 768px viewport. A device at 768px necessarily
+  renders the mobile layout — that's a *consequence* of the 1024px
+  breakpoint, not an alternative to it. 768px still has a real,
+  narrower job: as a **test viewport** for confirming the mobile layout
+  holds up on tablet portrait, kept distinct from the breakpoint
+  decision above so the two don't get conflated again.
 - **Marking an item sold out in real time (not just via a commit and
   redeploy) — resolved as not needed.** The client confirmed 2026-08-21:
   the bakery runs a live-kitchen model (made fresh/to-order, not pulled

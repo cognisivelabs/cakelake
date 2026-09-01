@@ -17,6 +17,11 @@
 /.next/
 /out/
 
+# generated — scripts/generate-sw.mjs bakes the current git commit into
+# this at build/dev time so the service worker's cache actually
+# invalidates on deploy (see scripts/sw-template.js for why)
+/public/sw.js
+
 # production
 /build
 

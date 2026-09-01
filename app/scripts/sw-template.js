@@ -1,7 +1,13 @@
 // Minimal, conservative service worker (ADR-005): cache the static build
 // output for fast repeat loads and basic offline access, without risking
 // stale content — pages always go to the network first.
-const CACHE_VERSION = "cakelake-v1";
+//
+// This file is a TEMPLATE — public/sw.js is generated from it by
+// scripts/generate-sw.mjs, which fills in the version placeholder below
+// with the current git commit (see that script for why: a version that
+// doesn't change every deploy means the activate handler below never has
+// anything to clean up, and the cache just grows forever).
+const CACHE_VERSION = "cakelake-VERSION_PLACEHOLDER";
 
 self.addEventListener("install", () => {
   self.skipWaiting();

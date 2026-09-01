@@ -213,7 +213,7 @@ right after the order lands anyway.
   size** the Hi-Fi is drawn at (14" MacBook) — a design target, not a
   breakpoint — while **1024px is the actual breakpoint**, decided in
   the project's step-1 planning and recorded as the source of truth in
-  `CLAUDE.md` ("Breakpoint stays 1024px"). Below 1024px: mobile layout.
+  [`CLAUDE.md`](../design/CLAUDE.md) ("Breakpoint stays 1024px"). Below 1024px: mobile layout.
   At or above it: desktop.
   768px isn't a candidate breakpoint to test against 1024px — it's
   structurally incapable of holding the desktop layout at all. The

@@ -9,8 +9,9 @@ hands off to WhatsApp per
 ## Status
 
 Real, continuing code — not a throwaway spike. Restyled and restructured
-against the client's Hi-Fi design (`CLB Hi-Fi Screens.dc.html`, Claude
-Design), which is now the visual/content reference — colours, type
+against the client's Hi-Fi design ([`CLB-Hi-Fi-Screens.dc.html`](../docs/design/CLB-Hi-Fi-Screens.dc.html),
+Claude Design — see [docs/design](../docs/design/README.md) for the full
+set), which is now the visual/content reference — colours, type
 (Bricolage Grotesque / DM Sans), and copy throughout come from there,
 not invented.
 

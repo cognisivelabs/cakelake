@@ -327,3 +327,17 @@ reasoning behind each:
   the POC to match (removed `deliveryFeeAed`/`deliveryFee()`, updated
   the order-message template and Cart totals). See
   [ADR-003](../adr/ADR-003-whatsapp-order-handoff.md).
+- **2026-09-02** — Corrected the 2026-08-21 breakpoint entry above: it
+  conflated the 1512pt desktop Hi-Fi canvas size (a design target) with
+  the actual breakpoint, and framed 768px as a candidate to test
+  against 1024px. It isn't one — the desktop Menu layout (category
+  rail + 3-up grid + cart column) needs the full 1512px canvas width
+  and cannot lay out at 768px at all, so a device at that width simply
+  falls back to mobile; that's a consequence of the breakpoint, not an
+  alternative to it. The breakpoint is **1024px**, decided in the
+  project's step-1 planning and recorded in [`CLAUDE.md`](../design/CLAUDE.md)
+  ("Breakpoint stays 1024px") — not an open build-time question. 768px
+  remains useful only as a **test viewport** for confirming the mobile
+  layout holds up on tablet portrait. See
+  [ADR-003](../adr/ADR-003-whatsapp-order-handoff.md), which carries
+  the full correction.

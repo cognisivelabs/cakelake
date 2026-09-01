@@ -2,11 +2,23 @@ import Link from "next/link";
 import { getCatalog, getCategories } from "@/lib/catalog";
 import { CONFIG } from "@/lib/config";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
+import { formatAed } from "@/lib/pricing";
 import { EXTERNAL_LINK_PROPS } from "@/lib/externalLink";
 import { ROUTES } from "@/lib/routes";
 import { Header } from "@/components/Header";
 import { InstallPrompt } from "@/components/InstallPrompt";
+import type { CatalogItem } from "@/types/catalog";
 import styles from "./home.module.css";
+
+// Desktop's category card shows a starting price (mobile's doesn't —
+// see docs/design/CLB-Hi-Fi-Screens.dc.html's desktop Home screen).
+function priceFrom(items: CatalogItem[]): string | null {
+  const prices = items
+    .flatMap((item) => item.weightTiers)
+    .map((tier) => tier.price)
+    .filter((price): price is number => price !== undefined);
+  return prices.length === 0 ? null : formatAed(Math.min(...prices));
+}
 
 export default function HomePage() {
   const categories = getCategories();
@@ -18,36 +30,42 @@ export default function HomePage() {
 
       <div className={styles.body}>
         <div className={styles.hero}>
-          <div className={styles.logoPlaceholder}>logo</div>
-          <h1>Cake Lake Bakery</h1>
-          <p className={styles.heroSubtitle}>Fresh cakes, ready in an hour</p>
-          <div className={styles.badges}>
-            <span className={styles.badgeTeal}>EGGLESS ONLY</span>
-            <span className={styles.badgeTeal}>PURE VEG</span>
-            <span className={styles.badgeWarm}>LIVE BAKERY</span>
+          <div className={styles.heroText}>
+            <div className={styles.logoPlaceholder}>logo</div>
+            <h1>Cake Lake Bakery</h1>
+            <p className={styles.heroSubtitle}>Fresh cakes, ready in an hour</p>
+            <div className={styles.badges}>
+              <span className={styles.badgeTeal}>EGGLESS ONLY</span>
+              <span className={styles.badgeTeal}>PURE VEG</span>
+              <span className={styles.badgeWarm}>LIVE BAKERY</span>
+            </div>
+            <p className={styles.tagline}>
+              A live bakery in Karama — our cake ranges are baked to order and
+              ready about an hour after you confirm. Custom cakes need a day.
+            </p>
+            <div className={styles.ctas}>
+              <Link href={ROUTES.menu} className={styles.primaryCta}>
+                BROWSE MENU
+              </Link>
+              {/* Secondary to Browse Menu — a PDF can't hold a cart, so
+                  it's not an equal, competing CTA. See requirements.md #6. */}
+              <button type="button" className={styles.secondaryCta} disabled>
+                DOWNLOAD MENU (PDF)
+              </button>
+            </div>
           </div>
-          <p className={styles.tagline}>
-            A live bakery in Karama — our cake ranges are baked to order and
-            ready about an hour after you confirm. Custom cakes need a day.
-          </p>
-        </div>
-
-        <div className={styles.ctas}>
-          <Link href={ROUTES.menu} className={styles.primaryCta}>
-            BROWSE MENU
-          </Link>
-          {/* Secondary to Browse Menu — a PDF can't hold a cart, so it's
-              not an equal, competing CTA. See requirements.md #6. */}
-          <button type="button" className={styles.secondaryCta} disabled>
-            DOWNLOAD MENU (PDF)
-          </button>
+          {/* Desktop only — mobile has no room for a hero photo, and none
+              exists yet regardless (placeholder, same convention as
+              catalog items with no photo). */}
+          <div className={styles.heroPhoto} />
         </div>
 
         <div className={styles.categorySection}>
           <div className={styles.sectionLabel}>SHOP BY CATEGORY</div>
           <div className={styles.categoryGrid}>
             {categories.map((category) => {
-              const count = catalog.filter((item) => item.categoryId === category.id).length;
+              const items = catalog.filter((item) => item.categoryId === category.id);
+              const from = priceFrom(items);
               return (
                 <Link
                   key={category.id}
@@ -59,7 +77,10 @@ export default function HomePage() {
                   <span className={styles.categoryName} style={{ color: category.accent }}>
                     {category.label}
                   </span>
-                  <span className={styles.categoryCount}>{count} ranges</span>
+                  <span className={styles.categoryCount}>
+                    {items.length} ranges
+                    {from && <span className={styles.categoryPriceFrom}> · from {from}</span>}
+                  </span>
                 </Link>
               );
             })}
@@ -87,6 +108,35 @@ export default function HomePage() {
             className={styles.footerLink}
           >
             MESSAGE US ON WHATSAPP →
+          </a>
+        </div>
+
+        {/* Desktop only — the Hi-Fi's 3-column footer (location / ordering
+            / a standalone WhatsApp button) is different enough in shape
+            from mobile's stacked version that reflowing one DOM tree
+            between the two got fighting-the-grid awkward; kept separate,
+            toggled by the same 1024px breakpoint as everything else here. */}
+        <div className={styles.desktopFooter}>
+          <div className={styles.desktopFooterColumn}>
+            <div className={`${styles.footerLabel} mono-tag`}>WHERE TO FIND US</div>
+            <p className={styles.footerText}>
+              {CONFIG.address.line1}
+              <br />
+              {CONFIG.address.line2}, {CONFIG.address.line3}
+              <br />
+              {CONFIG.shopPhone}
+            </p>
+          </div>
+          <div className={styles.desktopFooterColumn}>
+            <div className={`${styles.footerLabel} mono-tag`}>ORDERING</div>
+            <p className={styles.footerText}>
+              Orders are confirmed in WhatsApp.
+              <br />
+              Also on {CONFIG.alsoOnPlatforms.join(", ")}.
+            </p>
+          </div>
+          <a href={buildWhatsAppUrl()} {...EXTERNAL_LINK_PROPS} className={styles.desktopWaButton}>
+            MESSAGE US ON WHATSAPP
           </a>
         </div>
       </div>

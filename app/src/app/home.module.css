@@ -15,6 +15,14 @@
   text-align: center;
 }
 
+.heroText {
+  display: contents;
+}
+
+.heroPhoto {
+  display: none;
+}
+
 .logoPlaceholder {
   width: 72px;
   height: 72px;
@@ -76,7 +84,11 @@
 }
 
 .ctas {
-  padding: 16px 20px 0;
+  /* No side padding — .ctas now sits inside .hero (unwrapped via
+     .heroText's display:contents at mobile), which already provides it;
+     .hero's own flex gap supplies most of the vertical spacing too. */
+  width: 100%;
+  margin-top: 6px;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -151,6 +163,14 @@
   color: var(--color-ink-faint);
 }
 
+.categoryPriceFrom {
+  display: none;
+}
+
+.desktopFooter {
+  display: none;
+}
+
 .footer {
   margin-top: auto;
   padding: 18px 20px 24px;
@@ -182,4 +202,136 @@
   font-weight: 700;
   font-size: 0.72rem;
   text-decoration: none;
+}
+
+/* Desktop — see docs/design/CLB-Hi-Fi-Screens.dc.html's "Home — desktop"
+   screen. Breakpoint is 1024px, decided (see ADR-003's corrected entry),
+   not a value to keep re-deciding per component. */
+@media (min-width: 1024px) {
+  .hero {
+    flex-direction: row;
+    align-items: center;
+    gap: 40px;
+    padding: 52px 32px 0;
+    text-align: left;
+  }
+
+  .heroText {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 18px;
+    max-width: 540px;
+  }
+
+  .heroText h1 {
+    font-size: 3.5rem;
+    text-transform: none;
+  }
+
+  .badges {
+    justify-content: flex-start;
+  }
+
+  .tagline {
+    max-width: none;
+    font-size: 1rem;
+  }
+
+  .ctas {
+    width: auto;
+    flex-direction: row;
+    margin-top: 4px;
+  }
+
+  .primaryCta,
+  .secondaryCta {
+    padding: 16px 28px;
+  }
+
+  .heroPhoto {
+    display: block;
+    flex: 1;
+    align-self: stretch;
+    min-height: 380px;
+    border-radius: 14px;
+    background: var(--color-photo-bg);
+    border: 1px dashed var(--color-placeholder-border);
+  }
+
+  .categorySection {
+    padding: 52px 32px 0;
+    margin-bottom: 0;
+    gap: 16px;
+  }
+
+  .sectionLabel {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: 1.5rem;
+    letter-spacing: -0.02em;
+    color: var(--color-ink);
+  }
+
+  .categoryGrid {
+    max-width: 640px;
+    gap: 16px;
+  }
+
+  .categoryCard {
+    border-radius: 12px;
+    padding: 22px;
+    gap: 9px;
+  }
+
+  .categoryName {
+    font-size: 1.125rem;
+  }
+
+  .categoryCount {
+    font-size: 0.78rem;
+  }
+
+  .categoryPriceFrom {
+    display: inline;
+    font-weight: 700;
+    color: var(--color-ink-muted);
+  }
+
+  .footer {
+    display: none;
+  }
+
+  .desktopFooter {
+    margin-top: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 40px;
+    padding: 34px 32px;
+    background: var(--color-ink);
+  }
+
+  .desktopFooterColumn {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+  }
+
+  .desktopFooterColumn .footerText {
+    font-size: 0.84rem;
+  }
+
+  .desktopWaButton {
+    flex: none;
+    align-self: center;
+    background: var(--color-teal);
+    color: #fff;
+    border-radius: var(--radius-md);
+    padding: 14px 22px;
+    font-weight: 800;
+    font-size: 0.75rem;
+    letter-spacing: 0.03em;
+    text-decoration: none;
+  }
 }

@@ -10,6 +10,8 @@ import { EXTERNAL_LINK_PROPS } from "@/lib/externalLink";
 import { ROUTES } from "@/lib/routes";
 import { INSTALL_STEPS } from "@/components/installSteps";
 import { orderItemCount } from "@/lib/order";
+import { orderTotal, formatAed } from "@/lib/pricing";
+import { getCatalog } from "@/lib/catalog";
 import styles from "./Header.module.css";
 
 export function Header() {
@@ -18,6 +20,10 @@ export function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [showInstallSteps, setShowInstallSteps] = useState(false);
   const itemCount = orderItemCount(order);
+  // Desktop's cart button shows a running total too (mobile's doesn't —
+  // no room). Cheap either way: both are pure reads over the in-memory
+  // catalog, not worth gating behind the desktop breakpoint in JS.
+  const total = orderTotal(order, getCatalog());
 
   function closeMenu() {
     setMenuOpen(false);
@@ -50,6 +56,22 @@ export function Header() {
           Cake Lake
         </Link>
 
+        {/* Desktop only (hidden <1024px) — mobile keeps the hamburger
+            dropdown below instead, per ADR-003's corrected breakpoint. */}
+        <nav className={styles.desktopNav}>
+          <Link href={ROUTES.menu} className={styles.navLink}>
+            Menu
+          </Link>
+          {/* Custom cakes has no route of its own — it's a category on
+              the same Menu page, not a separate screen. */}
+          <Link href={ROUTES.menu} className={styles.navLink}>
+            Custom cakes
+          </Link>
+          <Link href={ROUTES.contact} className={styles.navLink}>
+            Find us
+          </Link>
+        </nav>
+
         <div className={styles.actions}>
           <a
             href={buildWhatsAppUrl()}
@@ -61,6 +83,15 @@ export function Header() {
           </a>
           <Link href={ROUTES.cart} className={`${styles.cartPill} mono-tag`}>
             CART {itemCount}
+          </Link>
+        </div>
+
+        <div className={styles.desktopActions}>
+          <a href={buildWhatsAppUrl()} {...EXTERNAL_LINK_PROPS} className={`${styles.waButton} mono-tag`}>
+            WhatsApp
+          </a>
+          <Link href={ROUTES.cart} className={`${styles.desktopCartPill} mono-tag`}>
+            Cart · {itemCount} · {formatAed(total)}
           </Link>
         </div>
       </div>

@@ -38,7 +38,14 @@ export function ItemCard({ item }: { item: CatalogItem }) {
       <div className={styles.photo}>
         {previewImage && (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={withBasePath(previewImage)} alt="" className={styles.photoImage} />
+          <img
+            src={withBasePath(previewImage)}
+            alt=""
+            className={styles.photoImage}
+            onError={(e) => {
+              e.currentTarget.style.display = "none";
+            }}
+          />
         )}
         {item.flavours.length > 0 && (
           <span className={`${styles.flavourCount} mono-tag`}>

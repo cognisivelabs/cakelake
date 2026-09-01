@@ -95,6 +95,9 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
             src={withBasePath(selectedFlavour.imageUrl)}
             alt={`${item.name}, ${selectedFlavour.label}`}
             className={styles.photoImage}
+            onError={(e) => {
+              e.currentTarget.style.display = "none";
+            }}
           />
         )}
         {item.flavours.length > 0 && (
@@ -120,6 +123,9 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
                       src={withBasePath(flavour.imageUrl)}
                       alt=""
                       className={styles.flavourSwatchImage}
+                      onError={(e) => {
+                        e.currentTarget.style.display = "none";
+                      }}
                     />
                   )}
                 </span>

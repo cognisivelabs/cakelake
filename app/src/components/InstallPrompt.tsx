@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useInstallPrompt } from "@/hooks/useInstallPrompt";
 import { STORAGE_KEYS } from "@/lib/storageKeys";
+import { safeGetItem, safeSetItem } from "@/lib/safeStorage";
 import { INSTALL_STEPS } from "@/components/installSteps";
 import styles from "./InstallPrompt.module.css";
 
@@ -14,7 +15,7 @@ export function InstallPrompt() {
   const [showSteps, setShowSteps] = useState(false);
 
   function dismiss() {
-    window.localStorage.setItem(DISMISSED_KEY, "1");
+    safeSetItem(DISMISSED_KEY, "1");
     setSessionDismissed(true);
   }
 
@@ -22,7 +23,7 @@ export function InstallPrompt() {
     if (platform === "android") {
       const outcome = await triggerInstall();
       if (outcome === "accepted") {
-        window.localStorage.setItem(DISMISSED_KEY, "1");
+        safeSetItem(DISMISSED_KEY, "1");
       }
       setSessionDismissed(true);
       return;
@@ -31,7 +32,7 @@ export function InstallPrompt() {
   }
 
   if (platform === "none") return null;
-  const dismissed = sessionDismissed || window.localStorage.getItem(DISMISSED_KEY) === "1";
+  const dismissed = sessionDismissed || safeGetItem(DISMISSED_KEY) === "1";
   if (dismissed) return null;
 
   return (

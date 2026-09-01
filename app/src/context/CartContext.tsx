@@ -8,6 +8,7 @@ import {
 } from "react";
 import type { CartLine, Fulfillment, Order, WhenNeeded } from "@/types/order";
 import { STORAGE_KEYS } from "@/lib/storageKeys";
+import { safeGetItem, safeSetItem } from "@/lib/safeStorage";
 
 const STORAGE_KEY = STORAGE_KEYS.cart;
 
@@ -31,7 +32,7 @@ const listeners = new Set<() => void>();
 
 function persist(order: Order) {
   if (typeof window === "undefined") return;
-  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(order));
+  safeSetItem(STORAGE_KEY, JSON.stringify(order));
 }
 
 function commit(next: Order) {
@@ -59,11 +60,11 @@ function subscribe(callback: () => void): () => void {
 // over post-hydration, so there's no server/client mismatch either way.
 if (typeof window !== "undefined") {
   try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
+    const raw = safeGetItem(STORAGE_KEY);
     const parsed = raw ? (JSON.parse(raw) as Order) : null;
     if (parsed?.lines) currentOrder = { ...EMPTY_ORDER, ...parsed };
   } catch {
-    // Corrupt or inaccessible storage — fall back to an empty cart.
+    // Corrupt storage contents — fall back to an empty cart.
   }
 }
 

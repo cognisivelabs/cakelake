@@ -14,8 +14,8 @@ const CORRECTION_LEVELS = ["H", "M", "L"] as const;
 /** Renders a scannable QR code for `value` — Cart — desktop's handoff
  * screen, so a customer can send the WhatsApp order from their phone
  * instead of this desktop browser. Client-side only (static export has
- * no server to render it ahead of time). Branded with a centered "CL"
- * monogram and the ink colour instead of plain black-on-white. */
+ * no server to render it ahead of time). Black on white, matching the
+ * centered "CL" monogram badge rather than clashing with it. */
 export function QrCode({ value, size = 220 }: { value: string; size?: number }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [rendered, setRendered] = useState(false);
@@ -31,7 +31,7 @@ export function QrCode({ value, size = 220 }: { value: string; size?: number }) 
             width: size,
             errorCorrectionLevel: level,
             color: {
-              dark: "#4f352f", // --color-ink
+              dark: "#000000",
               light: "#ffffff",
             },
           });

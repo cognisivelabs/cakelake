@@ -246,47 +246,87 @@ export default function MenuPage() {
             </section>
 
             <aside className={styles.cartColumn}>
-              {resolvedLines.length > 0 && (
-                <div className={styles.cartPanel}>
-                  <div className={styles.cartPanelHeader}>
-                    <span className={styles.cartPanelTitle}>Your order</span>
-                    <span className={styles.cartPanelCount}>
-                      {itemCount} item{itemCount === 1 ? "" : "s"}
-                    </span>
+              <div className={styles.cartPanel}>
+                <div className={styles.cartPanelHeader}>
+                  <span className={styles.cartPanelTitle}>Your order</span>
+                  <span className={styles.cartPanelCount}>
+                    {resolvedLines.length === 0
+                      ? "EMPTY"
+                      : `${itemCount} item${itemCount === 1 ? "" : "s"}`}
+                  </span>
+                </div>
+
+                <div className={styles.cartPanelBody}>
+                {resolvedLines.length === 0 ? (
+                  <div className={styles.cartPanelEmpty}>
+                    <p className={styles.cartPanelEmptyTitle}>Nothing added yet</p>
+                    <p className={styles.cartPanelEmptyText}>
+                      Open a range to pick flavour, size and any message on the
+                      cake. Everything you add lands here.
+                    </p>
+                    <div className={styles.cartPanelStepsLabel}>HOW ORDERING WORKS</div>
+                    <ol className={styles.cartPanelSteps}>
+                      <li>
+                        <span className={styles.cartPanelStepNum}>1</span>
+                        <span>Add your cakes and pick pickup or delivery.</span>
+                      </li>
+                      <li>
+                        <span className={styles.cartPanelStepNum}>2</span>
+                        <span>
+                          Send the order to us on WhatsApp — one tap, message
+                          already written.
+                        </span>
+                      </li>
+                      <li>
+                        <span className={styles.cartPanelStepNum}>3</span>
+                        <span>
+                          We confirm price and time in the chat. Nothing is
+                          charged in the app.
+                        </span>
+                      </li>
+                    </ol>
+                    <p className={styles.cartPanelNote}>
+                      Cakes are baked to order — most need 1 hour, custom
+                      cakes need 24 hours&apos; notice.
+                    </p>
                   </div>
-                  <div className={styles.cartPanelLines}>
-                    {resolvedLines.map(({ item, line }) => {
-                      const lt = lineTotal(item, line);
-                      return (
-                        <div key={line.lineId} className={styles.cartPanelLine}>
-                          <div className={styles.cartPanelPhoto} />
-                          <div className={styles.cartPanelInfo}>
-                            <div className={styles.cartPanelName}>{describeLine(item, line)}</div>
-                            {line.cakeMessage && (
-                              <div className={styles.cartPanelDetail}>&ldquo;{line.cakeMessage}&rdquo;</div>
-                            )}
-                            <div className={styles.cartPanelFooter}>
-                              <span>{lt === undefined ? "Price to confirm" : formatAed(lt)}</span>
-                              <span className={styles.cartPanelQty}>Qty {line.quantity}</span>
+                ) : (
+                  <>
+                    <div className={styles.cartPanelLines}>
+                      {resolvedLines.map(({ item, line }) => {
+                        const lt = lineTotal(item, line);
+                        return (
+                          <div key={line.lineId} className={styles.cartPanelLine}>
+                            <div className={styles.cartPanelPhoto} />
+                            <div className={styles.cartPanelInfo}>
+                              <div className={styles.cartPanelName}>{describeLine(item, line)}</div>
+                              {line.cakeMessage && (
+                                <div className={styles.cartPanelDetail}>&ldquo;{line.cakeMessage}&rdquo;</div>
+                              )}
+                              <div className={styles.cartPanelFooter}>
+                                <span>{lt === undefined ? "Price to confirm" : formatAed(lt)}</span>
+                                <span className={styles.cartPanelQty}>Qty {line.quantity}</span>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                  <p className={styles.cartPanelNote}>
-                    Delivery time runs on top of any lead time and is confirmed
-                    in chat.
-                  </p>
-                  <div className={styles.cartPanelTotalRow}>
-                    <span>Total</span>
-                    <span>{formatAed(total)}</span>
-                  </div>
-                  <Link href={ROUTES.cart} className={styles.reviewOrderButton}>
-                    REVIEW ORDER
-                  </Link>
+                        );
+                      })}
+                    </div>
+                    <p className={styles.cartPanelNote}>
+                      Delivery time runs on top of any lead time and is
+                      confirmed in chat.
+                    </p>
+                    <div className={styles.cartPanelTotalRow}>
+                      <span>Total</span>
+                      <span>{formatAed(total)}</span>
+                    </div>
+                    <Link href={ROUTES.cart} className={styles.reviewOrderButton}>
+                      REVIEW ORDER
+                    </Link>
+                  </>
+                )}
                 </div>
-              )}
+              </div>
             </aside>
           </div>
         )}

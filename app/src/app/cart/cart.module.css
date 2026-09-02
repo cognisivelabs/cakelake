@@ -557,10 +557,6 @@
     color: var(--color-ink);
   }
 
-  .qrPanel canvas {
-    border-radius: var(--radius-sm);
-  }
-
   .openWaLink {
     border: none;
     background: none;

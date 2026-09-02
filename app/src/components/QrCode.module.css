@@ -1,0 +1,37 @@
+.wrap {
+  position: relative;
+  display: inline-block;
+  line-height: 0;
+}
+
+.wrap canvas {
+  display: block;
+  border-radius: 10px;
+}
+
+/* Centered "CL" monogram — safe to overlay because the code is
+   generated with errorCorrectionLevel "H" (tolerates ~30% obscured)
+   and this covers well under that, clear of the three corner finder
+   squares. */
+.badge {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 15%;
+  height: 15%;
+  min-width: 34px;
+  min-height: 34px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  color: var(--color-ink);
+  border: 3px solid #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 0.75rem;
+  letter-spacing: -0.02em;
+  box-shadow: var(--shadow-card);
+}

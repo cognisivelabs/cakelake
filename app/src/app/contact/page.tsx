@@ -34,15 +34,6 @@ export default function ContactPage() {
         <Header />
       </div>
 
-      {/* Desktop only — see docs/design/CLB-Hi-Fi-Screens.dc.html's
-          "Find us — desktop": mobile's PageHeader title already says
-          "Find us", so this heading + subtitle is new content, not a
-          copy of anything mobile shows. */}
-      <div className={styles.desktopIntro}>
-        <h1>Find us in Karama</h1>
-        <p>A live bakery — walk in and collect, or message us and we&apos;ll bake it for a time that suits you.</p>
-      </div>
-
       <div className={styles.desktopGrid}>
         <iframe
           className={styles.map}
@@ -54,6 +45,18 @@ export default function ContactPage() {
         />
 
         <div className={styles.leftCol}>
+          {/* Desktop only — see docs/design/CLB-Hi-Fi-Screens.dc.html's
+              "Find us — desktop": mobile's PageHeader title already says
+              "Find us", so this heading + subtitle is new content, not
+              a copy of anything mobile shows. Lives inside .leftCol
+              (not as its own row above the grid) so its top lines up
+              with the map's, matching the Hi-Fi — measured directly off
+              the rendered canvas, both start at the same y. */}
+          <div className={styles.desktopIntro}>
+            <h1>Find us in Karama</h1>
+            <p>A live bakery — walk in and collect, or message us and we&apos;ll bake it for a time that suits you.</p>
+          </div>
+
           <div className={styles.content}>
             <section>
               <div className={styles.sectionLabel}>WHERE</div>

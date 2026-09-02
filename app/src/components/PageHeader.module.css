@@ -1,10 +1,29 @@
 .header {
+  background: var(--color-accent);
+}
+
+.headerInner {
   display: flex;
   align-items: center;
   gap: 10px;
   padding: 0 16px;
   height: 52px;
-  background: var(--color-accent);
+}
+
+/* Full-bleed on large monitors — see globals.css's --desktop-content-max.
+   Only used where a page keeps this back-link header at desktop instead
+   of swapping to the shared nav Header (Cart's send-order screen). */
+@media (min-width: 1024px) {
+  .headerInner {
+    height: 72px;
+    padding: 0 32px;
+    max-width: var(--desktop-content-max);
+    margin: 0 auto;
+  }
+
+  .title {
+    font-size: 1.2rem;
+  }
 }
 
 .back {

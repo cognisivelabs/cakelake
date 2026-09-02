@@ -1,3 +1,26 @@
+.page {
+  composes: page-shell breakout720 from global;
+}
+
+/* Review/empty states swap PageHeader (mobile) for the shared nav Header
+   (desktop) — same toggle Menu uses. The handoff/confirming state keeps
+   PageHeader at both breakpoints instead (see PageHeader.module.css's
+   own desktop treatment) since its "back to my order" action needs the
+   onBack handler the shared Header doesn't have a concept of. */
+.desktopHeaderWrap {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .mobileHeaderWrap {
+    display: none;
+  }
+
+  .desktopHeaderWrap {
+    display: block;
+  }
+}
+
 .centered {
   padding: 56px 30px 0;
   display: flex;
@@ -316,4 +339,241 @@
   font-size: 0.75rem;
   line-height: 1.6;
   color: var(--color-ink-muted);
+}
+
+/* — Desktop — see docs/design/CLB-Hi-Fi-Screens.dc.html's "Review order
+   — desktop" and "Handoff — desktop" screens. The line-item/form
+   sections (.lineList, .section) are shared with mobile unchanged —
+   only their wrapping layout and a couple of desktop-only additions
+   (.desktopHeading, .summaryColumn, the QR panel) differ. */
+.desktopHeading {
+  display: none;
+}
+
+.desktopReview {
+  display: contents;
+}
+
+.mainColumn {
+  display: contents;
+}
+
+.summaryColumn {
+  display: none;
+}
+
+.sideBySide {
+  display: contents;
+}
+
+.desktopOnlyNote {
+  display: none;
+}
+
+.desktopHandoff {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .centered {
+    max-width: 480px;
+    margin: 0 auto;
+    padding-top: 96px;
+  }
+
+  .desktopHeading {
+    display: block;
+    font-size: 1.75rem;
+  }
+
+  .desktopReview {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    align-items: start;
+    gap: 32px;
+    max-width: var(--desktop-content-max);
+    width: 100%;
+    margin: 0 auto;
+    padding: 32px;
+    box-sizing: border-box;
+  }
+
+  .mainColumn {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .mainColumn .lineList,
+  .mainColumn .section {
+    padding: 0;
+  }
+
+  .sideBySide {
+    display: flex;
+    gap: 24px;
+  }
+
+  .sideBySide > .section {
+    flex: 1;
+  }
+
+  .desktopOnlyNote {
+    display: block;
+  }
+
+  .summaryColumn {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    position: sticky;
+    top: 24px;
+  }
+
+  .totals,
+  .tealButtonBlock {
+    display: none;
+  }
+
+  /* — Summary panel — */
+  .summaryPanel {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: var(--color-surface);
+    border-radius: var(--radius-lg);
+    padding: 18px;
+    box-shadow: var(--shadow-card);
+  }
+
+  .summaryTitle {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: 1rem;
+    color: var(--color-ink);
+    margin-bottom: 2px;
+  }
+
+  .summaryRow {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: var(--color-ink-muted);
+  }
+
+  .summaryTotalRow {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 8px;
+    border-top: 1px solid var(--color-border);
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: 1.05rem;
+    color: var(--color-ink);
+  }
+
+  .summaryPanel .tealButton {
+    margin-top: 6px;
+  }
+
+  .summaryNote {
+    margin: 0;
+    font-size: 0.7rem;
+    line-height: 1.5;
+    color: var(--color-ink-faint);
+    text-align: center;
+  }
+
+  .howItWorksBox {
+    background: var(--color-teal-bg);
+    border-radius: var(--radius-lg);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .howItWorksBox .disclaimer {
+    color: var(--color-teal);
+    margin: 0;
+  }
+
+  /* — Handoff / QR — */
+  .handoffWrap {
+    display: none;
+  }
+
+  .desktopHandoff {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    align-items: start;
+    gap: 32px;
+    max-width: var(--desktop-content-max);
+    width: 100%;
+    margin: 0 auto;
+    padding: 32px;
+    box-sizing: border-box;
+  }
+
+  .desktopHandoffMain h1 {
+    font-size: 1.6rem;
+  }
+
+  .desktopMessageBox {
+    margin-top: 14px;
+    background: var(--color-surface);
+    border-radius: var(--radius-lg);
+    padding: 16px;
+    box-shadow: var(--shadow-card);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .desktopPreview {
+    white-space: pre-wrap;
+    margin: 0;
+    font-size: 0.75rem;
+    font-family: var(--font-body);
+    color: var(--color-ink-muted);
+  }
+
+  .qrPanel {
+    background: var(--color-surface);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    box-shadow: var(--shadow-card);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    text-align: center;
+  }
+
+  .qrTitle {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: 0.9rem;
+    color: var(--color-ink);
+  }
+
+  .qrPanel canvas {
+    border-radius: var(--radius-sm);
+  }
+
+  .openWaLink {
+    border: none;
+    background: none;
+    padding: 0;
+    font-size: 0.72rem;
+    line-height: 1.5;
+    color: var(--color-teal);
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  .qrPanel .stackedActions {
+    width: 100%;
+    margin-top: 4px;
+  }
 }

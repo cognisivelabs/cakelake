@@ -17,21 +17,23 @@ export function PageHeader(props: PageHeaderProps) {
 
   return (
     <header className={styles.header}>
-      {props.backHref ? (
-        <Link href={props.backHref} className={styles.back}>
-          ← {props.backLabel}
+      <div className={styles.headerInner}>
+        {props.backHref ? (
+          <Link href={props.backHref} className={styles.back}>
+            ← {props.backLabel}
+          </Link>
+        ) : (
+          <button type="button" className={styles.back} onClick={props.onBack}>
+            ← {props.backLabel}
+          </button>
+        )}
+
+        <h1 className={styles.title}>{props.title}</h1>
+
+        <Link href={ROUTES.cart} className={`${styles.cartPill} mono-tag`}>
+          CART {itemCount}
         </Link>
-      ) : (
-        <button type="button" className={styles.back} onClick={props.onBack}>
-          ← {props.backLabel}
-        </button>
-      )}
-
-      <h1 className={styles.title}>{props.title}</h1>
-
-      <Link href={ROUTES.cart} className={`${styles.cartPill} mono-tag`}>
-        CART {itemCount}
-      </Link>
+      </div>
     </header>
   );
 }

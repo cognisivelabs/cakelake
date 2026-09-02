@@ -14,6 +14,7 @@ import { formatShortDate, parseIsoDateLocal, todayIsoDate } from "@/lib/dates";
 import { CartLineItem } from "@/components/CartLineItem";
 import { Header } from "@/components/Header";
 import { PageHeader } from "@/components/PageHeader";
+import { QrCode } from "@/components/QrCode";
 import type { WhenNeeded } from "@/types/order";
 import styles from "./cart.module.css";
 
@@ -124,7 +125,7 @@ export default function CartPage() {
   // — Acknowledged —
   if (stage === "acknowledged" && ackSummary) {
     return (
-      <div>
+      <div className={styles.page}>
         <Header />
         <div className={styles.centered}>
           <div className={styles.checkCircle}>✓</div>
@@ -160,8 +161,9 @@ export default function CartPage() {
 
   // — Handoff review + "did you send it?" —
   if (stage === "handoff" || stage === "confirming") {
+    const waUrl = sentUrl || buildWhatsAppUrl(displayMessage);
     return (
-      <div>
+      <div className={styles.page}>
         <PageHeader title="Send order" backLabel="CART" onBack={backToReview} />
         <div className={styles.handoffWrap}>
           <div className={stage === "confirming" ? styles.dimmed : undefined}>
@@ -199,6 +201,47 @@ export default function CartPage() {
             </div>
           )}
         </div>
+
+        {/* Desktop — see docs/design/CLB-Hi-Fi-Screens.dc.html's
+            "Handoff — desktop": a QR code to scan on a phone, since a
+            desktop browser can't be sent to the WhatsApp app and back
+            the way mobile can. Both actions are offered together from
+            the start (no separate "open first" step to dim around) —
+            scanning the code happens off this page entirely. */}
+        <div className={styles.desktopHandoff}>
+          <div className={styles.desktopHandoffMain}>
+            <h1>Send this to us on WhatsApp</h1>
+            <p className={styles.muted}>
+              Scan the code with your phone and the message below opens
+              already typed. You still press send.
+            </p>
+            <div className={styles.desktopMessageBox}>
+              <div className={styles.sectionLabel}>THE MESSAGE</div>
+              <pre className={styles.desktopPreview}>{displayMessage}</pre>
+            </div>
+            <div className={styles.infoNote}>
+              We can&apos;t see your WhatsApp, so tell us once you&apos;ve sent
+              it and we&apos;ll clear your order here.
+            </div>
+          </div>
+
+          <div className={styles.qrPanel}>
+            <div className={styles.qrTitle}>Scan with your phone</div>
+            <QrCode value={waUrl} />
+            <button type="button" className={styles.openWaLink} onClick={openWhatsApp}>
+              Or open WhatsApp Web in another tab — the message will be
+              waiting
+            </button>
+            <div className={styles.stackedActions}>
+              <button type="button" className={styles.primaryButton} onClick={confirmSent}>
+                I&apos;VE SENT IT
+              </button>
+              <button type="button" className={styles.outlineButton} onClick={backToReview}>
+                BACK TO MY ORDER
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
@@ -206,8 +249,13 @@ export default function CartPage() {
   // — Review (default cart) —
   if (resolvedLines.length === 0) {
     return (
-      <div>
-        <PageHeader title="Your order" backHref={ROUTES.menu} backLabel="MENU" />
+      <div className={styles.page}>
+        <div className={styles.mobileHeaderWrap}>
+          <PageHeader title="Your order" backHref={ROUTES.menu} backLabel="MENU" />
+        </div>
+        <div className={styles.desktopHeaderWrap}>
+          <Header />
+        </div>
         <div className={styles.centered}>
           <div className={styles.emptyCircle}>0</div>
           <h1>Nothing in your order yet</h1>
@@ -230,97 +278,166 @@ export default function CartPage() {
   }
 
   return (
-    <div>
-      <PageHeader title="Your order" backHref={ROUTES.menu} backLabel="MENU" />
-
-      <div className={styles.lineList}>
-        {resolvedLines.map(({ item, line }) => (
-          <CartLineItem key={line.lineId} item={item} line={line} />
-        ))}
+    <div className={styles.page}>
+      <div className={styles.mobileHeaderWrap}>
+        <PageHeader title="Your order" backHref={ROUTES.menu} backLabel="MENU" />
+      </div>
+      <div className={styles.desktopHeaderWrap}>
+        <Header />
       </div>
 
-      <section className={styles.section}>
-        <div className={styles.sectionLabel}>WHEN DO YOU NEED IT?</div>
-        <div className={styles.pillRow}>
-          <button
-            type="button"
-            className={styles.pillOption}
-            data-selected={whenNeededValue === "today"}
-            onClick={() => handleWhenNeededChange("today")}
-          >
-            Today
-            <span className={styles.pillSubtext}>from {readyTime}</span>
-          </button>
-          <button
-            type="button"
-            className={styles.pillOption}
-            data-selected={whenNeededValue === "tomorrow"}
-            onClick={() => handleWhenNeededChange("tomorrow")}
-          >
-            Tomorrow
-          </button>
-          <button
-            type="button"
-            className={styles.pillOption}
-            data-selected={whenNeededValue === "date"}
-            onClick={pickADate}
-          >
-            Pick a date
-          </button>
-        </div>
-        {order.whenNeeded.kind === "date" && (
-          <input
-            type="date"
-            className={styles.dateInput}
-            value={order.whenNeeded.date}
-            min={todayIsoDate()}
-            onChange={(e) => handleWhenNeededChange(e.target.value)}
-          />
-        )}
-        <div className={styles.infoBox}>
-          Everything here is ready within the hour. Pick a later slot if
-          you&apos;d rather — delivery runs on top and is confirmed in chat.
-        </div>
-      </section>
+      <div className={styles.desktopReview}>
+        <div className={styles.mainColumn}>
+          <h1 className={styles.desktopHeading}>Review your order</h1>
 
-      <section className={styles.section}>
-        <div className={styles.sectionLabel}>PICKUP OR DELIVERY</div>
-        <div className={styles.pillRow}>
-          <button
-            type="button"
-            className={styles.pillOption}
-            data-selected={order.fulfillment === "pickup"}
-            onClick={() => setFulfillment("pickup")}
-          >
-            Pickup
-          </button>
-          <button
-            type="button"
-            className={styles.pillOption}
-            data-selected={order.fulfillment === "delivery"}
-            onClick={() => setFulfillment("delivery")}
-          >
-            Delivery
-          </button>
-        </div>
-        {order.fulfillment === "delivery" && (
-          <p className={styles.deliveryNote}>
-            We&apos;ll confirm the delivery fee with you on WhatsApp — it isn&apos;t
-            priced on the site.
-          </p>
-        )}
-      </section>
+          <div className={styles.lineList}>
+            {resolvedLines.map(({ item, line }) => (
+              <CartLineItem key={line.lineId} item={item} line={line} />
+            ))}
+          </div>
 
-      <section className={styles.section}>
-        <div className={styles.sectionLabel}>YOUR NAME</div>
-        <input
-          type="text"
-          className={`${styles.nameInput} ${order.customerName ? styles.nameInputActive : ""}`}
-          value={order.customerName}
-          onChange={(e) => setCustomerName(e.target.value)}
-          placeholder="Full Name"
-        />
-      </section>
+          <section className={styles.section}>
+            <div className={styles.sectionLabel}>WHEN DO YOU NEED IT?</div>
+            <div className={styles.pillRow}>
+              <button
+                type="button"
+                className={styles.pillOption}
+                data-selected={whenNeededValue === "today"}
+                onClick={() => handleWhenNeededChange("today")}
+              >
+                Today
+                <span className={styles.pillSubtext}>from {readyTime}</span>
+              </button>
+              <button
+                type="button"
+                className={styles.pillOption}
+                data-selected={whenNeededValue === "tomorrow"}
+                onClick={() => handleWhenNeededChange("tomorrow")}
+              >
+                Tomorrow
+              </button>
+              <button
+                type="button"
+                className={styles.pillOption}
+                data-selected={whenNeededValue === "date"}
+                onClick={pickADate}
+              >
+                Pick a date
+              </button>
+            </div>
+            {order.whenNeeded.kind === "date" && (
+              <input
+                type="date"
+                className={styles.dateInput}
+                value={order.whenNeeded.date}
+                min={todayIsoDate()}
+                onChange={(e) => handleWhenNeededChange(e.target.value)}
+              />
+            )}
+            <div className={styles.infoBox}>
+              Everything here is ready within the hour. Pick a later slot if
+              you&apos;d rather — delivery runs on top and is confirmed in chat.
+            </div>
+          </section>
+
+          <div className={styles.sideBySide}>
+            <section className={styles.section}>
+              <div className={styles.sectionLabel}>PICKUP OR DELIVERY</div>
+              <div className={styles.pillRow}>
+                <button
+                  type="button"
+                  className={styles.pillOption}
+                  data-selected={order.fulfillment === "pickup"}
+                  onClick={() => setFulfillment("pickup")}
+                >
+                  Pickup
+                </button>
+                <button
+                  type="button"
+                  className={styles.pillOption}
+                  data-selected={order.fulfillment === "delivery"}
+                  onClick={() => setFulfillment("delivery")}
+                >
+                  Delivery
+                </button>
+              </div>
+              {order.fulfillment === "delivery" && (
+                <p className={styles.deliveryNote}>
+                  We&apos;ll confirm the delivery fee with you on WhatsApp — it
+                  isn&apos;t priced on the site.
+                </p>
+              )}
+              {/* Desktop only — mobile's pill row above already implies
+                  the shop is the pickup point; this spells it out where
+                  there's room, without changing mobile's copy. */}
+              {order.fulfillment === "pickup" && (
+                <p className={`${styles.deliveryNote} ${styles.desktopOnlyNote}`}>
+                  Collect from {CONFIG.address.line1}, {CONFIG.address.line2}.
+                </p>
+              )}
+            </section>
+
+            <section className={styles.section}>
+              <div className={styles.sectionLabel}>YOUR NAME</div>
+              <input
+                type="text"
+                className={`${styles.nameInput} ${order.customerName ? styles.nameInputActive : ""}`}
+                value={order.customerName}
+                onChange={(e) => setCustomerName(e.target.value)}
+                placeholder="Full Name"
+              />
+              <p className={`${styles.deliveryNote} ${styles.desktopOnlyNote}`}>
+                So we know whose order it is when you message.
+              </p>
+            </section>
+          </div>
+        </div>
+
+        {/* Desktop only — see docs/design/CLB-Hi-Fi-Screens.dc.html's
+            "Review order — desktop": a persistent summary instead of
+            mobile's totals-then-button-at-the-bottom flow. */}
+        <aside className={styles.summaryColumn}>
+          <div className={styles.summaryPanel}>
+            <div className={styles.summaryTitle}>Summary</div>
+            <div className={styles.summaryRow}>
+              <span>Items ({itemCount})</span>
+              <span>{formatAed(orderTotal(order, catalog))}</span>
+            </div>
+            <div className={styles.summaryRow}>
+              <span>Collection</span>
+              <span>{order.fulfillment === "pickup" ? pickupSummary() : "Not needed"}</span>
+            </div>
+            <div className={styles.summaryRow}>
+              <span>Delivery</span>
+              <span>{order.fulfillment === "delivery" ? "Confirmed in chat" : "Not needed"}</span>
+            </div>
+            <div className={styles.summaryTotalRow}>
+              <span>Total</span>
+              <span>{formatAed(orderTotal(order, catalog))}</span>
+            </div>
+            {hasUnpricedLines(order, catalog) && (
+              <p className={styles.disclaimer}>
+                One or more items need a price confirmed with the bakery — the
+                total above doesn&apos;t include those yet.
+              </p>
+            )}
+            <button type="button" className={styles.tealButton} onClick={goToHandoff}>
+              SEND ORDER ON WHATSAPP
+            </button>
+            <p className={styles.summaryNote}>
+              Nothing is charged here. We confirm the price with you in chat.
+            </p>
+          </div>
+
+          <div className={styles.howItWorksBox}>
+            <div className={styles.sectionLabel}>HOW ORDERING WORKS</div>
+            <p className={styles.disclaimer}>
+              Your order opens as a message in WhatsApp. We reply to confirm
+              the details, the price and the time — usually within the hour.
+            </p>
+          </div>
+        </aside>
+      </div>
 
       <section className={styles.totals}>
         <div className={`${styles.totalRow} ${styles.totalRowMuted}`}>

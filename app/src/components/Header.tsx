@@ -70,11 +70,6 @@ export function Header({ desktopRight }: HeaderProps = {}) {
           <Link href={ROUTES.menu} className={styles.navLink}>
             Menu
           </Link>
-          {/* Custom cakes has no route of its own — it's a category on
-              the same Menu page, not a separate screen. */}
-          <Link href={ROUTES.menu} className={styles.navLink}>
-            Custom cakes
-          </Link>
           <Link href={ROUTES.contact} className={styles.navLink}>
             Find us
           </Link>

@@ -47,6 +47,10 @@
   composes: section-label from global;
 }
 
+.sectionContent {
+  display: contents;
+}
+
 .text {
   margin: 0;
   font-size: 0.8rem;
@@ -180,12 +184,40 @@
     gap: 20px;
   }
 
+  /* Row layout measured off the rendered Hi-Fi (getBoundingClientRect):
+     a fixed 150px label column, 28px gap, then the content — not
+     mobile's stacked label-above-content — with a divider between each
+     section instead of a plain gap. */
   .content {
-    gap: 18px;
-    padding: 22px;
+    gap: 0;
+    padding: 0 22px;
     background: var(--color-surface);
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-card);
+  }
+
+  .content section {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 28px;
+    padding: 22px 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .content section:last-child {
+    border-bottom: none;
+  }
+
+  .sectionLabel {
+    flex: 0 0 150px;
+  }
+
+  .sectionContent {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+    min-width: 0;
   }
 
   .actions {

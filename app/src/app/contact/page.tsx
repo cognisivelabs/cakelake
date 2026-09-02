@@ -57,36 +57,42 @@ export default function ContactPage() {
           <div className={styles.content}>
             <section>
               <div className={styles.sectionLabel}>WHERE</div>
-              <p className={styles.text}>
-                {CONFIG.address.line1}
-                <br />
-                {CONFIG.address.line2}
-                <br />
-                {CONFIG.address.line3}
-              </p>
+              <div className={styles.sectionContent}>
+                <p className={styles.text}>
+                  {CONFIG.address.line1}
+                  <br />
+                  {CONFIG.address.line2}
+                  <br />
+                  {CONFIG.address.line3}
+                </p>
+              </div>
             </section>
 
             <section>
               <div className={styles.sectionLabel}>WHEN</div>
-              <div className={styles.mutedBox}>
-                {CONFIG.openingHours.map((entry) => (
-                  <div key={entry.days} className={styles.hoursRow}>
-                    <span>{entry.days}</span>
-                    <span>{entry.hours}</span>
-                  </div>
-                ))}
+              <div className={styles.sectionContent}>
+                <div className={styles.mutedBox}>
+                  {CONFIG.openingHours.map((entry) => (
+                    <div key={entry.days} className={styles.hoursRow}>
+                      <span>{entry.days}</span>
+                      <span>{entry.hours}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
             </section>
 
             <section>
               <div className={styles.sectionLabel}>CALL OR MESSAGE</div>
-              <div className={styles.row}>
-                <span>Shop</span>
-                <span>{CONFIG.shopPhone}</span>
-              </div>
-              <div className={styles.row}>
-                <span>WhatsApp</span>
-                <span>{formatDisplay(CONFIG.bakeryWhatsAppNumber)}</span>
+              <div className={styles.sectionContent}>
+                <div className={styles.row}>
+                  <span>Shop</span>
+                  <span>{CONFIG.shopPhone}</span>
+                </div>
+                <div className={styles.row}>
+                  <span>WhatsApp</span>
+                  <span>{formatDisplay(CONFIG.bakeryWhatsAppNumber)}</span>
+                </div>
               </div>
             </section>
           </div>

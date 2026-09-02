@@ -378,11 +378,15 @@
     opacity: 0.5;
   }
 
+  /* Column widths measured directly off the rendered Hi-Fi (getBoundingClientRect,
+     not eyeballed): photo column 760px, details column 508px, 44px gap —
+     the details panel is a deliberately compact, non-stretched column,
+     not a flexible 1fr that fills the remaining width. */
   .desktopGrid {
     display: grid;
-    grid-template-columns: minmax(0, 460px) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 760px) minmax(0, 508px);
     align-items: start;
-    gap: 40px;
+    gap: 44px;
     max-width: var(--desktop-content-max);
     width: 100%;
     margin: 0 auto;

@@ -21,6 +21,33 @@ corrected breakpoint entry for why that mattered in practice.
   scale, buttons, chips, cards, inputs, badges, spacing, and all
   states) every screen in the Hi-Fi file is built from.
 
+## Viewing the `.dc.html` files
+
+These aren't static HTML — they're Claude Design canvases: a JS runtime
+(`support.js`, generated, project-agnostic, loaded via a relative
+`<script src="./support.js">`) pans/renders an `<x-dc>` element into the
+actual screens. Opening the file directly (`file://…`) does not work
+reliably: browser tooling that sandboxes local files (e.g. this repo's
+own `mcp__Claude_Browser__navigate`) can rewrite `file://` to a `data:`
+URL, which has no base path, so the relative `support.js` fails to load
+silently (no console error) — the canvas then sits at whatever static
+markup happens to be at the top of the document instead of the actual
+screen you scrolled/navigated to, which reads as "it opened" while
+actually showing the wrong content.
+
+**Serve the folder over local HTTP instead:**
+
+```bash
+cd docs/design && python3 -m http.server 4321
+```
+
+then open `http://localhost:4321/CLB-Hi-Fi-Screens.dc.html` (same for
+`CLB-Type-and-Components.dc.html`). Confirm `support.js` actually
+loaded (network tab / request log shows a 200, not silence) before
+trusting what's on screen. The canvas is wide (1512pt desktop screens) —
+widen the viewport rather than relying on the default pane width, or
+screens run off the right edge.
+
 ## What's deliberately not here
 
 The source folder also has wireframes, colour-theme explorations, print

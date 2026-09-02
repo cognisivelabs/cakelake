@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import Link from "next/link";
 import { FaWhatsapp } from "react-icons/fa";
 import { useCart } from "@/context/CartContext";
@@ -14,7 +14,15 @@ import { orderTotal, formatAed } from "@/lib/pricing";
 import { getCatalog } from "@/lib/catalog";
 import styles from "./Header.module.css";
 
-export function Header() {
+type HeaderProps = {
+  /** Replaces the default WhatsApp button + cart pill in the desktop nav
+   * bar — Menu — desktop uses this slot for its search field instead
+   * (the persistent order panel there already covers the cart). Mobile
+   * is unaffected; it always keeps its own hamburger/actions. */
+  desktopRight?: ReactNode;
+};
+
+export function Header({ desktopRight }: HeaderProps = {}) {
   const { order } = useCart();
   const { platform, triggerInstall } = useInstallPrompt();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -87,12 +95,16 @@ export function Header() {
         </div>
 
         <div className={styles.desktopActions}>
-          <a href={buildWhatsAppUrl()} {...EXTERNAL_LINK_PROPS} className={`${styles.waButton} mono-tag`}>
-            WhatsApp
-          </a>
-          <Link href={ROUTES.cart} className={`${styles.desktopCartPill} mono-tag`}>
-            Cart · {itemCount} · {formatAed(total)}
-          </Link>
+          {desktopRight ?? (
+            <>
+              <a href={buildWhatsAppUrl()} {...EXTERNAL_LINK_PROPS} className={`${styles.waButton} mono-tag`}>
+                WhatsApp
+              </a>
+              <Link href={ROUTES.cart} className={`${styles.desktopCartPill} mono-tag`}>
+                Cart · {itemCount} · {formatAed(total)}
+              </Link>
+            </>
+          )}
         </div>
       </div>
 

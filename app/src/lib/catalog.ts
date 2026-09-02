@@ -367,3 +367,13 @@ export function getCategory(id: string): Category | undefined {
 export function getItemById(id: string): CatalogItem | undefined {
   return CATALOG.find((item) => item.id === id);
 }
+
+// Weight tier ids are our own naming convention, assigned above
+// ("half-kg", "1kg", "2kg", "3kg-plus", …) — parsed here once for the
+// Menu — desktop "1kg or larger" filter rather than adding a parallel
+// numeric field to every tier for a single filter's sake.
+export function weightTierKg(tier: { id: string }): number {
+  if (tier.id.startsWith("half")) return 0.5;
+  const match = tier.id.match(/^(\d+(?:\.\d+)?)kg/);
+  return match ? Number(match[1]) : 0;
+}

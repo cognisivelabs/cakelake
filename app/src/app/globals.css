@@ -81,6 +81,22 @@ main {
   padding: 0 0 32px;
 }
 
+/* A page with a real desktop layout (edge-to-edge header/footer colour
+   bands, wide grids — see .breakout720 usages) opts out of the 720px
+   cap above via the shared .breakout720 class below, rather than this
+   rule being lifted globally: pages that don't have desktop-specific
+   CSS yet (see docs/design's remaining screens) still want the 720px
+   centered fallback above 1024px, not a suddenly full-bleed, un-designed
+   stretch to the viewport edge. */
+@media (min-width: 1024px) {
+  .breakout720 {
+    width: 100vw;
+    position: relative;
+    left: 50%;
+    margin-left: -50vw;
+  }
+}
+
 h1,
 h2,
 h3 {

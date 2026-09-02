@@ -1,5 +1,5 @@
 .page {
-  composes: page-shell from global;
+  composes: page-shell breakout720 from global;
 }
 
 .body {

@@ -1,3 +1,35 @@
+.page {
+  composes: page-shell breakout720 from global;
+}
+
+.desktopHeaderWrap {
+  display: none;
+}
+
+.breadcrumb {
+  display: none;
+}
+
+.desktopGrid {
+  display: contents;
+}
+
+.leftCol {
+  display: contents;
+}
+
+.rightCol {
+  display: contents;
+}
+
+.desktopOnlyNote {
+  display: none;
+}
+
+.photoCounter {
+  display: none;
+}
+
 .photo {
   height: 220px;
   background: var(--color-photo-bg);
@@ -305,5 +337,126 @@
   font-size: 0.75rem;
   letter-spacing: 0.03em;
   text-decoration: none;
+}
+
+/* — Desktop — see docs/design/CLB-Hi-Fi-Screens.dc.html's "Item detail
+   — desktop": photo + flavour picker in a left column, everything else
+   in a right column, both reusing the exact same mobile JSX/state —
+   only .desktopGrid/.leftCol/.rightCol's display changes. */
+@media (min-width: 1024px) {
+  .mobileHeaderWrap {
+    display: none;
+  }
+
+  .desktopHeaderWrap {
+    display: block;
+  }
+
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    max-width: var(--desktop-content-max);
+    margin: 0 auto;
+    padding: 20px 32px 0;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: var(--color-ink-muted);
+    box-sizing: border-box;
+  }
+
+  .breadcrumb a {
+    color: var(--color-ink-muted);
+    text-decoration: none;
+  }
+
+  .breadcrumb a:hover {
+    color: var(--color-ink);
+  }
+
+  .breadcrumbSep {
+    opacity: 0.5;
+  }
+
+  .desktopGrid {
+    display: grid;
+    grid-template-columns: minmax(0, 460px) minmax(0, 1fr);
+    align-items: start;
+    gap: 40px;
+    max-width: var(--desktop-content-max);
+    width: 100%;
+    margin: 0 auto;
+    padding: 20px 32px 32px;
+    box-sizing: border-box;
+  }
+
+  .leftCol {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  .rightCol {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .desktopOnlyNote {
+    display: inline;
+  }
+
+  .photo {
+    height: 420px;
+    border: 1px dashed var(--color-placeholder-border);
+    border-radius: var(--radius-lg);
+  }
+
+  .photoCounter {
+    display: block;
+    position: absolute;
+    right: 16px;
+    bottom: 16px;
+    background: rgba(79, 53, 47, 0.86);
+    color: var(--color-bg);
+    border-radius: 5px;
+    padding: 5px 9px;
+    font-weight: 700;
+    font-size: 0.75rem;
+  }
+
+  .flavourSection {
+    padding-top: 0;
+  }
+
+  .flavourStrip {
+    padding: 0 0 4px;
+  }
+
+  .content {
+    padding: 0;
+  }
+
+  .sectionLabel {
+    padding: 0;
+  }
+
+  .weightRow {
+    padding: 0;
+  }
+
+  .title {
+    font-size: 1.6rem;
+  }
+
+  /* No longer full-bleed/pinned inside a narrow mobile column — the Add
+     bar sits at the natural end of the right column instead. */
+  .footer {
+    position: static;
+    background: none;
+    border-top: none;
+    padding: 4px 0 0;
+    margin-top: 4px;
+  }
 }
 

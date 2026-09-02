@@ -141,27 +141,29 @@ export default function HomePage() {
             between the two got fighting-the-grid awkward; kept separate,
             toggled by the same 1024px breakpoint as everything else here. */}
         <div className={styles.desktopFooter}>
-          <div className={styles.desktopFooterColumn}>
-            <div className={`${styles.footerLabel} mono-tag`}>WHERE TO FIND US</div>
-            <p className={styles.footerText}>
-              {CONFIG.address.line1}
-              <br />
-              {CONFIG.address.line2}, {CONFIG.address.line3}
-              <br />
-              {CONFIG.shopPhone}
-            </p>
+          <div className={styles.desktopFooterInner}>
+            <div className={styles.desktopFooterColumn}>
+              <div className={`${styles.footerLabel} mono-tag`}>WHERE TO FIND US</div>
+              <p className={styles.footerText}>
+                {CONFIG.address.line1}
+                <br />
+                {CONFIG.address.line2}, {CONFIG.address.line3}
+                <br />
+                {CONFIG.shopPhone}
+              </p>
+            </div>
+            <div className={styles.desktopFooterColumn}>
+              <div className={`${styles.footerLabel} mono-tag`}>ORDERING</div>
+              <p className={styles.footerText}>
+                Orders are confirmed in WhatsApp.
+                <br />
+                Also on {formatList(CONFIG.alsoOnPlatforms)}.
+              </p>
+            </div>
+            <a href={buildWhatsAppUrl()} {...EXTERNAL_LINK_PROPS} className={styles.desktopWaButton}>
+              MESSAGE US ON WHATSAPP
+            </a>
           </div>
-          <div className={styles.desktopFooterColumn}>
-            <div className={`${styles.footerLabel} mono-tag`}>ORDERING</div>
-            <p className={styles.footerText}>
-              Orders are confirmed in WhatsApp.
-              <br />
-              Also on {formatList(CONFIG.alsoOnPlatforms)}.
-            </p>
-          </div>
-          <a href={buildWhatsAppUrl()} {...EXTERNAL_LINK_PROPS} className={styles.desktopWaButton}>
-            MESSAGE US ON WHATSAPP
-          </a>
         </div>
       </div>
 

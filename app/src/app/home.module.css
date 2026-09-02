@@ -229,6 +229,9 @@
     gap: 40px;
     padding: 52px 32px 0;
     text-align: left;
+    max-width: var(--desktop-content-max);
+    width: 100%;
+    margin: 0 auto;
   }
 
   .heroText {
@@ -304,6 +307,10 @@
     padding: 52px 32px 0;
     margin-bottom: 0;
     gap: 16px;
+    max-width: var(--desktop-content-max);
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   .sectionLabel {
@@ -349,14 +356,24 @@
     display: none;
   }
 
+  /* Full-bleed colour band — spans the viewport on large monitors, same
+     as the header. .desktopFooterInner below keeps the actual content a
+     readable column instead of also stretching. */
   .desktopFooter {
+    display: block;
     margin-top: auto;
+    background: var(--color-ink);
+  }
+
+  .desktopFooterInner {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
     gap: 40px;
     padding: 34px 32px;
-    background: var(--color-ink);
+    max-width: var(--desktop-content-max);
+    width: 100%;
+    margin: 0 auto;
   }
 
   .desktopFooterColumn {

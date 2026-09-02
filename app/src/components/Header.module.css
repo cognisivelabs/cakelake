@@ -96,6 +96,8 @@
     height: 72px;
     padding: 0 32px;
     gap: 28px;
+    max-width: var(--desktop-content-max);
+    margin: 0 auto;
   }
 
   .menuButton,

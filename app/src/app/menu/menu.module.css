@@ -214,6 +214,9 @@
     align-items: start;
     gap: 32px;
     padding: 32px;
+    max-width: var(--desktop-content-max);
+    width: 100%;
+    margin: 0 auto;
   }
 
   /* — Search field, embedded in Header's desktop nav bar — */

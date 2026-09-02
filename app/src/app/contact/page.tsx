@@ -74,15 +74,7 @@ export default function ContactPage() {
             <section>
               <div className={styles.sectionLabel}>WHEN</div>
               <div className={styles.sectionContent}>
-                <div className={styles.mutedBox}>
-                  {CONFIG.openingHours.map((entry) => (
-                    <div key={entry.days} className={styles.hoursRow}>
-                      <span>{entry.days}</span>
-                      <span>{entry.hours}</span>
-                    </div>
-                  ))}
-                </div>
-                <div className={styles.desktopHours}>
+                <div className={styles.hoursList}>
                   {CONFIG.openingHoursByDay.map((entry) => (
                     <div key={entry.day} className={styles.row}>
                       <span>{entry.day}</span>

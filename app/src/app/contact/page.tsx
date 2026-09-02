@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import { CONFIG } from "@/lib/config";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
+import { formatList } from "@/lib/format";
 import { EXTERNAL_LINK_PROPS } from "@/lib/externalLink";
 import { ROUTES } from "@/lib/routes";
 import { withBasePath } from "@/lib/assets";
 import { SITE_NAME, DEFAULT_OG_IMAGE } from "@/lib/og";
 import { PageHeader } from "@/components/PageHeader";
+import { Header } from "@/components/Header";
 import styles from "./contact.module.css";
 
 const DESCRIPTION = `${CONFIG.address.line1}, ${CONFIG.address.line2}, ${CONFIG.address.line3}.`;
@@ -25,69 +27,132 @@ export const metadata: Metadata = {
 
 export default function ContactPage() {
   return (
-    <div>
-      <PageHeader title="Find us" backHref={ROUTES.home} backLabel="BACK" />
-      <iframe
-        className={styles.map}
-        src={CONFIG.mapsEmbedSrc}
-        title="Cake Lake Bakery location"
-        loading="lazy"
-        referrerPolicy="strict-origin-when-cross-origin"
-        allowFullScreen
-      />
-
-      <div className={styles.content}>
-        <section>
-          <div className={styles.sectionLabel}>WHERE</div>
-          <p className={styles.text}>
-            {CONFIG.address.line1}
-            <br />
-            {CONFIG.address.line2}
-            <br />
-            {CONFIG.address.line3}
-          </p>
-        </section>
-
-        <section>
-          <div className={styles.sectionLabel}>WHEN</div>
-          <div className={styles.mutedBox}>
-            {CONFIG.openingHours.map((entry) => (
-              <div key={entry.days} className={styles.hoursRow}>
-                <span>{entry.days}</span>
-                <span>{entry.hours}</span>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        <section>
-          <div className={styles.sectionLabel}>CALL OR MESSAGE</div>
-          <div className={styles.row}>
-            <span>Shop</span>
-            <span>{CONFIG.shopPhone}</span>
-          </div>
-          <div className={styles.row}>
-            <span>WhatsApp</span>
-            <span>{formatDisplay(CONFIG.bakeryWhatsAppNumber)}</span>
-          </div>
-        </section>
+    <div className={styles.page}>
+      <div className={styles.mobileHeaderWrap}>
+        <PageHeader title="Find us" backHref={ROUTES.home} backLabel="BACK" />
+      </div>
+      <div className={styles.desktopHeaderWrap}>
+        <Header />
       </div>
 
-      <div className={styles.actions}>
-        <a
-          href={buildWhatsAppUrl()}
-          {...EXTERNAL_LINK_PROPS}
-          className={styles.tealButton}
-        >
-          MESSAGE US ON WHATSAPP
-        </a>
-        <a
-          href={CONFIG.mapsUrl}
-          {...EXTERNAL_LINK_PROPS}
-          className={styles.outlineButton}
-        >
-          OPEN IN MAPS
-        </a>
+      {/* Desktop only — see docs/design/CLB-Hi-Fi-Screens.dc.html's
+          "Find us — desktop": mobile's PageHeader title already says
+          "Find us", so this heading + subtitle is new content, not a
+          copy of anything mobile shows. */}
+      <div className={styles.desktopIntro}>
+        <h1>Find us in Karama</h1>
+        <p>A live bakery — walk in and collect, or message us and we&apos;ll bake it for a time that suits you.</p>
+      </div>
+
+      <div className={styles.desktopGrid}>
+        <iframe
+          className={styles.map}
+          src={CONFIG.mapsEmbedSrc}
+          title="Cake Lake Bakery location"
+          loading="lazy"
+          referrerPolicy="strict-origin-when-cross-origin"
+          allowFullScreen
+        />
+
+        <div className={styles.leftCol}>
+          <div className={styles.content}>
+            <section>
+              <div className={styles.sectionLabel}>WHERE</div>
+              <p className={styles.text}>
+                {CONFIG.address.line1}
+                <br />
+                {CONFIG.address.line2}
+                <br />
+                {CONFIG.address.line3}
+              </p>
+            </section>
+
+            <section>
+              <div className={styles.sectionLabel}>WHEN</div>
+              <div className={styles.mutedBox}>
+                {CONFIG.openingHours.map((entry) => (
+                  <div key={entry.days} className={styles.hoursRow}>
+                    <span>{entry.days}</span>
+                    <span>{entry.hours}</span>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            <section>
+              <div className={styles.sectionLabel}>CALL OR MESSAGE</div>
+              <div className={styles.row}>
+                <span>Shop</span>
+                <span>{CONFIG.shopPhone}</span>
+              </div>
+              <div className={styles.row}>
+                <span>WhatsApp</span>
+                <span>{formatDisplay(CONFIG.bakeryWhatsAppNumber)}</span>
+              </div>
+              <div className={`${styles.row} ${styles.desktopOnlyRow}`}>
+                <span>Second line</span>
+                <span>{formatDisplay(CONFIG.secondaryWhatsAppNumber)}</span>
+              </div>
+            </section>
+
+            <section className={styles.desktopOnlySection}>
+              <div className={styles.sectionLabel}>ALSO ORDER FROM</div>
+              <div className={styles.platformChips}>
+                {CONFIG.alsoOnPlatforms.map((platform) => (
+                  <span key={platform} className={styles.platformChip}>
+                    {platform}
+                  </span>
+                ))}
+              </div>
+            </section>
+          </div>
+
+          <div className={styles.actions}>
+            <a
+              href={buildWhatsAppUrl()}
+              {...EXTERNAL_LINK_PROPS}
+              className={styles.tealButton}
+            >
+              MESSAGE US ON WHATSAPP
+            </a>
+            <a
+              href={CONFIG.mapsUrl}
+              {...EXTERNAL_LINK_PROPS}
+              className={styles.outlineButton}
+            >
+              OPEN IN MAPS
+            </a>
+          </div>
+        </div>
+      </div>
+
+      {/* Desktop only — same footer band as Home's, no mobile
+          equivalent to toggle against here (this page has no footer at
+          all below 1024px). */}
+      <div className={styles.desktopFooter}>
+        <div className={styles.desktopFooterInner}>
+          <div className={styles.desktopFooterColumn}>
+            <div className={`${styles.footerLabel} mono-tag`}>WHERE TO FIND US</div>
+            <p className={styles.footerText}>
+              {CONFIG.address.line1}
+              <br />
+              {CONFIG.address.line2}, {CONFIG.address.line3}
+              <br />
+              {CONFIG.shopPhone}
+            </p>
+          </div>
+          <div className={styles.desktopFooterColumn}>
+            <div className={`${styles.footerLabel} mono-tag`}>ORDERING</div>
+            <p className={styles.footerText}>
+              Orders are confirmed in WhatsApp.
+              <br />
+              Also on {formatList(CONFIG.alsoOnPlatforms)}.
+            </p>
+          </div>
+          <a href={buildWhatsAppUrl()} {...EXTERNAL_LINK_PROPS} className={styles.desktopWaButton}>
+            MESSAGE US ON WHATSAPP
+          </a>
+        </div>
       </div>
     </div>
   );

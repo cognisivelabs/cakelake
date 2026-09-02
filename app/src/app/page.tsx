@@ -3,6 +3,7 @@ import { getCatalog, getCategories } from "@/lib/catalog";
 import { CONFIG } from "@/lib/config";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import { formatAed } from "@/lib/pricing";
+import { formatList } from "@/lib/format";
 import { EXTERNAL_LINK_PROPS } from "@/lib/externalLink";
 import { ROUTES } from "@/lib/routes";
 import { Header } from "@/components/Header";
@@ -18,12 +19,6 @@ function priceFrom(items: CatalogItem[]): string | null {
     .map((tier) => tier.price)
     .filter((price): price is number => price !== undefined);
   return prices.length === 0 ? null : formatAed(Math.min(...prices));
-}
-
-const listFormatter = new Intl.ListFormat("en-GB", { style: "long", type: "conjunction" });
-
-function formatList(items: readonly string[]): string {
-  return listFormatter.format(items);
 }
 
 export default function HomePage() {

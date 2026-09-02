@@ -1,3 +1,40 @@
+.page {
+  composes: page-shell breakout720 from global;
+}
+
+.desktopHeaderWrap {
+  display: none;
+}
+
+.desktopIntro {
+  display: none;
+}
+
+.desktopGrid {
+  display: contents;
+}
+
+.leftCol {
+  display: contents;
+}
+
+/* Higher-specificity selectors than plain .desktopOnlyRow/.desktopOnlySection
+   on their own — needed to actually beat .row's and .content section's
+   own display rules below, which would otherwise win on source order or
+   specificity regardless of which class comes second in the element's
+   className. */
+.row.desktopOnlyRow {
+  display: none;
+}
+
+.content section.desktopOnlySection {
+  display: none;
+}
+
+.desktopFooter {
+  display: none;
+}
+
 .map {
   display: block;
   width: 100%;
@@ -83,4 +120,160 @@
   font-size: 0.72rem;
   letter-spacing: 0.04em;
   text-decoration: none;
+}
+
+/* — Desktop — see docs/design/CLB-Hi-Fi-Screens.dc.html's "Find us —
+   desktop": "deliberately a constrained column, not a stretched page"
+   per its own annotation — measured off the rendered canvas rather than
+   eyeballed (see the Item detail — desktop fix): a 660px info column, a
+   48px gap, then a 562px map, left-packed with room spare on the right
+   rather than stretched to fill it. */
+@media (min-width: 1024px) {
+  .mobileHeaderWrap {
+    display: none;
+  }
+
+  .desktopHeaderWrap {
+    display: block;
+  }
+
+  .desktopIntro {
+    display: block;
+    max-width: var(--desktop-content-max);
+    margin: 0 auto;
+    padding: 32px 32px 0;
+    box-sizing: border-box;
+  }
+
+  .desktopIntro h1 {
+    font-size: 2rem;
+  }
+
+  .desktopIntro p {
+    margin: 8px 0 0;
+    max-width: 660px;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: var(--color-ink-muted);
+  }
+
+  .desktopGrid {
+    display: grid;
+    grid-template-columns: minmax(0, 660px) minmax(0, 562px);
+    align-items: start;
+    gap: 48px;
+    max-width: var(--desktop-content-max);
+    width: 100%;
+    margin: 0 auto;
+    padding: 24px 32px 40px;
+    box-sizing: border-box;
+  }
+
+  .map {
+    grid-column: 2;
+    grid-row: 1;
+    height: 522px;
+    border-radius: var(--radius-lg);
+  }
+
+  .leftCol {
+    grid-column: 1;
+    grid-row: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .content {
+    gap: 18px;
+    padding: 22px;
+    background: var(--color-surface);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-card);
+  }
+
+  .row.desktopOnlyRow {
+    display: flex;
+  }
+
+  .content section.desktopOnlySection {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .platformChips {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .platformChip {
+    background: var(--color-surface-muted);
+    color: var(--color-ink-muted);
+    border-radius: var(--radius-sm);
+    padding: 5px 10px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: capitalize;
+  }
+
+  .actions {
+    padding: 0;
+    flex-direction: row;
+  }
+
+  .actions a {
+    flex: 1;
+  }
+
+  .desktopFooter {
+    display: block;
+    margin-top: auto;
+    background: var(--color-ink);
+  }
+
+  .desktopFooterInner {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 40px;
+    padding: 34px 32px;
+    max-width: var(--desktop-content-max);
+    width: 100%;
+    margin: 0 auto;
+    box-sizing: border-box;
+  }
+
+  .desktopFooterColumn {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+  }
+
+  .footerLabel {
+    color: var(--color-accent);
+    font-size: 0.65rem !important;
+    letter-spacing: 0.08em;
+  }
+
+  .footerText {
+    margin: 0;
+    font-size: 0.84rem;
+    line-height: 1.6;
+    color: #e8dcc6;
+  }
+
+  .desktopWaButton {
+    flex: none;
+    align-self: center;
+    background: var(--color-teal);
+    color: #fff;
+    border-radius: var(--radius-md);
+    padding: 14px 22px;
+    font-weight: 800;
+    font-size: 0.75rem;
+    letter-spacing: 0.03em;
+    text-decoration: none;
+  }
 }

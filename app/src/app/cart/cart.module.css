@@ -375,10 +375,19 @@
 }
 
 @media (min-width: 1024px) {
+  /* width: 100% for the same reason ItemDetailView's .breadcrumb and
+     Contact's .desktopIntro need it — a flex child of .page (column
+     flex) with margin: 0 auto but no explicit width shrinks to content
+     width instead of filling the row first. Harmless here today only
+     because .centered's own content is already text-align: center, so
+     the two ways of being "centered" look identical — still fixed for
+     correctness, not because it's currently visible. */
   .centered {
+    width: 100%;
     max-width: 480px;
     margin: 0 auto;
     padding-top: 96px;
+    box-sizing: border-box;
   }
 
   .desktopHeading {

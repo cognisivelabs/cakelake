@@ -137,8 +137,17 @@
     display: block;
   }
 
+  /* width: 100% is load-bearing here, not decorative — .page is a
+     column flex container (page-shell), and a flex child with `margin:
+     0 auto` but no explicit width shrinks to its own content width
+     (flexbox lets auto cross-axis margins absorb space instead of
+     stretching) rather than filling the row before centering. Without
+     it this ends up as a narrow, centered block instead of a
+     full-width one left-aligned with .desktopGrid below — which is
+     exactly the bug this comment is here to stop someone reintroducing. */
   .desktopIntro {
     display: block;
+    width: 100%;
     max-width: var(--desktop-content-max);
     margin: 0 auto;
     padding: 32px 32px 0;

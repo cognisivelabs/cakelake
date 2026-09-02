@@ -352,10 +352,17 @@
     display: block;
   }
 
+  /* width: 100% is load-bearing — .page is a column flex container
+     (page-shell), and a flex child with `margin: 0 auto` but no
+     explicit width shrinks to its own content width instead of filling
+     the row before centering (auto cross-axis margins absorb space
+     rather than stretching). Without it this sits centered in the
+     middle of the page instead of left-aligned with .desktopGrid below. */
   .breadcrumb {
     display: flex;
     align-items: center;
     gap: 8px;
+    width: 100%;
     max-width: var(--desktop-content-max);
     margin: 0 auto;
     padding: 20px 32px 0;

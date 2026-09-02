@@ -154,7 +154,9 @@
     max-width: var(--desktop-content-max);
     width: 100%;
     margin: 0 auto;
-    padding: 24px 32px 40px;
+    /* Top padding measured off the rendered Hi-Fi: 52px from the
+       header's bottom edge to the heading/map's top — not eyeballed. */
+    padding: 52px 32px 40px;
     box-sizing: border-box;
   }
 

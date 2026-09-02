@@ -3,7 +3,6 @@ import { getCatalog, getCategories } from "@/lib/catalog";
 import { CONFIG } from "@/lib/config";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import { formatAed } from "@/lib/pricing";
-import { formatList } from "@/lib/format";
 import { EXTERNAL_LINK_PROPS } from "@/lib/externalLink";
 import { ROUTES } from "@/lib/routes";
 import { Header } from "@/components/Header";
@@ -149,11 +148,7 @@ export default function HomePage() {
             </div>
             <div className={styles.desktopFooterColumn}>
               <div className={`${styles.footerLabel} mono-tag`}>ORDERING</div>
-              <p className={styles.footerText}>
-                Orders are confirmed in WhatsApp.
-                <br />
-                Also on {formatList(CONFIG.alsoOnPlatforms)}.
-              </p>
+              <p className={styles.footerText}>Orders are confirmed in WhatsApp.</p>
             </div>
             <a href={buildWhatsAppUrl()} {...EXTERNAL_LINK_PROPS} className={styles.desktopWaButton}>
               MESSAGE US ON WHATSAPP

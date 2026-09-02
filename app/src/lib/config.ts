@@ -69,9 +69,4 @@ export const CONFIG = {
    * ADR-002); update this when the site moves to its own domain.
    */
   siteUrl: "https://cognisivelabs.github.io",
-  /** Other delivery platforms the bakery is also listed on — from the
-   * design source (docs/design/CLAUDE.md), shown on Home's desktop
-   * footer. Not shown on mobile today; this site remains the only
-   * direct-to-bakery ordering channel regardless. */
-  alsoOnPlatforms: ["talabat", "noon", "Careem"],
 } as const;

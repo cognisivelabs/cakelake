@@ -18,16 +18,11 @@
   display: contents;
 }
 
-/* Higher-specificity selectors than plain .desktopOnlyRow/.desktopOnlySection
-   on their own — needed to actually beat .row's and .content section's
-   own display rules below, which would otherwise win on source order or
-   specificity regardless of which class comes second in the element's
-   className. */
+/* Higher-specificity selector than plain .desktopOnlyRow on its own —
+   needed to actually beat .row's own display rule below, which would
+   otherwise win on source order regardless of which class comes second
+   in the element's className. */
 .row.desktopOnlyRow {
-  display: none;
-}
-
-.content section.desktopOnlySection {
   display: none;
 }
 
@@ -203,28 +198,6 @@
 
   .row.desktopOnlyRow {
     display: flex;
-  }
-
-  .content section.desktopOnlySection {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-
-  .platformChips {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-  }
-
-  .platformChip {
-    background: var(--color-surface-muted);
-    color: var(--color-ink-muted);
-    border-radius: var(--radius-sm);
-    padding: 5px 10px;
-    font-size: 0.75rem;
-    font-weight: 700;
-    text-transform: capitalize;
   }
 
   .actions {

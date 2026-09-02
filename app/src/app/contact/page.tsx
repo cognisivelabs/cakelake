@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { CONFIG } from "@/lib/config";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
-import { formatList } from "@/lib/format";
 import { EXTERNAL_LINK_PROPS } from "@/lib/externalLink";
 import { ROUTES } from "@/lib/routes";
 import { withBasePath } from "@/lib/assets";
@@ -94,17 +93,6 @@ export default function ContactPage() {
                 <span>{formatDisplay(CONFIG.secondaryWhatsAppNumber)}</span>
               </div>
             </section>
-
-            <section className={styles.desktopOnlySection}>
-              <div className={styles.sectionLabel}>ALSO ORDER FROM</div>
-              <div className={styles.platformChips}>
-                {CONFIG.alsoOnPlatforms.map((platform) => (
-                  <span key={platform} className={styles.platformChip}>
-                    {platform}
-                  </span>
-                ))}
-              </div>
-            </section>
           </div>
 
           <div className={styles.actions}>
@@ -143,11 +131,7 @@ export default function ContactPage() {
           </div>
           <div className={styles.desktopFooterColumn}>
             <div className={`${styles.footerLabel} mono-tag`}>ORDERING</div>
-            <p className={styles.footerText}>
-              Orders are confirmed in WhatsApp.
-              <br />
-              Also on {formatList(CONFIG.alsoOnPlatforms)}.
-            </p>
+            <p className={styles.footerText}>Orders are confirmed in WhatsApp.</p>
           </div>
           <a href={buildWhatsAppUrl()} {...EXTERNAL_LINK_PROPS} className={styles.desktopWaButton}>
             MESSAGE US ON WHATSAPP

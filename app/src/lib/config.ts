@@ -35,6 +35,18 @@ export const CONFIG = {
     { days: "Monday - Thursday", hours: "10 am - 12 am" },
     { days: "Friday - Sunday", hours: "10 am - 1 am" },
   ],
+  /** Same hours as openingHours above, listed per day — Find us — desktop
+   * has room to show every day individually instead of mobile's compact
+   * two-row grouping. */
+  openingHoursByDay: [
+    { day: "Monday", hours: "10 am - 12 am" },
+    { day: "Tuesday", hours: "10 am - 12 am" },
+    { day: "Wednesday", hours: "10 am - 12 am" },
+    { day: "Thursday", hours: "10 am - 12 am" },
+    { day: "Friday", hours: "10 am - 1 am" },
+    { day: "Saturday", hours: "10 am - 1 am" },
+    { day: "Sunday", hours: "10 am - 1 am" },
+  ],
   currency: "AED",
   /**
    * PWA brand colours — must match `--color-accent`/`--color-bg` in

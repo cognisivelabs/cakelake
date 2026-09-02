@@ -82,6 +82,14 @@ export default function ContactPage() {
                     </div>
                   ))}
                 </div>
+                <div className={styles.desktopHours}>
+                  {CONFIG.openingHoursByDay.map((entry) => (
+                    <div key={entry.day} className={styles.row}>
+                      <span>{entry.day}</span>
+                      <span>{entry.hours}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
             </section>
 

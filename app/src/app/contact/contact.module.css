@@ -74,6 +74,10 @@
   gap: 12px;
 }
 
+.desktopHours {
+  display: none;
+}
+
 .row {
   display: flex;
   justify-content: space-between;
@@ -211,6 +215,16 @@
     gap: 8px;
     flex: 1;
     min-width: 0;
+  }
+
+  .mutedBox {
+    display: none;
+  }
+
+  .desktopHours {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
   }
 
   .actions {

@@ -133,13 +133,17 @@
     display: block;
   }
 
+  /* 1.6rem matches the desktop page-heading size already used on Menu
+     (.desktopCategoryHeading) and Item detail (.title) — not the
+     Hi-Fi's own one-off 44px for this specific screen, which would be
+     the only page-heading at a different size than everywhere else. */
   .desktopIntro h1 {
-    font-size: 2rem;
+    font-size: 1.6rem;
   }
 
   .desktopIntro p {
     margin: 8px 0 0;
-    font-size: 0.9rem;
+    font-size: 0.8rem;
     line-height: 1.6;
     color: var(--color-ink-muted);
   }

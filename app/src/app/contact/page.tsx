@@ -88,10 +88,6 @@ export default function ContactPage() {
                 <span>WhatsApp</span>
                 <span>{formatDisplay(CONFIG.bakeryWhatsAppNumber)}</span>
               </div>
-              <div className={`${styles.row} ${styles.desktopOnlyRow}`}>
-                <span>Second line</span>
-                <span>{formatDisplay(CONFIG.secondaryWhatsAppNumber)}</span>
-              </div>
             </section>
           </div>
 

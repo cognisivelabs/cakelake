@@ -8,10 +8,6 @@ export const CONFIG = {
    * the order handoff (ADR-003) and every general "message us" link.
    */
   bakeryWhatsAppNumber: "971503287761",
-  /** A second WhatsApp line, display only — from docs/design/CLAUDE.md.
-   * Shown on Contact — desktop's "call or message" list; not used for
-   * the order handoff, which always goes to bakeryWhatsAppNumber above. */
-  secondaryWhatsAppNumber: "971529811358",
   /** Shop landline — display only, not a WhatsApp number. */
   shopPhone: "04 221 7761",
   address: {

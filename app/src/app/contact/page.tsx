@@ -138,9 +138,6 @@ export default function ContactPage() {
             <div className={`${styles.footerLabel} mono-tag`}>ORDERING</div>
             <p className={styles.footerText}>Orders are confirmed in WhatsApp.</p>
           </div>
-          <a href={buildWhatsAppUrl()} {...EXTERNAL_LINK_PROPS} className={styles.desktopWaButton}>
-            MESSAGE US ON WHATSAPP
-          </a>
         </div>
       </div>
     </div>

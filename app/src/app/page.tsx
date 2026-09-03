@@ -1,9 +1,7 @@
 import Link from "next/link";
 import { getCatalog, getCategories } from "@/lib/catalog";
 import { CONFIG } from "@/lib/config";
-import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import { formatAed } from "@/lib/pricing";
-import { EXTERNAL_LINK_PROPS } from "@/lib/externalLink";
 import { ROUTES } from "@/lib/routes";
 import { Header } from "@/components/Header";
 import { InstallPrompt } from "@/components/InstallPrompt";
@@ -120,13 +118,6 @@ export default function HomePage() {
               </span>
             ))}
           </p>
-          <a
-            href={buildWhatsAppUrl()}
-            {...EXTERNAL_LINK_PROPS}
-            className={styles.footerLink}
-          >
-            MESSAGE US ON WHATSAPP →
-          </a>
         </div>
 
         {/* Desktop only — the Hi-Fi's 3-column footer (location / ordering
@@ -150,9 +141,6 @@ export default function HomePage() {
               <div className={`${styles.footerLabel} mono-tag`}>ORDERING</div>
               <p className={styles.footerText}>Orders are confirmed in WhatsApp.</p>
             </div>
-            <a href={buildWhatsAppUrl()} {...EXTERNAL_LINK_PROPS} className={styles.desktopWaButton}>
-              MESSAGE US ON WHATSAPP
-            </a>
           </div>
         </div>
       </div>

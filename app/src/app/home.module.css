@@ -212,13 +212,6 @@
   color: #b7a68c;
 }
 
-.footerLink {
-  color: var(--color-accent);
-  font-weight: 700;
-  font-size: 0.72rem;
-  text-decoration: none;
-}
-
 /* Desktop — see docs/design/CLB-Hi-Fi-Screens.dc.html's "Home — desktop"
    screen. Breakpoint is 1024px, decided (see ADR-003's corrected entry),
    not a value to keep re-deciding per component. */
@@ -386,16 +379,4 @@
     font-size: 0.84rem;
   }
 
-  .desktopWaButton {
-    flex: none;
-    align-self: center;
-    background: var(--color-teal);
-    color: #fff;
-    border-radius: var(--radius-md);
-    padding: 14px 22px;
-    font-weight: 800;
-    font-size: 0.75rem;
-    letter-spacing: 0.03em;
-    text-decoration: none;
-  }
 }

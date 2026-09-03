@@ -271,6 +271,7 @@
   left: 16px;
   right: 16px;
   bottom: 16px;
+  z-index: 20;
   max-width: 360px;
   margin: 0 auto;
   background: var(--color-bg);

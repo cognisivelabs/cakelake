@@ -141,6 +141,7 @@
 .cartBar {
   position: sticky;
   bottom: 0;
+  z-index: 20;
   margin: 24px 0 -32px;
   margin-top: auto;
   background: var(--color-ink);

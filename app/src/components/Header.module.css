@@ -70,18 +70,6 @@
   flex: none;
 }
 
-.waBadge {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background: var(--color-teal);
-  color: #fff !important;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-decoration: none !important;
-}
-
 .cartPill {
   composes: cart-pill from global;
 }
@@ -130,15 +118,6 @@
     align-items: center;
     gap: 12px;
     flex: none;
-  }
-
-  .waButton {
-    background: var(--color-teal);
-    color: #fff !important;
-    border-radius: var(--radius-md);
-    padding: 11px 16px;
-    font-size: 0.71875rem !important;
-    text-decoration: none !important;
   }
 
   .desktopCartPill {

@@ -2,11 +2,8 @@
 
 import { useState, type ReactNode } from "react";
 import Link from "next/link";
-import { FaWhatsapp } from "react-icons/fa";
 import { useCart } from "@/context/CartContext";
 import { useInstallPrompt } from "@/hooks/useInstallPrompt";
-import { buildWhatsAppUrl } from "@/lib/whatsapp";
-import { EXTERNAL_LINK_PROPS } from "@/lib/externalLink";
 import { ROUTES } from "@/lib/routes";
 import { INSTALL_STEPS } from "@/components/installSteps";
 import { orderItemCount } from "@/lib/order";
@@ -76,14 +73,6 @@ export function Header({ desktopRight }: HeaderProps = {}) {
         </nav>
 
         <div className={styles.actions}>
-          <a
-            href={buildWhatsAppUrl()}
-            {...EXTERNAL_LINK_PROPS}
-            className={styles.waBadge}
-            aria-label="Message us on WhatsApp"
-          >
-            <FaWhatsapp size={16} aria-hidden="true" />
-          </a>
           <Link href={ROUTES.cart} className={`${styles.cartPill} mono-tag`}>
             CART {itemCount}
           </Link>
@@ -91,14 +80,9 @@ export function Header({ desktopRight }: HeaderProps = {}) {
 
         <div className={styles.desktopActions}>
           {desktopRight ?? (
-            <>
-              <a href={buildWhatsAppUrl()} {...EXTERNAL_LINK_PROPS} className={`${styles.waButton} mono-tag`}>
-                WhatsApp
-              </a>
-              <Link href={ROUTES.cart} className={`${styles.desktopCartPill} mono-tag`}>
-                Cart · {itemCount} · {formatAed(total)}
-              </Link>
-            </>
+            <Link href={ROUTES.cart} className={`${styles.desktopCartPill} mono-tag`}>
+              Cart · {itemCount} · {formatAed(total)}
+            </Link>
           )}
         </div>
       </div>

@@ -1,0 +1,31 @@
+/* Sized to sit fully behind whichever mobile-only bottom bar is present
+   (Menu's cart bar, Item detail's add bar — both ~70px tall; Cart's
+   "did you send it?" card, inset 16px from the bottom): bottom must be
+   >= 16px so the button's own bottom edge never pokes out below that
+   card, and bottom + height must stay under ~69px so a ~70px-tall bar
+   fully covers it rather than leaving a sliver poking out above. */
+.button {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 15;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--color-teal);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-modal);
+  text-decoration: none;
+}
+
+@media (min-width: 1024px) {
+  .button {
+    right: 28px;
+    bottom: 28px;
+    width: 60px;
+    height: 60px;
+  }
+}

@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import Script from "next/script";
 import { CartProvider } from "@/context/CartContext";
 import { ServiceWorkerRegister } from "@/components/ServiceWorkerRegister";
+import { FloatingWhatsApp } from "@/components/FloatingWhatsApp";
 import { CONFIG } from "@/lib/config";
 import { INSTALL_PROMPT_EVENT, APP_INSTALLED_EVENT } from "@/lib/installEvents";
 import { withBasePath } from "@/lib/assets";
@@ -67,6 +68,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <CartProvider>
           <main>{children}</main>
         </CartProvider>
+        <FloatingWhatsApp />
         <ServiceWorkerRegister />
       </body>
     </html>

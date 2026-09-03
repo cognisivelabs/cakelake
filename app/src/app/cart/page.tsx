@@ -272,6 +272,33 @@ export default function CartPage() {
               ASK US FOR SOMETHING CUSTOM
             </a>
           </div>
+          <div className={styles.orderingStepsCard}>
+            <div className={styles.orderingStepsLabel}>HOW ORDERING WORKS</div>
+            <ol className={styles.orderingSteps}>
+              <li>
+                <span className={styles.orderingStepNum}>1</span>
+                <span>Add your cakes and pick pickup or delivery.</span>
+              </li>
+              <li>
+                <span className={styles.orderingStepNum}>2</span>
+                <span>
+                  Send the order to us on WhatsApp — one tap, message already
+                  written.
+                </span>
+              </li>
+              <li>
+                <span className={styles.orderingStepNum}>3</span>
+                <span>
+                  We confirm price and time in the chat.{" "}
+                  <strong>Nothing is charged in the app.</strong>
+                </span>
+              </li>
+            </ol>
+            <p className={styles.orderingStepsNote}>
+              Cakes are baked to order — most need 1 hour, custom cakes need
+              24 hours&apos; notice.
+            </p>
+          </div>
         </div>
       </div>
     );

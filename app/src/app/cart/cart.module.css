@@ -587,8 +587,18 @@
     box-sizing: border-box;
   }
 
+  /* 34px, matching the Hi-Fi's "Handoff — desktop" screen exactly — not
+     44px; that value is specific to Find us — desktop's heading. */
   .desktopHandoffMain h1 {
-    font-size: 1.6rem;
+    font-size: 2.125rem;
+  }
+
+  /* 32px, matching the Hi-Fi's "Desktop — Order sent" screen exactly.
+     Needs its own class (not a bare .centered h1 rule) since .centered
+     is shared with the empty-cart state's "Nothing in your order yet"
+     heading, which this isn't meant to affect. */
+  .ackHeading {
+    font-size: 2rem;
   }
 
   .desktopMessageBox {

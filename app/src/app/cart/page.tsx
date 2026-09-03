@@ -129,7 +129,7 @@ export default function CartPage() {
         <Header />
         <div className={styles.centered}>
           <div className={styles.checkCircle}>✓</div>
-          <h1>Order sent</h1>
+          <h1 className={styles.ackHeading}>Order sent</h1>
           <p className={styles.muted}>
             We&apos;ll confirm the details and the price in WhatsApp, usually
             within the hour during opening times.

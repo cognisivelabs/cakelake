@@ -76,18 +76,6 @@
   gap: 10px;
 }
 
-.tealButton {
-  background: var(--color-teal);
-  color: #fff;
-  border-radius: var(--radius-md);
-  padding: 14px;
-  text-align: center;
-  font-weight: 800;
-  font-size: 0.78rem;
-  letter-spacing: 0.03em;
-  text-decoration: none;
-}
-
 .outlineButton {
   border: 1.5px solid var(--color-ink);
   color: var(--color-ink);

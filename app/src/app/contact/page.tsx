@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { CONFIG } from "@/lib/config";
-import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import { EXTERNAL_LINK_PROPS } from "@/lib/externalLink";
 import { ROUTES } from "@/lib/routes";
 import { withBasePath } from "@/lib/assets";
@@ -101,13 +100,6 @@ export default function ContactPage() {
           </div>
 
           <div className={styles.actions}>
-            <a
-              href={buildWhatsAppUrl()}
-              {...EXTERNAL_LINK_PROPS}
-              className={styles.tealButton}
-            >
-              MESSAGE US ON WHATSAPP
-            </a>
             <a
               href={CONFIG.mapsUrl}
               {...EXTERNAL_LINK_PROPS}

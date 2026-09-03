@@ -44,6 +44,13 @@
   color: var(--color-ink);
 }
 
+/* 24px, matching the Hi-Fi's mobile "Handoff — acknowledged" screen
+   exactly — had no explicit size before, so it was silently falling
+   back to the browser default h1 size (32px) instead. */
+.ackHeading {
+  font-size: 1.5rem;
+}
+
 .emptyCircle {
   width: 64px;
   height: 64px;
@@ -209,6 +216,13 @@
 .handoffWrap {
   padding: 20px 20px 0;
   position: relative;
+}
+
+/* 20px, matching the Hi-Fi's mobile "Handoff" screen exactly — had no
+   explicit size before, so it was silently falling back to the browser
+   default h1 size (32px) instead. */
+.handoffWrap h1 {
+  font-size: 1.25rem;
 }
 
 .dimmed {

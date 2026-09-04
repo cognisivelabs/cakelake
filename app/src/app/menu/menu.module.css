@@ -147,7 +147,7 @@
   position: sticky;
   bottom: 0;
   z-index: 20;
-  margin: 24px 0 0;
+  margin: 24px 0 24px;
   background: var(--color-ink);
   padding: 14px 20px;
   display: flex;

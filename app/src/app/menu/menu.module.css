@@ -143,48 +143,6 @@
   margin-bottom: 24px;
 }
 
-.cartBar {
-  position: sticky;
-  bottom: 0;
-  z-index: 20;
-  margin: 24px 0 24px;
-  background: var(--color-ink);
-  padding: 14px 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-  text-decoration: none;
-}
-
-.cartBarInfo {
-  display: flex;
-  flex-direction: column;
-}
-
-.cartBarCount {
-  font-weight: 700;
-  font-size: 0.75rem;
-  color: #e8dcc6;
-}
-
-.cartBarTotal {
-  font-family: var(--font-heading);
-  font-weight: 800;
-  font-size: 1.05rem;
-  color: var(--color-accent);
-}
-
-.viewCartButton {
-  background: var(--color-accent);
-  color: var(--color-ink);
-  border-radius: var(--radius-md);
-  padding: 12px 18px;
-  font-weight: 800;
-  font-size: 0.8rem;
-  box-shadow: 0 2px 0 var(--color-accent-shadow);
-}
-
 /* Desktop — see docs/design/CLB-Hi-Fi-Screens.dc.html's "Menu — desktop"
    screen (category rail, 3-up grid, persistent cart column). Mobile's
    header/search/section markup above is duplicated rather than reflowed

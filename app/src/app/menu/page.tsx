@@ -158,18 +158,6 @@ export default function MenuPage() {
               </section>
             );
           })}
-
-          {itemCount > 0 && (
-            <Link href={ROUTES.cart} className={styles.cartBar}>
-              <span className={styles.cartBarInfo}>
-                <span className={styles.cartBarCount}>
-                  {itemCount} item{itemCount === 1 ? "" : "s"}
-                </span>
-                <span className={styles.cartBarTotal}>{formatAed(total)}</span>
-              </span>
-              <span className={styles.viewCartButton}>VIEW CART</span>
-            </Link>
-          )}
         </div>
 
         {!hasResults && (

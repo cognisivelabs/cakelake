@@ -5,6 +5,7 @@ import type { CartLine } from "@/types/order";
 import { useCart } from "@/context/CartContext";
 import { lineTotal, formatAed } from "@/lib/pricing";
 import { resolveSelection } from "@/lib/order";
+import { withBasePath } from "@/lib/assets";
 import styles from "./CartLineItem.module.css";
 
 export function CartLineItem({ item, line }: { item: CatalogItem; line: CartLine }) {
@@ -15,7 +16,19 @@ export function CartLineItem({ item, line }: { item: CatalogItem; line: CartLine
 
   return (
     <div className={styles.line}>
-      <div className={styles.photo} />
+      <div className={styles.photo}>
+        {flavour?.imageUrl && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={withBasePath(flavour.imageUrl)}
+            alt=""
+            className={styles.photoImage}
+            onError={(e) => {
+              e.currentTarget.style.display = "none";
+            }}
+          />
+        )}
+      </div>
       <div className={styles.info}>
         <div className={styles.nameRow}>
           <strong>

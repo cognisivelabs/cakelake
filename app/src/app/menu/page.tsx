@@ -12,7 +12,8 @@ import { ROUTES } from "@/lib/routes";
 import { PageHeader } from "@/components/PageHeader";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
-import { orderItemCount, resolveOrderLines, describeLine } from "@/lib/order";
+import { orderItemCount, resolveOrderLines, describeLine, resolveSelection } from "@/lib/order";
+import { withBasePath } from "@/lib/assets";
 import type { CatalogItem } from "@/types/catalog";
 import styles from "./menu.module.css";
 
@@ -296,9 +297,22 @@ export default function MenuPage() {
                     <div className={styles.cartPanelLines}>
                       {resolvedLines.map(({ item, line }) => {
                         const lt = lineTotal(item, line);
+                        const { flavour } = resolveSelection(item, line);
                         return (
                           <div key={line.lineId} className={styles.cartPanelLine}>
-                            <div className={styles.cartPanelPhoto} />
+                            <div className={styles.cartPanelPhoto}>
+                              {flavour?.imageUrl && (
+                                // eslint-disable-next-line @next/next/no-img-element
+                                <img
+                                  src={withBasePath(flavour.imageUrl)}
+                                  alt=""
+                                  className={styles.cartPanelPhotoImage}
+                                  onError={(e) => {
+                                    e.currentTarget.style.display = "none";
+                                  }}
+                                />
+                              )}
+                            </div>
                             <div className={styles.cartPanelInfo}>
                               <div className={styles.cartPanelName}>{describeLine(item, line)}</div>
                               {line.cakeMessage && (

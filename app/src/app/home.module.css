@@ -182,36 +182,6 @@
   display: none;
 }
 
-.desktopFooter {
-  display: none;
-}
-
-.footer {
-  margin-top: auto;
-  padding: 18px 20px 24px;
-  background: var(--color-ink);
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.footerLabel {
-  color: var(--color-accent);
-  font-size: 0.65rem !important;
-  letter-spacing: 0.08em;
-}
-
-.footerText {
-  margin: 0;
-  font-size: 0.75rem;
-  line-height: 1.6;
-  color: #e8dcc6;
-}
-
-.footerMuted {
-  color: #b7a68c;
-}
-
 /* Desktop — see docs/design/CLB-Hi-Fi-Screens.dc.html's "Home — desktop"
    screen. Breakpoint is 1024px, decided (see ADR-003's corrected entry),
    not a value to keep re-deciding per component. */
@@ -344,39 +314,4 @@
     margin-top: 14px;
     font-size: 0.8125rem;
   }
-
-  .footer {
-    display: none;
-  }
-
-  /* Full-bleed colour band — spans the viewport on large monitors, same
-     as the header. .desktopFooterInner below keeps the actual content a
-     readable column instead of also stretching. */
-  .desktopFooter {
-    display: block;
-    margin-top: auto;
-    background: var(--color-ink);
-  }
-
-  .desktopFooterInner {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 40px;
-    padding: 34px 32px;
-    max-width: var(--desktop-content-max);
-    width: 100%;
-    margin: 0 auto;
-  }
-
-  .desktopFooterColumn {
-    display: flex;
-    flex-direction: column;
-    gap: 9px;
-  }
-
-  .desktopFooterColumn .footerText {
-    font-size: 0.84rem;
-  }
-
 }

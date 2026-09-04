@@ -11,6 +11,7 @@ import { EXTERNAL_LINK_PROPS } from "@/lib/externalLink";
 import { ROUTES } from "@/lib/routes";
 import { PageHeader } from "@/components/PageHeader";
 import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
 import { orderItemCount, resolveOrderLines, describeLine } from "@/lib/order";
 import type { CatalogItem } from "@/types/catalog";
 import styles from "./menu.module.css";
@@ -71,7 +72,7 @@ export default function MenuPage() {
   }
 
   const searchField = (
-    <div className={`${styles.desktopSearchField} ${query ? styles.desktopSearchFieldActive : ""}`}>
+    <div className={styles.desktopSearchField}>
       <input
         type="text"
         className={styles.desktopSearchInput}
@@ -115,7 +116,7 @@ export default function MenuPage() {
           </div>
 
           <div className={styles.searchRow}>
-            <div className={`${styles.searchField} ${query ? styles.searchFieldActive : ""}`}>
+            <div className={styles.searchField}>
               <input
                 type="text"
                 className={styles.searchInput}
@@ -330,6 +331,8 @@ export default function MenuPage() {
             </aside>
           </div>
         )}
+
+        <Footer />
       </div>
     </div>
   );

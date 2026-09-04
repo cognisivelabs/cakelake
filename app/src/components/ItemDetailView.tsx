@@ -14,6 +14,7 @@ import { EXTERNAL_LINK_PROPS } from "@/lib/externalLink";
 import { ROUTES } from "@/lib/routes";
 import { PageHeader } from "@/components/PageHeader";
 import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
 import styles from "./ItemDetailView.module.css";
 
 export function ItemDetailView({ item }: { item: CatalogItem }) {
@@ -89,6 +90,8 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
             ASK US ABOUT THIS CAKE
           </a>
         </div>
+
+        <Footer />
       </div>
     );
   }
@@ -292,6 +295,8 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
           </div>
         </div>
       </div>
+
+      <Footer />
     </div>
   );
 }

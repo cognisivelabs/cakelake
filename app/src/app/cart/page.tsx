@@ -15,6 +15,7 @@ import { CartLineItem } from "@/components/CartLineItem";
 import { Header } from "@/components/Header";
 import { PageHeader } from "@/components/PageHeader";
 import { QrCode } from "@/components/QrCode";
+import { Footer } from "@/components/Footer";
 import type { WhenNeeded } from "@/types/order";
 import styles from "./cart.module.css";
 
@@ -155,6 +156,8 @@ export default function CartPage() {
             </a>
           </div>
         </div>
+
+        <Footer />
       </div>
     );
   }
@@ -242,6 +245,8 @@ export default function CartPage() {
             </div>
           </div>
         </div>
+
+        <Footer />
       </div>
     );
   }
@@ -300,6 +305,8 @@ export default function CartPage() {
             </p>
           </div>
         </div>
+
+        <Footer />
       </div>
     );
   }
@@ -497,6 +504,8 @@ export default function CartPage() {
       <button type="button" className={styles.tealButtonBlock} onClick={goToHandoff}>
         SEND ORDER ON WHATSAPP
       </button>
+
+      <Footer />
     </div>
   );
 }

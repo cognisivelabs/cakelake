@@ -1,10 +1,10 @@
 import Link from "next/link";
 import { getCatalog, getCategories } from "@/lib/catalog";
-import { CONFIG } from "@/lib/config";
 import { formatAed } from "@/lib/pricing";
 import { ROUTES } from "@/lib/routes";
 import { Header } from "@/components/Header";
 import { InstallPrompt } from "@/components/InstallPrompt";
+import { Footer } from "@/components/Footer";
 import type { CatalogItem } from "@/types/catalog";
 import styles from "./home.module.css";
 
@@ -103,46 +103,7 @@ export default function HomePage() {
           </p>
         </div>
 
-        <div className={styles.footer}>
-          <div className={`${styles.footerLabel} mono-tag`}>HOURS &amp; LOCATION</div>
-          <p className={styles.footerText}>
-            {CONFIG.address.line1}
-            <br />
-            {CONFIG.address.line2}
-          </p>
-          <p className={styles.footerText}>
-            {CONFIG.openingHours.map((entry) => (
-              <span key={entry.days} className={styles.footerMuted}>
-                {entry.days}: {entry.hours}
-                <br />
-              </span>
-            ))}
-          </p>
-        </div>
-
-        {/* Desktop only — the Hi-Fi's 3-column footer (location / ordering
-            / a standalone WhatsApp button) is different enough in shape
-            from mobile's stacked version that reflowing one DOM tree
-            between the two got fighting-the-grid awkward; kept separate,
-            toggled by the same 1024px breakpoint as everything else here. */}
-        <div className={styles.desktopFooter}>
-          <div className={styles.desktopFooterInner}>
-            <div className={styles.desktopFooterColumn}>
-              <div className={`${styles.footerLabel} mono-tag`}>WHERE TO FIND US</div>
-              <p className={styles.footerText}>
-                {CONFIG.address.line1}
-                <br />
-                {CONFIG.address.line2}, {CONFIG.address.line3}
-                <br />
-                {CONFIG.shopPhone}
-              </p>
-            </div>
-            <div className={styles.desktopFooterColumn}>
-              <div className={`${styles.footerLabel} mono-tag`}>ORDERING</div>
-              <p className={styles.footerText}>Orders are confirmed in WhatsApp.</p>
-            </div>
-          </div>
-        </div>
+        <Footer />
       </div>
 
       <InstallPrompt />

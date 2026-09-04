@@ -1,14 +1,12 @@
 /* Sized to sit fully behind whichever mobile-only bottom bar is present
    (Menu's cart bar, Item detail's add bar — both ~70px tall; Cart's
-   "did you send it?" card, inset 16px from the bottom): bottom must be
-   >= 16px so the button's own bottom edge never pokes out below that
-   card, and bottom + height must stay under ~69px so a ~70px-tall bar
-   fully covers it rather than leaving a sliver poking out above. */
+   "did you send it?" card, inset 16px from the bottom) on the rare page
+   where one happens to be showing at the same scroll position as this:
+   bottom must be >= 16px so this never pokes out below that card, and
+   bottom + height must stay under ~69px so a ~70px-tall bar fully
+   covers it rather than leaving a sliver poking out above. */
 .button {
-  position: fixed;
-  right: 18px;
-  bottom: 18px;
-  z-index: 15;
+  pointer-events: auto;
   width: 48px;
   height: 48px;
   border-radius: 50%;
@@ -19,13 +17,55 @@
   justify-content: center;
   box-shadow: var(--shadow-modal);
   text-decoration: none;
+  flex: none;
+}
+
+/* Placed as the last child right before Footer's own markup (see
+   Footer.tsx) — sticks to the bottom of the viewport during scroll,
+   then simply runs out of room to stick once its own normal-flow
+   position (right before the footer) comes into view, so it settles
+   there with a small gap above the footer (margin-bottom) instead of
+   sitting flush on top of it. Capped/centered to the same content
+   column as the rest of each page's desktop layout so it lines up with
+   everything else rather than hugging the raw viewport edge.
+
+   margin-top:auto is what keeps it pinned just above the footer on a
+   short page / tall viewport (e.g. a large monitor), where there's no
+   scrolling at all: with no auto margin, this wrapper would just sit at
+   its natural height right after the page's content, stranded high up
+   while the footer (which has its own margin-top:auto, pushing it to
+   the bottom of the flex column) ends up far below it. Absorbing that
+   same leftover space here instead pushes this wrapper down to sit
+   right where the footer begins, so the two move as one unit. */
+.dockedWrap {
+  position: sticky;
+  bottom: 18px;
+  z-index: 15;
+  margin-top: auto;
+  margin-bottom: 16px;
+  padding: 0 20px;
+  display: flex;
+  justify-content: flex-end;
+  pointer-events: none;
 }
 
 @media (min-width: 1024px) {
   .button {
-    right: 28px;
-    bottom: 28px;
     width: 60px;
     height: 60px;
+  }
+
+  .dockedWrap {
+    bottom: 28px;
+    margin-bottom: 24px;
+    max-width: var(--desktop-content-max);
+    width: 100%;
+    /* margin-left/right, not the margin:0 auto shorthand — that would
+       reset margin-top back to 0 and undo the auto-push-to-footer
+       behaviour above. */
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0 32px;
+    box-sizing: border-box;
   }
 }

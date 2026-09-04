@@ -34,10 +34,6 @@
   box-sizing: border-box;
 }
 
-.searchFieldActive {
-  border-color: var(--color-accent);
-}
-
 .searchInput {
   flex: 1;
   min-width: 0;
@@ -48,6 +44,15 @@
   font-size: 0.8rem;
   color: var(--color-ink);
   outline: none;
+}
+
+/* globals.css restores a 2px accent-yellow :focus-visible outline on
+   every input (with !important, to win over exactly this kind of local
+   outline:none) since several fields hide the browser's own focus ring
+   with no other visible indicator left for keyboard users — needs
+   matching !important to opt this one control back out. */
+.searchInput:focus-visible {
+  outline: none !important;
 }
 
 .searchInput::placeholder {
@@ -142,8 +147,7 @@
   position: sticky;
   bottom: 0;
   z-index: 20;
-  margin: 24px 0 -32px;
-  margin-top: auto;
+  margin: 24px 0 0;
   background: var(--color-ink);
   padding: 14px 20px;
   display: flex;
@@ -233,10 +237,6 @@
     background: rgba(255, 255, 255, 0.55);
   }
 
-  .desktopSearchFieldActive {
-    border-color: var(--color-ink);
-  }
-
   .desktopSearchInput {
     flex: 1;
     min-width: 0;
@@ -245,6 +245,12 @@
     font-size: 0.78rem;
     color: var(--color-ink);
     outline: none;
+  }
+
+  /* See .searchInput:focus-visible above — same override, needed again
+     here since this is a separate class. */
+  .desktopSearchInput:focus-visible {
+    outline: none !important;
   }
 
   .desktopSearchInput::placeholder {

@@ -18,10 +18,6 @@
   display: contents;
 }
 
-.desktopFooter {
-  display: none;
-}
-
 .map {
   display: block;
   width: 100%;
@@ -198,42 +194,4 @@
   .actions a {
     flex: 1;
   }
-
-  .desktopFooter {
-    display: block;
-    margin-top: auto;
-    background: var(--color-ink);
-  }
-
-  .desktopFooterInner {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 40px;
-    padding: 34px 32px;
-    max-width: var(--desktop-content-max);
-    width: 100%;
-    margin: 0 auto;
-    box-sizing: border-box;
-  }
-
-  .desktopFooterColumn {
-    display: flex;
-    flex-direction: column;
-    gap: 9px;
-  }
-
-  .footerLabel {
-    color: var(--color-accent);
-    font-size: 0.65rem !important;
-    letter-spacing: 0.08em;
-  }
-
-  .footerText {
-    margin: 0;
-    font-size: 0.84rem;
-    line-height: 1.6;
-    color: #e8dcc6;
-  }
-
 }

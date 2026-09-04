@@ -6,6 +6,7 @@ import { withBasePath } from "@/lib/assets";
 import { SITE_NAME, DEFAULT_OG_IMAGE } from "@/lib/og";
 import { PageHeader } from "@/components/PageHeader";
 import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
 import styles from "./contact.module.css";
 
 const DESCRIPTION = `${CONFIG.address.line1}, ${CONFIG.address.line2}, ${CONFIG.address.line3}.`;
@@ -111,27 +112,7 @@ export default function ContactPage() {
         </div>
       </div>
 
-      {/* Desktop only — same footer band as Home's, no mobile
-          equivalent to toggle against here (this page has no footer at
-          all below 1024px). */}
-      <div className={styles.desktopFooter}>
-        <div className={styles.desktopFooterInner}>
-          <div className={styles.desktopFooterColumn}>
-            <div className={`${styles.footerLabel} mono-tag`}>WHERE TO FIND US</div>
-            <p className={styles.footerText}>
-              {CONFIG.address.line1}
-              <br />
-              {CONFIG.address.line2}, {CONFIG.address.line3}
-              <br />
-              {CONFIG.shopPhone}
-            </p>
-          </div>
-          <div className={styles.desktopFooterColumn}>
-            <div className={`${styles.footerLabel} mono-tag`}>ORDERING</div>
-            <p className={styles.footerText}>Orders are confirmed in WhatsApp.</p>
-          </div>
-        </div>
-      </div>
+      <Footer />
     </div>
   );
 }

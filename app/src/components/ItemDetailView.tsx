@@ -255,7 +255,7 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
           {item.cakeMessageMaxLength > 0 && (
             <div className={styles.content}>
               <div className={styles.sectionLabel}>MESSAGE ON THE CAKE</div>
-              <div className={`${styles.messageField} ${cakeMessage ? styles.messageFieldActive : ""}`}>
+              <div className={styles.messageField}>
                 <input
                   type="text"
                   value={cakeMessage}

@@ -31,11 +31,13 @@
 }
 
 .photo {
-  /* Square on mobile only (height:220px was a fixed, non-square value
-     here before) — aspect-ratio, not a fixed height, so it stays square
-     across different phone widths instead of matching only one. Reset
-     back to a fixed height at desktop, see below. */
-  aspect-ratio: 1 / 1;
+  /* Slightly shorter than square on mobile (height:220px was a fixed,
+     non-square value here before) — aspect-ratio, not a fixed height,
+     so it scales with different phone widths instead of matching only
+     one. 5:4 rather than 1:1: less cropping on the one product photo
+     that's noticeably wider than the rest, while still reading as
+     roughly square. Reset back to a fixed height at desktop, see below. */
+  aspect-ratio: 5 / 4;
   background: var(--color-photo-bg);
   border-bottom: 1px dashed var(--color-placeholder-border);
   display: flex;

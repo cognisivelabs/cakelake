@@ -2,6 +2,7 @@ import Link from "next/link";
 import { getCatalog, getCategories } from "@/lib/catalog";
 import { formatAed } from "@/lib/pricing";
 import { ROUTES } from "@/lib/routes";
+import { withBasePath } from "@/lib/assets";
 import { Header } from "@/components/Header";
 import { InstallPrompt } from "@/components/InstallPrompt";
 import { Footer } from "@/components/Footer";
@@ -29,7 +30,12 @@ export default function HomePage() {
       <div className={styles.body}>
         <div className={styles.hero}>
           <div className={styles.heroText}>
-            <div className={styles.logoPlaceholder}>logo</div>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={withBasePath("/images/logo.png")}
+              alt="Cake Lake Bakery"
+              className={styles.logo}
+            />
             <h1>Cake Lake Bakery</h1>
             <p className={styles.heroSubtitle}>Fresh cakes, ready in an hour</p>
             <div className={styles.badges}>

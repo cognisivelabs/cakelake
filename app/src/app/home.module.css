@@ -23,17 +23,11 @@
   display: none;
 }
 
-.logoPlaceholder {
+.logo {
   width: 72px;
   height: 72px;
   border-radius: 50%;
-  background: var(--color-photo-bg);
-  border: 1px dashed var(--color-placeholder-border);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.7rem;
-  color: var(--color-ink-faint);
+  object-fit: cover;
 }
 
 .hero h1 {
@@ -209,7 +203,7 @@
      not the heading — reordered via flex `order` rather than moving
      the JSX, so mobile's DOM/source order (logo, heading, badges) stays
      untouched. */
-  .logoPlaceholder {
+  .logo {
     display: none;
   }
 

@@ -157,8 +157,14 @@
   composes: textField;
 }
 
-.nameInputActive {
-  border-color: var(--color-accent);
+/* globals.css restores a 2px accent-yellow :focus-visible outline on
+   every input (with !important, to win over .textField's outline:none)
+   since several fields hide the browser's own focus ring with no other
+   visible indicator left for keyboard users — needs matching !important
+   to opt this one control back out, same as Menu's search inputs and
+   Item detail's message field. */
+.nameInput:focus-visible {
+  outline: none !important;
 }
 
 .totals {

@@ -31,7 +31,11 @@
 }
 
 .photo {
-  height: 220px;
+  /* Square on mobile only (height:220px was a fixed, non-square value
+     here before) — aspect-ratio, not a fixed height, so it stays square
+     across different phone widths instead of matching only one. Reset
+     back to a fixed height at desktop, see below. */
+  aspect-ratio: 1 / 1;
   background: var(--color-photo-bg);
   border-bottom: 1px dashed var(--color-placeholder-border);
   display: flex;
@@ -424,6 +428,7 @@
   }
 
   .photo {
+    aspect-ratio: auto;
     height: 420px;
     border: 1px dashed var(--color-placeholder-border);
     border-radius: var(--radius-lg);

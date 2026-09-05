@@ -24,7 +24,12 @@ export default function manifest(): MetadataRoute.Manifest {
         purpose: "any",
       },
       {
-        src: "icons/icon-192.png",
+        // A distinct file, not icon-192.png reused — maskable icons get
+        // cropped to whatever shape the OS applies (circle, squircle,
+        // etc.), so this one is the logo scaled down onto an opaque
+        // brand-yellow square with a safe margin, instead of the "any"
+        // icon's transparent background and edge-to-edge circle.
+        src: "icons/icon-192-maskable.png",
         sizes: "192x192",
         type: "image/png",
         purpose: "maskable",
@@ -36,7 +41,7 @@ export default function manifest(): MetadataRoute.Manifest {
         purpose: "any",
       },
       {
-        src: "icons/icon-512.png",
+        src: "icons/icon-512-maskable.png",
         sizes: "512x512",
         type: "image/png",
         purpose: "maskable",

@@ -7,8 +7,6 @@ import { useInstallPrompt } from "@/hooks/useInstallPrompt";
 import { ROUTES } from "@/lib/routes";
 import { INSTALL_STEPS } from "@/components/installSteps";
 import { orderItemCount } from "@/lib/order";
-import { orderTotal, formatAed } from "@/lib/pricing";
-import { getCatalog } from "@/lib/catalog";
 import styles from "./Header.module.css";
 
 type HeaderProps = {
@@ -25,10 +23,6 @@ export function Header({ desktopRight }: HeaderProps = {}) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [showInstallSteps, setShowInstallSteps] = useState(false);
   const itemCount = orderItemCount(order);
-  // Desktop's cart button shows a running total too (mobile's doesn't —
-  // no room). Cheap either way: both are pure reads over the in-memory
-  // catalog, not worth gating behind the desktop breakpoint in JS.
-  const total = orderTotal(order, getCatalog());
 
   function closeMenu() {
     setMenuOpen(false);
@@ -81,7 +75,7 @@ export function Header({ desktopRight }: HeaderProps = {}) {
         <div className={styles.desktopActions}>
           {desktopRight ?? (
             <Link href={ROUTES.cart} className={`${styles.desktopCartPill} mono-tag`}>
-              Cart · {itemCount} · {formatAed(total)}
+              Cart · {itemCount}
             </Link>
           )}
         </div>

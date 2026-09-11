@@ -4,12 +4,12 @@ import { useState } from "react";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import { getCatalog } from "@/lib/catalog";
-import { orderTotal, hasUnpricedLines, formatAed } from "@/lib/pricing";
+import { orderTotal, hasUnpricedLines, lineTotal, formatAed } from "@/lib/pricing";
 import { buildOrderMessage, buildWhatsAppUrl, openWhatsAppUrl } from "@/lib/whatsapp";
 import { CONFIG } from "@/lib/config";
 import { EXTERNAL_LINK_PROPS } from "@/lib/externalLink";
 import { ROUTES } from "@/lib/routes";
-import { describeLine, resolveOrderLines, orderItemCount } from "@/lib/order";
+import { describeLine, resolveOrderLines, resolveSelection, orderItemCount } from "@/lib/order";
 import { formatShortDate, parseIsoDateLocal, todayIsoDate } from "@/lib/dates";
 import { CartLineItem } from "@/components/CartLineItem";
 import { Header } from "@/components/Header";
@@ -46,7 +46,23 @@ export default function CartPage() {
   const stage: Stage = manualStage ?? (order.pendingHandoff ? "confirming" : "review");
   const [sentMessage, setSentMessage] = useState("");
   const [sentUrl, setSentUrl] = useState("");
-  const [ackSummary, setAckSummary] = useState<{ lines: string; total: string } | null>(null);
+  // itemizedLines/fulfillmentLine/sentAt only feed the desktop screen's
+  // richer recap (see docs/design/CLB-Hi-Fi-Screens.dc.html's "Order sent
+  // — desktop") — mobile keeps its existing flattened lines/total summary.
+  const [ackSummary, setAckSummary] = useState<{
+    lines: string;
+    total: string;
+    itemizedLines: {
+      quantity: number;
+      name: string;
+      descriptor?: string;
+      message?: string;
+      detail?: string;
+      price: string;
+    }[];
+    fulfillmentLine: string;
+    sentAt: string;
+  } | null>(null);
   const displayMessage = sentMessage || buildOrderMessage(order, catalog);
 
   const resolvedLines = resolveOrderLines(order, catalog);
@@ -118,6 +134,23 @@ export default function CartPage() {
         .map(({ item, line }) => describeLine(item, line))
         .join(" · "),
       total: formatAed(orderTotal(order, catalog)),
+      itemizedLines: resolvedLines.map(({ item, line }) => {
+        const { tier, flavour } = resolveSelection(item, line);
+        const price = lineTotal(item, line);
+        return {
+          quantity: line.quantity,
+          name: item.name,
+          descriptor: [tier?.label, flavour?.label].filter(Boolean).join(" · ") || undefined,
+          message: line.cakeMessage,
+          detail: line.customDescription,
+          price: price === undefined ? "Ask us" : formatAed(price),
+        };
+      }),
+      fulfillmentLine:
+        order.fulfillment === "pickup"
+          ? `Pickup · ${pickupSummary()} — ${CONFIG.address.line1}`
+          : `Delivery · ${pickupSummary()}`,
+      sentAt: new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }),
     });
     clearCart();
     setManualStage("acknowledged");
@@ -154,6 +187,82 @@ export default function CartPage() {
             >
               OPEN THE CHAT AGAIN
             </a>
+          </div>
+        </div>
+
+        {/* Desktop — see docs/design/CLB-Hi-Fi-Screens.dc.html's "Order
+            sent — desktop": "the order is now a conversation, so the page
+            stops being a checkout" — an itemized recap and a dedicated
+            "something to change?" panel instead of mobile's one-line
+            summary, same dual-block pattern as the handoff/QR stage
+            above. */}
+        <div className={styles.desktopAcknowledged}>
+          <div className={styles.desktopAckCard}>
+            <div className={styles.desktopAckCheck}>✓</div>
+            <h1 className={styles.desktopAckHeading}>Order sent</h1>
+            <p className={styles.desktopAckSubtitle}>
+              We&apos;ll confirm the details and the price in WhatsApp,
+              usually within the hour during opening times.
+            </p>
+          </div>
+
+          <div className={styles.desktopAckRecap}>
+            <div className={styles.desktopAckRecapLabel}>
+              WHAT YOU SENT · {ackSummary.sentAt}
+            </div>
+            <div className={styles.desktopAckLines}>
+              {ackSummary.itemizedLines.map((line, i) => (
+                <div key={i} className={styles.desktopAckLine}>
+                  <div>
+                    <div className={styles.desktopAckLineName}>
+                      {line.quantity}× {line.name}
+                    </div>
+                    {line.descriptor && (
+                      <div className={styles.desktopAckLineDetail}>{line.descriptor}</div>
+                    )}
+                    {line.detail && (
+                      <div className={styles.desktopAckLineDetail}>{line.detail}</div>
+                    )}
+                    {line.message && (
+                      <div className={styles.desktopAckLineDetail}>&ldquo;{line.message}&rdquo;</div>
+                    )}
+                  </div>
+                  <div className={styles.desktopAckLinePrice}>{line.price}</div>
+                </div>
+              ))}
+            </div>
+            <div className={styles.desktopAckDivider} />
+            <div className={styles.desktopAckTotalRow}>
+              <span>Total, to be confirmed</span>
+              <span className={styles.desktopAckTotalAmount}>{ackSummary.total}</span>
+            </div>
+            <div className={styles.desktopAckInfoBox}>
+              {ackSummary.fulfillmentLine}
+              <br />
+              <span className={styles.desktopAckInfoMuted}>
+                Nothing is charged here. We confirm the price with you in chat.
+              </span>
+            </div>
+          </div>
+
+          <div className={styles.desktopAckChangeCard}>
+            <div className={styles.desktopAckChangeHeading}>Something to change?</div>
+            <p className={styles.desktopAckChangeText}>
+              Reply in the same WhatsApp chat — flavour, inscription, time,
+              all of it. There&apos;s nothing to edit here.
+            </p>
+            <div className={styles.desktopAckChangeActions}>
+              <a
+                href={sentUrl}
+                {...EXTERNAL_LINK_PROPS}
+                className={styles.desktopAckOpenChat}
+              >
+                OPEN THE CHAT
+              </a>
+              <Link href={ROUTES.menu} className={styles.desktopAckBackToMenu}>
+                BACK TO THE MENU
+              </Link>
+            </div>
           </div>
         </div>
 

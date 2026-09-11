@@ -474,6 +474,13 @@
   color: var(--color-ink-muted);
 }
 
+/* Desktop-only "order sent" screen — see the .desktopAcknowledged block's
+   own comment in page.tsx. Hidden here (mobile), built out in the
+   @media block below. */
+.desktopAcknowledged {
+  display: none;
+}
+
 /* — Desktop — see docs/design/CLB-Hi-Fi-Screens.dc.html's "Review order
    — desktop" and "Handoff — desktop" screens. The line-item/form
    sections (.lineList, .section) are shared with mobile unchanged —
@@ -508,19 +515,204 @@
 }
 
 @media (min-width: 1024px) {
-  /* width: 100% for the same reason ItemDetailView's .breadcrumb and
-     Contact's .desktopIntro need it — a flex child of .page (column
-     flex) with margin: 0 auto but no explicit width shrinks to content
-     width instead of filling the row first. Harmless here today only
-     because .centered's own content is already text-align: center, so
-     the two ways of being "centered" look identical — still fixed for
-     correctness, not because it's currently visible. */
+  /* .centered is only the acknowledged ("order sent") screen now — the
+     empty-order state has its own .emptyState layout above. That screen
+     gets a real desktop-native treatment (.desktopAcknowledged, below)
+     instead of this block just narrowed, same as .handoffWrap/
+     .desktopHandoff. */
   .centered {
+    display: none;
+  }
+
+  .desktopAcknowledged {
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+    max-width: 660px;
     width: 100%;
-    max-width: 480px;
     margin: 0 auto;
-    padding-top: 96px;
+    padding: 56px 32px 40px;
     box-sizing: border-box;
+  }
+
+  .desktopAckCard {
+    background: var(--color-surface);
+    border-radius: var(--radius-lg);
+    padding: 36px;
+    box-shadow: var(--shadow-card);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+    text-align: center;
+  }
+
+  .desktopAckCheck {
+    width: 68px;
+    height: 68px;
+    border-radius: 50%;
+    background: var(--color-accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: 1.75rem;
+    color: var(--color-ink);
+  }
+
+  .desktopAckHeading {
+    font-size: 2rem;
+  }
+
+  .desktopAckSubtitle {
+    margin: 0;
+    max-width: 420px;
+    font-size: 0.90625rem;
+    line-height: 1.7;
+    color: var(--color-ink-muted);
+  }
+
+  .desktopAckRecap {
+    background: var(--color-surface);
+    border-radius: var(--radius-lg);
+    padding: 26px 28px;
+    box-shadow: var(--shadow-card);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .desktopAckRecapLabel {
+    font-family: var(--font-mono);
+    font-weight: 700;
+    font-size: 0.6875rem;
+    letter-spacing: 0.1em;
+    color: var(--color-ink-faint);
+  }
+
+  .desktopAckLines {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .desktopAckLine {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    align-items: flex-start;
+    font-size: 0.84375rem;
+    color: var(--color-ink);
+    padding-bottom: 12px;
+  }
+
+  .desktopAckLine:not(:last-child) {
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .desktopAckLineName {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 0.875rem;
+  }
+
+  .desktopAckLineDetail {
+    margin-top: 2px;
+    font-size: 0.78125rem;
+    color: var(--color-ink-muted);
+  }
+
+  .desktopAckLinePrice {
+    font-family: var(--font-heading);
+    font-weight: 700;
+    font-size: 0.875rem;
+    white-space: nowrap;
+  }
+
+  .desktopAckDivider {
+    height: 1px;
+    background: var(--color-border);
+  }
+
+  .desktopAckTotalRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    font-weight: 700;
+    font-size: 0.84375rem;
+    color: var(--color-ink-muted);
+  }
+
+  .desktopAckTotalAmount {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: 1.25rem;
+    color: var(--color-ink);
+  }
+
+  .desktopAckInfoBox {
+    background: var(--color-surface-alt);
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+    font-size: 0.8125rem;
+    line-height: 1.7;
+    color: var(--color-ink);
+  }
+
+  .desktopAckInfoMuted {
+    color: var(--color-ink-muted);
+  }
+
+  .desktopAckChangeCard {
+    background: var(--color-ink);
+    border-radius: var(--radius-lg);
+    padding: 26px 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .desktopAckChangeHeading {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: 1.0625rem;
+    color: var(--color-bg);
+  }
+
+  .desktopAckChangeText {
+    margin: 0;
+    font-size: 0.84375rem;
+    line-height: 1.7;
+    color: #e3d5c4;
+  }
+
+  .desktopAckChangeActions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .desktopAckOpenChat {
+    background: var(--color-teal);
+    color: #fff;
+    border-radius: var(--radius-md);
+    padding: 14px 22px;
+    font-weight: 800;
+    font-size: 0.78125rem;
+    letter-spacing: 0.04em;
+    text-decoration: none;
+  }
+
+  .desktopAckBackToMenu {
+    border: 1.5px solid #8d7669;
+    color: var(--color-bg);
+    border-radius: var(--radius-md);
+    padding: 12.5px 22px;
+    font-weight: 700;
+    font-size: 0.75rem;
+    letter-spacing: 0.04em;
+    text-decoration: none;
   }
 
   .emptyBackLink {
@@ -772,14 +964,6 @@
      44px; that value is specific to Find us — desktop's heading. */
   .desktopHandoffMain h1 {
     font-size: 2.125rem;
-  }
-
-  /* 32px, matching the Hi-Fi's "Desktop — Order sent" screen exactly.
-     Needs its own class (not a bare .centered h1 rule) since .centered
-     is shared with the empty-cart state's "Nothing in your order yet"
-     heading, which this isn't meant to affect. */
-  .ackHeading {
-    font-size: 2rem;
   }
 
   .desktopMessageBox {

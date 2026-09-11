@@ -51,25 +51,66 @@
   font-size: 1.5rem;
 }
 
-.emptyCircle {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  background: var(--color-surface-alt);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: 0.7rem;
-  color: var(--color-ink-faint);
-}
-
 .muted {
   color: var(--color-ink-muted);
   font-size: 0.8rem;
   line-height: 1.6;
   max-width: 280px;
+}
+
+/* — Empty order — see the .emptyState block's own comment in page.tsx.
+   Independent of .centered (the acknowledged screen keeps that) since
+   this state's desktop layout is a genuinely different two-column page,
+   not a narrowed version of the mobile block. */
+.emptyState {
+  display: flex;
+  flex-direction: column;
+}
+
+.emptyBackLink {
+  display: none;
+}
+
+.emptyLayout {
+  display: flex;
+  flex-direction: column;
+}
+
+.emptyIntro {
+  padding: 34px 30px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 11px;
+  text-align: center;
+}
+
+.emptyHeading {
+  font-size: 1.375rem;
+}
+
+.emptySubtitleMobile,
+.emptySubtitleDesktop {
+  max-width: 270px;
+}
+
+.emptySubtitleDesktop {
+  display: none;
+}
+
+.emptyActions {
+  padding: 18px 30px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.emptyCardCol {
+  display: contents;
+}
+
+.clickWord {
+  display: none;
 }
 
 .lineList {
@@ -351,7 +392,7 @@
 
 .orderingStepsCard {
   align-self: stretch;
-  margin: 22px -14px 0;
+  margin: 22px 16px 0;
   background: var(--color-surface);
   border-radius: 10px;
   padding: 16px;
@@ -480,6 +521,117 @@
     margin: 0 auto;
     padding-top: 96px;
     box-sizing: border-box;
+  }
+
+  .emptyBackLink {
+    display: block;
+    width: 100%;
+    max-width: var(--desktop-content-max);
+    margin: 0 auto;
+    padding: 22px 32px 0;
+    font-weight: 700;
+    font-size: 0.78rem;
+    color: var(--color-ink);
+    text-decoration: none;
+    box-sizing: border-box;
+  }
+
+  .emptyLayout {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 56px;
+    max-width: var(--desktop-content-max);
+    width: 100%;
+    margin: 0 auto;
+    padding: 44px 32px 0;
+    box-sizing: border-box;
+  }
+
+  .emptyIntro {
+    width: 520px;
+    flex: none;
+    padding: 0;
+    align-items: flex-start;
+    text-align: left;
+    gap: 14px;
+  }
+
+  .emptyHeading {
+    font-size: 2.5rem;
+    letter-spacing: -0.03em;
+  }
+
+  .emptySubtitleMobile {
+    display: none;
+  }
+
+  .emptySubtitleDesktop {
+    display: block;
+    max-width: 440px;
+    font-size: 0.9375rem;
+  }
+
+  .emptyActions {
+    flex-direction: row;
+    padding: 0;
+    gap: 12px;
+    margin-top: 6px;
+  }
+
+  .emptyActions .primaryButton {
+    padding: 16px 28px;
+    font-size: 0.8125rem;
+  }
+
+  .emptyActions .tealOutlineButton {
+    padding: 14.5px 26px;
+    font-size: 0.78rem;
+  }
+
+  .emptyCardCol {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .tapWord {
+    display: none;
+  }
+
+  .clickWord {
+    display: inline;
+  }
+
+  .orderingStepsCard {
+    margin: 0;
+    max-width: 560px;
+    padding: 28px 30px;
+    gap: 18px;
+  }
+
+  .orderingStepsLabel {
+    font-size: 0.6875rem;
+  }
+
+  .orderingSteps {
+    gap: 12px;
+  }
+
+  .orderingSteps li {
+    gap: 14px;
+    font-size: 0.90625rem;
+  }
+
+  .orderingStepNum {
+    width: 26px;
+    height: 26px;
+    font-size: 0.8125rem;
+  }
+
+  .orderingStepsNote {
+    padding: 14px 16px;
+    font-size: 0.8125rem;
   }
 
   .desktopHeading {

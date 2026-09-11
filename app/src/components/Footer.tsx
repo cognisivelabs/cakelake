@@ -1,4 +1,5 @@
 import { CONFIG } from "@/lib/config";
+import { groupOpeningHours } from "@/lib/hours";
 import { FloatingWhatsApp } from "@/components/FloatingWhatsApp";
 import styles from "./Footer.module.css";
 
@@ -7,6 +8,8 @@ import styles from "./Footer.module.css";
 // sticky/margin-top:auto "dock above the footer" behaviour to work — see
 // FloatingWhatsApp.module.css.
 export function Footer() {
+  const groupedHours = groupOpeningHours(CONFIG.openingHoursByDay);
+
   return (
     <>
       <FloatingWhatsApp />
@@ -19,7 +22,7 @@ export function Footer() {
           {CONFIG.address.line2}
         </p>
         <p className={styles.footerText}>
-          {CONFIG.openingHours.map((entry) => (
+          {groupedHours.map((entry) => (
             <span key={entry.days} className={styles.footerMuted}>
               {entry.days}: {entry.hours}
               <br />

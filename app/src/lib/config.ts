@@ -1,19 +1,3 @@
-import { groupOpeningHours } from "@/lib/hours";
-
-/** Client-provided, one entry per day — the single source of truth for
- * the shop's hours. Find us — desktop has room to list every day
- * individually; Footer/mobile show groupOpeningHours()'s collapsed
- * two-row summary instead. */
-const OPENING_HOURS_BY_DAY = [
-  { day: "Monday", hours: "10 am - 12 am" },
-  { day: "Tuesday", hours: "10 am - 12 am" },
-  { day: "Wednesday", hours: "10 am - 12 am" },
-  { day: "Thursday", hours: "10 am - 12 am" },
-  { day: "Friday", hours: "10 am - 1 am" },
-  { day: "Saturday", hours: "10 am - 1 am" },
-  { day: "Sunday", hours: "10 am - 1 am" },
-] as const;
-
 /**
  * Real values confirmed by the client, except where noted. Kept in one
  * place so changes are a one-line edit, not a hunt through the codebase.
@@ -54,12 +38,19 @@ export const CONFIG = {
    */
   mapsEmbedSrc:
     "https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d902.164755967051!2d55.3038083!3d25.2484071!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e5f43e86fd0df21%3A0xab8c252f39da49ca!2sCake%20Lake%20Bakery!5e0!3m2!1sen!2suk!4v1787921738360!5m2!1sen!2suk",
-  /** Footer/mobile's compact summary — derived from openingHoursByDay
-   * below, not hand-typed, so the two views can't drift apart. */
-  openingHours: groupOpeningHours(OPENING_HOURS_BY_DAY),
-  /** Find us — desktop's full per-day listing. The canonical schedule —
-   * edit this when hours change. */
-  openingHoursByDay: OPENING_HOURS_BY_DAY,
+  /** Client-provided, one entry per day. Find us — desktop lists these
+   * as-is; Footer/mobile collapses them into a compact two-row summary
+   * via lib/hours.ts's groupOpeningHours, so the two views can't drift
+   * apart from separately hand-typed copies. */
+  openingHoursByDay: [
+    { day: "Monday", hours: "10 am - 12 am" },
+    { day: "Tuesday", hours: "10 am - 12 am" },
+    { day: "Wednesday", hours: "10 am - 12 am" },
+    { day: "Thursday", hours: "10 am - 12 am" },
+    { day: "Friday", hours: "10 am - 1 am" },
+    { day: "Saturday", hours: "10 am - 1 am" },
+    { day: "Sunday", hours: "10 am - 1 am" },
+  ],
   currency: "AED",
   /**
    * PWA brand colours — must match `--color-accent`/`--color-bg` in

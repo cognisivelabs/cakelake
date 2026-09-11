@@ -1,5 +1,14 @@
-import { afterEach, describe, expect, it } from "vitest";
-import { isAndroidDevice, isIOSDevice, isIOSSafari, isStandalone } from "@/hooks/useInstallPrompt";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { act, createElement } from "react";
+import { createRoot, type Root } from "react-dom/client";
+import {
+  isAndroidDevice,
+  isIOSDevice,
+  isIOSSafari,
+  isStandalone,
+  useInstallPrompt,
+} from "@/hooks/useInstallPrompt";
+import { INSTALL_PROMPT_EVENT, APP_INSTALLED_EVENT } from "@/lib/installEvents";
 
 const IPHONE_SAFARI_UA =
   "Mozilla/5.0 (iPhone; CPU iPhone OS 17_4 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.4 Mobile/15E148 Safari/604.1";
@@ -116,5 +125,108 @@ describe("isStandalone", () => {
   it("is false otherwise", () => {
     setStandalone(false);
     expect(isStandalone()).toBe(false);
+  });
+});
+
+function fakePromptEvent(outcome: "accepted" | "dismissed" = "accepted") {
+  const event = new Event(INSTALL_PROMPT_EVENT) as Event & {
+    prompt: () => Promise<void>;
+    userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
+  };
+  event.prompt = vi.fn().mockResolvedValue(undefined);
+  event.userChoice = Promise.resolve({ outcome });
+  return event;
+}
+
+describe("useInstallPrompt", () => {
+  let container: HTMLDivElement;
+  let root: Root;
+  let state: ReturnType<typeof useInstallPrompt>;
+
+  function Probe() {
+    state = useInstallPrompt();
+    return null;
+  }
+
+  function mount() {
+    container = document.createElement("div");
+    document.body.appendChild(container);
+    act(() => {
+      root = createRoot(container);
+      root.render(createElement(Probe));
+    });
+  }
+
+  afterEach(() => {
+    act(() => root.unmount());
+    container.remove();
+    window.__cakelakeInstallPrompt = null;
+    setDevice({});
+    setStandalone(false);
+  });
+
+  it("is 'none' on a desktop browser with no captured prompt", () => {
+    setDevice({ userAgent: DESKTOP_CHROME_UA, platform: "MacIntel", maxTouchPoints: 0 });
+    mount();
+    expect(state.platform).toBe("none");
+  });
+
+  it("stays 'none' when already running standalone, regardless of device", () => {
+    setDevice({ userAgent: ANDROID_CHROME_UA });
+    setStandalone(true);
+    mount();
+    expect(state.platform).toBe("none");
+  });
+
+  it("is 'ios' for iOS Safari", () => {
+    setDevice({ userAgent: IPHONE_SAFARI_UA, platform: "iPhone", maxTouchPoints: 5 });
+    mount();
+    expect(state.platform).toBe("ios");
+  });
+
+  it("is 'android-manual' for Android with no captured install prompt", () => {
+    setDevice({ userAgent: ANDROID_CHROME_UA });
+    mount();
+    expect(state.platform).toBe("android-manual");
+  });
+
+  it("picks up a beforeinstallprompt event fired after mount, and triggerInstall resolves its outcome", async () => {
+    setDevice({ userAgent: ANDROID_CHROME_UA });
+    mount();
+    const event = fakePromptEvent("accepted");
+
+    act(() => {
+      window.dispatchEvent(event);
+    });
+    expect(state.platform).toBe("android");
+
+    let outcome;
+    await act(async () => {
+      outcome = await state.triggerInstall();
+    });
+    expect(outcome).toBe("accepted");
+    expect(event.prompt).toHaveBeenCalledOnce();
+    expect(window.__cakelakeInstallPrompt).toBeNull();
+  });
+
+  it("picks up a prompt already stashed by the beforeInteractive script before mount", () => {
+    setDevice({ userAgent: ANDROID_CHROME_UA });
+    window.__cakelakeInstallPrompt = fakePromptEvent();
+
+    mount();
+
+    expect(state.platform).toBe("android");
+  });
+
+  it("goes back to 'none' once appinstalled fires", () => {
+    setDevice({ userAgent: ANDROID_CHROME_UA });
+    mount();
+    expect(state.platform).toBe("android-manual");
+
+    act(() => {
+      window.dispatchEvent(new Event(APP_INSTALLED_EVENT));
+    });
+
+    expect(state.platform).toBe("none");
   });
 });

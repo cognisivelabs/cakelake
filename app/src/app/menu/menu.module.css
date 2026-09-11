@@ -171,6 +171,14 @@
     display: none;
   }
 
+  /* Mobile-styled no-results block — the desktop equivalent
+     (.desktopNoResults, further down) lives inside .desktopLayout's main
+     column instead, alongside the rail and cart panel it would otherwise
+     leave stranded. */
+  .noResults {
+    display: none;
+  }
+
   .desktopLayout {
     display: grid;
     grid-template-columns: 212px 1fr 300px;
@@ -182,17 +190,31 @@
     margin: 0 auto;
   }
 
-  /* — Search field, embedded in Header's desktop nav bar — */
+  /* — Search field — top of the main column, see docs/design/
+     CLB-Hi-Fi-Screens.dc.html's updated "Menu — desktop": no longer
+     embedded in Header's nav bar. */
   .desktopSearchField {
+    flex: none;
     display: flex;
     align-items: center;
-    gap: 8px;
-    width: 240px;
-    height: 38px;
-    padding: 0 12px;
-    border: 1.5px solid transparent;
-    border-radius: var(--radius-md);
-    background: rgba(255, 255, 255, 0.55);
+    gap: 11px;
+    height: 48px;
+    padding: 0 16px;
+    margin-bottom: 18px;
+    border: 1px solid var(--color-border);
+    border-radius: 9px;
+    background: var(--color-surface);
+    box-sizing: border-box;
+    color: var(--color-ink-faint);
+  }
+
+  .desktopSearchField[data-active="true"] {
+    border: 2px solid var(--color-accent);
+    padding: 0 15px;
+  }
+
+  .desktopSearchIcon {
+    flex: none;
   }
 
   .desktopSearchInput {
@@ -200,7 +222,7 @@
     min-width: 0;
     border: none;
     background: none;
-    font-size: 0.78rem;
+    font-size: 0.84375rem;
     color: var(--color-ink);
     outline: none;
   }
@@ -212,7 +234,7 @@
   }
 
   .desktopSearchInput::placeholder {
-    color: rgba(79, 53, 47, 0.55);
+    color: var(--color-ink-faint);
   }
 
   .desktopClearButton {
@@ -221,9 +243,57 @@
     background: none;
     padding: 0;
     font-weight: 700;
-    font-size: 0.9rem;
-    color: var(--color-ink);
+    font-size: 1rem;
+    color: var(--color-ink-faint);
     cursor: pointer;
+  }
+
+  /* — Search, no results — see docs/design/CLB-Hi-Fi-Screens.dc.html's
+     "Search, no results — desktop": everything except the "OR TRY ONE OF
+     THESE" suggestions grid, left out per client instruction. */
+  .desktopNoResults {
+    background: var(--color-surface);
+    border-radius: var(--radius-lg);
+    padding: 32px;
+    box-shadow: var(--shadow-card);
+    display: flex;
+    align-items: center;
+    gap: 36px;
+  }
+
+  .desktopNoResultsText {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+  }
+
+  .desktopNoResultsTitle {
+    font-family: var(--font-heading);
+    font-weight: 800;
+    font-size: 1.875rem;
+    letter-spacing: -0.025em;
+    color: var(--color-ink);
+  }
+
+  .desktopNoResultsText p {
+    margin: 0;
+    max-width: 560px;
+    font-size: 0.90625rem;
+    line-height: 1.7;
+    color: var(--color-ink-muted);
+  }
+
+  .desktopNoResultsAsk {
+    flex: none;
+    background: var(--color-teal);
+    color: #fff;
+    border-radius: var(--radius-md);
+    padding: 16px 26px;
+    font-weight: 800;
+    font-size: 0.8125rem;
+    letter-spacing: 0.03em;
+    text-decoration: none;
   }
 
   /* — Category rail + filters — */

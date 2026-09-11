@@ -56,7 +56,10 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
   const total = unitPrice === undefined ? undefined : unitPrice * quantity;
   const flavourIndex = item.flavours.findIndex((f) => f.id === flavourId);
 
-  const canAdd = weightTierId !== "" && (item.flavours.length === 0 || flavourId !== "");
+  const canAdd =
+    weightTierId !== "" &&
+    (item.flavours.length === 0 || flavourId !== "") &&
+    (!item.needsCustomDescription || customDescription.trim() !== "");
 
   function handleAdd() {
     if (!canAdd) return;

@@ -63,7 +63,7 @@ export const CONFIG = {
   sameDayPrepHours: 1,
   /** Max length for the optional per-item cake inscription — every
    * catalog item uses this same client-confirmed limit. */
-  cakeMessageMaxLength: 40,
+  cakeMessageMaxLength: 25,
   /** ADR-003: an unanswered "did you send it?" prompt is treated as
    * abandoned after this long, resetting to an empty cart. */
   pendingHandoffExpiryHours: 2,

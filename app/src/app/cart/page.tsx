@@ -194,7 +194,7 @@ export default function CartPage() {
             above. */}
         <div className={styles.desktopAcknowledged}>
           <div className={styles.desktopAckCard}>
-            <div className={styles.desktopAckCheck}>✓</div>
+            <div className={styles.checkCircle}>✓</div>
             <h1 className={styles.desktopAckHeading}>Order sent</h1>
             <p className={styles.desktopAckSubtitle}>
               We&apos;ll confirm the details and the price in WhatsApp,
@@ -544,7 +544,7 @@ export default function CartPage() {
               <div className={styles.sectionLabel}>YOUR NAME</div>
               <input
                 type="text"
-                className={styles.nameInput}
+                className={`${styles.nameInput} no-focus-ring`}
                 value={order.customerName}
                 onChange={(e) => setCustomerName(e.target.value)}
                 placeholder="Full Name"

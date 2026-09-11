@@ -182,3 +182,13 @@ select:focus-visible {
   outline: 2px solid var(--color-accent) !important;
   outline-offset: 1px;
 }
+
+/* Opt a specific field back out of the restoration above — for one
+   that already shows a strong, deliberate active state some other way
+   (an accent border, a background change). Add alongside the field's
+   own class, same as the shared `mono-tag` utility elsewhere. One
+   shared rule instead of every such field re-declaring its own
+   `<localClass>:focus-visible { outline: none !important }` override. */
+.no-focus-ring:focus-visible {
+  outline: none !important;
+}

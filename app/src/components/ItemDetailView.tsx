@@ -290,6 +290,7 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
               <div className={styles.messageField}>
                 <input
                   type="text"
+                  className="no-focus-ring"
                   value={cakeMessage}
                   maxLength={item.cakeMessageMaxLength}
                   onChange={(e) => setCakeMessage(e.target.value)}

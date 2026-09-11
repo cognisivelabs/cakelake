@@ -107,7 +107,7 @@ export default function MenuPage() {
       </svg>
       <input
         type="text"
-        className={styles.desktopSearchInput}
+        className={`${styles.desktopSearchInput} no-focus-ring`}
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Search cakes…"
@@ -151,7 +151,7 @@ export default function MenuPage() {
             <div className={styles.searchField}>
               <input
                 type="text"
-                className={styles.searchInput}
+                className={`${styles.searchInput} no-focus-ring`}
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search items…"

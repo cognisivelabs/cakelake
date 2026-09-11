@@ -2,11 +2,10 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import type { CatalogItem } from "@/types/catalog";
 import { useCart } from "@/context/CartContext";
-import { formatAed, orderTotal } from "@/lib/pricing";
-import { resolveSelection, orderItemCount } from "@/lib/order";
+import { formatAed, orderTotal, lineTotal } from "@/lib/pricing";
+import { resolveSelection, orderItemCount, resolveOrderLines, describeLine } from "@/lib/order";
 import { getCategory, getCatalog } from "@/lib/catalog";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import { withBasePath } from "@/lib/assets";
@@ -26,10 +25,13 @@ type AddedSnapshot = {
   lineTotal?: number;
   itemCount: number;
   orderTotalAmount: number;
+  // Desktop's panel lists what else is already in the order (see
+  // "Added to order — desktop" in the Hi-Fi) — mobile's sheet has no
+  // room and just shows the itemCount/orderTotalAmount summary above.
+  otherLines: { label: string; quantity: number; total?: number }[];
 };
 
 export function ItemDetailView({ item }: { item: CatalogItem }) {
-  const router = useRouter();
   const { order, addLine } = useCart();
   const category = getCategory(item.categoryId);
   const categoryLabel = category?.label ?? "Menu";
@@ -40,9 +42,10 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
   const [quantity, setQuantity] = useState(1);
   const [cakeMessage, setCakeMessage] = useState("");
   const [customDescription, setCustomDescription] = useState("");
-  // Mobile only — see docs/design/CLB-Hi-Fi-Screens.dc.html's "Added to
-  // order" screen; there's no desktop design for it yet, so desktop keeps
-  // its previous behaviour (Add jumps straight to Menu) below.
+  // See docs/design/CLB-Hi-Fi-Screens.dc.html's "Added to order" screens —
+  // a bottom sheet on mobile, a right-side panel on desktop. Same state,
+  // only the CSS layout differs between the two (like the rest of this
+  // component).
   const [addedSnapshot, setAddedSnapshot] = useState<AddedSnapshot | null>(null);
 
   const { tier: selectedTier, flavour: selectedFlavour } = resolveSelection(item, {
@@ -57,11 +60,14 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
 
   function handleAdd() {
     if (!canAdd) return;
-    // Desktop has no "Added to order" design yet — keep its prior
-    // behaviour (straight to Menu) and only show the new mobile sheet
-    // below the 1024px breakpoint used everywhere else in the app.
-    const isDesktop =
-      typeof window !== "undefined" && window.matchMedia("(min-width: 1024px)").matches;
+    // Snapshot the "also in your order" lines before adding — order.lines
+    // doesn't include the new one yet at this point.
+    const catalog = getCatalog();
+    const otherLines = resolveOrderLines(order, catalog).map(({ item: lineItem, line }) => ({
+      label: describeLine(lineItem, line),
+      quantity: line.quantity,
+      total: lineTotal(lineItem, line),
+    }));
     addLine({
       itemId: item.id,
       quantity,
@@ -70,10 +76,6 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
       cakeMessage: cakeMessage.trim() || undefined,
       customDescription: customDescription.trim() || undefined,
     });
-    if (isDesktop) {
-      router.push(ROUTES.menu);
-      return;
-    }
     setAddedSnapshot({
       tierLabel: selectedTier?.label,
       flavourLabel: selectedFlavour?.label,
@@ -82,7 +84,8 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
       quantity,
       lineTotal: total,
       itemCount: orderItemCount(order) + quantity,
-      orderTotalAmount: orderTotal(order, getCatalog()) + (total ?? 0),
+      orderTotalAmount: orderTotal(order, catalog) + (total ?? 0),
+      otherLines,
     });
   }
 
@@ -336,6 +339,17 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
             <div className={styles.addedHeader}>
               <span className={styles.addedCheck}>✓</span>
               <span className={styles.addedTitle}>Added to your order</span>
+              <span className={styles.addedHeaderSpacer} />
+              {/* Desktop only — mobile dismisses via KEEP SHOPPING/REVIEW
+                  ORDER instead; see the .addedClose desktop override. */}
+              <button
+                type="button"
+                className={styles.addedClose}
+                aria-label="Close"
+                onClick={() => setAddedSnapshot(null)}
+              >
+                ✕
+              </button>
             </div>
 
             <div className={styles.addedCard}>
@@ -377,6 +391,22 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
                 {addedSnapshot.lineTotal === undefined ? "Ask us" : formatAed(addedSnapshot.lineTotal)}
               </div>
             </div>
+
+            {/* Desktop only — mobile's sheet has no room for an itemized
+                list and just shows the summary row below. */}
+            {addedSnapshot.otherLines.length > 0 && (
+              <div className={styles.addedOtherSection}>
+                <div className={styles.addedOtherLabel}>ALSO IN YOUR ORDER</div>
+                {addedSnapshot.otherLines.map((line, i) => (
+                  <div key={i} className={styles.addedOtherRow}>
+                    <span>
+                      {line.quantity}× {line.label}
+                    </span>
+                    <span>{line.total === undefined ? "Ask us" : formatAed(line.total)}</span>
+                  </div>
+                ))}
+              </div>
+            )}
 
             <div className={styles.addedSummary}>
               <span>

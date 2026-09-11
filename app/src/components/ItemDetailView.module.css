@@ -351,10 +351,9 @@
   text-decoration: none;
 }
 
-/* — "Added to your order" sheet — mobile only, see
-   docs/design/CLB-Hi-Fi-Screens.dc.html's "Added to order" screen. No
-   desktop design exists yet (see the @media block below), so desktop
-   keeps its prior "Add jumps to Menu" behaviour instead. */
+/* — "Added to your order" — see docs/design/CLB-Hi-Fi-Screens.dc.html's
+   "Added to order" screens: a bottom sheet on mobile (below), a
+   right-side slide-in panel on desktop (see the @media block below). */
 .addedOverlay {
   position: fixed;
   inset: 0;
@@ -411,6 +410,16 @@
   font-size: 1.125rem;
   letter-spacing: -0.01em;
   color: var(--color-ink);
+}
+
+.addedHeaderSpacer {
+  flex: 1;
+}
+
+/* Desktop only (see the @media block) — mobile dismisses via the
+   KEEP SHOPPING/REVIEW ORDER actions below instead. */
+.addedClose {
+  display: none;
 }
 
 .addedCard {
@@ -486,6 +495,34 @@
   white-space: nowrap;
 }
 
+/* Desktop only (see the @media block) — mobile's sheet has no room for
+   an itemized list of the rest of the order, just the summary below. */
+.addedOtherSection {
+  display: none;
+}
+
+.addedOtherLabel {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.625rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-ink-faint);
+}
+
+.addedOtherRow {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 0.8125rem;
+  color: var(--color-ink-muted);
+  padding: 10px 0;
+}
+
+.addedOtherRow:not(:last-child) {
+  border-bottom: 1px solid var(--color-border);
+}
+
 .addedSummary {
   margin: 12px 16px 0;
   display: flex;
@@ -550,8 +587,101 @@
    in a right column, both reusing the exact same mobile JSX/state —
    only .desktopGrid/.leftCol/.rightCol's display changes. */
 @media (min-width: 1024px) {
+  /* Right-side slide-in panel, "out of the edge where the order already
+     lives" (the persistent cart panel on Menu — desktop) rather than a
+     bottom sheet, which would have nowhere natural to dock on a page
+     this wide. */
   .addedOverlay {
+    align-items: stretch;
+    justify-content: flex-end;
+  }
+
+  .addedSheet {
+    max-width: 400px;
+    border-radius: 0;
+    box-shadow: -14px 0 44px rgba(43, 28, 24, 0.34);
+    overflow-y: auto;
+  }
+
+  .addedHandle {
     display: none;
+  }
+
+  .addedHeader {
+    margin: 0;
+    padding: 20px 26px;
+    background: var(--color-ink);
+    flex: none;
+  }
+
+  .addedTitle {
+    font-size: 1.25rem;
+    color: var(--color-bg);
+  }
+
+  .addedCheck {
+    width: 30px;
+    height: 30px;
+    font-size: 0.9rem;
+  }
+
+  .addedClose {
+    display: block;
+    flex: none;
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: 1.1rem;
+    line-height: 1;
+    color: var(--color-border-strong);
+    cursor: pointer;
+  }
+
+  .addedCard {
+    margin: 22px 26px 0;
+    padding: 16px;
+    gap: 14px;
+  }
+
+  .addedPhoto {
+    width: 80px;
+    height: 80px;
+  }
+
+  .addedName {
+    font-size: 1rem;
+  }
+
+  .addedOtherSection {
+    display: flex;
+    flex-direction: column;
+    margin: 20px 26px 0;
+  }
+
+  .addedSummary {
+    margin: 16px 26px 0;
+    padding-top: 14px;
+    border-top: 1px solid var(--color-border);
+    font-size: 0.8125rem;
+  }
+
+  .addedSummaryTotal {
+    font-size: 1.25rem;
+  }
+
+  .addedActions {
+    margin-top: auto;
+    padding: 22px 26px 0;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .addedPrimary,
+  .addedSecondary {
+    padding: 15px;
+  }
+
+  .addedNote {
+    padding: 8px 26px 26px;
   }
 
   .mobileHeaderWrap {

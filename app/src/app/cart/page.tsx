@@ -27,6 +27,36 @@ import styles from "./cart.module.css";
 
 type Stage = "review" | "handoff" | "confirming" | "acknowledged";
 
+// itemizedLines/fulfillmentLine/sentAt only feed the desktop screen's
+// richer recap (see docs/design/CLB-Hi-Fi-Screens.dc.html's "Order sent
+// — desktop") — mobile keeps its existing flattened lines/total summary.
+type AckSummary = {
+  lines: string;
+  total: string;
+  itemizedLines: {
+    quantity: number;
+    name: string;
+    descriptor?: string;
+    message?: string;
+    detail?: string;
+    price: string;
+  }[];
+  fulfillmentLine: string;
+  sentAt: string;
+};
+
+// A discriminated union, not a bare Stage + a separate ackSummary field
+// — the "acknowledged" screen needs its summary to render at all, so
+// the type only allows reaching that stage with one attached. Kept
+// distinct from the plain Stage strings the rest of the file compares
+// against (via .kind below) since most of those checks don't care about
+// the acknowledged case's extra data.
+type ManualStage =
+  | { kind: "review" }
+  | { kind: "handoff" }
+  | { kind: "confirming" }
+  | { kind: "acknowledged"; summary: AckSummary };
+
 export default function CartPage() {
   const { order, setFulfillment, setWhenNeeded, setCustomerName, startHandoff, declineHandoff, clearCart } =
     useCart();
@@ -38,27 +68,10 @@ export default function CartPage() {
   // comes back to a blank/reloaded app still lands on "did you send it?"
   // instead of a reset cart. manualStage overrides it once the customer
   // takes an explicit action in this session.
-  const [manualStage, setManualStage] = useState<Stage | null>(null);
-  const stage: Stage = manualStage ?? (order.pendingHandoff ? "confirming" : "review");
+  const [manualStage, setManualStage] = useState<ManualStage | null>(null);
+  const stage: Stage = manualStage?.kind ?? (order.pendingHandoff ? "confirming" : "review");
   const [sentMessage, setSentMessage] = useState("");
   const [sentUrl, setSentUrl] = useState("");
-  // itemizedLines/fulfillmentLine/sentAt only feed the desktop screen's
-  // richer recap (see docs/design/CLB-Hi-Fi-Screens.dc.html's "Order sent
-  // — desktop") — mobile keeps its existing flattened lines/total summary.
-  const [ackSummary, setAckSummary] = useState<{
-    lines: string;
-    total: string;
-    itemizedLines: {
-      quantity: number;
-      name: string;
-      descriptor?: string;
-      message?: string;
-      detail?: string;
-      price: string;
-    }[];
-    fulfillmentLine: string;
-    sentAt: string;
-  } | null>(null);
   const displayMessage = sentMessage || buildOrderMessage(order, catalog);
 
   const resolvedLines = resolveOrderLines(order, catalog);
@@ -99,7 +112,7 @@ export default function CartPage() {
 
   function goToHandoff() {
     setSentMessage(buildOrderMessage(order, catalog));
-    setManualStage("handoff");
+    setManualStage({ kind: "handoff" });
   }
 
   function openWhatsApp() {
@@ -108,7 +121,7 @@ export default function CartPage() {
     // Persist before navigating — see the pendingHandoff comment above.
     startHandoff();
     openWhatsAppUrl(url);
-    setManualStage("confirming");
+    setManualStage({ kind: "confirming" });
   }
 
   function backToReview() {
@@ -117,7 +130,7 @@ export default function CartPage() {
     // "Send order" screen's plain back button, before a handoff was ever
     // attempted, which shouldn't start any abandonment clock at all.
     if (order.pendingHandoff) declineHandoff();
-    setManualStage("review");
+    setManualStage({ kind: "review" });
   }
 
   function confirmSent() {
@@ -125,7 +138,7 @@ export default function CartPage() {
     // "confirming" after a reload, openWhatsApp() (which normally sets
     // this) never ran this session.
     setSentUrl((current) => current || buildWhatsAppUrl(displayMessage));
-    setAckSummary({
+    const summary: AckSummary = {
       lines: resolvedLines
         .map(({ item, line }) => describeLine(item, line))
         .join(" · "),
@@ -147,13 +160,14 @@ export default function CartPage() {
           ? `Pickup · ${pickupSummary()} — ${CONFIG.address.line1}`
           : `Delivery · ${pickupSummary()}`,
       sentAt: formatTime(new Date()),
-    });
+    };
     clearCart();
-    setManualStage("acknowledged");
+    setManualStage({ kind: "acknowledged", summary });
   }
 
   // — Acknowledged —
-  if (stage === "acknowledged" && ackSummary) {
+  if (manualStage?.kind === "acknowledged") {
+    const ackSummary = manualStage.summary;
     return (
       <div className={styles.page}>
         <Header />

@@ -53,6 +53,22 @@ describe("buildOrderMessage", () => {
     expect(message).toContain("Needed: Dec 25");
   });
 
+  it("formats a 'tomorrow' pickup date as today's date plus one day", () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2026, 11, 25));
+    try {
+      const message = buildOrderMessage(order({ whenNeeded: { kind: "tomorrow" } }), [item]);
+      expect(message).toContain("Needed: Tomorrow, Dec 26");
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it("shows the 'unsure' copy verbatim", () => {
+    const message = buildOrderMessage(order({ whenNeeded: { kind: "unsure" } }), [item]);
+    expect(message).toContain("Needed: Not sure yet — I'll confirm on WhatsApp");
+  });
+
   it("skips lines whose item is missing and still totals correctly", () => {
     const message = buildOrderMessage(
       order({ lines: [line(), line({ lineId: "l2", itemId: "gone" })] }),

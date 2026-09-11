@@ -5,7 +5,7 @@ import type { CartLine } from "@/types/order";
 import { useCart } from "@/context/CartContext";
 import { lineTotal, formatAed } from "@/lib/pricing";
 import { resolveSelection } from "@/lib/order";
-import { withBasePath } from "@/lib/assets";
+import { hideBrokenImage, withBasePath } from "@/lib/assets";
 import styles from "./CartLineItem.module.css";
 
 export function CartLineItem({ item, line }: { item: CatalogItem; line: CartLine }) {
@@ -23,9 +23,7 @@ export function CartLineItem({ item, line }: { item: CatalogItem; line: CartLine
             src={withBasePath(flavour.imageUrl)}
             alt=""
             className={styles.photoImage}
-            onError={(e) => {
-              e.currentTarget.style.display = "none";
-            }}
+            onError={hideBrokenImage}
           />
         )}
       </div>

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { CatalogItem } from "@/types/catalog";
 import { cheapestPrice, formatAed } from "@/lib/pricing";
-import { withBasePath } from "@/lib/assets";
+import { hideBrokenImage, withBasePath } from "@/lib/assets";
 import styles from "./ItemCard.module.css";
 
 function priceFrom(item: CatalogItem): string {
@@ -41,9 +41,7 @@ export function ItemCard({ item }: { item: CatalogItem }) {
             src={withBasePath(previewImage)}
             alt=""
             className={styles.photoImage}
-            onError={(e) => {
-              e.currentTarget.style.display = "none";
-            }}
+            onError={hideBrokenImage}
           />
         )}
         {item.flavours.length > 0 && (

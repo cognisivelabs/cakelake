@@ -8,7 +8,7 @@ import { formatAed, orderTotal, lineTotal } from "@/lib/pricing";
 import { resolveSelection, orderItemCount, resolveOrderLines, describeLine } from "@/lib/order";
 import { getCategory, getCatalog } from "@/lib/catalog";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
-import { withBasePath } from "@/lib/assets";
+import { hideBrokenImage, withBasePath } from "@/lib/assets";
 import { EXTERNAL_LINK_PROPS } from "@/lib/externalLink";
 import { ROUTES } from "@/lib/routes";
 import { PageHeader } from "@/components/PageHeader";
@@ -168,9 +168,7 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
                 src={withBasePath(selectedFlavour.imageUrl)}
                 alt={`${item.name}, ${selectedFlavour.label}`}
                 className={styles.photoImage}
-                onError={(e) => {
-                  e.currentTarget.style.display = "none";
-                }}
+                onError={hideBrokenImage}
               />
             )}
             {item.flavours.length > 0 && (
@@ -204,9 +202,7 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
                           src={withBasePath(flavour.imageUrl)}
                           alt=""
                           className={styles.flavourSwatchImage}
-                          onError={(e) => {
-                            e.currentTarget.style.display = "none";
-                          }}
+                          onError={hideBrokenImage}
                         />
                       )}
                     </span>
@@ -360,9 +356,7 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
                     src={withBasePath(addedSnapshot.flavourImageUrl)}
                     alt=""
                     className={styles.addedPhotoImage}
-                    onError={(e) => {
-                      e.currentTarget.style.display = "none";
-                    }}
+                    onError={hideBrokenImage}
                   />
                 )}
               </div>

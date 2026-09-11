@@ -18,7 +18,7 @@ import {
   describeLine,
   resolveSelection,
 } from "@/lib/order";
-import { withBasePath } from "@/lib/assets";
+import { hideBrokenImage, withBasePath } from "@/lib/assets";
 import type { CatalogItem } from "@/types/catalog";
 import styles from "./menu.module.css";
 
@@ -385,9 +385,7 @@ export default function MenuPage() {
                                   src={withBasePath(flavour.imageUrl)}
                                   alt=""
                                   className={styles.cartPanelPhotoImage}
-                                  onError={(e) => {
-                                    e.currentTarget.style.display = "none";
-                                  }}
+                                  onError={hideBrokenImage}
                                 />
                               )}
                             </div>

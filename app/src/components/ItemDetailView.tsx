@@ -11,8 +11,7 @@ import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import { hideBrokenImage, withBasePath } from "@/lib/assets";
 import { EXTERNAL_LINK_PROPS } from "@/lib/externalLink";
 import { ROUTES } from "@/lib/routes";
-import { PageHeader } from "@/components/PageHeader";
-import { Header } from "@/components/Header";
+import { ResponsiveHeader } from "@/components/ResponsiveHeader";
 import { Footer } from "@/components/Footer";
 import styles from "./ItemDetailView.module.css";
 
@@ -95,12 +94,7 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
   if (!item.available) {
     return (
       <div className={styles.page}>
-        <div className={styles.mobileHeaderWrap}>
-          <PageHeader title={categoryLabel} backHref={ROUTES.menu} backLabel="MENU" />
-        </div>
-        <div className={styles.desktopHeaderWrap}>
-          <Header />
-        </div>
+        <ResponsiveHeader title={categoryLabel} backHref={ROUTES.menu} backLabel="MENU" />
         <div className={styles.photo}>
           <span className={`${styles.unavailableBadge} mono-tag`}>UNAVAILABLE</span>
         </div>
@@ -137,12 +131,7 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
 
   return (
     <div className={styles.page}>
-      <div className={styles.mobileHeaderWrap}>
-        <PageHeader title={categoryLabel} backHref={ROUTES.menu} backLabel="MENU" />
-      </div>
-      <div className={styles.desktopHeaderWrap}>
-        <Header />
-      </div>
+      <ResponsiveHeader title={categoryLabel} backHref={ROUTES.menu} backLabel="MENU" />
 
       {/* Desktop only — see docs/design/CLB-Hi-Fi-Screens.dc.html's
           "Item detail — desktop": a breadcrumb replaces mobile's plain

@@ -9,8 +9,7 @@ import { orderTotal, lineTotal, formatAed } from "@/lib/pricing";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import { EXTERNAL_LINK_PROPS } from "@/lib/externalLink";
 import { ROUTES } from "@/lib/routes";
-import { PageHeader } from "@/components/PageHeader";
-import { Header } from "@/components/Header";
+import { ResponsiveHeader } from "@/components/ResponsiveHeader";
 import { Footer } from "@/components/Footer";
 import {
   orderItemCount,
@@ -131,12 +130,7 @@ export default function MenuPage() {
           header with just the cart icon, same as every other desktop
           header — the search field lives in the main column instead
           (see desktopSearchBar below). */}
-      <div className={styles.mobileHeaderWrap}>
-        <PageHeader title="Menu" backHref={ROUTES.home} backLabel="BACK" />
-      </div>
-      <div className={styles.desktopHeaderWrap}>
-        <Header />
-      </div>
+      <ResponsiveHeader title="Menu" backHref={ROUTES.home} backLabel="BACK" />
 
       <div className={styles.body}>
         <div className={styles.mobileOnly}>

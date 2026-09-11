@@ -2,10 +2,6 @@
   composes: page-shell breakout720 from global;
 }
 
-.desktopHeaderWrap {
-  display: none;
-}
-
 .breadcrumb {
   display: none;
 }
@@ -673,14 +669,6 @@
 
   .addedNote {
     padding: 8px 26px 26px;
-  }
-
-  .mobileHeaderWrap {
-    display: none;
-  }
-
-  .desktopHeaderWrap {
-    display: block;
   }
 
   /* width: 100% is load-bearing — .page is a column flex container

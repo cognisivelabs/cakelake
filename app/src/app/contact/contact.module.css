@@ -2,10 +2,6 @@
   composes: page-shell breakout720 from global;
 }
 
-.desktopHeaderWrap {
-  display: none;
-}
-
 .desktopIntro {
   display: none;
 }
@@ -91,14 +87,6 @@
    48px gap, then a 562px map, left-packed with room spare on the right
    rather than stretched to fill it. */
 @media (min-width: 1024px) {
-  .mobileHeaderWrap {
-    display: none;
-  }
-
-  .desktopHeaderWrap {
-    display: block;
-  }
-
   /* Lives inside .leftCol now (see page.tsx) so its top lines up with
      the map's — both are then just grid items placed with align-items:
      start, no separate centering/padding of its own needed here. */

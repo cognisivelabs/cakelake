@@ -141,23 +141,11 @@
    (mobile lists every category in one scroll; desktop shows one
    category, picked from the rail), not just a different layout of the
    same content — so each is toggled by display, not shared DOM. */
-.desktopHeaderWrap {
-  display: none;
-}
-
 .desktopLayout {
   display: none;
 }
 
 @media (min-width: 1024px) {
-  .mobileHeaderWrap {
-    display: none;
-  }
-
-  .desktopHeaderWrap {
-    display: block;
-  }
-
   .mobileOnly {
     display: none;
   }

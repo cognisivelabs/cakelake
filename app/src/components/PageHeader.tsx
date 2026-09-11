@@ -4,7 +4,7 @@ import Link from "next/link";
 import { CartButton } from "@/components/CartButton";
 import styles from "./PageHeader.module.css";
 
-type PageHeaderProps = {
+export type PageHeaderProps = {
   title: string;
   backLabel: string;
 } & ({ backHref: string; onBack?: never } | { onBack: () => void; backHref?: never });

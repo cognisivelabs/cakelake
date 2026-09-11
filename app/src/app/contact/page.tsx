@@ -5,8 +5,7 @@ import { ROUTES } from "@/lib/routes";
 import { withBasePath } from "@/lib/assets";
 import { SITE_NAME, DEFAULT_OG_IMAGE } from "@/lib/og";
 import { formatLocalPhone } from "@/lib/whatsapp";
-import { PageHeader } from "@/components/PageHeader";
-import { Header } from "@/components/Header";
+import { ResponsiveHeader } from "@/components/ResponsiveHeader";
 import { Footer } from "@/components/Footer";
 import styles from "./contact.module.css";
 
@@ -28,12 +27,7 @@ export const metadata: Metadata = {
 export default function ContactPage() {
   return (
     <div className={styles.page}>
-      <div className={styles.mobileHeaderWrap}>
-        <PageHeader title="Find us" backHref={ROUTES.home} backLabel="BACK" />
-      </div>
-      <div className={styles.desktopHeaderWrap}>
-        <Header />
-      </div>
+      <ResponsiveHeader title="Find us" backHref={ROUTES.home} backLabel="BACK" />
 
       <div className={styles.desktopGrid}>
         <iframe

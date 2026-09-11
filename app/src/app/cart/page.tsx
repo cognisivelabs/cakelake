@@ -20,6 +20,7 @@ import {
 import { CartLineItem } from "@/components/CartLineItem";
 import { Header } from "@/components/Header";
 import { PageHeader } from "@/components/PageHeader";
+import { ResponsiveHeader } from "@/components/ResponsiveHeader";
 import { QrCode } from "@/components/QrCode";
 import { Footer } from "@/components/Footer";
 import type { WhenNeeded } from "@/types/order";
@@ -374,12 +375,7 @@ export default function CartPage() {
   if (resolvedLines.length === 0) {
     return (
       <div className={styles.page}>
-        <div className={styles.mobileHeaderWrap}>
-          <PageHeader title="Your order" backHref={ROUTES.menu} backLabel="MENU" />
-        </div>
-        <div className={styles.desktopHeaderWrap}>
-          <Header />
-        </div>
+        <ResponsiveHeader title="Your order" backHref={ROUTES.menu} backLabel="MENU" />
         {/* Desktop — see docs/design/CLB-Hi-Fi-Screens.dc.html's "Empty
             order — desktop": the page itself is the empty state (heading
             + actions in a wide left column, the ordering-works card in a
@@ -456,12 +452,7 @@ export default function CartPage() {
 
   return (
     <div className={styles.page}>
-      <div className={styles.mobileHeaderWrap}>
-        <PageHeader title="Your order" backHref={ROUTES.menu} backLabel="MENU" />
-      </div>
-      <div className={styles.desktopHeaderWrap}>
-        <Header />
-      </div>
+      <ResponsiveHeader title="Your order" backHref={ROUTES.menu} backLabel="MENU" />
 
       <div className={styles.desktopReview}>
         <div className={styles.mainColumn}>

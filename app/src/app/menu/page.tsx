@@ -11,6 +11,7 @@ import { EXTERNAL_LINK_PROPS } from "@/lib/externalLink";
 import { ROUTES } from "@/lib/routes";
 import { PageHeader } from "@/components/PageHeader";
 import { Header } from "@/components/Header";
+import { CartButton } from "@/components/CartButton";
 import { Footer } from "@/components/Footer";
 import { orderItemCount, resolveOrderLines, describeLine, resolveSelection } from "@/lib/order";
 import { withBasePath } from "@/lib/assets";
@@ -72,39 +73,41 @@ export default function MenuPage() {
     setFilters((f) => ({ ...f, [key]: !f[key] }));
   }
 
-  const searchField = (
-    <div className={styles.desktopSearchField}>
-      <input
-        type="text"
-        className={styles.desktopSearchInput}
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        placeholder="Search items…"
-      />
-      {query && (
-        <button
-          type="button"
-          className={styles.desktopClearButton}
-          onClick={() => setQuery("")}
-          aria-label="Clear search"
-        >
-          ×
-        </button>
-      )}
-    </div>
+  const desktopHeaderRight = (
+    <>
+      <div className={styles.desktopSearchField}>
+        <input
+          type="text"
+          className={styles.desktopSearchInput}
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Search items…"
+        />
+        {query && (
+          <button
+            type="button"
+            className={styles.desktopClearButton}
+            onClick={() => setQuery("")}
+            aria-label="Clear search"
+          >
+            ×
+          </button>
+        )}
+      </div>
+      <CartButton />
+    </>
   );
 
   return (
     <div className={styles.page}>
       {/* Mobile keeps the back-link header; desktop gets the shared nav
-          header with a search field where Home's WhatsApp/cart actions
-          normally sit — the persistent order panel below already covers
-          the cart on this screen. */}
+          header with a search field (in place of Home's WhatsApp button)
+          plus the same cart icon every other desktop header uses. */}
       <div className={styles.mobileHeaderWrap}>
         <PageHeader title="Menu" backHref={ROUTES.home} backLabel="BACK" />
       </div>
       <div className={styles.desktopHeaderWrap}>
-        <Header desktopRight={searchField} />
+        <Header desktopRight={desktopHeaderRight} />
       </div>
 
       <div className={styles.body}>

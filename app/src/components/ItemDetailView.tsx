@@ -5,9 +5,9 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { CatalogItem } from "@/types/catalog";
 import { useCart } from "@/context/CartContext";
-import { formatAed } from "@/lib/pricing";
-import { resolveSelection } from "@/lib/order";
-import { getCategory } from "@/lib/catalog";
+import { formatAed, orderTotal } from "@/lib/pricing";
+import { resolveSelection, orderItemCount } from "@/lib/order";
+import { getCategory, getCatalog } from "@/lib/catalog";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import { withBasePath } from "@/lib/assets";
 import { EXTERNAL_LINK_PROPS } from "@/lib/externalLink";
@@ -17,9 +17,20 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import styles from "./ItemDetailView.module.css";
 
+type AddedSnapshot = {
+  tierLabel?: string;
+  flavourLabel?: string;
+  flavourImageUrl?: string;
+  cakeMessage?: string;
+  quantity: number;
+  lineTotal?: number;
+  itemCount: number;
+  orderTotalAmount: number;
+};
+
 export function ItemDetailView({ item }: { item: CatalogItem }) {
   const router = useRouter();
-  const { addLine } = useCart();
+  const { order, addLine } = useCart();
   const category = getCategory(item.categoryId);
   const categoryLabel = category?.label ?? "Menu";
   const baseWeightPrice = item.weightTiers[0]?.price;
@@ -29,6 +40,10 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
   const [quantity, setQuantity] = useState(1);
   const [cakeMessage, setCakeMessage] = useState("");
   const [customDescription, setCustomDescription] = useState("");
+  // Mobile only — see docs/design/CLB-Hi-Fi-Screens.dc.html's "Added to
+  // order" screen; there's no desktop design for it yet, so desktop keeps
+  // its previous behaviour (Add jumps straight to Menu) below.
+  const [addedSnapshot, setAddedSnapshot] = useState<AddedSnapshot | null>(null);
 
   const { tier: selectedTier, flavour: selectedFlavour } = resolveSelection(item, {
     weightTierId,
@@ -42,6 +57,11 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
 
   function handleAdd() {
     if (!canAdd) return;
+    // Desktop has no "Added to order" design yet — keep its prior
+    // behaviour (straight to Menu) and only show the new mobile sheet
+    // below the 1024px breakpoint used everywhere else in the app.
+    const isDesktop =
+      typeof window !== "undefined" && window.matchMedia("(min-width: 1024px)").matches;
     addLine({
       itemId: item.id,
       quantity,
@@ -50,7 +70,20 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
       cakeMessage: cakeMessage.trim() || undefined,
       customDescription: customDescription.trim() || undefined,
     });
-    router.push(ROUTES.menu);
+    if (isDesktop) {
+      router.push(ROUTES.menu);
+      return;
+    }
+    setAddedSnapshot({
+      tierLabel: selectedTier?.label,
+      flavourLabel: selectedFlavour?.label,
+      flavourImageUrl: selectedFlavour?.imageUrl,
+      cakeMessage: cakeMessage.trim() || undefined,
+      quantity,
+      lineTotal: total,
+      itemCount: orderItemCount(order) + quantity,
+      orderTotalAmount: orderTotal(order, getCatalog()) + (total ?? 0),
+    });
   }
 
   if (!item.available) {
@@ -295,6 +328,82 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
           </div>
         </div>
       </div>
+
+      {addedSnapshot && (
+        <div className={styles.addedOverlay}>
+          <div className={styles.addedSheet}>
+            <div className={styles.addedHandle} />
+            <div className={styles.addedHeader}>
+              <span className={styles.addedCheck}>✓</span>
+              <span className={styles.addedTitle}>Added to your order</span>
+            </div>
+
+            <div className={styles.addedCard}>
+              <div className={styles.addedPhoto}>
+                {addedSnapshot.flavourImageUrl && (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={withBasePath(addedSnapshot.flavourImageUrl)}
+                    alt=""
+                    className={styles.addedPhotoImage}
+                    onError={(e) => {
+                      e.currentTarget.style.display = "none";
+                    }}
+                  />
+                )}
+              </div>
+              <div className={styles.addedInfo}>
+                <div className={styles.addedName}>{item.name}</div>
+                {(addedSnapshot.tierLabel || addedSnapshot.flavourLabel) && (
+                  <div className={styles.addedMeta}>
+                    {[addedSnapshot.tierLabel, addedSnapshot.flavourLabel]
+                      .filter(Boolean)
+                      .join(" · ")}
+                  </div>
+                )}
+                {addedSnapshot.cakeMessage && (
+                  <div className={styles.addedMessage}>&ldquo;{addedSnapshot.cakeMessage}&rdquo;</div>
+                )}
+                <div className={styles.addedTagsRow}>
+                  <span
+                    className={`${styles.tag} ${item.leadTimeHours > 0 ? styles.tagNotice : styles.tagReady} mono-tag`}
+                  >
+                    {item.readyLabel}
+                  </span>
+                  <span className={styles.addedQty}>Qty {addedSnapshot.quantity}</span>
+                </div>
+              </div>
+              <div className={styles.addedPrice}>
+                {addedSnapshot.lineTotal === undefined ? "Ask us" : formatAed(addedSnapshot.lineTotal)}
+              </div>
+            </div>
+
+            <div className={styles.addedSummary}>
+              <span>
+                {addedSnapshot.itemCount} item{addedSnapshot.itemCount === 1 ? "" : "s"} in your order
+              </span>
+              <span className={styles.addedSummaryTotal}>{formatAed(addedSnapshot.orderTotalAmount)}</span>
+            </div>
+
+            <div className={styles.addedActions}>
+              <Link href={ROUTES.cart} className={styles.addedPrimary}>
+                REVIEW ORDER · {addedSnapshot.itemCount} ITEM{addedSnapshot.itemCount === 1 ? "" : "S"}
+              </Link>
+              <button
+                type="button"
+                className={styles.addedSecondary}
+                onClick={() => setAddedSnapshot(null)}
+              >
+                KEEP SHOPPING
+              </button>
+            </div>
+
+            <p className={styles.addedNote}>
+              Nothing is charged here — we confirm price and time on WhatsApp.
+            </p>
+          </div>
+        </div>
+      )}
 
       <Footer />
     </div>

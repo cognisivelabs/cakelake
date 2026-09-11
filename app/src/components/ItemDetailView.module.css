@@ -351,11 +351,209 @@
   text-decoration: none;
 }
 
+/* — "Added to your order" sheet — mobile only, see
+   docs/design/CLB-Hi-Fi-Screens.dc.html's "Added to order" screen. No
+   desktop design exists yet (see the @media block below), so desktop
+   keeps its prior "Add jumps to Menu" behaviour instead. */
+.addedOverlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(58, 42, 36, 0.55);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.addedSheet {
+  width: 100%;
+  max-width: 480px;
+  background: var(--color-bg);
+  border-radius: 16px 16px 0 0;
+  box-shadow: var(--shadow-modal);
+  display: flex;
+  flex-direction: column;
+}
+
+.addedHandle {
+  align-self: center;
+  width: 38px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--color-placeholder-border);
+  margin-top: 10px;
+}
+
+.addedHeader {
+  padding: 16px 16px 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.addedCheck {
+  width: 26px;
+  height: 26px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--color-accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.8rem;
+  color: var(--color-ink);
+}
+
+.addedTitle {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 1.125rem;
+  letter-spacing: -0.01em;
+  color: var(--color-ink);
+}
+
+.addedCard {
+  margin: 14px 16px 0;
+  background: var(--color-surface);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  box-shadow: var(--shadow-card);
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+
+.addedPhoto {
+  width: 62px;
+  height: 62px;
+  flex: none;
+  border-radius: var(--radius-md);
+  background: var(--color-photo-bg);
+  border: 1px dashed var(--color-placeholder-border);
+  position: relative;
+  overflow: hidden;
+}
+
+.addedPhotoImage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.addedInfo {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.addedName {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 0.9375rem;
+  color: var(--color-ink);
+}
+
+.addedMeta,
+.addedMessage {
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--color-ink-muted);
+}
+
+.addedTagsRow {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.addedQty {
+  font-weight: 700;
+  font-size: 0.72rem;
+  color: var(--color-ink-muted);
+}
+
+.addedPrice {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 0.9375rem;
+  color: var(--color-ink);
+  white-space: nowrap;
+}
+
+.addedSummary {
+  margin: 12px 16px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--color-ink-muted);
+}
+
+.addedSummaryTotal {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 1.0625rem;
+  color: var(--color-ink);
+}
+
+.addedActions {
+  padding: 14px 16px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.addedPrimary {
+  background: var(--color-accent);
+  color: var(--color-ink);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  text-align: center;
+  font-weight: 800;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  box-shadow: 0 2px 0 var(--color-accent-shadow);
+  text-decoration: none;
+}
+
+.addedSecondary {
+  border: 1.5px solid var(--color-ink);
+  color: var(--color-ink);
+  background: none;
+  border-radius: var(--radius-md);
+  padding: 12px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+}
+
+.addedNote {
+  margin: 0;
+  padding: 14px 16px 18px;
+  font-size: 0.72rem;
+  line-height: 1.55;
+  color: var(--color-ink-muted);
+  text-align: center;
+}
+
 /* — Desktop — see docs/design/CLB-Hi-Fi-Screens.dc.html's "Item detail
    — desktop": photo + flavour picker in a left column, everything else
    in a right column, both reusing the exact same mobile JSX/state —
    only .desktopGrid/.leftCol/.rightCol's display changes. */
 @media (min-width: 1024px) {
+  .addedOverlay {
+    display: none;
+  }
+
   .mobileHeaderWrap {
     display: none;
   }

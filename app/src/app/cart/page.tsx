@@ -10,7 +10,13 @@ import { CONFIG } from "@/lib/config";
 import { EXTERNAL_LINK_PROPS } from "@/lib/externalLink";
 import { ROUTES } from "@/lib/routes";
 import { describeLine, resolveOrderLines, resolveSelection, orderItemCount } from "@/lib/order";
-import { formatShortDate, parseIsoDateLocal, todayIsoDate } from "@/lib/dates";
+import {
+  estimatedReadyTime,
+  formatShortDate,
+  formatTime,
+  parseIsoDateLocal,
+  todayIsoDate,
+} from "@/lib/dates";
 import { CartLineItem } from "@/components/CartLineItem";
 import { Header } from "@/components/Header";
 import { PageHeader } from "@/components/PageHeader";
@@ -20,16 +26,6 @@ import type { WhenNeeded } from "@/types/order";
 import styles from "./cart.module.css";
 
 type Stage = "review" | "handoff" | "confirming" | "acknowledged";
-
-// A rough same-day estimate — every standard range is "ready in an hour"
-// (CONFIG.sameDayPrepHours). Items that need real advance notice aren't
-// meant to be ordered for today in the first place, so this doesn't try
-// to account for those.
-function estimatedReadyTime(): string {
-  const d = new Date();
-  d.setHours(d.getHours() + CONFIG.sameDayPrepHours);
-  return d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
-}
 
 export default function CartPage() {
   const { order, setFulfillment, setWhenNeeded, setCustomerName, startHandoff, declineHandoff, clearCart } =
@@ -150,7 +146,7 @@ export default function CartPage() {
         order.fulfillment === "pickup"
           ? `Pickup · ${pickupSummary()} — ${CONFIG.address.line1}`
           : `Delivery · ${pickupSummary()}`,
-      sentAt: new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" }),
+      sentAt: formatTime(new Date()),
     });
     clearCart();
     setManualStage("acknowledged");

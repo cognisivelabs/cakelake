@@ -1,10 +1,27 @@
 // Date helpers shared across the WhatsApp message formatting and the
 // cart's "when needed" picker — both need to parse/format the same
 // "YYYY-MM-DD" shape consistently.
+import { CONFIG } from "@/lib/config";
 
 /** "Aug 29" style — used everywhere a date is shown without a year. */
 export function formatShortDate(d: Date): string {
   return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+}
+
+/** "9:41 AM" style — the customer-facing time format used for both the
+ * same-day "ready by" estimate and the WhatsApp handoff timestamp. */
+export function formatTime(d: Date): string {
+  return d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+}
+
+/** A rough same-day estimate — every standard range is "ready in an
+ * hour" (CONFIG.sameDayPrepHours). Items that need real advance notice
+ * aren't meant to be ordered for today in the first place, so this
+ * doesn't try to account for those. */
+export function estimatedReadyTime(): string {
+  const d = new Date();
+  d.setHours(d.getHours() + CONFIG.sameDayPrepHours);
+  return formatTime(d);
 }
 
 /**

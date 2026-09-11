@@ -1,5 +1,6 @@
-import { afterEach, describe, expect, it } from "vitest";
-import { formatShortDate, parseIsoDateLocal, todayIsoDate } from "@/lib/dates";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { estimatedReadyTime, formatShortDate, formatTime, parseIsoDateLocal, todayIsoDate } from "@/lib/dates";
+import { CONFIG } from "@/lib/config";
 
 const originalTz = process.env.TZ;
 
@@ -36,6 +37,26 @@ describe("parseIsoDateLocal", () => {
     const naive = new Date("2026-09-01");
     const safe = parseIsoDateLocal("2026-09-01");
     expect(naive.getDate()).not.toBe(safe.getDate());
+  });
+});
+
+describe("formatTime", () => {
+  it("formats as 'h:mm AM/PM'", () => {
+    expect(formatTime(new Date(2026, 8, 1, 9, 5))).toBe("9:05 AM");
+    expect(formatTime(new Date(2026, 8, 1, 14, 30))).toBe("2:30 PM");
+  });
+});
+
+describe("estimatedReadyTime", () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("adds CONFIG.sameDayPrepHours to the current time", () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2026, 8, 1, 10, 0));
+    const expected = new Date(2026, 8, 1, 10 + CONFIG.sameDayPrepHours, 0);
+    expect(estimatedReadyTime()).toBe(formatTime(expected));
   });
 });
 

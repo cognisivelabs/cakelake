@@ -6,7 +6,7 @@ import {
   resolveOrderLines,
   resolveSelection,
 } from "@/lib/order";
-import { item, line, order } from "@/lib/testFixtures";
+import { item, line, order } from "@/test/fixtures";
 import type { CatalogItem } from "@/types/catalog";
 import type { Order } from "@/types/order";
 

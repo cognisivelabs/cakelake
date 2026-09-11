@@ -7,7 +7,7 @@ import {
   orderTotal,
   unitPrice,
 } from "@/lib/pricing";
-import { item, line, order } from "@/lib/testFixtures";
+import { item, line, order } from "@/test/fixtures";
 
 describe("unitPrice", () => {
   it("returns the selected weight tier's price", () => {

@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { buildOrderMessage, buildWhatsAppUrl, formatLocalPhone, openWhatsAppUrl } from "@/lib/whatsapp";
 import { formatShortDate } from "@/lib/dates";
 import { CONFIG } from "@/lib/config";
-import { item, line, order } from "@/lib/testFixtures";
+import { item, line, order } from "@/test/fixtures";
 
 describe("buildOrderMessage", () => {
   it("omits the name from the header when blank", () => {

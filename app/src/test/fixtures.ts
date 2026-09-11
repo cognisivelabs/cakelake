@@ -1,7 +1,9 @@
 // Shared builders for lib/*.test.ts — order.test.ts, pricing.test.ts and
 // whatsapp.test.ts each used to redefine near-identical item/line/order
 // fixtures by hand. One shared copy means a CatalogItem/Order shape
-// change only needs updating here.
+// change only needs updating here. Lives under src/test/ (not src/lib/)
+// since it's fixture data for tests, not production code — vitest.config
+// only treats *.test.ts as test files, so this needed its own signal.
 import type { CatalogItem } from "@/types/catalog";
 import type { CartLine, Order } from "@/types/order";
 import { CONFIG } from "@/lib/config";

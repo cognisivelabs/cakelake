@@ -389,13 +389,9 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
               <Link href={ROUTES.cart} className={styles.addedPrimary}>
                 REVIEW ORDER · {addedSnapshot.itemCount} ITEM{addedSnapshot.itemCount === 1 ? "" : "S"}
               </Link>
-              <button
-                type="button"
-                className={styles.addedSecondary}
-                onClick={() => setAddedSnapshot(null)}
-              >
+              <Link href={ROUTES.menu} className={styles.addedSecondary}>
                 KEEP SHOPPING
-              </button>
+              </Link>
             </div>
 
             <p className={styles.addedNote}>

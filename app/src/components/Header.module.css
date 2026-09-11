@@ -70,10 +70,6 @@
   flex: none;
 }
 
-.cartPill {
-  composes: cart-pill from global;
-}
-
 .desktopNav,
 .desktopActions {
   display: none;
@@ -118,15 +114,6 @@
     align-items: center;
     gap: 12px;
     flex: none;
-  }
-
-  .desktopCartPill {
-    background: var(--color-ink);
-    color: var(--color-accent) !important;
-    border-radius: var(--radius-md);
-    padding: 11px 16px;
-    font-size: 0.71875rem !important;
-    text-decoration: none !important;
   }
 }
 

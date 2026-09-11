@@ -1,9 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCart } from "@/context/CartContext";
-import { ROUTES } from "@/lib/routes";
-import { orderItemCount } from "@/lib/order";
+import { CartButton } from "@/components/CartButton";
 import styles from "./PageHeader.module.css";
 
 type PageHeaderProps = {
@@ -12,9 +10,6 @@ type PageHeaderProps = {
 } & ({ backHref: string; onBack?: never } | { onBack: () => void; backHref?: never });
 
 export function PageHeader(props: PageHeaderProps) {
-  const { order } = useCart();
-  const itemCount = orderItemCount(order);
-
   return (
     <header className={styles.header}>
       <div className={styles.headerInner}>
@@ -30,9 +25,9 @@ export function PageHeader(props: PageHeaderProps) {
 
         <h1 className={styles.title}>{props.title}</h1>
 
-        <Link href={ROUTES.cart} className={`${styles.cartPill} mono-tag`}>
-          CART {itemCount}
-        </Link>
+        <div className={styles.cartSlot}>
+          <CartButton />
+        </div>
       </div>
     </header>
   );

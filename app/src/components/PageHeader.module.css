@@ -51,9 +51,11 @@
   margin: 0;
 }
 
-.cartPill {
-  composes: cart-pill from global;
+/* min-width matches .back so the centered title stays centered — same
+   balancing role the old text pill served. */
+.cartSlot {
   flex: 0 0 auto;
   min-width: 52px;
-  text-align: right;
+  display: flex;
+  justify-content: flex-end;
 }

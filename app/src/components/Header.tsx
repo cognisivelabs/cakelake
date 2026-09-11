@@ -2,11 +2,10 @@
 
 import { useState, type ReactNode } from "react";
 import Link from "next/link";
-import { useCart } from "@/context/CartContext";
 import { useInstallPrompt } from "@/hooks/useInstallPrompt";
 import { ROUTES } from "@/lib/routes";
 import { INSTALL_STEPS } from "@/components/installSteps";
-import { orderItemCount } from "@/lib/order";
+import { CartButton } from "@/components/CartButton";
 import styles from "./Header.module.css";
 
 type HeaderProps = {
@@ -18,11 +17,9 @@ type HeaderProps = {
 };
 
 export function Header({ desktopRight }: HeaderProps = {}) {
-  const { order } = useCart();
   const { platform, triggerInstall } = useInstallPrompt();
   const [menuOpen, setMenuOpen] = useState(false);
   const [showInstallSteps, setShowInstallSteps] = useState(false);
-  const itemCount = orderItemCount(order);
 
   function closeMenu() {
     setMenuOpen(false);
@@ -67,18 +64,10 @@ export function Header({ desktopRight }: HeaderProps = {}) {
         </nav>
 
         <div className={styles.actions}>
-          <Link href={ROUTES.cart} className={`${styles.cartPill} mono-tag`}>
-            CART {itemCount}
-          </Link>
+          <CartButton />
         </div>
 
-        <div className={styles.desktopActions}>
-          {desktopRight ?? (
-            <Link href={ROUTES.cart} className={`${styles.desktopCartPill} mono-tag`}>
-              Cart · {itemCount}
-            </Link>
-          )}
-        </div>
+        <div className={styles.desktopActions}>{desktopRight ?? <CartButton />}</div>
       </div>
 
       {menuOpen && (

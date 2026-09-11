@@ -19,24 +19,26 @@ declare global {
   }
 }
 
-function isStandalone(): boolean {
+// Exported for direct unit testing — these are pure UA-sniffing checks
+// with no dependency on the rest of the hook's React state.
+export function isStandalone(): boolean {
   const nav = window.navigator as Navigator & { standalone?: boolean };
   return window.matchMedia("(display-mode: standalone)").matches || nav.standalone === true;
 }
 
-function isIOSDevice(): boolean {
+export function isIOSDevice(): boolean {
   const ua = window.navigator.userAgent;
   return /iPad|iPhone|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
 }
 
-function isIOSSafari(): boolean {
+export function isIOSSafari(): boolean {
   const ua = window.navigator.userAgent;
   // Chrome/Firefox/Edge on iOS all render with WebKit but can't install
   // to the home screen the way Safari can (ADR-005) — exclude them.
   return isIOSDevice() && !/CriOS|FxiOS|EdgiOS|OPiOS|mercury/i.test(ua);
 }
 
-function isAndroidDevice(): boolean {
+export function isAndroidDevice(): boolean {
   return /Android/i.test(window.navigator.userAgent);
 }
 

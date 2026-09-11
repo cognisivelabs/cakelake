@@ -45,3 +45,16 @@ export function resolveOrderLines(
 export function orderItemCount(order: Order): number {
   return order.lines.reduce((sum, line) => sum + line.quantity, 0);
 }
+
+/** Strips any line whose item no longer exists in the catalog — a cart
+ * can sit in localStorage for weeks, long enough for an item it
+ * references to be discontinued or renamed in a later deploy. Without
+ * this the line lingers forever: it drops out of resolveOrderLines()'s
+ * item/price rendering (so the cart page and total look right) but
+ * still counts toward orderItemCount()'s "CART N" badge, since that only
+ * reads order.lines — the two would silently disagree. */
+export function dropDiscontinuedLines(order: Order, catalog: CatalogItem[]): Order {
+  const catalogIds = new Set(catalog.map((item) => item.id));
+  const lines = order.lines.filter((line) => catalogIds.has(line.itemId));
+  return lines.length === order.lines.length ? order : { ...order, lines };
+}

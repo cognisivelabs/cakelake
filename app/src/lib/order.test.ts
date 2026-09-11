@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { describeLine, orderItemCount, resolveOrderLines, resolveSelection } from "@/lib/order";
+import {
+  describeLine,
+  dropDiscontinuedLines,
+  orderItemCount,
+  resolveOrderLines,
+  resolveSelection,
+} from "@/lib/order";
 import type { CatalogItem } from "@/types/catalog";
 import type { CartLine, Order } from "@/types/order";
 
@@ -103,5 +109,33 @@ describe("orderItemCount", () => {
 
   it("is 0 for an empty order", () => {
     expect(orderItemCount(order([]))).toBe(0);
+  });
+});
+
+describe("dropDiscontinuedLines", () => {
+  it("removes lines whose item id is no longer in the catalog", () => {
+    const original = order([
+      line({ lineId: "a" }),
+      line({ lineId: "b", itemId: "discontinued" }),
+    ]);
+    const result = dropDiscontinuedLines(original, [item]);
+    expect(result.lines.map((l) => l.lineId)).toEqual(["a"]);
+  });
+
+  it("returns the same order reference when nothing was dropped", () => {
+    const original = order([line()]);
+    expect(dropDiscontinuedLines(original, [item])).toBe(original);
+  });
+
+  it("preserves every other order field when lines are dropped", () => {
+    const original: Order = {
+      ...order([line({ itemId: "discontinued" })]),
+      customerName: "Sam",
+      fulfillment: "delivery",
+    };
+    const result = dropDiscontinuedLines(original, [item]);
+    expect(result.lines).toEqual([]);
+    expect(result.customerName).toBe("Sam");
+    expect(result.fulfillment).toBe("delivery");
   });
 });

@@ -10,6 +10,7 @@ import type { CartLine, Fulfillment, Order, WhenNeeded } from "@/types/order";
 import { STORAGE_KEYS } from "@/lib/storageKeys";
 import { safeGetItem, safeSetItem } from "@/lib/safeStorage";
 import { getCatalog } from "@/lib/catalog";
+import { dropDiscontinuedLines } from "@/lib/order";
 import { isOrderExpired, pendingHandoffExpiresAt, declinedHandoffExpiresAt } from "@/lib/cartExpiry";
 
 const STORAGE_KEY = STORAGE_KEYS.cart;
@@ -66,18 +67,6 @@ function subscribe(callback: () => void): () => void {
   return () => listeners.delete(callback);
 }
 
-// A cart can sit in localStorage for weeks — long enough for a catalog
-// item it references to be discontinued or renamed to a new id in a later
-// deploy. Without this, the line lingers forever: it drops out of
-// resolveOrderLines()'s item/price rendering (so the cart page and total
-// look right) but still counts toward orderItemCount()'s "CART N" badge,
-// since that only reads order.lines — the two would silently disagree.
-function dropDiscontinuedLines(order: Order): Order {
-  const catalogIds = new Set(getCatalog().map((item) => item.id));
-  const lines = order.lines.filter((line) => catalogIds.has(line.itemId));
-  return lines.length === order.lines.length ? order : { ...order, lines };
-}
-
 // Hydrate the store from localStorage once, on the client, outside any
 // component's lifecycle — the first client render still uses
 // getServerSnapshot (EMPTY_ORDER) until useSyncExternalStore switches
@@ -95,7 +84,7 @@ if (typeof window !== "undefined") {
         currentOrder = EMPTY_ORDER;
         persist(EMPTY_ORDER);
       } else {
-        const reconciled = dropDiscontinuedLines(merged);
+        const reconciled = dropDiscontinuedLines(merged, getCatalog());
         currentOrder = reconciled;
         if (reconciled.lines.length !== merged.lines.length) persist(reconciled);
       }

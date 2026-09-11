@@ -1,23 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { getCatalog, getCategories, weightTierKg } from "@/lib/catalog";
 import { ItemCard } from "@/components/ItemCard";
-import { useCart } from "@/context/CartContext";
-import { orderTotal, lineTotal, formatAed } from "@/lib/pricing";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import { EXTERNAL_LINK_PROPS } from "@/lib/externalLink";
 import { ROUTES } from "@/lib/routes";
 import { ResponsiveHeader } from "@/components/ResponsiveHeader";
 import { Footer } from "@/components/Footer";
-import {
-  orderItemCount,
-  resolveOrderLines,
-  describeLine,
-  resolveSelection,
-} from "@/lib/order";
-import { hideBrokenImage, withBasePath } from "@/lib/assets";
 import type { CatalogItem } from "@/types/catalog";
 import styles from "./menu.module.css";
 
@@ -51,7 +41,6 @@ function passesFilters(item: CatalogItem, filters: Filters): boolean {
 export default function MenuPage() {
   const catalog = getCatalog();
   const categories = getCategories();
-  const { order } = useCart();
   const [query, setQuery] = useState("");
   // Desktop only, see docs/design/CLB-Hi-Fi-Screens.dc.html's "Menu —
   // desktop" screen — a category rail + filter panel with no mobile
@@ -65,10 +54,6 @@ export default function MenuPage() {
     oneKgPlus: false,
     canCarryMessage: false,
   });
-
-  const itemCount = orderItemCount(order);
-  const total = orderTotal(order, catalog);
-  const resolvedLines = resolveOrderLines(order, catalog);
 
   const visibleCatalog = catalog.filter((item) => matches(query, item));
   const hasResults = visibleCatalog.length > 0;
@@ -209,10 +194,10 @@ export default function MenuPage() {
 
         {/* Desktop — see docs/design/CLB-Hi-Fi-Screens.dc.html's "Menu —
             desktop" and "Search, no results — desktop" screens: the rail
-            and cart panel stay in place even with no search results, so
-            a search that comes up empty doesn't strand the shopper on a
-            bare page — only the main column's content swaps to the
-            no-results card. */}
+            stays in place even with no search results, so a search that
+            comes up empty doesn't strand the shopper on a bare page —
+            only the main column's content swaps to the no-results
+            card. */}
         <div className={styles.desktopLayout}>
           <aside className={styles.rail}>
             <div className={`${styles.railLabel} mono-tag`}>CATEGORIES</div>
@@ -311,121 +296,6 @@ export default function MenuPage() {
               </div>
             )}
           </section>
-
-          <aside className={styles.cartColumn}>
-            <div className={styles.cartPanel}>
-              <div className={styles.cartPanelHeader}>
-                <span className={styles.cartPanelTitle}>Your order</span>
-                <span className={styles.cartPanelCount}>
-                  {resolvedLines.length === 0
-                    ? "EMPTY"
-                    : `${itemCount} item${itemCount === 1 ? "" : "s"}`}
-                </span>
-              </div>
-
-              <div className={styles.cartPanelBody}>
-                {resolvedLines.length === 0 ? (
-                  <div className={styles.cartPanelEmpty}>
-                    <p className={styles.cartPanelEmptyTitle}>
-                      Nothing added yet
-                    </p>
-                    <p className={styles.cartPanelEmptyText}>
-                      Open a range to pick flavour, size and any message on the
-                      cake. Everything you add lands here.
-                    </p>
-                    <div className={styles.cartPanelStepsLabel}>
-                      HOW ORDERING WORKS
-                    </div>
-                    <ol className={styles.cartPanelSteps}>
-                      <li>
-                        <span className={styles.cartPanelStepNum}>1</span>
-                        <span>Add your cakes and pick pickup or delivery.</span>
-                      </li>
-                      <li>
-                        <span className={styles.cartPanelStepNum}>2</span>
-                        <span>
-                          Send the order to us on WhatsApp — one tap, message
-                          already written.
-                        </span>
-                      </li>
-                      <li>
-                        <span className={styles.cartPanelStepNum}>3</span>
-                        <span>
-                          We confirm price and time in the chat. Nothing is
-                          charged in the app.
-                        </span>
-                      </li>
-                    </ol>
-                    <p className={styles.cartPanelNote}>
-                      Cakes are baked to order — most need 1 hour, custom cakes
-                      need 24 hours&apos; notice.
-                    </p>
-                  </div>
-                ) : (
-                  <>
-                    <div className={styles.cartPanelLines}>
-                      {resolvedLines.map(({ item, line }) => {
-                        const lt = lineTotal(item, line);
-                        const { flavour } = resolveSelection(item, line);
-                        return (
-                          <div
-                            key={line.lineId}
-                            className={styles.cartPanelLine}
-                          >
-                            <div className={styles.cartPanelPhoto}>
-                              {flavour?.imageUrl && (
-                                // eslint-disable-next-line @next/next/no-img-element
-                                <img
-                                  src={withBasePath(flavour.imageUrl)}
-                                  alt=""
-                                  className={styles.cartPanelPhotoImage}
-                                  onError={hideBrokenImage}
-                                />
-                              )}
-                            </div>
-                            <div className={styles.cartPanelInfo}>
-                              <div className={styles.cartPanelName}>
-                                {describeLine(item, line)}
-                              </div>
-                              {line.cakeMessage && (
-                                <div className={styles.cartPanelDetail}>
-                                  &ldquo;{line.cakeMessage}&rdquo;
-                                </div>
-                              )}
-                              <div className={styles.cartPanelFooter}>
-                                <span>
-                                  {lt === undefined
-                                    ? "Price to confirm"
-                                    : formatAed(lt)}
-                                </span>
-                                <span className={styles.cartPanelQty}>
-                                  Qty {line.quantity}
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                    <p className={styles.cartPanelNote}>
-                      Delivery time runs on top of any lead time and is
-                      confirmed in chat.
-                    </p>
-                    <div className={styles.cartPanelTotalRow}>
-                      <span>Total</span>
-                      <span>{formatAed(total)}</span>
-                    </div>
-                    <Link
-                      href={ROUTES.cart}
-                      className={styles.reviewOrderButton}
-                    >
-                      REVIEW ORDER
-                    </Link>
-                  </>
-                )}
-              </div>
-            </div>
-          </aside>
         </div>
 
         <Footer />

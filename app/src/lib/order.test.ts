@@ -6,49 +6,11 @@ import {
   resolveOrderLines,
   resolveSelection,
 } from "@/lib/order";
+import { item, line, order } from "@/lib/testFixtures";
 import type { CatalogItem } from "@/types/catalog";
-import type { CartLine, Order } from "@/types/order";
-
-const item: CatalogItem = {
-  id: "classic-cakes",
-  name: "Classic Cakes",
-  categoryId: "cakes",
-  description: "",
-  weightTiers: [
-    { id: "half-kg", label: "½ kg", price: 55 },
-    { id: "1kg", label: "1 kg", price: 100 },
-  ],
-  flavours: [{ id: "butterscotch", label: "Butterscotch" }],
-  readyLabel: "Ready in 1 hour",
-  leadTimeHours: 0,
-  cakeMessageMaxLength: 40,
-  needsCustomDescription: false,
-  available: true,
-  requiresDelivery: false,
-};
+import type { Order } from "@/types/order";
 
 const noFlavourItem: CatalogItem = { ...item, id: "photo-cakes", flavours: [] };
-
-function line(overrides: Partial<CartLine> = {}): CartLine {
-  return {
-    lineId: "l1",
-    itemId: item.id,
-    quantity: 1,
-    weightTierId: "half-kg",
-    flavourId: "butterscotch",
-    ...overrides,
-  };
-}
-
-function order(lines: CartLine[]): Order {
-  return {
-    lines,
-    fulfillment: "pickup",
-    whenNeeded: { kind: "today" },
-    customerName: "",
-    pendingHandoff: false,
-  };
-}
 
 describe("resolveSelection", () => {
   it("resolves the matching tier and flavour", () => {
@@ -87,14 +49,16 @@ describe("describeLine", () => {
 
 describe("resolveOrderLines", () => {
   it("pairs each cart line with its catalog item", () => {
-    const resolved = resolveOrderLines(order([line()]), [item]);
+    const resolved = resolveOrderLines(order({ lines: [line()] }), [item]);
     expect(resolved).toHaveLength(1);
     expect(resolved[0].item).toBe(item);
     expect(resolved[0].line.lineId).toBe("l1");
   });
 
   it("drops lines whose item no longer exists in the catalog", () => {
-    const resolved = resolveOrderLines(order([line({ itemId: "discontinued" })]), [item]);
+    const resolved = resolveOrderLines(order({ lines: [line({ itemId: "discontinued" })] }), [
+      item,
+    ]);
     expect(resolved).toHaveLength(0);
   });
 });
@@ -102,37 +66,38 @@ describe("resolveOrderLines", () => {
 describe("orderItemCount", () => {
   it("sums quantities across all lines", () => {
     const count = orderItemCount(
-      order([line({ lineId: "a", quantity: 2 }), line({ lineId: "b", quantity: 3 })])
+      order({
+        lines: [line({ lineId: "a", quantity: 2 }), line({ lineId: "b", quantity: 3 })],
+      })
     );
     expect(count).toBe(5);
   });
 
   it("is 0 for an empty order", () => {
-    expect(orderItemCount(order([]))).toBe(0);
+    expect(orderItemCount(order({ lines: [] }))).toBe(0);
   });
 });
 
 describe("dropDiscontinuedLines", () => {
   it("removes lines whose item id is no longer in the catalog", () => {
-    const original = order([
-      line({ lineId: "a" }),
-      line({ lineId: "b", itemId: "discontinued" }),
-    ]);
+    const original = order({
+      lines: [line({ lineId: "a" }), line({ lineId: "b", itemId: "discontinued" })],
+    });
     const result = dropDiscontinuedLines(original, [item]);
     expect(result.lines.map((l) => l.lineId)).toEqual(["a"]);
   });
 
   it("returns the same order reference when nothing was dropped", () => {
-    const original = order([line()]);
+    const original = order({ lines: [line()] });
     expect(dropDiscontinuedLines(original, [item])).toBe(original);
   });
 
   it("preserves every other order field when lines are dropped", () => {
-    const original: Order = {
-      ...order([line({ itemId: "discontinued" })]),
+    const original: Order = order({
+      lines: [line({ itemId: "discontinued" })],
       customerName: "Sam",
       fulfillment: "delivery",
-    };
+    });
     const result = dropDiscontinuedLines(original, [item]);
     expect(result.lines).toEqual([]);
     expect(result.customerName).toBe("Sam");

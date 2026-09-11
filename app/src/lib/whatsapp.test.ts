@@ -2,45 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { buildOrderMessage, buildWhatsAppUrl, openWhatsAppUrl } from "@/lib/whatsapp";
 import { formatShortDate } from "@/lib/dates";
 import { CONFIG } from "@/lib/config";
-import type { CatalogItem } from "@/types/catalog";
-import type { CartLine, Order } from "@/types/order";
-
-const item: CatalogItem = {
-  id: "classic-cakes",
-  name: "Classic Cakes",
-  categoryId: "cakes",
-  description: "",
-  weightTiers: [{ id: "half-kg", label: "½ kg", price: 55 }],
-  flavours: [{ id: "butterscotch", label: "Butterscotch" }],
-  readyLabel: "Ready in 1 hour",
-  leadTimeHours: 0,
-  cakeMessageMaxLength: 40,
-  needsCustomDescription: false,
-  available: true,
-  requiresDelivery: false,
-};
-
-function line(overrides: Partial<CartLine> = {}): CartLine {
-  return {
-    lineId: "l1",
-    itemId: item.id,
-    quantity: 1,
-    weightTierId: "half-kg",
-    flavourId: "butterscotch",
-    ...overrides,
-  };
-}
-
-function order(overrides: Partial<Order> = {}): Order {
-  return {
-    lines: [line()],
-    fulfillment: "pickup",
-    whenNeeded: { kind: "today" },
-    customerName: "",
-    pendingHandoff: false,
-    ...overrides,
-  };
-}
+import { item, line, order } from "@/lib/testFixtures";
 
 describe("buildOrderMessage", () => {
   it("omits the name from the header when blank", () => {

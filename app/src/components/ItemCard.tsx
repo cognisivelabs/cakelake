@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { CatalogItem } from "@/types/catalog";
 import { cheapestPrice, formatAed } from "@/lib/pricing";
 import { hideBrokenImage, withBasePath } from "@/lib/assets";
+import { itemRoute } from "@/lib/routes";
 import styles from "./ItemCard.module.css";
 
 function priceFrom(item: CatalogItem): string {
@@ -21,7 +22,7 @@ export function ItemCard({ item }: { item: CatalogItem }) {
           <div className={styles.flavours}>{item.description}</div>
           <div className={styles.footer}>
             <span className={styles.price}>{priceFrom(item)}</span>
-            <Link href={`/menu/${item.id}`} className={styles.askButton}>
+            <Link href={itemRoute(item.id)} className={styles.askButton}>
               ASK US
             </Link>
           </div>
@@ -33,7 +34,7 @@ export function ItemCard({ item }: { item: CatalogItem }) {
   const previewImage = item.flavours.find((f) => f.imageUrl)?.imageUrl;
 
   return (
-    <Link href={`/menu/${item.id}`} className={styles.card}>
+    <Link href={itemRoute(item.id)} className={styles.card}>
       <div className={styles.photo}>
         {previewImage && (
           // eslint-disable-next-line @next/next/no-img-element

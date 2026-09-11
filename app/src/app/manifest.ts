@@ -8,8 +8,8 @@ export const dynamic = "force-static";
 // instead of needing to duplicate that basePath logic here.
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Cake Lake Bakery",
-    short_name: "Cake Lake",
+    name: CONFIG.name,
+    short_name: CONFIG.shortName,
     description: "Browse the menu, build an order, and send it to us on WhatsApp.",
     start_url: ".",
     scope: ".",

@@ -4,6 +4,14 @@
  */
 export const CONFIG = {
   /**
+   * The business's full and short names — every place the brand name
+   * appears (browser tab title, PWA manifest, nav wordmark, Open Graph
+   * metadata via lib/og.ts's SITE_NAME) reads from here instead of its
+   * own hardcoded copy.
+   */
+  name: "Cake Lake Bakery",
+  shortName: "Cake Lake",
+  /**
    * The bakery's one WhatsApp number, client-confirmed — used for both
    * the order handoff (ADR-003) and every general "message us" link.
    */

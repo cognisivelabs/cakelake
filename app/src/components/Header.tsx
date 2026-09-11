@@ -4,6 +4,7 @@ import { useState, type ReactNode } from "react";
 import Link from "next/link";
 import { useInstallPrompt } from "@/hooks/useInstallPrompt";
 import { ROUTES } from "@/lib/routes";
+import { CONFIG } from "@/lib/config";
 import { INSTALL_STEPS } from "@/components/installSteps";
 import { CartButton } from "@/components/CartButton";
 import styles from "./Header.module.css";
@@ -49,7 +50,7 @@ export function Header({ desktopRight }: HeaderProps = {}) {
         </button>
 
         <Link href={ROUTES.home} className={styles.brand} onClick={closeMenu}>
-          Cake Lake
+          {CONFIG.shortName}
         </Link>
 
         {/* Desktop only (hidden <1024px) — mobile keeps the hamburger

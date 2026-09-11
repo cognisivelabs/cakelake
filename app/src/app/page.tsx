@@ -3,6 +3,7 @@ import { getCatalog, getCategories } from "@/lib/catalog";
 import { cheapestPrice, formatAed } from "@/lib/pricing";
 import { ROUTES } from "@/lib/routes";
 import { withBasePath } from "@/lib/assets";
+import { CONFIG } from "@/lib/config";
 import { Header } from "@/components/Header";
 import { InstallPrompt } from "@/components/InstallPrompt";
 import { Footer } from "@/components/Footer";
@@ -30,10 +31,10 @@ export default function HomePage() {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={withBasePath("/images/logo.png")}
-              alt="Cake Lake Bakery"
+              alt={CONFIG.name}
               className={styles.logo}
             />
-            <h1>Cake Lake Bakery</h1>
+            <h1>{CONFIG.name}</h1>
             <p className={styles.heroSubtitle}>Fresh cakes, ready in an hour</p>
             <div className={styles.badges}>
               <span className={styles.badgeTeal}>EGGLESS ONLY</span>

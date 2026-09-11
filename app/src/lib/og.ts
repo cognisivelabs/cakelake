@@ -1,4 +1,5 @@
 import { withBasePath } from "@/lib/assets";
+import { CONFIG } from "@/lib/config";
 
 // Next doesn't deep-merge a page's `openGraph` metadata with the parent
 // layout's — a page that provides the key at all replaces the whole
@@ -6,7 +7,7 @@ import { withBasePath } from "@/lib/assets";
 // openGraph override (to get its own og:title/og:description filled in)
 // can still repeat the site-wide constants correctly instead of losing
 // them.
-export const SITE_NAME = "Cake Lake Bakery";
+export const SITE_NAME = CONFIG.name;
 
 export const DEFAULT_DESCRIPTION =
   "Fresh cakes, ready in an hour. Browse the menu, build an order, and send it to us on WhatsApp.";

@@ -39,7 +39,7 @@ export default function ContactPage() {
         <iframe
           className={styles.map}
           src={CONFIG.mapsEmbedSrc}
-          title="Cake Lake Bakery location"
+          title={`${CONFIG.name} location`}
           loading="lazy"
           referrerPolicy="strict-origin-when-cross-origin"
           allowFullScreen

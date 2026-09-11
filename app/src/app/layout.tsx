@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   description: DEFAULT_DESCRIPTION,
   appleWebApp: {
     capable: true,
-    title: "Cake Lake",
+    title: CONFIG.shortName,
     statusBarStyle: "default",
   },
   openGraph: {

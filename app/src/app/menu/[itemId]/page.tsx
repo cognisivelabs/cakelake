@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getCatalog, getItemById } from "@/lib/catalog";
 import { withBasePath } from "@/lib/assets";
+import { itemRoute } from "@/lib/routes";
 import { SITE_NAME, DEFAULT_OG_IMAGE } from "@/lib/og";
 import { ItemDetailView } from "@/components/ItemDetailView";
 
@@ -28,7 +29,7 @@ export async function generateMetadata({ params }: ItemPageProps): Promise<Metad
     openGraph: {
       siteName: SITE_NAME,
       type: "website",
-      url: withBasePath(`/menu/${item.id}/`),
+      url: withBasePath(`${itemRoute(item.id)}/`),
       images: [photo ? { url: withBasePath(photo), alt: item.name } : DEFAULT_OG_IMAGE],
     },
   };

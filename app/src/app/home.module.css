@@ -65,8 +65,8 @@
 }
 
 .badgeWarm {
-  background: #fdeae3;
-  color: #c33a0c;
+  background: var(--color-badge-warm-bg);
+  color: var(--color-badge-warm-ink);
 }
 
 .tagline {

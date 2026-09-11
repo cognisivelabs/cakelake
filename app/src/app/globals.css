@@ -32,6 +32,13 @@
 
   --color-unavailable-bg: #7b6049;
 
+  /* Home's "LIVE BAKERY" badge — distinct from --color-warn-*
+     (a yellow caution tone) above, so keep the names distinguishable. */
+  --color-badge-warm-bg: #fdeae3;
+  --color-badge-warm-ink: #c33a0c;
+
+  --color-danger: #a33; /* "Remove" and other destructive actions */
+
   --font-heading: "Bricolage Grotesque", system-ui, sans-serif;
   --font-body: "DM Sans", system-ui, sans-serif;
   --font-mono: ui-monospace, Menlo, monospace;

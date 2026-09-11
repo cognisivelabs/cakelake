@@ -7,6 +7,15 @@ import { useEffect } from "react";
 // file to render its own <html>/<body> since it replaces the whole root
 // layout, and recommends keeping it as dependency-free as possible since
 // it's the last line of defense.
+//
+// The colors below are deliberately hardcoded literals, not
+// CONFIG.themeColor/backgroundColor or globals.css's custom properties,
+// even though that duplicates them a third time (see config.ts's own
+// note on the CONFIG/globals.css duplication) — this page exists
+// specifically for when the layout that would normally load
+// globals.css has already failed, so it can't safely assume that
+// stylesheet (or CONFIG, or any other app module) loaded correctly.
+// Import nothing that isn't guaranteed to work standalone.
 export default function GlobalError({
   error,
   reset,

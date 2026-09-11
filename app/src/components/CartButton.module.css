@@ -26,7 +26,7 @@
   padding: 0 4px;
   box-sizing: border-box;
   border-radius: 9px;
-  background: #cd346f;
+  background: var(--color-pink);
   border: 2px solid var(--color-accent);
   display: flex;
   align-items: center;

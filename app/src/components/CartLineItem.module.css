@@ -111,7 +111,7 @@
   flex: none;
   border: none;
   background: none;
-  color: #a33;
+  color: var(--color-danger);
   font-size: 0.7rem;
   cursor: pointer;
   padding: 0;

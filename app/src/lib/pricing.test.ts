@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { formatAed, hasUnpricedLines, lineTotal, orderTotal, unitPrice } from "@/lib/pricing";
+import {
+  cheapestPrice,
+  formatAed,
+  hasUnpricedLines,
+  lineTotal,
+  orderTotal,
+  unitPrice,
+} from "@/lib/pricing";
 import { item, line, order } from "@/lib/testFixtures";
 
 describe("unitPrice", () => {
@@ -53,5 +60,29 @@ describe("orderTotal", () => {
 describe("formatAed", () => {
   it("prefixes the amount with the currency code", () => {
     expect(formatAed(55)).toBe("AED 55");
+  });
+});
+
+describe("cheapestPrice", () => {
+  it("returns the lowest priced tier across a single item", () => {
+    expect(cheapestPrice([item])).toBe(55);
+  });
+
+  it("returns the lowest priced tier across multiple items", () => {
+    const pricier = {
+      ...item,
+      id: "premium-cakes",
+      weightTiers: [{ id: "half-kg", label: "½ kg", price: 85 }],
+    };
+    expect(cheapestPrice([pricier, item])).toBe(55);
+  });
+
+  it("is undefined when every tier is 'Ask us'", () => {
+    const unpriced = { ...item, weightTiers: [{ id: "custom", label: "Custom" }] };
+    expect(cheapestPrice([unpriced])).toBeUndefined();
+  });
+
+  it("is undefined for an empty list of items", () => {
+    expect(cheapestPrice([])).toBeUndefined();
   });
 });

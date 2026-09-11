@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getCatalog, getCategories } from "@/lib/catalog";
-import { formatAed } from "@/lib/pricing";
+import { cheapestPrice, formatAed } from "@/lib/pricing";
 import { ROUTES } from "@/lib/routes";
 import { withBasePath } from "@/lib/assets";
 import { Header } from "@/components/Header";
@@ -12,11 +12,8 @@ import styles from "./home.module.css";
 // Desktop's category card shows a starting price (mobile's doesn't —
 // see docs/design/CLB-Hi-Fi-Screens.dc.html's desktop Home screen).
 function priceFrom(items: CatalogItem[]): string | null {
-  const prices = items
-    .flatMap((item) => item.weightTiers)
-    .map((tier) => tier.price)
-    .filter((price): price is number => price !== undefined);
-  return prices.length === 0 ? null : formatAed(Math.min(...prices));
+  const price = cheapestPrice(items);
+  return price === undefined ? null : formatAed(price);
 }
 
 export default function HomePage() {

@@ -34,3 +34,15 @@ export function orderTotal(order: Order, catalog: CatalogItem[]): number {
 export function formatAed(amount: number): string {
   return `${CONFIG.currency} ${amount}`;
 }
+
+/** The lowest priced weight tier across the given items, or undefined if
+ * none has a fixed price (every tier is "Ask us"). Used both for a
+ * single item's card (ItemCard) and a whole category's "from" price
+ * (Home). */
+export function cheapestPrice(items: CatalogItem[]): number | undefined {
+  const prices = items
+    .flatMap((item) => item.weightTiers)
+    .map((tier) => tier.price)
+    .filter((price): price is number => price !== undefined);
+  return prices.length === 0 ? undefined : Math.min(...prices);
+}

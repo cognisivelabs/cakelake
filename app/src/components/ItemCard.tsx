@@ -1,13 +1,12 @@
 import Link from "next/link";
 import type { CatalogItem } from "@/types/catalog";
-import { formatAed } from "@/lib/pricing";
+import { cheapestPrice, formatAed } from "@/lib/pricing";
 import { withBasePath } from "@/lib/assets";
 import styles from "./ItemCard.module.css";
 
 function priceFrom(item: CatalogItem): string {
-  const prices = item.weightTiers.map((t) => t.price).filter((p): p is number => p !== undefined);
-  if (prices.length === 0) return "Ask us";
-  return `From ${formatAed(Math.min(...prices))}`;
+  const price = cheapestPrice([item]);
+  return price === undefined ? "Ask us" : `From ${formatAed(price)}`;
 }
 
 export function ItemCard({ item }: { item: CatalogItem }) {

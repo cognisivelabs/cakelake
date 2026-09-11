@@ -6,10 +6,10 @@ import { orderItemCount } from "@/lib/order";
 import { ROUTES } from "@/lib/routes";
 import styles from "./CartButton.module.css";
 
-// See docs/design/CLB-Cart-Icon.dc.html's "1a — corner badge" — bare
-// glyph (no button box), a pink count badge, and a dimmed glyph with no
-// badge once the cart is empty. Shared by Header (mobile + desktop nav)
-// and PageHeader (mobile back-link header) so both stay in sync.
+// The "corner badge" cart icon treatment — a bare glyph (no button box),
+// a pink count badge, and a dimmed glyph with no badge once the cart is
+// empty. Shared by Header (mobile + desktop nav) and PageHeader (mobile
+// back-link header) so both stay in sync.
 export function CartButton() {
   const { order } = useCart();
   const itemCount = orderItemCount(order);

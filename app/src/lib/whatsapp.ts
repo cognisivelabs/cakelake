@@ -97,3 +97,16 @@ export function openWhatsAppUrl(url: string): void {
   link.click();
   document.body.removeChild(link);
 }
+
+/**
+ * "971503287761" -> "050 328 7761" — the local UAE display form of the
+ * bakery's WhatsApp number, shown next to it on the Find Us page.
+ * Assumes a 3-digit country code (UAE's is "971") stripped off a
+ * 10-digit local number — not a generic international formatter, so a
+ * differently-shaped number here would silently misformat rather than
+ * throw.
+ */
+export function formatLocalPhone(intlNumber: string): string {
+  const local = "0" + intlNumber.slice(3);
+  return `${local.slice(0, 3)} ${local.slice(3, 6)} ${local.slice(6)}`;
+}

@@ -4,6 +4,7 @@ import { EXTERNAL_LINK_PROPS } from "@/lib/externalLink";
 import { ROUTES } from "@/lib/routes";
 import { withBasePath } from "@/lib/assets";
 import { SITE_NAME, DEFAULT_OG_IMAGE } from "@/lib/og";
+import { formatLocalPhone } from "@/lib/whatsapp";
 import { PageHeader } from "@/components/PageHeader";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
@@ -94,7 +95,7 @@ export default function ContactPage() {
                 </div>
                 <div className={styles.row}>
                   <span>WhatsApp</span>
-                  <span>{formatDisplay(CONFIG.bakeryWhatsAppNumber)}</span>
+                  <span>{formatLocalPhone(CONFIG.bakeryWhatsAppNumber)}</span>
                 </div>
               </div>
             </section>
@@ -115,10 +116,4 @@ export default function ContactPage() {
       <Footer />
     </div>
   );
-}
-
-function formatDisplay(intlNumber: string): string {
-  // "971529811358" -> "052 981 1358"
-  const local = "0" + intlNumber.slice(3);
-  return `${local.slice(0, 3)} ${local.slice(3, 6)} ${local.slice(6)}`;
 }

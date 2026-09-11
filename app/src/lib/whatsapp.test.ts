@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { buildOrderMessage, buildWhatsAppUrl, openWhatsAppUrl } from "@/lib/whatsapp";
+import { buildOrderMessage, buildWhatsAppUrl, formatLocalPhone, openWhatsAppUrl } from "@/lib/whatsapp";
 import { formatShortDate } from "@/lib/dates";
 import { CONFIG } from "@/lib/config";
 import { item, line, order } from "@/lib/testFixtures";
@@ -83,5 +83,15 @@ describe("openWhatsAppUrl", () => {
     expect(clickSpy).toHaveBeenCalledOnce();
     expect(document.body.childElementCount).toBe(before);
     clickSpy.mockRestore();
+  });
+});
+
+describe("formatLocalPhone", () => {
+  it("strips the 3-digit UAE country code and re-adds a leading 0", () => {
+    expect(formatLocalPhone("971503287761")).toBe("050 328 7761");
+  });
+
+  it("matches the bakery's own configured number", () => {
+    expect(formatLocalPhone(CONFIG.bakeryWhatsAppNumber)).toBe("050 328 7761");
   });
 });

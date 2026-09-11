@@ -1,3 +1,42 @@
+type DayHours = { day: string; hours: string };
+
+/**
+ * Collapses consecutive days sharing the same hours into one "Day - Day"
+ * range (or a bare day name for a range of one) — so the compact
+ * two-row summary (Footer, mobile) is derived from the same per-day
+ * schedule that Find us — desktop lists in full, instead of the two
+ * being separate hand-typed copies that could silently drift apart.
+ */
+function groupOpeningHours(byDay: readonly DayHours[]): { days: string; hours: string }[] {
+  const groups: { days: string[]; hours: string }[] = [];
+  for (const entry of byDay) {
+    const current = groups[groups.length - 1];
+    if (current && current.hours === entry.hours) {
+      current.days.push(entry.day);
+    } else {
+      groups.push({ days: [entry.day], hours: entry.hours });
+    }
+  }
+  return groups.map(({ days, hours }) => ({
+    days: days.length > 1 ? `${days[0]} - ${days[days.length - 1]}` : days[0],
+    hours,
+  }));
+}
+
+/** Client-provided, one entry per day — the single source of truth for
+ * the shop's hours. Find us — desktop has room to list every day
+ * individually; Footer/mobile show groupOpeningHours()'s collapsed
+ * two-row summary instead. */
+const OPENING_HOURS_BY_DAY = [
+  { day: "Monday", hours: "10 am - 12 am" },
+  { day: "Tuesday", hours: "10 am - 12 am" },
+  { day: "Wednesday", hours: "10 am - 12 am" },
+  { day: "Thursday", hours: "10 am - 12 am" },
+  { day: "Friday", hours: "10 am - 1 am" },
+  { day: "Saturday", hours: "10 am - 1 am" },
+  { day: "Sunday", hours: "10 am - 1 am" },
+] as const;
+
 /**
  * Real values confirmed by the client, except where noted. Kept in one
  * place so changes are a one-line edit, not a hunt through the codebase.
@@ -38,23 +77,12 @@ export const CONFIG = {
    */
   mapsEmbedSrc:
     "https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d902.164755967051!2d55.3038083!3d25.2484071!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3e5f43e86fd0df21%3A0xab8c252f39da49ca!2sCake%20Lake%20Bakery!5e0!3m2!1sen!2suk!4v1787921738360!5m2!1sen!2suk",
-  /** Client-provided. Grouped by the two distinct schedules across the week. */
-  openingHours: [
-    { days: "Monday - Thursday", hours: "10 am - 12 am" },
-    { days: "Friday - Sunday", hours: "10 am - 1 am" },
-  ],
-  /** Same hours as openingHours above, listed per day — Find us — desktop
-   * has room to show every day individually instead of mobile's compact
-   * two-row grouping. */
-  openingHoursByDay: [
-    { day: "Monday", hours: "10 am - 12 am" },
-    { day: "Tuesday", hours: "10 am - 12 am" },
-    { day: "Wednesday", hours: "10 am - 12 am" },
-    { day: "Thursday", hours: "10 am - 12 am" },
-    { day: "Friday", hours: "10 am - 1 am" },
-    { day: "Saturday", hours: "10 am - 1 am" },
-    { day: "Sunday", hours: "10 am - 1 am" },
-  ],
+  /** Footer/mobile's compact summary — derived from openingHoursByDay
+   * below, not hand-typed, so the two views can't drift apart. */
+  openingHours: groupOpeningHours(OPENING_HOURS_BY_DAY),
+  /** Find us — desktop's full per-day listing. The canonical schedule —
+   * edit this when hours change. */
+  openingHoursByDay: OPENING_HOURS_BY_DAY,
   currency: "AED",
   /**
    * PWA brand colours — must match `--color-accent`/`--color-bg` in

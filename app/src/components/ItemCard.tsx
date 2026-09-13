@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { CatalogItem } from "@/types/catalog";
 import { cheapestPrice, formatAed } from "@/lib/pricing";
 import { hideBrokenImage, withBasePath } from "@/lib/assets";
-import { resolveImageStyle } from "@/lib/imageFraming";
+import { resolveImageStyle } from "@/lib/imageConfig";
 import { itemRoute } from "@/lib/routes";
 import styles from "./ItemCard.module.css";
 
@@ -43,7 +43,7 @@ export function ItemCard({ item }: { item: CatalogItem }) {
             src={withBasePath(previewFlavour.imageUrl)}
             alt=""
             className={styles.photoImage}
-            style={resolveImageStyle(previewFlavour.framing, "thumbnail")}
+            style={resolveImageStyle(previewFlavour.imageUrl, "thumbnail")}
             onError={hideBrokenImage}
           />
         )}

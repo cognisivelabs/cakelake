@@ -1,4 +1,4 @@
-import type { Category, CatalogItem } from "@/types/catalog";
+import type { Category, CatalogItem, ImageFraming } from "@/types/catalog";
 import { CONFIG } from "@/lib/config";
 
 /**
@@ -18,16 +18,29 @@ const CATEGORIES: Category[] = [
   { id: "custom-cakes", label: "Custom Cakes", accent: "#91134B" },
 ];
 
-type FlavourEntry = string | { label: string; description?: string; imageUrl?: string };
+type FlavourEntry =
+  | string
+  | {
+      label: string;
+      description?: string;
+      imageUrl?: string;
+      /** Per-slot crop/zoom tuning for imageUrl — see lib/imageFraming.ts.
+       * A bare ImageFraming here (rather than the full per-slot shape) is
+       * shorthand for "default" — most photos only ever need one tuning
+       * that applies everywhere, not different settings per slot. */
+      framing?: ImageFraming;
+    };
 
 function flavours(...entries: FlavourEntry[]) {
   return entries.map((entry) => {
-    const { label, description, imageUrl } = typeof entry === "string" ? { label: entry } : entry;
+    const { label, description, imageUrl, framing } =
+      typeof entry === "string" ? { label: entry } : entry;
     return {
       id: label.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
       label,
       ...(description ? { description } : {}),
       ...(imageUrl ? { imageUrl } : {}),
+      ...(framing ? { framing: { default: framing } } : {}),
     };
   });
 }

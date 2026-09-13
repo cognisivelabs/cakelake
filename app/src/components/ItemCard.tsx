@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { CatalogItem } from "@/types/catalog";
 import { cheapestPrice, formatAed } from "@/lib/pricing";
 import { hideBrokenImage, withBasePath } from "@/lib/assets";
+import { resolveImageStyle } from "@/lib/imageFraming";
 import { itemRoute } from "@/lib/routes";
 import styles from "./ItemCard.module.css";
 
@@ -31,17 +32,18 @@ export function ItemCard({ item }: { item: CatalogItem }) {
     );
   }
 
-  const previewImage = item.flavours.find((f) => f.imageUrl)?.imageUrl;
+  const previewFlavour = item.flavours.find((f) => f.imageUrl);
 
   return (
     <Link href={itemRoute(item.id)} className={styles.card}>
       <div className={styles.photo}>
-        {previewImage && (
+        {previewFlavour?.imageUrl && (
           // eslint-disable-next-line @next/next/no-img-element
           <img
-            src={withBasePath(previewImage)}
+            src={withBasePath(previewFlavour.imageUrl)}
             alt=""
             className={styles.photoImage}
+            style={resolveImageStyle(previewFlavour.framing, "thumbnail")}
             onError={hideBrokenImage}
           />
         )}

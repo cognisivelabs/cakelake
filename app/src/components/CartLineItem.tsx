@@ -6,6 +6,7 @@ import { useCart } from "@/context/CartContext";
 import { lineTotal, formatAed } from "@/lib/pricing";
 import { resolveSelection } from "@/lib/order";
 import { hideBrokenImage, withBasePath } from "@/lib/assets";
+import { resolveImageStyle } from "@/lib/imageFraming";
 import styles from "./CartLineItem.module.css";
 
 export function CartLineItem({ item, line }: { item: CatalogItem; line: CartLine }) {
@@ -23,6 +24,7 @@ export function CartLineItem({ item, line }: { item: CatalogItem; line: CartLine
             src={withBasePath(flavour.imageUrl)}
             alt=""
             className={styles.photoImage}
+            style={resolveImageStyle(flavour.framing, "thumbnail")}
             onError={hideBrokenImage}
           />
         )}

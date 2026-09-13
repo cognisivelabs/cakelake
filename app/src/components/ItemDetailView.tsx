@@ -9,6 +9,7 @@ import { resolveSelection, orderItemCount, resolveOrderLines, describeLine } fro
 import { getCategory, getCatalog } from "@/lib/catalog";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import { hideBrokenImage, withBasePath } from "@/lib/assets";
+import { resolveImageStyle } from "@/lib/imageFraming";
 import { EXTERNAL_LINK_PROPS } from "@/lib/externalLink";
 import { ROUTES } from "@/lib/routes";
 import { ResponsiveHeader } from "@/components/ResponsiveHeader";
@@ -160,6 +161,7 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
                 src={withBasePath(selectedFlavour.imageUrl)}
                 alt={`${item.name}, ${selectedFlavour.label}`}
                 className={styles.photoImage}
+                style={resolveImageStyle(selectedFlavour.framing, "hero")}
                 onError={hideBrokenImage}
               />
             )}
@@ -194,6 +196,7 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
                           src={withBasePath(flavour.imageUrl)}
                           alt=""
                           className={styles.flavourSwatchImage}
+                          style={resolveImageStyle(flavour.framing, "thumbnail")}
                           onError={hideBrokenImage}
                         />
                       )}

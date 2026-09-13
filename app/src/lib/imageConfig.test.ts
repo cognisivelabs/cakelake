@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { resolveImageStyle, type ImageFramingBySlot } from "./imageConfig";
+import { resolveImageStyle } from "./imageConfig";
+import type { ImageFramingBySlot } from "@/types/image";
 
 const CONFIG: Record<string, ImageFramingBySlot> = {
   "/images/centered.jpg": { hero: {} },

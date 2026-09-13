@@ -17,12 +17,46 @@ export function resolveImageStyle(
   const spec = framing?.[slot] ?? framing?.default;
   if (!spec) return {};
 
-  const { fit = "cover", focalX = 50, focalY = 50, zoom = 1 } = spec;
-  const focalPoint = `${focalX}% ${focalY}%`;
+  const {
+    fit = "cover",
+    focalX = 50,
+    focalY = 50,
+    zoom = 1,
+    rotate = 0,
+    flipX = false,
+    flipY = false,
+    backgroundColor,
+    cropTop = 0,
+    cropRight = 0,
+    cropBottom = 0,
+    cropLeft = 0,
+  } = spec;
 
-  return {
+  const focalPoint = `${focalX}% ${focalY}%`;
+  const style: CSSProperties = {
     objectFit: fit,
     objectPosition: focalPoint,
-    ...(zoom !== 1 ? { transform: `scale(${zoom})`, transformOrigin: focalPoint } : {}),
   };
+
+  // scale(x, y) covers zoom and flip together — flip is just zoom with a
+  // negated axis — rather than a separate scaleX()/scaleY() function.
+  const scaleX = zoom * (flipX ? -1 : 1);
+  const scaleY = zoom * (flipY ? -1 : 1);
+  const transformParts: string[] = [];
+  if (scaleX !== 1 || scaleY !== 1) transformParts.push(`scale(${scaleX}, ${scaleY})`);
+  if (rotate !== 0) transformParts.push(`rotate(${rotate}deg)`);
+  if (transformParts.length > 0) {
+    style.transform = transformParts.join(" ");
+    style.transformOrigin = focalPoint;
+  }
+
+  if (backgroundColor) {
+    style.backgroundColor = backgroundColor;
+  }
+
+  if (cropTop !== 0 || cropRight !== 0 || cropBottom !== 0 || cropLeft !== 0) {
+    style.clipPath = `inset(${cropTop}% ${cropRight}% ${cropBottom}% ${cropLeft}%)`;
+  }
+
+  return style;
 }

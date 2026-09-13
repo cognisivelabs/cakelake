@@ -15,24 +15,35 @@ export type ImageSlot = "hero" | "thumbnail";
  * Per-slot display tuning for one photo. This adjusts how the existing
  * photo FILE is displayed; it doesn't crop or re-encode the file itself
  * — there's no image-processing pipeline here, just CSS presentation of
- * one <img>. Considered and deliberately left out: rotate/flip/a custom
- * letterbox-background-color override — no cake photo taken so far has
- * needed any of them, and each is easy to add later if one ever does.
+ * one <img>.
+ *
+ * Two independent tools live here, usable together:
+ *  - fit/focalX/focalY/zoom — a symmetric pan-and-zoom model: one focal
+ *    point, one zoom level, cropping (or letterboxing) equally around
+ *    that point. Good for "shift the crop" or "zoom in/out" adjustments.
+ *  - cropTop/Right/Bottom/Left — direct, independently-sized trims off
+ *    each edge. Good for "I know this photo has exactly this much empty
+ *    margin on each side, remove it" — including unequal amounts (e.g.
+ *    trim 15% off the top but only 5% off the bottom), which the
+ *    symmetric pan/zoom model above can't express on its own.
+ * Applied in this order: fit -> focal position -> zoom/rotate/flip ->
+ * crop trim, i.e. the crop percentages are measured against the box
+ * *after* everything else has already been applied.
  */
 export type ImageFraming = {
   /**
    * "cover" (default when omitted): crop to fill the box, discarding
    * whatever falls outside it — the site's plain default everywhere an
    * image has no config at all. "contain": show the whole photo,
-   * letterboxed (the box's own placeholder background shows through the
-   * gaps) rather than cropped — use this when a photo doesn't have
-   * enough margin to survive cover's crop without losing real content.
+   * letterboxed (see backgroundColor below) rather than cropped — use
+   * this when a photo doesn't have enough margin to survive cover's
+   * crop without losing real content.
    */
   fit?: "cover" | "contain";
   /** Horizontal focal point, 0-100 (50 = centered). With fit: "cover",
    * this is which edge of the photo survives the crop. With fit:
    * "contain", it's where the photo sits in any letterbox gap. Either
-   * way, it's also where a zoom crops in/out from. */
+   * way, it's also the anchor a zoom or rotate is applied around. */
   focalX?: number;
   /** Vertical focal point, 0-100 (50 = centered). */
   focalY?: number;
@@ -50,6 +61,31 @@ export type ImageFraming = {
    *    would have produced, and beyond that, tighter still.
    */
   zoom?: number;
+  /** Degrees, clockwise. 0 (or omitted) = no rotation. Rotates around
+   * focalX/focalY, same as zoom. */
+  rotate?: number;
+  /** Mirror the photo left-right. */
+  flipX?: boolean;
+  /** Mirror the photo top-bottom. */
+  flipY?: boolean;
+  /** CSS color for the letterbox gaps fit: "contain" leaves around a
+   * photo that doesn't match its box's aspect ratio — overrides the
+   * box's own placeholder background (--color-photo-bg) just for this
+   * photo. No visible effect under fit: "cover" (there are no gaps to
+   * fill — it always fills the box completely). */
+  backgroundColor?: string;
+  /** Trim this many percent off the top edge, applied last — after
+   * fit/focal/zoom/rotate/flip. 0 (or omitted) = no additional trim.
+   * Independently sized from the other 3 sides — see the type-level
+   * comment above for why that's a different tool from focalX/focalY +
+   * zoom's symmetric model. */
+  cropTop?: number;
+  /** Trim this many percent off the right edge. */
+  cropRight?: number;
+  /** Trim this many percent off the bottom edge. */
+  cropBottom?: number;
+  /** Trim this many percent off the left edge. */
+  cropLeft?: number;
 };
 
 export type ImageFramingBySlot = Partial<Record<ImageSlot, ImageFraming>> & {

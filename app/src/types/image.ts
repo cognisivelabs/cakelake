@@ -12,25 +12,43 @@
 export type ImageSlot = "hero" | "thumbnail";
 
 /**
- * Presence of an entry (even {}) opts a slot out of the default
- * object-fit: cover (crop-to-fill, which silently discards whatever
- * falls outside the box) and into object-fit: contain — the whole photo
- * is always visible, letterboxed rather than cropped — then optionally
- * zooms in from there. This adjusts how the existing photo FILE is
- * displayed; it doesn't crop or re-encode the file itself — there's no
- * image-processing pipeline here, just CSS presentation of one <img>.
+ * Per-slot display tuning for one photo. This adjusts how the existing
+ * photo FILE is displayed; it doesn't crop or re-encode the file itself
+ * — there's no image-processing pipeline here, just CSS presentation of
+ * one <img>. Considered and deliberately left out: rotate/flip/a custom
+ * letterbox-background-color override — no cake photo taken so far has
+ * needed any of them, and each is easy to add later if one ever does.
  */
 export type ImageFraming = {
-  /** Horizontal focal point, 0-100 (50 = centered) — where the photo
-   * sits in any letterbox gap, and what a zoom > 1 crops in toward. */
+  /**
+   * "cover" (default when omitted): crop to fill the box, discarding
+   * whatever falls outside it — the site's plain default everywhere an
+   * image has no config at all. "contain": show the whole photo,
+   * letterboxed (the box's own placeholder background shows through the
+   * gaps) rather than cropped — use this when a photo doesn't have
+   * enough margin to survive cover's crop without losing real content.
+   */
+  fit?: "cover" | "contain";
+  /** Horizontal focal point, 0-100 (50 = centered). With fit: "cover",
+   * this is which edge of the photo survives the crop. With fit:
+   * "contain", it's where the photo sits in any letterbox gap. Either
+   * way, it's also where a zoom crops in/out from. */
   focalX?: number;
   /** Vertical focal point, 0-100 (50 = centered). */
   focalY?: number;
-  /** 1 (or omitted): fully visible, no cropping — the safe default once
-   * a slot opts in. > 1: crops in progressively from focalX/focalY,
-   * tighter as zoom increases — at some value equivalent to what
-   * object-fit: cover alone would have produced, and beyond that,
-   * tighter still. */
+  /**
+   * Zoom relative to `fit`'s own result — 1 (or omitted) leaves it
+   * unchanged. Behavior depends on `fit`:
+   *  - fit: "cover" — already crops to fill, so zoom here only resizes
+   *    that already-cropped result: > 1 crops in tighter (hides more of
+   *    the edges); < 1 shrinks it within the box, revealing the box's
+   *    background as a border. It cannot recover content cover already
+   *    discarded.
+   *  - fit: "contain" — 1 is fully visible, no cropping at all; > 1
+   *    crops in progressively from focalX/focalY, tighter as zoom
+   *    increases — at some value equivalent to what fit: "cover" alone
+   *    would have produced, and beyond that, tighter still.
+   */
   zoom?: number;
 };
 

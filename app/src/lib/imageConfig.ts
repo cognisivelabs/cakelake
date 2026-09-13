@@ -17,11 +17,11 @@ export function resolveImageStyle(
   const spec = framing?.[slot] ?? framing?.default;
   if (!spec) return {};
 
-  const { focalX = 50, focalY = 50, zoom = 1 } = spec;
+  const { fit = "cover", focalX = 50, focalY = 50, zoom = 1 } = spec;
   const focalPoint = `${focalX}% ${focalY}%`;
 
   return {
-    objectFit: "contain",
+    objectFit: fit,
     objectPosition: focalPoint,
     ...(zoom !== 1 ? { transform: `scale(${zoom})`, transformOrigin: focalPoint } : {}),
   };

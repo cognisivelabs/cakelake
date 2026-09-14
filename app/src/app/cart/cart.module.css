@@ -147,6 +147,16 @@
   font-weight: 800;
 }
 
+.pillOption:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pillOption:disabled[data-selected="true"] {
+  background: var(--color-surface-alt);
+  color: var(--color-ink-muted);
+}
+
 .pillSubtext {
   font-weight: 400;
   font-size: 0.68rem;

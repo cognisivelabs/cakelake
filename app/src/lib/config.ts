@@ -65,6 +65,13 @@ export const CONFIG = {
    * by" estimate. Independent of each catalog item's own readyLabel
    * copy, which the client may phrase differently later. */
   sameDayPrepHours: 1,
+  /** Latest local time a same-day PICKUP order can still be placed —
+   * the bakery can't bake and have it ready the same day after this. */
+  sameDayPickupCutoff: { hour: 23, minute: 30 },
+  /** Latest local time a same-day DELIVERY order can still be placed —
+   * deliveries need to land by sameDayPickupCutoff too, so the order
+   * itself has to go in earlier to leave room to bake and deliver. */
+  sameDayDeliveryCutoff: { hour: 21, minute: 0 },
   /** Max length for the optional per-item cake inscription — every
    * catalog item uses this same client-confirmed limit. */
   cakeMessageMaxLength: 25,

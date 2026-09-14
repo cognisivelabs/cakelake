@@ -1,5 +1,13 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { estimatedReadyTime, formatShortDate, formatTime, parseIsoDateLocal, todayIsoDate } from "@/lib/dates";
+import {
+  estimatedReadyTime,
+  formatShortDate,
+  formatTime,
+  parseIsoDateLocal,
+  sameDayCutoffLabel,
+  sameDayCutoffPassed,
+  todayIsoDate,
+} from "@/lib/dates";
 import { CONFIG } from "@/lib/config";
 
 const originalTz = process.env.TZ;
@@ -57,6 +65,55 @@ describe("estimatedReadyTime", () => {
     vi.setSystemTime(new Date(2026, 8, 1, 10, 0));
     const expected = new Date(2026, 8, 1, 10 + CONFIG.sameDayPrepHours, 0);
     expect(estimatedReadyTime()).toBe(formatTime(expected));
+  });
+});
+
+describe("sameDayCutoffPassed", () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("is false for pickup right before CONFIG.sameDayPickupCutoff", () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2026, 8, 1, 23, 29));
+    expect(sameDayCutoffPassed("pickup")).toBe(false);
+  });
+
+  it("is true for pickup at or after CONFIG.sameDayPickupCutoff", () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2026, 8, 1, 23, 30));
+    expect(sameDayCutoffPassed("pickup")).toBe(true);
+  });
+
+  it("is false for delivery right before CONFIG.sameDayDeliveryCutoff", () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2026, 8, 1, 20, 59));
+    expect(sameDayCutoffPassed("delivery")).toBe(false);
+  });
+
+  it("is true for delivery at or after CONFIG.sameDayDeliveryCutoff", () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2026, 8, 1, 21, 0));
+    expect(sameDayCutoffPassed("delivery")).toBe(true);
+  });
+
+  it("delivery's cutoff is earlier than pickup's, so a time can block delivery but not pickup", () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2026, 8, 1, 22, 0));
+    expect(sameDayCutoffPassed("delivery")).toBe(true);
+    expect(sameDayCutoffPassed("pickup")).toBe(false);
+  });
+});
+
+describe("sameDayCutoffLabel", () => {
+  it("formats CONFIG.sameDayPickupCutoff/sameDayDeliveryCutoff as a time", () => {
+    const pickup = new Date();
+    pickup.setHours(CONFIG.sameDayPickupCutoff.hour, CONFIG.sameDayPickupCutoff.minute, 0, 0);
+    expect(sameDayCutoffLabel("pickup")).toBe(formatTime(pickup));
+
+    const delivery = new Date();
+    delivery.setHours(CONFIG.sameDayDeliveryCutoff.hour, CONFIG.sameDayDeliveryCutoff.minute, 0, 0);
+    expect(sameDayCutoffLabel("delivery")).toBe(formatTime(delivery));
   });
 });
 

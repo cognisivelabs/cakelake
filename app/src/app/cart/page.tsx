@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useCart } from "@/context/CartContext";
 import { getCatalog } from "@/lib/catalog";
@@ -15,6 +15,8 @@ import {
   formatShortDate,
   formatTime,
   parseIsoDateLocal,
+  sameDayCutoffLabel,
+  sameDayCutoffPassed,
   todayIsoDate,
 } from "@/lib/dates";
 import { CartLineItem } from "@/components/CartLineItem";
@@ -79,6 +81,19 @@ export default function CartPage() {
   const whenNeededValue =
     order.whenNeeded.kind === "date" ? "date" : order.whenNeeded.kind;
   const itemCount = orderItemCount(order);
+  const todayCutoffPassed = sameDayCutoffPassed(order.fulfillment);
+
+  // "Today" can go from available to not (past the cutoff, or the
+  // customer switches to delivery's earlier cutoff) without the
+  // customer touching this control at all — drop a now-invalid "today"
+  // selection to "tomorrow" instead of silently letting an order that
+  // can't be fulfilled today stay selected.
+  useEffect(() => {
+    if (order.whenNeeded.kind === "today" && todayCutoffPassed) {
+      setWhenNeeded({ kind: "tomorrow" });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [order.fulfillment, order.whenNeeded.kind, todayCutoffPassed]);
 
   function handleWhenNeededChange(value: string) {
     const next: WhenNeeded =
@@ -466,10 +481,15 @@ export default function CartPage() {
                 type="button"
                 className={styles.pillOption}
                 data-selected={whenNeededValue === "today"}
+                disabled={todayCutoffPassed}
                 onClick={() => handleWhenNeededChange("today")}
               >
                 Today
-                <span className={styles.pillSubtext}>from {readyTime}</span>
+                <span className={styles.pillSubtext}>
+                  {todayCutoffPassed
+                    ? `Order by ${sameDayCutoffLabel(order.fulfillment)}`
+                    : `from ${readyTime}`}
+                </span>
               </button>
               <button
                 type="button"

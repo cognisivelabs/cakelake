@@ -2,6 +2,7 @@
 // cart's "when needed" picker — both need to parse/format the same
 // "YYYY-MM-DD" shape consistently.
 import { CONFIG } from "@/lib/config";
+import type { Fulfillment } from "@/types/order";
 
 /** "Aug 29" style — used everywhere a date is shown without a year. */
 export function formatShortDate(d: Date): string {
@@ -32,6 +33,35 @@ export function estimatedReadyTime(): string {
  */
 export function parseIsoDateLocal(iso: string): Date {
   return new Date(`${iso}T00:00:00`);
+}
+
+/** CONFIG.sameDayPickupCutoff for pickup, CONFIG.sameDayDeliveryCutoff
+ * for delivery — delivery's is earlier since the cake still has to be
+ * baked and then delivered by the same pickup cutoff. */
+function sameDayCutoff(fulfillment: Fulfillment): { hour: number; minute: number } {
+  return fulfillment === "delivery" ? CONFIG.sameDayDeliveryCutoff : CONFIG.sameDayPickupCutoff;
+}
+
+/**
+ * Whether it's already too late, right now, to place a same-day order
+ * for the given fulfillment — see sameDayCutoff. Evaluated against the
+ * current time at call time, not kept live-updating while a page sits
+ * open across the cutoff (matches todayIsoDate()/estimatedReadyTime()'s
+ * same per-call convention).
+ */
+export function sameDayCutoffPassed(fulfillment: Fulfillment): boolean {
+  const cutoff = sameDayCutoff(fulfillment);
+  const now = new Date();
+  return now.getHours() * 60 + now.getMinutes() >= cutoff.hour * 60 + cutoff.minute;
+}
+
+/** "11:30 PM" style — the cutoff time shown next to a disabled "Today"
+ * option so the customer knows why and when it stops being available. */
+export function sameDayCutoffLabel(fulfillment: Fulfillment): string {
+  const cutoff = sameDayCutoff(fulfillment);
+  const d = new Date();
+  d.setHours(cutoff.hour, cutoff.minute, 0, 0);
+  return formatTime(d);
 }
 
 /**

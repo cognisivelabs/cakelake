@@ -67,11 +67,6 @@ export default function HomePage() {
               <Link href={ROUTES.menu} className={styles.primaryCta}>
                 BROWSE MENU
               </Link>
-              {/* Secondary to Browse Menu — a PDF can't hold a cart, so
-                  it's not an equal, competing CTA. See requirements.md #6. */}
-              <button type="button" className={styles.secondaryCta} disabled>
-                DOWNLOAD MENU (PDF)
-              </button>
             </div>
           </div>
           {/* Desktop only — mobile has no room for a hero photo, and none

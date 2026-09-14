@@ -112,19 +112,6 @@
   text-decoration: none;
 }
 
-.secondaryCta {
-  border: 1.5px solid var(--color-ink);
-  color: var(--color-ink);
-  background: none;
-  border-radius: var(--radius-md);
-  padding: 16px;
-  text-align: center;
-  font-weight: 700;
-  font-size: 0.75rem;
-  letter-spacing: 0.04em;
-  opacity: 0.5;
-}
-
 .categorySection {
   padding: 20px 20px 0;
   margin-bottom: 28px;
@@ -244,10 +231,6 @@
 
   .primaryCta {
     padding: 16px 28px;
-  }
-
-  .secondaryCta {
-    padding: 14.5px 26px;
   }
 
   .heroPhoto {

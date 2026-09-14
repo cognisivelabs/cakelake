@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getCatalog, getCategories, weightTierKg } from "@/lib/catalog";
 import { ItemCard } from "@/components/ItemCard";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
@@ -58,6 +58,83 @@ export default function MenuPage() {
 
   const visibleCatalog = catalog.filter((item) => matches(query, item));
   const hasResults = visibleCatalog.length > 0;
+  // Mobile's sticky category rail (below) only lists categories that
+  // actually have something to jump to right now — same "skip if empty"
+  // rule the category sections themselves already use.
+  const visibleCategories = categories.filter((category) =>
+    visibleCatalog.some((item) => item.categoryId === category.id),
+  );
+  const visibleCategoryIds = visibleCategories.map((c) => c.id).join(",");
+
+  // Mobile only — see docs/design/CLB Menu Recategorised.dc.html's "1a"
+  // (chosen): a sticky horizontal chip rail for quick-jump navigation
+  // within the one long scroll (not a filter — that's desktop's rail,
+  // above). Tracks which section is currently in view so the matching
+  // chip highlights, the same way a scroll-spy nav does.
+  const [activeCategoryId, setActiveCategoryId] = useState(
+    visibleCategories[0]?.id ?? "",
+  );
+  const sectionRefs = useRef(new Map<string, HTMLElement>());
+  const chipRefs = useRef(new Map<string, HTMLAnchorElement>());
+
+  // Keeps the highlighted chip inside the horizontally-scrolling strip —
+  // otherwise a category several screens down highlights a chip that's
+  // scrolled off to the right, out of view in its own row.
+  useEffect(() => {
+    chipRefs.current.get(activeCategoryId)?.scrollIntoView({
+      behavior: "smooth",
+      inline: "center",
+      block: "nearest",
+    });
+  }, [activeCategoryId]);
+
+  // One scroll listener, one straightforward rule — a position scan,
+  // not IntersectionObserver's shrunk-viewport zone test. That approach
+  // (tried first) used a second, independent listener just to patch the
+  // case where a short last category could never scroll far enough to
+  // register as "intersecting" its own trigger zone — but a second
+  // listener races the first: whichever one's callback happens to run
+  // last on a given scroll event wins, so the patch could get silently
+  // overwritten right back to the wrong value. A single source of truth
+  // avoids that entirely, and turns out simpler regardless: the current
+  // category is just whichever section's heading has scrolled the
+  // furthest up past the trigger line without going past it entirely.
+  useEffect(() => {
+    const TRIGGER_LINE = 110; // px from viewport top, just under the sticky rail
+
+    function updateActiveCategory() {
+      const atBottom =
+        window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4;
+      const last = visibleCategories[visibleCategories.length - 1];
+      if (atBottom && last) {
+        setActiveCategoryId(last.id);
+        return;
+      }
+
+      let bestId: string | undefined;
+      let bestTop = -Infinity;
+      sectionRefs.current.forEach((el, id) => {
+        const top = el.getBoundingClientRect().top;
+        if (top <= TRIGGER_LINE && top > bestTop) {
+          bestTop = top;
+          bestId = id;
+        }
+      });
+      // Above the very first section (e.g. right at page top) — nothing
+      // has crossed the trigger line yet, so default to the first one.
+      setActiveCategoryId(bestId ?? visibleCategories[0]?.id ?? "");
+    }
+
+    window.addEventListener("scroll", updateActiveCategory, { passive: true });
+    updateActiveCategory();
+    return () => window.removeEventListener("scroll", updateActiveCategory);
+    // visibleCategoryIds is a stable stand-in for visibleCategories'
+    // contents (same array, joined into one string) — re-running this
+    // per that string's actual changes, not the array's reference
+    // identity, avoids tearing the scroll listener down and rebuilding
+    // it on every render for no reason.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [visibleCategoryIds]);
 
   const selectedCategory = categories.find((c) => c.id === selectedCategoryId);
   const desktopItems = visibleCatalog.filter(
@@ -149,13 +226,52 @@ export default function MenuPage() {
             </div>
           </div>
 
+          {hasResults && (
+            <div className={styles.railChips}>
+              <div className={styles.railChipsScroll}>
+                {visibleCategories.map((category) => {
+                  const active = category.id === activeCategoryId;
+                  return (
+                    <a
+                      key={category.id}
+                      href={`#${category.id}`}
+                      ref={(el) => {
+                        if (el) chipRefs.current.set(category.id, el);
+                        else chipRefs.current.delete(category.id);
+                      }}
+                      className={styles.railChip}
+                      style={
+                        active
+                          ? { background: category.accent, borderColor: category.accent, color: "#fff" }
+                          : undefined
+                      }
+                    >
+                      {category.label.replace(/ Cakes$/, "")}
+                    </a>
+                  );
+                })}
+              </div>
+              <p className={styles.railChipsHint}>
+                ← {visibleCategories.length} categories, scrolls sideways
+              </p>
+            </div>
+          )}
+
           {categories.map((category) => {
             const items = visibleCatalog.filter(
               (item) => item.categoryId === category.id,
             );
             if (items.length === 0) return null;
             return (
-              <section key={category.id} className={styles.section}>
+              <section
+                key={category.id}
+                id={category.id}
+                ref={(el) => {
+                  if (el) sectionRefs.current.set(category.id, el);
+                  else sectionRefs.current.delete(category.id);
+                }}
+                className={styles.section}
+              >
                 <h2
                   className={styles.categoryHeading}
                   style={{

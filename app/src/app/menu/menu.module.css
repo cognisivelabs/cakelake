@@ -104,8 +104,58 @@
   box-sizing: border-box;
 }
 
+/* Mobile only — sticky quick-jump chip rail, see menu/page.tsx's
+   IntersectionObserver-driven activeCategoryId. Sits at the true
+   viewport top once the (non-sticky) header scrolls past. */
+.railChips {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--color-bg);
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 10px;
+}
+
+.railChipsScroll {
+  display: flex;
+  gap: 7px;
+  padding: 10px 20px 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+}
+
+.railChipsScroll::-webkit-scrollbar {
+  display: none;
+}
+
+.railChip {
+  flex: none;
+  border-radius: 16px;
+  padding: 9px 14px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  font-weight: 700;
+  font-size: 0.71875rem;
+  color: var(--color-ink);
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+.railChipsHint {
+  margin: 0;
+  padding: 7px 20px 0;
+  font-size: 0.71875rem;
+  color: var(--color-ink-muted);
+}
+
 .section {
   padding: 12px 20px 0;
+  /* Lands just below the sticky rail instead of directly under it —
+     without this, jumping to a section via its chip (or any #anchor)
+     scrolls the heading exactly to the viewport top, where the sticky
+     rail itself then covers it. */
+  scroll-margin-top: 80px;
 }
 
 .categoryHeading {

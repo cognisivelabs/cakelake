@@ -60,6 +60,9 @@
 
 html {
   height: 100%;
+  /* Menu's mobile category chips jump to an #anchor — smooth rather than
+     an instant jarring cut, everywhere a same-page anchor link is used. */
+  scroll-behavior: smooth;
 }
 
 html {

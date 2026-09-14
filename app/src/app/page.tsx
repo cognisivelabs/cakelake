@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { getCatalog, getCategories } from "@/lib/catalog";
+import { getCatalog } from "@/lib/catalog";
 import { cheapestPrice, formatAed } from "@/lib/pricing";
 import { ROUTES } from "@/lib/routes";
 import { withBasePath } from "@/lib/assets";
@@ -18,8 +18,19 @@ function priceFrom(items: CatalogItem[]): string | null {
 }
 
 export default function HomePage() {
-  const categories = getCategories();
   const catalog = getCatalog();
+  // Sep 2026 recategorisation: the menu's 11 categories are all one
+  // flavour-picking flow now, so Home keeps the same 2-tile shortcut the
+  // client's updated design shows — "Cakes" (every standard category)
+  // and "3D Cakes" (the one from-scratch, per-kg category) — rather
+  // than listing all 11 individually, which would turn this into a
+  // second copy of the Menu category rail.
+  const cakeItems = catalog.filter((item) => item.categoryId !== "3d-cakes");
+  const customItems = catalog.filter((item) => item.categoryId === "3d-cakes");
+  const shopByCategory = [
+    { id: "cakes", label: "Cakes", accent: "#CD346F", items: cakeItems, perKg: false },
+    { id: "3d-cakes", label: "3D Cakes", accent: "#91134B", items: customItems, perKg: true },
+  ];
 
   return (
     <div className={styles.page}>
@@ -72,13 +83,12 @@ export default function HomePage() {
         <div className={styles.categorySection}>
           <div className={styles.sectionLabel}>Shop by category</div>
           <div className={styles.categoryGrid}>
-            {categories.map((category) => {
-              const items = catalog.filter((item) => item.categoryId === category.id);
-              // Cakes get a starting price; Custom Cakes is priced per kg
+            {shopByCategory.map((category) => {
+              // Cakes get a starting price; 3D Cakes is priced per kg
               // across the board (up to "Ask us" for the largest sizes),
               // so a single "from" price is less honest there — matches
               // the Hi-Fi's per-category treatment, not a generic formula.
-              const from = category.id === "custom-cakes" ? null : priceFrom(items);
+              const from = category.perKg ? null : priceFrom(category.items);
               return (
                 <Link
                   key={category.id}
@@ -91,9 +101,9 @@ export default function HomePage() {
                     {category.label}
                   </span>
                   <span className={styles.categoryCount}>
-                    {items.length} ranges
+                    {category.items.length} ranges
                     {from && <span className={styles.categoryPriceFrom}> · from {from}</span>}
-                    {category.id === "custom-cakes" && (
+                    {category.perKg && (
                       <span className={styles.categoryPriceFrom}> · per kg</span>
                     )}
                   </span>

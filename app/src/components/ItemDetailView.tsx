@@ -6,20 +6,18 @@ import type { CatalogItem } from "@/types/catalog";
 import { useCart } from "@/context/CartContext";
 import { formatAed, orderTotal, lineTotal } from "@/lib/pricing";
 import { resolveSelection, orderItemCount, resolveOrderLines, describeLine } from "@/lib/order";
-import { getCategory, getCatalog } from "@/lib/catalog";
+import { getCategory, getCatalog, getSiblingItems } from "@/lib/catalog";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import { hideBrokenImage, withBasePath } from "@/lib/assets";
 import { resolveImageStyle } from "@/lib/imageConfig";
 import { EXTERNAL_LINK_PROPS } from "@/lib/externalLink";
-import { ROUTES } from "@/lib/routes";
+import { ROUTES, itemRoute } from "@/lib/routes";
 import { ResponsiveHeader } from "@/components/ResponsiveHeader";
 import { Footer } from "@/components/Footer";
 import styles from "./ItemDetailView.module.css";
 
 type AddedSnapshot = {
   tierLabel?: string;
-  flavourLabel?: string;
-  flavourImageUrl?: string;
   cakeMessage?: string;
   quantity: number;
   lineTotal?: number;
@@ -35,31 +33,31 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
   const { order, addLine } = useCart();
   const category = getCategory(item.categoryId);
   const categoryLabel = category?.label ?? "Menu";
+  // Sep 2026 recategorisation: Photo Cakes/3D Cakes are the only items
+  // still priced by open-ended weight (an unpriced "Ask us" tier at the
+  // top end) rather than a fixed ½kg/1kg pair — used below to label the
+  // size section "WEIGHT ... PER KG" instead of "SIZE" for just those.
+  const isWeightPriced = item.weightTiers.some((t) => t.price === undefined);
   const baseWeightPrice = item.weightTiers[0]?.price;
+  // Flavour is no longer a picker on this page (Sep 2026
+  // recategorisation) — every other item in the same category is
+  // cross-linked instead, at the foot of the page.
+  const siblingItems = getSiblingItems(item);
 
   const [weightTierId, setWeightTierId] = useState(item.weightTiers[0]?.id ?? "");
-  const [flavourId, setFlavourId] = useState(item.flavours[0]?.id ?? "");
   const [quantity, setQuantity] = useState(1);
   const [cakeMessage, setCakeMessage] = useState("");
-  const [customDescription, setCustomDescription] = useState("");
   // See docs/design/CLB-Hi-Fi-Screens.dc.html's "Added to order" screens —
   // a bottom sheet on mobile, a right-side panel on desktop. Same state,
   // only the CSS layout differs between the two (like the rest of this
   // component).
   const [addedSnapshot, setAddedSnapshot] = useState<AddedSnapshot | null>(null);
 
-  const { tier: selectedTier, flavour: selectedFlavour } = resolveSelection(item, {
-    weightTierId,
-    flavourId,
-  });
+  const { tier: selectedTier } = resolveSelection(item, { weightTierId });
   const unitPrice = selectedTier?.price;
   const total = unitPrice === undefined ? undefined : unitPrice * quantity;
-  const flavourIndex = item.flavours.findIndex((f) => f.id === flavourId);
 
-  const canAdd =
-    weightTierId !== "" &&
-    (item.flavours.length === 0 || flavourId !== "") &&
-    (!item.needsCustomDescription || customDescription.trim() !== "");
+  const canAdd = weightTierId !== "";
 
   function handleAdd() {
     if (!canAdd) return;
@@ -75,14 +73,10 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
       itemId: item.id,
       quantity,
       weightTierId,
-      flavourId,
       cakeMessage: cakeMessage.trim() || undefined,
-      customDescription: customDescription.trim() || undefined,
     });
     setAddedSnapshot({
       tierLabel: selectedTier?.label,
-      flavourLabel: selectedFlavour?.label,
-      flavourImageUrl: selectedFlavour?.imageUrl,
       cakeMessage: cakeMessage.trim() || undefined,
       quantity,
       lineTotal: total,
@@ -137,8 +131,8 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
       {/* Desktop only — see docs/design/CLB-Hi-Fi-Screens.dc.html's
           "Item detail — desktop": a breadcrumb replaces mobile's plain
           "← MENU" back-link once there's room for one. Both links go to
-          the same /menu (no per-category route exists — same choice
-          already made for Header's "Custom cakes" link). */}
+          the same /menu — no per-category route exists (unlike Header's
+          3D cakes link, which goes straight to that one item instead). */}
       <nav className={styles.breadcrumb}>
         <Link href={ROUTES.menu}>← Menu</Link>
         <span className={styles.breadcrumbSep}>/</span>
@@ -150,68 +144,17 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
       <div className={styles.desktopGrid}>
         <div className={styles.leftCol}>
           <div className={styles.photo}>
-            {selectedFlavour?.imageUrl && (
+            {item.imageUrl && (
               // eslint-disable-next-line @next/next/no-img-element
               <img
-                // Keyed by src so switching to a flavour with a working photo
-                // always gets a fresh DOM node — otherwise a prior flavour's
-                // onError (which hides this element directly, outside React's
-                // own prop diffing) would stay applied to the reused node.
-                key={selectedFlavour.imageUrl}
-                src={withBasePath(selectedFlavour.imageUrl)}
-                alt={`${item.name}, ${selectedFlavour.label}`}
+                src={withBasePath(item.imageUrl)}
+                alt={item.name}
                 className={styles.photoImage}
-                style={resolveImageStyle(selectedFlavour.imageUrl, "hero")}
+                style={resolveImageStyle(item.imageUrl, "hero")}
                 onError={hideBrokenImage}
               />
             )}
-            {item.flavours.length > 0 && (
-              <span className={styles.photoLabel}>{selectedFlavour?.label}</span>
-            )}
-            {item.flavours.length > 1 && (
-              <span className={styles.photoCounter}>
-                {flavourIndex + 1} / {item.flavours.length}
-              </span>
-            )}
           </div>
-
-          {item.flavours.length > 0 && (
-            <div className={styles.flavourSection}>
-              <div className={styles.sectionLabel}>
-                CHOOSE A FLAVOUR
-                <span className={styles.desktopOnlyNote}> · {item.flavours.length} IN THIS RANGE</span>
-              </div>
-              <div className={styles.flavourStrip}>
-                {item.flavours.map((flavour) => (
-                  <button
-                    key={flavour.id}
-                    type="button"
-                    className={styles.flavourOption}
-                    onClick={() => setFlavourId(flavour.id)}
-                  >
-                    <span className={styles.flavourSwatch} data-selected={flavour.id === flavourId}>
-                      {flavour.imageUrl && (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
-                          src={withBasePath(flavour.imageUrl)}
-                          alt=""
-                          className={styles.flavourSwatchImage}
-                          style={resolveImageStyle(flavour.imageUrl, "thumbnail")}
-                          onError={hideBrokenImage}
-                        />
-                      )}
-                    </span>
-                    <span
-                      className={styles.flavourLabel}
-                      data-selected={flavour.id === flavourId}
-                    >
-                      {flavour.label}
-                    </span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
 
         <div className={styles.rightCol}>
@@ -235,16 +178,13 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
               </span>
               <span className={`${styles.tag} ${styles.tagReady} mono-tag`}>Eggless</span>
             </div>
-            <h1 className={styles.title}>
-              {item.name}
-              {item.flavours.length > 0 && flavourId ? ` · ${selectedFlavour?.label}` : ""}
-            </h1>
-            <p className={styles.description}>{selectedFlavour?.description ?? item.description}</p>
+            <h1 className={styles.title}>{item.name}</h1>
+            <p className={styles.description}>{item.description}</p>
           </div>
 
           <div className={styles.content}>
             <div className={styles.sectionLabel}>
-              {item.needsCustomDescription
+              {isWeightPriced
                 ? `WEIGHT${baseWeightPrice !== undefined ? ` · ${formatAed(baseWeightPrice)} PER KG` : ""}`
                 : "SIZE"}
             </div>
@@ -265,19 +205,6 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
               ))}
             </div>
           </div>
-
-          {item.needsCustomDescription && (
-            <div className={styles.content}>
-              <div className={styles.sectionLabel}>WHAT SHOULD IT LOOK LIKE?</div>
-              <textarea
-                className={styles.textInput}
-                value={customDescription}
-                onChange={(e) => setCustomDescription(e.target.value)}
-                placeholder="Describe the design you have in mind"
-                rows={3}
-              />
-            </div>
-          )}
 
           {item.cakeMessageMaxLength > 0 && (
             <div className={styles.content}>
@@ -306,6 +233,35 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
                 : `Baked to order in the shop — ${item.readyLabel.toLowerCase()}.`}
             </div>
           </div>
+
+          {siblingItems.length > 0 && (
+            <div className={styles.otherFlavoursSection}>
+              <div className={styles.sectionLabel}>OTHER FLAVOURS IN {categoryLabel.toUpperCase()}</div>
+              <div className={styles.otherFlavoursStrip}>
+                {siblingItems.map((sibling) => (
+                  <Link
+                    key={sibling.id}
+                    href={itemRoute(sibling.id)}
+                    className={styles.otherFlavourLink}
+                  >
+                    <span className={styles.otherFlavourSwatch}>
+                      {sibling.imageUrl && (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={withBasePath(sibling.imageUrl)}
+                          alt=""
+                          className={styles.otherFlavourSwatchImage}
+                          style={resolveImageStyle(sibling.imageUrl, "thumbnail")}
+                          onError={hideBrokenImage}
+                        />
+                      )}
+                    </span>
+                    <span className={styles.otherFlavourLabel}>{sibling.name}</span>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
 
           <div className={styles.footer}>
             <div className={styles.quantityStepper}>
@@ -350,10 +306,10 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
 
             <div className={styles.addedCard}>
               <div className={styles.addedPhoto}>
-                {addedSnapshot.flavourImageUrl && (
+                {item.imageUrl && (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
-                    src={withBasePath(addedSnapshot.flavourImageUrl)}
+                    src={withBasePath(item.imageUrl)}
                     alt=""
                     className={styles.addedPhotoImage}
                     onError={hideBrokenImage}
@@ -362,12 +318,8 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
               </div>
               <div className={styles.addedInfo}>
                 <div className={styles.addedName}>{item.name}</div>
-                {(addedSnapshot.tierLabel || addedSnapshot.flavourLabel) && (
-                  <div className={styles.addedMeta}>
-                    {[addedSnapshot.tierLabel, addedSnapshot.flavourLabel]
-                      .filter(Boolean)
-                      .join(" · ")}
-                  </div>
+                {addedSnapshot.tierLabel && (
+                  <div className={styles.addedMeta}>{addedSnapshot.tierLabel}</div>
                 )}
                 {addedSnapshot.cakeMessage && (
                   <div className={styles.addedMessage}>&ldquo;{addedSnapshot.cakeMessage}&rdquo;</div>

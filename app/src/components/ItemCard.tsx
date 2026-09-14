@@ -8,9 +8,15 @@ import styles from "./ItemCard.module.css";
 
 function priceFrom(item: CatalogItem): string {
   const price = cheapestPrice([item]);
-  return price === undefined ? "Ask us" : `From ${formatAed(price)}`;
+  return price === undefined ? "Ask us" : formatAed(price);
 }
 
+// Sep 2026 recategorisation: this card is now one flavour (one flattened
+// catalog item), not a multi-flavour group — no more "+N FLAVOURS"
+// badge or flavour-list subtitle, matching the updated Hi-Fi's simpler
+// card (photo, name, price, a button). Tapping ADD still opens the item
+// detail page rather than adding straight from the card — there's no
+// weight-tier/quantity picker here to add with yet.
 export function ItemCard({ item }: { item: CatalogItem }) {
   if (!item.available) {
     return (
@@ -20,7 +26,6 @@ export function ItemCard({ item }: { item: CatalogItem }) {
         </div>
         <div className={styles.body}>
           <div className={styles.name}>{item.name}</div>
-          <div className={styles.flavours}>{item.description}</div>
           <div className={styles.footer}>
             <span className={styles.price}>{priceFrom(item)}</span>
             <Link href={itemRoute(item.id)} className={styles.askButton}>
@@ -32,41 +37,25 @@ export function ItemCard({ item }: { item: CatalogItem }) {
     );
   }
 
-  const previewFlavour = item.flavours.find((f) => f.imageUrl);
-
   return (
     <Link href={itemRoute(item.id)} className={styles.card}>
       <div className={styles.photo}>
-        {previewFlavour?.imageUrl && (
+        {item.imageUrl && (
           // eslint-disable-next-line @next/next/no-img-element
           <img
-            src={withBasePath(previewFlavour.imageUrl)}
+            src={withBasePath(item.imageUrl)}
             alt=""
             className={styles.photoImage}
-            style={resolveImageStyle(previewFlavour.imageUrl, "thumbnail")}
+            style={resolveImageStyle(item.imageUrl, "thumbnail")}
             onError={hideBrokenImage}
           />
-        )}
-        {item.flavours.length > 0 && (
-          <span className={`${styles.flavourCount} mono-tag`}>
-            {item.flavours.length} FLAVOUR{item.flavours.length === 1 ? "" : "S"}
-          </span>
         )}
       </div>
       <div className={styles.body}>
         <div className={styles.name}>{item.name}</div>
-        <div className={styles.flavours}>
-          {item.flavours.length > 0
-            ? item.flavours
-                .slice(0, 3)
-                .map((f) => f.label)
-                .join(" · ") + (item.flavours.length > 3 ? ` · ${item.flavours.length - 3} more` : "")
-            : item.description}
-        </div>
-        <span className={`${styles.readyTag} mono-tag`}>{item.readyLabel}</span>
         <div className={styles.footer}>
           <span className={styles.price}>{priceFrom(item)}</span>
-          <span className={styles.viewButton}>VIEW</span>
+          <span className={styles.addButton}>ADD</span>
         </div>
       </div>
     </Link>

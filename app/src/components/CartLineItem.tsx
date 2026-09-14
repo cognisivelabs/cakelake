@@ -12,19 +12,19 @@ import styles from "./CartLineItem.module.css";
 export function CartLineItem({ item, line }: { item: CatalogItem; line: CartLine }) {
   const { updateQuantity, removeLine } = useCart();
 
-  const { tier, flavour } = resolveSelection(item, line);
+  const { tier } = resolveSelection(item, line);
   const total = lineTotal(item, line);
 
   return (
     <div className={styles.line}>
       <div className={styles.photo}>
-        {flavour?.imageUrl && (
+        {item.imageUrl && (
           // eslint-disable-next-line @next/next/no-img-element
           <img
-            src={withBasePath(flavour.imageUrl)}
+            src={withBasePath(item.imageUrl)}
             alt=""
             className={styles.photoImage}
-            style={resolveImageStyle(flavour.imageUrl, "thumbnail")}
+            style={resolveImageStyle(item.imageUrl, "thumbnail")}
             onError={hideBrokenImage}
           />
         )}
@@ -39,10 +39,6 @@ export function CartLineItem({ item, line }: { item: CatalogItem; line: CartLine
             Remove
           </button>
         </div>
-        {flavour && <p className={styles.flavourLine}>{flavour.label}</p>}
-        {line.customDescription && (
-          <p className={styles.detail}>{line.customDescription}</p>
-        )}
         {line.cakeMessage && <p className={styles.inscription}>&ldquo;{line.cakeMessage}&rdquo;</p>}
         <div className={styles.footerRow}>
           <span className={styles.price}>

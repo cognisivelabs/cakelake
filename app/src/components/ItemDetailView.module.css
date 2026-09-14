@@ -18,14 +18,6 @@
   display: contents;
 }
 
-.desktopOnlyNote {
-  display: none;
-}
-
-.photoCounter {
-  display: none;
-}
-
 .photo {
   /* Slightly shorter than square on mobile (height:220px was a fixed,
      non-square value here before) — aspect-ratio, not a fixed height,
@@ -51,15 +43,6 @@
   object-fit: cover;
 }
 
-.photoLabel {
-  background: rgba(79, 53, 47, 0.86);
-  color: var(--color-bg);
-  border-radius: 5px;
-  padding: 5px 9px;
-  font-weight: 700;
-  font-size: 0.75rem;
-}
-
 .unavailableBadge {
   background: var(--color-unavailable-bg);
   color: #fff;
@@ -83,34 +66,36 @@
   padding: 0 20px;
 }
 
-.flavourSection {
+/* Sep 2026 recategorisation — flavour is no longer a picker on this
+   page (each flavour has its own item/page now); this cross-links every
+   other item in the same category instead. Same visual language as the
+   old flavour-swatch picker (kept the shape, dropped the selected
+   state — these are plain navigation links now, not a toggle). */
+.otherFlavoursSection {
   padding-top: 14px;
   display: flex;
   flex-direction: column;
   gap: 5px;
 }
 
-.flavourStrip {
+.otherFlavoursStrip {
   display: flex;
   gap: 10px;
   padding: 0 20px 4px;
   overflow-x: auto;
 }
 
-.flavourOption {
+.otherFlavourLink {
   flex: none;
   width: 64px;
   display: flex;
   flex-direction: column;
   gap: 5px;
   align-items: center;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
+  text-decoration: none;
 }
 
-.flavourSwatch {
+.otherFlavourSwatch {
   width: 60px;
   height: 60px;
   border-radius: 9px;
@@ -122,7 +107,7 @@
   overflow: hidden;
 }
 
-.flavourSwatchImage {
+.otherFlavourSwatchImage {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -130,21 +115,11 @@
   object-fit: cover;
 }
 
-.flavourSwatch[data-selected="true"] {
-  border: 2.5px solid var(--color-accent);
-  box-shadow: 0 2px 0 var(--color-accent-shadow);
-}
-
-.flavourLabel {
+.otherFlavourLabel {
   font-size: 0.68rem;
   line-height: 1.25;
   text-align: center;
   color: var(--color-ink-muted);
-}
-
-.flavourLabel[data-selected="true"] {
-  font-weight: 700;
-  color: var(--color-ink);
 }
 
 .tags {
@@ -215,7 +190,6 @@
   opacity: 0.75;
 }
 
-.textInput,
 .messageField input {
   width: 100%;
   border: 1px solid var(--color-border-strong);
@@ -225,11 +199,6 @@
   font-size: 0.8rem;
   color: var(--color-ink);
   box-sizing: border-box;
-}
-
-.textInput {
-  resize: vertical;
-  font-family: var(--font-body);
 }
 
 .messageField {
@@ -732,10 +701,6 @@
     gap: 16px;
   }
 
-  .desktopOnlyNote {
-    display: inline;
-  }
-
   .photo {
     aspect-ratio: auto;
     height: 420px;
@@ -743,24 +708,11 @@
     border-radius: var(--radius-lg);
   }
 
-  .photoCounter {
-    display: block;
-    position: absolute;
-    right: 16px;
-    bottom: 16px;
-    background: rgba(79, 53, 47, 0.86);
-    color: var(--color-bg);
-    border-radius: 5px;
-    padding: 5px 9px;
-    font-weight: 700;
-    font-size: 0.75rem;
-  }
-
-  .flavourSection {
+  .otherFlavoursSection {
     padding-top: 0;
   }
 
-  .flavourStrip {
+  .otherFlavoursStrip {
     padding: 0 0 4px;
   }
 

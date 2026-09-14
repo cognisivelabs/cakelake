@@ -3,7 +3,7 @@
 import { useState, type ReactNode } from "react";
 import Link from "next/link";
 import { useInstallPrompt } from "@/hooks/useInstallPrompt";
-import { ROUTES } from "@/lib/routes";
+import { ROUTES, itemRoute } from "@/lib/routes";
 import { CONFIG } from "@/lib/config";
 import { INSTALL_STEPS } from "@/components/installSteps";
 import { CartButton } from "@/components/CartButton";
@@ -58,6 +58,15 @@ export function Header({ desktopRight }: HeaderProps = {}) {
         <nav className={styles.desktopNav}>
           <Link href={ROUTES.menu} className={styles.navLink}>
             Menu
+          </Link>
+          {/* Sep 2026 recategorisation — the one category that's still
+              worth its own nav entry now that "Custom Cakes" no longer
+              exists as a single grouping category (see
+              docs/design/CLB-Hi-Fi-Screens.dc.html's desktop nav: Menu /
+              3D cakes / Find us). Links straight to the item since it's
+              the category's only item. */}
+          <Link href={itemRoute("3d-cakes")} className={styles.navLink}>
+            3D cakes
           </Link>
           <Link href={ROUTES.contact} className={styles.navLink}>
             Find us

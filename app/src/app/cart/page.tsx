@@ -39,7 +39,6 @@ type AckSummary = {
     name: string;
     descriptor?: string;
     message?: string;
-    detail?: string;
     price: string;
   }[];
   fulfillmentLine: string;
@@ -145,14 +144,13 @@ export default function CartPage() {
         .join(" · "),
       total: formatAed(orderTotal(order, catalog)),
       itemizedLines: resolvedLines.map(({ item, line }) => {
-        const { tier, flavour } = resolveSelection(item, line);
+        const { tier } = resolveSelection(item, line);
         const price = lineTotal(item, line);
         return {
           quantity: line.quantity,
           name: item.name,
-          descriptor: [tier?.label, flavour?.label].filter(Boolean).join(" · ") || undefined,
+          descriptor: tier?.label,
           message: line.cakeMessage,
-          detail: line.customDescription,
           price: price === undefined ? "Ask us" : formatAed(price),
         };
       }),
@@ -230,9 +228,6 @@ export default function CartPage() {
                     </div>
                     {line.descriptor && (
                       <div className={styles.desktopAckLineDetail}>{line.descriptor}</div>
-                    )}
-                    {line.detail && (
-                      <div className={styles.desktopAckLineDetail}>{line.detail}</div>
                     )}
                     {line.message && (
                       <div className={styles.desktopAckLineDetail}>&ldquo;{line.message}&rdquo;</div>

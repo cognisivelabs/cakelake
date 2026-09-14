@@ -11,11 +11,12 @@ import { Footer } from "@/components/Footer";
 import type { CatalogItem } from "@/types/catalog";
 import styles from "./menu.module.css";
 
+// Sep 2026 recategorisation: flavour is the item now, so matching the
+// item's own name already covers what used to be a separate "search
+// each flavour inside this group" check.
 function matches(query: string, item: CatalogItem): boolean {
   const q = query.trim().toLowerCase();
-  if (!q) return true;
-  if (item.name.toLowerCase().includes(q)) return true;
-  return item.flavours.some((f) => f.label.toLowerCase().includes(q));
+  return !q || item.name.toLowerCase().includes(q);
 }
 
 type Filters = {

@@ -49,18 +49,6 @@
   color: var(--color-ink);
 }
 
-.flavourLine {
-  margin: 0;
-  font-size: 0.72rem;
-  color: var(--color-ink-faint);
-}
-
-.detail {
-  margin: 0;
-  font-size: 0.72rem;
-  color: var(--color-ink-muted);
-}
-
 .inscription {
   margin: 0;
   align-self: flex-start;

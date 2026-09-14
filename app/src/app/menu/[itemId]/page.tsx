@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: ItemPageProps): Promise<Metad
   const item = getItemById(itemId);
   if (!item) return {};
 
-  const photo = item.flavours.find((f) => f.imageUrl)?.imageUrl;
+  const photo = item.imageUrl;
 
   return {
     title: item.name,

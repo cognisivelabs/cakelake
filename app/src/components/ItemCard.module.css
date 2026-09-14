@@ -42,27 +42,6 @@
   align-items: flex-start;
 }
 
-.readyTag {
-  align-self: flex-start;
-  background: var(--color-teal-bg);
-  color: var(--color-teal);
-  border-radius: 4px;
-  padding: 3px 6px;
-  font-size: 0.6rem !important;
-}
-
-.flavourCount {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(79, 53, 47, 0.82);
-  color: var(--color-accent);
-  text-align: center;
-  padding: 3px 0;
-  font-size: 0.58rem !important;
-}
-
 .unavailableBadge {
   background: var(--color-unavailable-bg);
   color: #fff;
@@ -86,12 +65,6 @@
   color: var(--color-ink);
 }
 
-.flavours {
-  font-size: 0.75rem;
-  color: var(--color-ink-faint);
-  line-height: 1.4;
-}
-
 .footer {
   display: flex;
   align-items: center;
@@ -105,7 +78,7 @@
   color: var(--color-ink);
 }
 
-.viewButton,
+.addButton,
 .askButton {
   border: 1.5px solid var(--color-ink);
   border-radius: 7px;
@@ -148,10 +121,6 @@
 
   .name {
     font-size: 1rem;
-  }
-
-  .flavours {
-    font-size: 0.78rem;
   }
 
   .footer {

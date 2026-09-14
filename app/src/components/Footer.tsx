@@ -1,19 +1,13 @@
 import { CONFIG } from "@/lib/config";
 import { groupOpeningHours } from "@/lib/hours";
-import { FloatingWhatsApp } from "@/components/FloatingWhatsApp";
 import styles from "./Footer.module.css";
 
-// Rendered as the last element on every page. FloatingWhatsApp relies on
-// being this component's (and so the page's) last flex child for its
-// sticky/margin-top:auto "dock above the footer" behaviour to work — see
-// FloatingWhatsApp.module.css.
+// Rendered as the last element on every page.
 export function Footer() {
   const groupedHours = groupOpeningHours(CONFIG.openingHoursByDay);
 
   return (
     <>
-      <FloatingWhatsApp />
-
       <div className={styles.footer}>
         <div className={`${styles.footerLabel} mono-tag`}>HOURS &amp; LOCATION</div>
         <p className={styles.footerText}>

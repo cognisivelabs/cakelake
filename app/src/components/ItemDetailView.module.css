@@ -19,13 +19,12 @@
 }
 
 .photo {
-  /* Slightly shorter than square on mobile (height:220px was a fixed,
-     non-square value here before) — aspect-ratio, not a fixed height,
-     so it scales with different phone widths instead of matching only
-     one. 5:4 rather than 1:1: less cropping on the one product photo
-     that's noticeably wider than the rest, while still reading as
-     roughly square. Reset back to a fixed height at desktop, see below. */
-  aspect-ratio: 5 / 4;
+  /* aspect-ratio, not a fixed height (height:220px was a fixed,
+     non-square value here before), so it scales with different phone
+     widths instead of matching only one. 1:1 per the Hi-Fi's "every
+     photo slot is square, so one 1:1 upload fits everywhere". Reset
+     back to a fixed height at desktop, see below. */
+  aspect-ratio: 1 / 1;
   background: var(--color-photo-bg);
   border-bottom: 1px dashed var(--color-placeholder-border);
   display: flex;
@@ -702,8 +701,10 @@
   }
 
   .photo {
-    aspect-ratio: auto;
-    height: 420px;
+    /* Hi-Fi's desktop item detail keeps the same 1:1 as everywhere
+       else, scaling with the 760px photo column rather than a fixed
+       height. */
+    aspect-ratio: 1 / 1;
     border: 1px dashed var(--color-placeholder-border);
     border-radius: var(--radius-lg);
   }

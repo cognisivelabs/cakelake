@@ -11,20 +11,18 @@ import { CONFIG } from "@/lib/config";
 /** A realistic item with both a priced and an "Ask us" (unpriced) weight
  * tier, so tests needing either case can use the same fixture. */
 export const item: CatalogItem = {
-  id: "classic-cakes",
-  name: "Classic Cakes",
-  categoryId: "cakes",
+  id: "classic-cakes-butterscotch",
+  name: "Butterscotch",
+  categoryId: "classic-cakes",
   description: "",
   weightTiers: [
     { id: "half-kg", label: "½ kg", price: 55 },
     { id: "1kg", label: "1 kg", price: 100 },
     { id: "3kg-plus", label: "3 kg+" }, // "Ask us" — no fixed price
   ],
-  flavours: [{ id: "butterscotch", label: "Butterscotch" }],
   readyLabel: "Ready in 1 hour",
   leadTimeHours: 0,
   cakeMessageMaxLength: CONFIG.cakeMessageMaxLength,
-  needsCustomDescription: false,
   available: true,
   requiresDelivery: false,
 };
@@ -35,7 +33,6 @@ export function line(overrides: Partial<CartLine> = {}): CartLine {
     itemId: item.id,
     quantity: 1,
     weightTierId: "half-kg",
-    flavourId: "butterscotch",
     ...overrides,
   };
 }

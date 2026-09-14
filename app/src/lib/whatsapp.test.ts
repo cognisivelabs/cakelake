@@ -15,9 +15,9 @@ describe("buildOrderMessage", () => {
     expect(message.split("\n")[0]).toBe("New order — Aisha");
   });
 
-  it("formats an item line with quantity, description, and price", () => {
+  it("formats an item line with quantity, tier, and price", () => {
     const message = buildOrderMessage(order({ lines: [line({ quantity: 2 })] }), [item]);
-    expect(message).toContain("2× Classic Cakes, ½ kg, Butterscotch — AED 110");
+    expect(message).toContain("2× Butterscotch, ½ kg — AED 110");
   });
 
   it("shows 'price to confirm' for an unpriced weight tier", () => {
@@ -26,12 +26,11 @@ describe("buildOrderMessage", () => {
     expect(message).toContain("price to confirm");
   });
 
-  it("includes the design and cake-message detail lines when present", () => {
+  it("includes the cake-message detail line when present", () => {
     const message = buildOrderMessage(
-      order({ lines: [line({ customDescription: "A red heart", cakeMessage: "Happy Bday" })] }),
+      order({ lines: [line({ cakeMessage: "Happy Bday" })] }),
       [item]
     );
-    expect(message).toContain("   Design: A red heart");
     expect(message).toContain('   Message: "Happy Bday"');
   });
 

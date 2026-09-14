@@ -9,10 +9,9 @@ import type { Order } from "@/types/order";
 const HOUR_MS = 60 * 60 * 1000;
 
 const NEW_LINE: NewLineInput = {
-  itemId: "classic-cakes",
+  itemId: "classic-cakes-butterscotch",
   quantity: 1,
   weightTierId: "half-kg",
-  flavourId: "butterscotch",
 };
 
 let container: HTMLDivElement;
@@ -69,7 +68,7 @@ describe("CartContext", () => {
     expect(cart.order.lines).toHaveLength(2);
     const [a, b] = cart.order.lines;
     expect(a.lineId).not.toBe(b.lineId);
-    expect(a.itemId).toBe("classic-cakes");
+    expect(a.itemId).toBe("classic-cakes-butterscotch");
   });
 
   it("updateQuantity changes the matching line's quantity", () => {
@@ -97,7 +96,7 @@ describe("CartContext", () => {
   it("removeLine removes only the matching line", () => {
     act(() => {
       cart.addLine(NEW_LINE);
-      cart.addLine({ ...NEW_LINE, flavourId: "black-forest" });
+      cart.addLine({ ...NEW_LINE, itemId: "classic-cakes-black-forest" });
     });
     const [first, second] = cart.order.lines;
     act(() => {
@@ -109,7 +108,7 @@ describe("CartContext", () => {
   it("updateCakeMessage sets the message on the matching line only", () => {
     act(() => {
       cart.addLine(NEW_LINE);
-      cart.addLine({ ...NEW_LINE, flavourId: "black-forest" });
+      cart.addLine({ ...NEW_LINE, itemId: "classic-cakes-black-forest" });
     });
     const [first, second] = cart.order.lines;
     act(() => {
@@ -151,7 +150,7 @@ describe("CartContext", () => {
     });
     const stored = JSON.parse(localStorage.getItem(STORAGE_KEYS.cart)!) as Order;
     expect(stored.lines).toHaveLength(1);
-    expect(stored.lines[0].itemId).toBe("classic-cakes");
+    expect(stored.lines[0].itemId).toBe("classic-cakes-butterscotch");
   });
 
   it("startHandoff marks pendingHandoff and stamps a ~2 hour expiry", () => {
@@ -236,10 +235,9 @@ describe("CartContext — localStorage hydration on load", () => {
       lines: [
         {
           lineId: "l1",
-          itemId: "classic-cakes",
+          itemId: "classic-cakes-butterscotch",
           quantity: 2,
           weightTierId: "half-kg",
-          flavourId: "butterscotch",
         },
       ],
       fulfillment: "delivery",
@@ -259,10 +257,9 @@ describe("CartContext — localStorage hydration on load", () => {
       lines: [
         {
           lineId: "l1",
-          itemId: "classic-cakes",
+          itemId: "classic-cakes-butterscotch",
           quantity: 1,
           weightTierId: "half-kg",
-          flavourId: "butterscotch",
         },
       ],
       fulfillment: "pickup",
@@ -284,12 +281,11 @@ describe("CartContext — localStorage hydration on load", () => {
       lines: [
         {
           lineId: "l1",
-          itemId: "classic-cakes",
+          itemId: "classic-cakes-butterscotch",
           quantity: 1,
           weightTierId: "half-kg",
-          flavourId: "butterscotch",
         },
-        { lineId: "l2", itemId: "does-not-exist", quantity: 1, weightTierId: "x", flavourId: "y" },
+        { lineId: "l2", itemId: "does-not-exist", quantity: 1, weightTierId: "x" },
       ],
       fulfillment: "pickup",
       whenNeeded: { kind: "today" },

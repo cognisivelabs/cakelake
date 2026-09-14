@@ -1,84 +1,126 @@
-import type { Category, CatalogItem } from "@/types/catalog";
+import type { Category, CatalogItem, WeightTier } from "@/types/catalog";
 import { CONFIG } from "@/lib/config";
 
 /**
- * PLACEHOLDER CONTENT — not the real catalogue. The client will provide
- * the actual items, prices, and flavours to go here (see the "Content
- * checklist" in docs/requirements/requirements.md). Every screen reads
- * from getCatalog()/getCategories() below, nothing is hardcoded
- * elsewhere, so swapping in real data is a data change, not a code one.
+ * PLACEHOLDER CONTENT in places — see individual comments below. The
+ * client will provide the remaining items/prices/photos (see the
+ * "Content checklist" in docs/requirements/requirements.md). Every
+ * screen reads from getCatalog()/getCategories() below, nothing is
+ * hardcoded elsewhere, so swapping in real data is a data change, not a
+ * code one.
  *
  * Scope, client-confirmed: only cakes are ordered online. Cupcakes,
  * cookies, pastries, desserts, and savoury items are not — the bakery
  * doesn't take online orders for those.
+ *
+ * Sep 2026 recategorisation (client-confirmed): each flavour is now its
+ * own catalog item, and what used to be a multi-flavour "group" (e.g.
+ * Premium Cakes) is now a Category instead. Photo Cakes and 3D Cakes
+ * stay single items (no per-flavour split — Photo Cakes works with any
+ * flavour on this menu, chosen in the WhatsApp chat; 3D Cakes is a
+ * from-scratch design brief). Any customisation a customer wants — a
+ * photo to print, a design idea, anything — is handled entirely in that
+ * WhatsApp chat, not a form field in the app.
  */
 
 const CATEGORIES: Category[] = [
-  { id: "cakes", label: "Cakes", accent: "#CD346F" },
-  { id: "custom-cakes", label: "Custom Cakes", accent: "#91134B" },
+  { id: "classic-cakes", label: "Classic Cakes", accent: "#CD346F" },
+  { id: "premium-cakes", label: "Premium Cakes", accent: "#CD346F" },
+  { id: "exotic-cakes", label: "Exotic Cakes", accent: "#CD346F" },
+  { id: "exotic-premium-cakes", label: "Exotic Premium Cakes", accent: "#CD346F" },
+  { id: "cheesecakes", label: "Cheesecakes", accent: "#CD346F" },
+  { id: "indian-cakes", label: "Indian Cakes", accent: "#CD346F" },
+  { id: "photo-cakes", label: "Photo Cakes", accent: "#CD346F" },
+  // The one category that keeps a distinct colour — a from-scratch
+  // design brief, not a menu flavour, so it reads as the odd one out.
+  { id: "3d-cakes", label: "3D Cakes", accent: "#91134B" },
+  { id: "pull-me-up-cakes", label: "Pull Me Up Cakes", accent: "#CD346F" },
+  { id: "hammer-cakes", label: "Hammer Cakes", accent: "#CD346F" },
+  { id: "pinata-cakes", label: "Pinata Cakes", accent: "#CD346F" },
+  // Seasonal — client-confirmed as coming, but flavours/prices aren't
+  // set yet, so not shipped until there's real content to show.
+  // { id: "halloween-cakes", label: "Halloween Cakes", accent: "#CD346F" },
+  // { id: "valentine-cakes", label: "Valentine Cakes", accent: "#CD346F" },
 ];
 
-type FlavourEntry = string | { label: string; description?: string; imageUrl?: string };
+type ItemEntry = string | { label: string; description?: string; imageUrl?: string };
 
-function flavours(...entries: FlavourEntry[]) {
+/**
+ * Builds one category's flattened item list — one CatalogItem per
+ * flavour, all sharing that category's weight tiers/ready time/lead
+ * time. A bare string entry falls back to `fallbackDescription`, same
+ * as a flavour with no description of its own used to fall back to its
+ * group's description before the recategorisation.
+ */
+function categoryItems(
+  categoryId: string,
+  idPrefix: string,
+  fallbackDescription: string,
+  weightTiers: WeightTier[],
+  readyLabel: string,
+  leadTimeHours: number,
+  entries: ItemEntry[],
+  requiresDelivery = false,
+): CatalogItem[] {
   return entries.map((entry) => {
     const { label, description, imageUrl } = typeof entry === "string" ? { label: entry } : entry;
     return {
-      id: label.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
-      label,
-      ...(description ? { description } : {}),
+      id: `${idPrefix}-${label.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`,
+      name: label,
+      categoryId,
+      description: description ?? fallbackDescription,
+      weightTiers,
+      readyLabel,
+      leadTimeHours,
+      cakeMessageMaxLength: CONFIG.cakeMessageMaxLength,
+      available: true,
+      requiresDelivery,
       ...(imageUrl ? { imageUrl } : {}),
     };
   });
 }
 
 const CATALOG: CatalogItem[] = [
-  {
-    id: "classic-cakes",
-    name: "Classic Cakes",
-    categoryId: "cakes",
-    description: "Ultra moist cake with each bite having a creamy butterscotch mouthfeel.",
-    weightTiers: [
+  ...categoryItems(
+    "classic-cakes",
+    "classic-cakes",
+    "Ultra moist, ready in an hour.",
+    [
       { id: "half-kg", label: "½ kg", price: 55 },
       { id: "1kg", label: "1 kg", price: 100 },
     ],
-    flavours: [
+    "Ready in 1 hour",
+    0,
+    [
       {
-        id: "butterscotch",
         label: "Butterscotch",
-        imageUrl: "/images/classic-butterscotch.jpg",
         description: "Ultra moist cake with each bite having a creamy butterscotch mouthfeel.",
+        imageUrl: "/images/classic-butterscotch.jpg",
       },
-      ...flavours(
-        {
-          label: "Black Forest",
-          description: "A divine combination of chocolate, cherries and whipped cream in every layer.",
-          imageUrl: "/images/classic-black-forest.jpg",
-        },
-        {
-          label: "Pineapple",
-          description: "A light and airy cake with tropical, fresh pineapple in every bite.",
-          imageUrl: "/images/classic-pineapple.jpg",
-        },
-      ),
+      {
+        label: "Black Forest",
+        description: "A divine combination of chocolate, cherries and whipped cream in every layer.",
+        imageUrl: "/images/classic-black-forest.jpg",
+      },
+      {
+        label: "Pineapple",
+        description: "A light and airy cake with tropical, fresh pineapple in every bite.",
+        imageUrl: "/images/classic-pineapple.jpg",
+      },
     ],
-    readyLabel: "Ready in 1 hour",
-    leadTimeHours: 0,
-    cakeMessageMaxLength: CONFIG.cakeMessageMaxLength,
-    needsCustomDescription: false,
-    available: true,
-    requiresDelivery: false,
-  },
-  {
-    id: "premium-cakes",
-    name: "Premium Cakes",
-    categoryId: "cakes",
-    description: "Truffle, fresh fruit, and berry finishes.",
-    weightTiers: [
+  ),
+
+  ...categoryItems(
+    "premium-cakes",
+    "premium-cakes",
+    "Truffle, fresh fruit, and berry finishes.",
+    [
       { id: "half-kg", label: "½ kg", price: 65 },
       { id: "1kg", label: "1 kg", price: 115 },
     ],
-    flavours: flavours(
+    "Ready in 1 hour",
+    0,
+    [
       {
         label: "Dark Chocolate Truffle",
         description: "Love dark chocolate? This luxurious, ganache based cake is for you.",
@@ -120,24 +162,20 @@ const CATALOG: CatalogItem[] = [
           "Subtle, delectable vanilla cake with fresh, fruity goodness in every bite. Made of fresh fruit with less sugar.",
         imageUrl: "/images/premium-fresh-fruit.jpg",
       },
-    ),
-    readyLabel: "Ready in 1 hour",
-    leadTimeHours: 0,
-    cakeMessageMaxLength: CONFIG.cakeMessageMaxLength,
-    needsCustomDescription: false,
-    available: true,
-    requiresDelivery: false,
-  },
-  {
-    id: "exotic-cakes",
-    name: "Exotic Cakes",
-    categoryId: "cakes",
-    description: "Our more distinctive flavours.",
-    weightTiers: [
+    ],
+  ),
+
+  ...categoryItems(
+    "exotic-cakes",
+    "exotic-cakes",
+    "Our more distinctive flavours.",
+    [
       { id: "half-kg", label: "½ kg", price: 75 },
       { id: "1kg", label: "1 kg", price: 140 },
     ],
-    flavours: flavours(
+    "Ready in 1 hour",
+    0,
+    [
       {
         label: "Chocolate Mousse",
         description: "A classic with layers of moist chocolate cake and creamy chocolate mousse.",
@@ -179,24 +217,20 @@ const CATALOG: CatalogItem[] = [
       "Lush Berries",
       "Raspberry & White Chocolate",
       "Ragi Cake (Dry Fruits & Banana)",
-    ),
-    readyLabel: "Ready in 1 hour",
-    leadTimeHours: 0,
-    cakeMessageMaxLength: CONFIG.cakeMessageMaxLength,
-    needsCustomDescription: false,
-    available: true,
-    requiresDelivery: false,
-  },
-  {
-    id: "premium-exotic-cakes",
-    name: "Exotic Premium Cakes",
-    categoryId: "cakes",
-    description: "Our top-tier range — whole Rocher, Kinder Bueno, and more.",
-    weightTiers: [
+    ],
+  ),
+
+  ...categoryItems(
+    "exotic-premium-cakes",
+    "exotic-premium-cakes",
+    "Our top-tier range — whole Rocher, Kinder Bueno, and more.",
+    [
       { id: "half-kg", label: "½ kg", price: 85 },
       { id: "1kg", label: "1 kg", price: 160 },
     ],
-    flavours: flavours(
+    "Ready in 1 hour",
+    0,
+    [
       {
         label: "Oreo",
         description: "The perfect combo of an incredibly moist chocolate cake with crushed Oreo cookies.",
@@ -228,125 +262,98 @@ const CATALOG: CatalogItem[] = [
       },
       "KitKat & Gems",
       "Rose & Pistachio",
-    ),
-    readyLabel: "Ready in 1 hour",
-    leadTimeHours: 0,
-    cakeMessageMaxLength: CONFIG.cakeMessageMaxLength,
-    needsCustomDescription: false,
-    available: true,
-    requiresDelivery: false,
-  },
-  {
-    id: "hammer-cakes",
-    name: "Hammer Cakes",
-    categoryId: "cakes",
-    description: "A chocolate shell cake you crack open with a hammer.",
-    weightTiers: [{ id: "1kg", label: "1 kg", price: 150 }],
-    flavours: flavours("Chocolate", "Strawberry"),
-    readyLabel: "24 hours notice",
-    leadTimeHours: 24,
-    cakeMessageMaxLength: CONFIG.cakeMessageMaxLength,
-    needsCustomDescription: false,
-    available: true,
-    requiresDelivery: false,
-  },
-  {
-    id: "pull-me-up-cakes",
-    name: "Pull Me Up Cakes",
-    categoryId: "cakes",
-    description: "Pull the ribbons to reveal a surprise inside.",
-    weightTiers: [{ id: "1kg", label: "1 kg", price: 150 }],
-    flavours: flavours("Chocolate", "Vanilla"),
-    readyLabel: "24 hours notice",
-    leadTimeHours: 24,
-    cakeMessageMaxLength: CONFIG.cakeMessageMaxLength,
-    needsCustomDescription: false,
-    available: true,
-    requiresDelivery: false,
-  },
-  {
-    id: "pinata-cakes",
-    name: "Pinata Cakes",
-    categoryId: "cakes",
-    description: "Break it open for the treats hidden inside.",
-    weightTiers: [{ id: "1kg", label: "1 kg", price: 160 }],
-    flavours: flavours("Chocolate", "Vanilla"),
-    readyLabel: "24 hours notice",
-    leadTimeHours: 24,
-    cakeMessageMaxLength: CONFIG.cakeMessageMaxLength,
-    needsCustomDescription: false,
-    available: true,
-    requiresDelivery: false,
-  },
+    ],
+  ),
+
+  // NEW category (Sep 2026 recategorisation) — whole cakes only, one
+  // weight tier. Only these 2 flavours are confirmed by the client so
+  // far; more may be added once the rest of the lineup is confirmed.
+  ...categoryItems(
+    "cheesecakes",
+    "cheesecakes",
+    "Creamy baked cheesecake, whole cakes only.",
+    [{ id: "half-kg", label: "½ kg", price: 95 }],
+    "Ready in 1 hour",
+    0,
+    ["New York Cheesecake", "Lotus Biscoff Cheesecake"],
+  ),
+
+  // NEW category (Sep 2026 recategorisation) — made in small batches
+  // each morning, per the client. Only a ½ kg price is confirmed so
+  // far; ready time/lead time follow the standard same-day cakes until
+  // the client says otherwise (see docs/design/CLAUDE.md — still TBC).
+  ...categoryItems(
+    "indian-cakes",
+    "indian-cakes",
+    "Traditional Indian mithai flavours in cake form, made fresh each morning.",
+    [{ id: "half-kg", label: "½ kg", price: 105 }],
+    "Ready in 1 hour",
+    0,
+    ["Motichoor", "Kaju Katli", "Gulkand", "Gulab Jamun", "Rasmalai"],
+  ),
+
+  ...categoryItems(
+    "hammer-cakes",
+    "hammer-cakes",
+    "A chocolate shell cake you crack open with a hammer.",
+    [{ id: "1kg", label: "1 kg", price: 150 }],
+    "24 hours notice",
+    24,
+    ["Chocolate", "Strawberry"],
+  ),
+
+  ...categoryItems(
+    "pull-me-up-cakes",
+    "pull-me-up-cakes",
+    "Pull the ribbons to reveal a surprise inside.",
+    [{ id: "1kg", label: "1 kg", price: 150 }],
+    "24 hours notice",
+    24,
+    ["Chocolate", "Vanilla"],
+  ),
+
+  ...categoryItems(
+    "pinata-cakes",
+    "pinata-cakes",
+    "Break it open for the treats hidden inside.",
+    [{ id: "1kg", label: "1 kg", price: 160 }],
+    "24 hours notice",
+    24,
+    ["Chocolate", "Vanilla"],
+  ),
+
   {
     id: "photo-cakes",
     name: "Photo Cakes",
-    categoryId: "custom-cakes",
-    description: "An edible print of your photo on the cake.",
+    categoryId: "photo-cakes",
+    description:
+      "An edible print of your photo on the cake — works with any flavour on this menu. Tell us which flavour you'd like and send the photo on WhatsApp after ordering.",
     weightTiers: [
       { id: "1kg", label: "1 kg", price: 150 },
       { id: "2kg", label: "2 kg", price: 290 },
       { id: "3kg-plus", label: "3 kg+", price: undefined },
     ],
-    flavours: [],
     readyLabel: "24 hours notice",
     leadTimeHours: 24,
     cakeMessageMaxLength: CONFIG.cakeMessageMaxLength,
-    needsCustomDescription: true,
     available: true,
     requiresDelivery: true,
   },
-  {
-    id: "cheese-cakes",
-    name: "Cheese Cakes",
-    categoryId: "custom-cakes",
-    description: "Custom-designed cheesecake.",
-    weightTiers: [
-      { id: "1kg", label: "1 kg", price: 170 },
-      { id: "2kg", label: "2 kg", price: 330 },
-      { id: "3kg-plus", label: "3 kg+", price: undefined },
-    ],
-    flavours: [],
-    readyLabel: "24 hours notice",
-    leadTimeHours: 24,
-    cakeMessageMaxLength: CONFIG.cakeMessageMaxLength,
-    needsCustomDescription: true,
-    available: true,
-    requiresDelivery: true,
-  },
-  {
-    id: "shape-cake",
-    name: "Shape Cake",
-    categoryId: "custom-cakes",
-    description: "Sculpted into a shape of your choice.",
-    weightTiers: [
-      { id: "1kg", label: "1 kg", price: 190 },
-      { id: "2kg", label: "2 kg", price: 380 },
-      { id: "3kg-plus", label: "3 kg+", price: undefined },
-    ],
-    flavours: [],
-    readyLabel: "24 hours notice",
-    leadTimeHours: 24,
-    cakeMessageMaxLength: CONFIG.cakeMessageMaxLength,
-    needsCustomDescription: true,
-    available: true,
-    requiresDelivery: true,
-  },
+
   {
     id: "3d-cakes",
     name: "3D Cakes",
-    categoryId: "custom-cakes",
-    description: "Designed to your idea in fondant.",
+    categoryId: "3d-cakes",
+    description:
+      "Designed to your idea in fondant. Describe what you have in mind — a reference photo helps — on WhatsApp after ordering.",
     weightTiers: [
       { id: "1kg", label: "1 kg", price: 190 },
       { id: "2kg", label: "2 kg", price: 380 },
       { id: "3kg-plus", label: "3 kg+", price: undefined },
     ],
-    flavours: [],
     readyLabel: "24 hours notice",
     leadTimeHours: 24,
     cakeMessageMaxLength: CONFIG.cakeMessageMaxLength,
-    needsCustomDescription: true,
     available: true,
     requiresDelivery: true,
   },
@@ -366,6 +373,13 @@ export function getCategory(id: string): Category | undefined {
 
 export function getItemById(id: string): CatalogItem | undefined {
   return CATALOG.find((item) => item.id === id);
+}
+
+/** Every other item in the same category — for the "OTHER FLAVOURS IN
+ * [category]" strip on an item's detail page, since flavour is no
+ * longer a picker on that same page (Sep 2026 recategorisation). */
+export function getSiblingItems(item: CatalogItem): CatalogItem[] {
+  return CATALOG.filter((c) => c.categoryId === item.categoryId && c.id !== item.id);
 }
 
 // Weight tier ids are our own naming convention, assigned above

@@ -1,5 +1,12 @@
 import { describe, expect, it } from "vitest";
-import { getCatalog, getCategories, getCategory, getItemById, weightTierKg } from "@/lib/catalog";
+import {
+  getCatalog,
+  getCategories,
+  getCategory,
+  getItemById,
+  getSiblingItems,
+  weightTierKg,
+} from "@/lib/catalog";
 
 describe("getCatalog / getCategories", () => {
   it("returns a non-empty catalogue and category list", () => {
@@ -18,6 +25,11 @@ describe("getCatalog / getCategories", () => {
     for (const item of getCatalog()) {
       expect(item.weightTiers.length).toBeGreaterThan(0);
     }
+  });
+
+  it("has no duplicate item ids — each flavour is its own flattened item since the Sep 2026 recategorisation", () => {
+    const ids = getCatalog().map((item) => item.id);
+    expect(new Set(ids).size).toBe(ids.length);
   });
 });
 
@@ -72,5 +84,20 @@ describe("weightTierKg", () => {
   it("falls back to 0 for an id with no recognizable weight", () => {
     expect(weightTierKg({ id: "custom" })).toBe(0);
     expect(weightTierKg({ id: "" })).toBe(0);
+  });
+});
+
+describe("getSiblingItems", () => {
+  it("returns every other item in the same category, excluding itself", () => {
+    const butterscotch = getItemById("classic-cakes-butterscotch")!;
+    const siblings = getSiblingItems(butterscotch);
+    expect(siblings.length).toBeGreaterThan(0);
+    expect(siblings.every((s) => s.categoryId === "classic-cakes")).toBe(true);
+    expect(siblings.some((s) => s.id === butterscotch.id)).toBe(false);
+  });
+
+  it("is empty for a category with only one item", () => {
+    const photoCakes = getItemById("photo-cakes")!;
+    expect(getSiblingItems(photoCakes)).toEqual([]);
   });
 });

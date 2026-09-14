@@ -1,19 +1,15 @@
 export type CartLine = {
   /** Unique per line, not per item — the same item can appear twice
-   * with different weight/flavour/message combinations. */
+   * with different weight/message combinations. */
   lineId: string;
   itemId: string;
   quantity: number;
   weightTierId: string;
-  /** Empty string if the item has no flavour choice. */
-  flavourId: string;
   /**
    * Cake inscription — per item, per ADR-003. Optional, always asked at
    * the point of adding the item, never inferred from the customer.
    */
   cakeMessage?: string;
-  /** For items with needsCustomDescription — what the cake should look like. */
-  customDescription?: string;
 };
 
 export type Fulfillment = "pickup" | "delivery";

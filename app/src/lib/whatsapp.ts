@@ -6,16 +6,15 @@ import { describeLine, resolveOrderLines } from "@/lib/order";
 import { formatShortDate, parseIsoDateLocal } from "@/lib/dates";
 
 // Matches docs/adr/ADR-003-whatsapp-order-handoff.md's template, updated
-// for the weight/flavour pricing model and the optional name field.
+// for the weight pricing model and the optional name field. Design/photo
+// customisation isn't a line-item field — see types/catalog.ts's header
+// comment — the customer sends that directly in the chat.
 
 function formatItemLine(item: CatalogItem, line: CartLine): string {
   const total = lineTotal(item, line);
   const priceText = total === undefined ? "price to confirm" : formatAed(total);
 
   const detailLines: string[] = [];
-  if (line.customDescription?.trim()) {
-    detailLines.push(`   Design: ${line.customDescription.trim()}`);
-  }
   if (line.cakeMessage?.trim()) {
     detailLines.push(`   Message: "${line.cakeMessage.trim()}"`);
   }

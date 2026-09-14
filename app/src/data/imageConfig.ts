@@ -2,7 +2,7 @@ import type { ImageFramingBySlot } from "@/types/image";
 
 /**
  * The single place every image's display settings live, keyed by the
- * same URL string used as a Flavour's imageUrl — independent of the
+ * same URL string used as a CatalogItem's imageUrl — independent of the
  * catalogue's own content data (types/catalog.ts, lib/catalog.ts), so
  * "what photo is this" and "how should this photo be displayed" stay
  * two separate concerns. Read by lib/imageConfig.ts's resolveImageStyle,

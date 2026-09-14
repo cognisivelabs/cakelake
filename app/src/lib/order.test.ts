@@ -7,43 +7,27 @@ import {
   resolveSelection,
 } from "@/lib/order";
 import { item, line, order } from "@/test/fixtures";
-import type { CatalogItem } from "@/types/catalog";
 import type { Order } from "@/types/order";
 
-const noFlavourItem: CatalogItem = { ...item, id: "photo-cakes", flavours: [] };
-
 describe("resolveSelection", () => {
-  it("resolves the matching tier and flavour", () => {
-    const { tier, flavour } = resolveSelection(item, {
-      weightTierId: "1kg",
-      flavourId: "butterscotch",
-    });
+  it("resolves the matching tier", () => {
+    const { tier } = resolveSelection(item, { weightTierId: "1kg" });
     expect(tier?.label).toBe("1 kg");
-    expect(flavour?.label).toBe("Butterscotch");
   });
 
-  it("returns undefined for ids that don't match any option", () => {
-    const { tier, flavour } = resolveSelection(item, { weightTierId: "nope", flavourId: "" });
+  it("returns undefined for an id that doesn't match any tier", () => {
+    const { tier } = resolveSelection(item, { weightTierId: "nope" });
     expect(tier).toBeUndefined();
-    expect(flavour).toBeUndefined();
   });
 });
 
 describe("describeLine", () => {
-  it("joins the tier and flavour labels onto the item name", () => {
-    expect(describeLine(item, line())).toBe("Classic Cakes, ½ kg, Butterscotch");
+  it("joins the tier label onto the item name", () => {
+    expect(describeLine(item, line())).toBe("Butterscotch, ½ kg");
   });
 
-  it("omits the flavour segment when the item has none", () => {
-    expect(describeLine(noFlavourItem, line({ itemId: noFlavourItem.id, flavourId: "" }))).toBe(
-      "Classic Cakes, ½ kg"
-    );
-  });
-
-  it("falls back to just the item name when nothing resolves", () => {
-    expect(describeLine(item, line({ weightTierId: "nope", flavourId: "nope" }))).toBe(
-      "Classic Cakes"
-    );
+  it("falls back to just the item name when the tier doesn't resolve", () => {
+    expect(describeLine(item, line({ weightTierId: "nope" }))).toBe("Butterscotch");
   });
 });
 

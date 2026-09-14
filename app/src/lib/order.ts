@@ -1,29 +1,22 @@
-import type { CatalogItem, Flavour, WeightTier } from "@/types/catalog";
+import type { CatalogItem, WeightTier } from "@/types/catalog";
 import type { CartLine, Order } from "@/types/order";
 
-/**
- * The selected weight tier and flavour for a line — or, on the item
- * detail screen before a line exists yet, the picker's current raw
- * weightTierId/flavourId state. Both shapes satisfy this signature, so
- * this covers every "what did they pick" lookup in the app.
- */
+/** The selected weight tier for a line — or, on the item detail screen
+ * before a line exists yet, the picker's current raw weightTierId
+ * state. Both shapes satisfy this signature. */
 export function resolveSelection(
   item: CatalogItem,
-  ids: { weightTierId: string; flavourId: string }
-): { tier: WeightTier | undefined; flavour: Flavour | undefined } {
-  return {
-    tier: item.weightTiers.find((t) => t.id === ids.weightTierId),
-    flavour: item.flavours.find((f) => f.id === ids.flavourId),
-  };
+  ids: { weightTierId: string }
+): { tier: WeightTier | undefined } {
+  return { tier: item.weightTiers.find((t) => t.id === ids.weightTierId) };
 }
 
-/** "Item Name, Tier, Flavour" (only the parts that exist) — the line
- * description used in both the WhatsApp order message and the
- * order-sent recap shown after confirming. */
+/** "Item Name, Tier" (only the parts that exist) — the line description
+ * used in both the WhatsApp order message and the order-sent recap
+ * shown after confirming. */
 export function describeLine(item: CatalogItem, line: CartLine): string {
-  const { tier, flavour } = resolveSelection(item, line);
-  const descriptors = [tier?.label, flavour?.label].filter(Boolean).join(", ");
-  return descriptors ? `${item.name}, ${descriptors}` : item.name;
+  const { tier } = resolveSelection(item, line);
+  return tier ? `${item.name}, ${tier.label}` : item.name;
 }
 
 /** Joins each cart line to its catalog item, dropping any line whose

@@ -98,9 +98,7 @@ export type NewLineInput = {
   itemId: string;
   quantity: number;
   weightTierId: string;
-  flavourId: string;
   cakeMessage?: string;
-  customDescription?: string;
 };
 
 type CartContextValue = {

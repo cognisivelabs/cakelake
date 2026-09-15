@@ -266,8 +266,7 @@ const CATALOG: CatalogItem[] = [
   ),
 
   // NEW category (Sep 2026 recategorisation) — whole cakes only, one
-  // weight tier. Only these 2 flavours are confirmed by the client so
-  // far; more may be added once the rest of the lineup is confirmed.
+  // weight tier.
   ...categoryItems(
     "cheesecakes",
     "cheesecakes",
@@ -275,7 +274,7 @@ const CATALOG: CatalogItem[] = [
     [{ id: "half-kg", label: "½ kg", price: 95 }],
     "Ready in 1 hour",
     0,
-    ["New York Cheesecake", "Lotus Biscoff Cheesecake"],
+    ["Oreo", "Strawberry", "Blueberry", "Lotus Biscoff", "New York"],
   ),
 
   // NEW category (Sep 2026 recategorisation) — made in small batches

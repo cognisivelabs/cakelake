@@ -308,7 +308,7 @@ const CATALOG: CatalogItem[] = [
     [{ id: "1kg", label: "1 kg", price: 150 }],
     "24 hours notice",
     24,
-    ["Chocolate", "Vanilla"],
+    ["Biscoff", "Coffee", "Nutella Strawberry", "Triple Chocolate", "Mango", "Red Velvet"],
   ),
 
   ...categoryItems(

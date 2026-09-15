@@ -65,6 +65,11 @@ export const CONFIG = {
    * by" estimate. Independent of each catalog item's own readyLabel
    * copy, which the client may phrase differently later. */
   sameDayPrepHours: 1,
+  /** Earliest local time a same-day order (pickup or delivery) can be
+   * placed — matches openingHoursByDay's opening time (10am every day
+   * currently). Kept as its own value rather than parsing the
+   * display-only "10 am - 12 am" strings below. */
+  sameDayOrderingOpensAt: { hour: 10, minute: 0 },
   /** Latest local time a same-day PICKUP order can still be placed —
    * the bakery can't bake and have it ready the same day after this. */
   sameDayPickupCutoff: { hour: 23, minute: 30 },

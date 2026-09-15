@@ -6,6 +6,8 @@ import {
   parseIsoDateLocal,
   sameDayCutoffLabel,
   sameDayCutoffPassed,
+  sameDayOrderingNotYetOpen,
+  sameDayOrderingOpensAtLabel,
   todayIsoDate,
 } from "@/lib/dates";
 import { CONFIG } from "@/lib/config";
@@ -114,6 +116,40 @@ describe("sameDayCutoffLabel", () => {
     const delivery = new Date();
     delivery.setHours(CONFIG.sameDayDeliveryCutoff.hour, CONFIG.sameDayDeliveryCutoff.minute, 0, 0);
     expect(sameDayCutoffLabel("delivery")).toBe(formatTime(delivery));
+  });
+});
+
+describe("sameDayOrderingNotYetOpen", () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("is true before CONFIG.sameDayOrderingOpensAt", () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2026, 8, 1, 6, 0));
+    expect(sameDayOrderingNotYetOpen()).toBe(true);
+  });
+
+  it("is false right at CONFIG.sameDayOrderingOpensAt", () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(
+      new Date(2026, 8, 1, CONFIG.sameDayOrderingOpensAt.hour, CONFIG.sameDayOrderingOpensAt.minute)
+    );
+    expect(sameDayOrderingNotYetOpen()).toBe(false);
+  });
+
+  it("is false well after opening", () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2026, 8, 1, 12, 0));
+    expect(sameDayOrderingNotYetOpen()).toBe(false);
+  });
+});
+
+describe("sameDayOrderingOpensAtLabel", () => {
+  it("formats CONFIG.sameDayOrderingOpensAt as a time", () => {
+    const opensAt = new Date();
+    opensAt.setHours(CONFIG.sameDayOrderingOpensAt.hour, CONFIG.sameDayOrderingOpensAt.minute, 0, 0);
+    expect(sameDayOrderingOpensAtLabel()).toBe(formatTime(opensAt));
   });
 });
 

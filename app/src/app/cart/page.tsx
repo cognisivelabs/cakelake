@@ -17,6 +17,8 @@ import {
   parseIsoDateLocal,
   sameDayCutoffLabel,
   sameDayCutoffPassed,
+  sameDayOrderingNotYetOpen,
+  sameDayOrderingOpensAtLabel,
   todayIsoDate,
 } from "@/lib/dates";
 import { CartLineItem } from "@/components/CartLineItem";
@@ -81,19 +83,21 @@ export default function CartPage() {
   const whenNeededValue =
     order.whenNeeded.kind === "date" ? "date" : order.whenNeeded.kind;
   const itemCount = orderItemCount(order);
+  const todayTooEarly = sameDayOrderingNotYetOpen();
   const todayCutoffPassed = sameDayCutoffPassed(order.fulfillment);
+  const todayUnavailable = todayTooEarly || todayCutoffPassed;
 
-  // "Today" can go from available to not (past the cutoff, or the
-  // customer switches to delivery's earlier cutoff) without the
-  // customer touching this control at all — drop a now-invalid "today"
-  // selection to "tomorrow" instead of silently letting an order that
-  // can't be fulfilled today stay selected.
+  // "Today" can go from available to not (the shop isn't open yet, past
+  // the cutoff, or the customer switches to delivery's earlier cutoff)
+  // without the customer touching this control at all — drop a
+  // now-invalid "today" selection to "tomorrow" instead of silently
+  // letting an order that can't be fulfilled today stay selected.
   useEffect(() => {
-    if (order.whenNeeded.kind === "today" && todayCutoffPassed) {
+    if (order.whenNeeded.kind === "today" && todayUnavailable) {
       setWhenNeeded({ kind: "tomorrow" });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [order.fulfillment, order.whenNeeded.kind, todayCutoffPassed]);
+  }, [order.fulfillment, order.whenNeeded.kind, todayUnavailable]);
 
   function handleWhenNeededChange(value: string) {
     const next: WhenNeeded =
@@ -481,14 +485,16 @@ export default function CartPage() {
                 type="button"
                 className={styles.pillOption}
                 data-selected={whenNeededValue === "today"}
-                disabled={todayCutoffPassed}
+                disabled={todayUnavailable}
                 onClick={() => handleWhenNeededChange("today")}
               >
                 Today
                 <span className={styles.pillSubtext}>
                   {todayCutoffPassed
                     ? `Order by ${sameDayCutoffLabel(order.fulfillment)}`
-                    : `from ${readyTime}`}
+                    : todayTooEarly
+                      ? `Opens at ${sameDayOrderingOpensAtLabel()}`
+                      : `from ${readyTime}`}
                 </span>
               </button>
               <button

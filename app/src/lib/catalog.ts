@@ -318,7 +318,7 @@ const CATALOG: CatalogItem[] = [
     [{ id: "1kg", label: "1 kg", price: 160 }],
     "24 hours notice",
     24,
-    ["Chocolate", "Vanilla"],
+    ["Fresh Fruit", "Chocolate", "Rainbow"],
   ),
 
   {

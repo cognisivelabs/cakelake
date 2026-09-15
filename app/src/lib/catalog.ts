@@ -29,7 +29,7 @@ const CATEGORIES: Category[] = [
   { id: "exotic-cakes", label: "Exotic Cakes", accent: "#CD346F" },
   { id: "exotic-premium-cakes", label: "Exotic Premium Cakes", accent: "#CD346F" },
   { id: "cheesecakes", label: "Cheesecakes", accent: "#CD346F" },
-  { id: "indian-cakes", label: "Indian Cakes", accent: "#CD346F" },
+  { id: "indian-cakes", label: "Flavourful Indian Cakes", accent: "#CD346F" },
   { id: "photo-cakes", label: "Photo Cakes", accent: "#CD346F" },
   // The one category that keeps a distinct colour — a from-scratch
   // design brief, not a menu flavour, so it reads as the odd one out.
@@ -278,14 +278,17 @@ const CATALOG: CatalogItem[] = [
   ),
 
   // NEW category (Sep 2026 recategorisation) — made in small batches
-  // each morning, per the client. Only a ½ kg price is confirmed so
-  // far; ready time/lead time follow the standard same-day cakes until
-  // the client says otherwise (see docs/design/CLAUDE.md — still TBC).
+  // each morning, per the client. Ready time/lead time follow the
+  // standard same-day cakes until the client says otherwise (see
+  // docs/design/CLAUDE.md — still TBC).
   ...categoryItems(
     "indian-cakes",
     "indian-cakes",
     "Traditional Indian mithai flavours in cake form, made fresh each morning.",
-    [{ id: "half-kg", label: "½ kg", price: 105 }],
+    [
+      { id: "half-kg", label: "½ kg", price: 105 },
+      { id: "1kg", label: "1 kg", price: 190 },
+    ],
     "Ready in 1 hour",
     0,
     ["Motichoor", "Kaju Katli", "Gulkand", "Gulab Jamun", "Rasmalai"],

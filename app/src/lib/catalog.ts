@@ -265,13 +265,15 @@ const CATALOG: CatalogItem[] = [
     ],
   ),
 
-  // NEW category (Sep 2026 recategorisation) — whole cakes only, one
-  // weight tier.
+  // NEW category (Sep 2026 recategorisation) — whole cakes only.
   ...categoryItems(
     "cheesecakes",
     "cheesecakes",
     "Creamy baked cheesecake, whole cakes only.",
-    [{ id: "half-kg", label: "½ kg", price: 95 }],
+    [
+      { id: "half-kg", label: "½ kg", price: 95 },
+      { id: "1kg", label: "1 kg", price: 170 },
+    ],
     "Ready in 1 hour",
     0,
     ["Oreo", "Strawberry", "Blueberry", "Lotus Biscoff", "New York"],

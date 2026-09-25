@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { getCategories } from "@/lib/catalog";
-import { getMenuGroups } from "@/lib/menuGroups";
+import { getCustomCategoriesRoute, getMenuGroups } from "@/lib/menuGroups";
 import { categoryPriceLabel } from "@/lib/pricing";
 import { getCatalog } from "@/lib/catalog";
 
@@ -28,6 +28,12 @@ describe("getMenuGroups", () => {
       "pinata-cakes",
     ]);
     expect(groups.custom).toEqual(["photo-cakes", "3d-cakes"]);
+  });
+});
+
+describe("getCustomCategoriesRoute", () => {
+  it("points the Photo & 3D links at the first custom category", () => {
+    expect(getCustomCategoriesRoute()).toBe("/menu?category=photo-cakes");
   });
 });
 

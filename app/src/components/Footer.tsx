@@ -5,17 +5,14 @@ import { getCategories, getOccasions } from "@/lib/catalog";
 import { categoryRoute, occasionRoute } from "@/lib/routes";
 import styles from "./Footer.module.css";
 
-// Made to order = the categories that need notice or a brief; the rest
-// are the everyday ranges. Same split as the Hi-Fi's footer columns.
-const MADE_TO_ORDER_IDS = ["photo-cakes", "3d-cakes", "pull-me-up-cakes", "hammer-cakes", "pinata-cakes"];
 const COUNTER_ONLY = ["Cupcakes & minis", "Cookies & bites", "Pastries & desserts"];
 
 // Rendered as the last element on every page.
 export function Footer() {
   const groupedHours = groupOpeningHours(CONFIG.openingHoursByDay);
   const categories = getCategories();
-  const everyday = categories.filter((c) => !MADE_TO_ORDER_IDS.includes(c.id));
-  const madeToOrder = categories.filter((c) => MADE_TO_ORDER_IDS.includes(c.id));
+  const everyday = categories.filter((c) => c.kind === "everyday");
+  const madeToOrder = categories.filter((c) => c.kind !== "everyday");
   const occasions = getOccasions();
 
   const categoryLinks = (list: typeof categories) =>

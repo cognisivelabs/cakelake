@@ -24,9 +24,14 @@ export type WeightTier = {
   price?: number;
 };
 
+/** How a category is sold: everyday menu ranges, ranges that need notice
+ * (made to order), or a from-scratch custom brief (Photo, 3D). */
+export type CategoryKind = "everyday" | "made-to-order" | "custom";
+
 export type Category = {
   id: string;
   label: string;
+  kind: CategoryKind;
   /** Accent colour for chips/headers — a CSS colour, normally a theme
    * variable (var(--color-pink)) so it follows the active theme. */
   accent: string;

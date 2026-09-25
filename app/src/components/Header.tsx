@@ -4,7 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { CONFIG } from "@/lib/config";
-import { ROUTES, categoryRoute } from "@/lib/routes";
+import { ROUTES } from "@/lib/routes";
+import { getCustomCategoriesRoute } from "@/lib/menuGroups";
 import { buildWhatsAppUrl, formatLocalPhone } from "@/lib/whatsapp";
 import { EXTERNAL_LINK_PROPS } from "@/lib/externalLink";
 import { CartButton } from "@/components/CartButton";
@@ -119,7 +120,7 @@ export function Header() {
             Occasions <span className={styles.caret}>▾</span>
           </button>
           <Link
-            href={categoryRoute("photo-cakes")}
+            href={getCustomCategoriesRoute()}
             className={styles.navItem}
             onMouseEnter={() => setOpenMenu(null)}
           >

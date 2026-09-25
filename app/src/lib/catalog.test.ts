@@ -1,10 +1,9 @@
 import { describe, expect, it } from "vitest";
+import { CATEGORY_OCCASIONS, FLAVOUR_ITEMS, MOST_ORDERED } from "@/data/taxonomy";
 import {
-  CATEGORY_OCCASIONS,
-  FLAVOUR_ITEMS,
-  MOST_ORDERED,
   getCatalog,
   getCategories,
+  getCategoriesByKind,
   getCategory,
   getCategoryImage,
   getFlavourTagImage,
@@ -151,5 +150,27 @@ describe("occasions, flavour tags and most ordered", () => {
       expect(item.leadTimeHours, item.id).toBe(24);
       expect(item.readyLabel, item.id).toBe("24 hours notice");
     }
+  });
+});
+
+describe("getCategoriesByKind", () => {
+  it("splits the categories into everyday, made-to-order and custom, in menu order", () => {
+    const ids = (kind: Parameters<typeof getCategoriesByKind>[0]) => getCategoriesByKind(kind).map((c) => c.id);
+    expect(ids("everyday")).toEqual([
+      "classic-cakes",
+      "premium-cakes",
+      "exotic-cakes",
+      "exotic-premium-cakes",
+      "cheesecakes",
+      "indian-cakes",
+    ]);
+    expect(ids("made-to-order")).toEqual(["pull-me-up-cakes", "hammer-cakes", "pinata-cakes"]);
+    expect(ids("custom")).toEqual(["photo-cakes", "3d-cakes"]);
+  });
+
+  it("covers every category exactly once", () => {
+    const kinds = ["everyday", "made-to-order", "custom"] as const;
+    const total = kinds.flatMap((kind) => getCategoriesByKind(kind)).length;
+    expect(total).toBe(getCategories().length);
   });
 });

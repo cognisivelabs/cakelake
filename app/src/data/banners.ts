@@ -1,3 +1,4 @@
+import { SPECIAL_ITEM_IDS } from "@/data/items";
 import { getItemById } from "@/lib/catalog";
 import { formatAed } from "@/lib/pricing";
 import { itemRoute, ROUTES } from "@/lib/routes";
@@ -22,7 +23,7 @@ export type Banner = {
 
 // The Photo cakes banner quotes the real per-kilo price rather than a
 // typed-in number that could drift from the menu.
-const photoCakes = getItemById("photo-cakes");
+const photoCakes = getItemById(SPECIAL_ITEM_IDS.photoCakes);
 const photoPerKg = photoCakes?.weightTiers.find((tier) => tier.id === "1kg")?.price;
 
 /**
@@ -48,8 +49,8 @@ export const HOME_BANNERS: Banner[] = [
     body: `Send the picture on WhatsApp with your order. Eggless sponge in any of our flavours${
       photoPerKg !== undefined ? `, ${formatAed(photoPerKg)} a kilo` : ""
     }.`,
-    cta: { label: "ORDER A PHOTO CAKE", href: itemRoute("photo-cakes") },
-    secondaryCta: { label: "See 3D cakes →", href: itemRoute("3d-cakes") },
+    cta: { label: "ORDER A PHOTO CAKE", href: itemRoute(SPECIAL_ITEM_IDS.photoCakes) },
+    secondaryCta: { label: "See 3D cakes →", href: itemRoute(SPECIAL_ITEM_IDS.threeDCakes) },
     photoUrl: photoCakes?.imageUrl,
   },
 ];

@@ -14,6 +14,7 @@ import {
 } from "@/lib/catalog";
 import { cheapestPrice, formatAed } from "@/lib/pricing";
 import { categoryRoute, flavourRoute, itemRoute, occasionRoute } from "@/lib/routes";
+import { getCustomCategoriesRoute } from "@/lib/menuGroups";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import { EXTERNAL_LINK_PROPS } from "@/lib/externalLink";
 import { HOME_BANNERS } from "@/data/banners";
@@ -32,7 +33,7 @@ export function HomeHero() {
     <div className={styles.hero}>
       <HeroBanners banners={HOME_BANNERS} />
       <div className={styles.sideCards}>
-        <Link href={categoryRoute("photo-cakes")} className={`${styles.sideCard} ${styles.sideCardWhite}`}>
+        <Link href={getCustomCategoriesRoute()} className={`${styles.sideCard} ${styles.sideCardWhite}`}>
           <span className={`${styles.sideBadge} mono-tag`}>24 HOURS</span>
           <div className={styles.sideTitle}>Photo &amp; 3D cakes</div>
           <div className={styles.sideText}>
@@ -88,12 +89,14 @@ export function CategoryTiles() {
     >
       {categories.map((category) => {
         const image = getCategoryImage(category.id);
-        const custom = category.id === "3d-cakes";
+        // A custom category with no photo of its own (3D cakes) gets the
+        // outlined "24 HRS" tile instead of an empty placeholder.
+        const custom = category.kind === "custom" && !image;
         return (
           <Link key={category.id} href={categoryRoute(category.id)} className={styles.tile}>
             <div className={`${styles.tileImage} ${custom ? styles.tileImageCustom : ""}`}>
               <Photo src={image} />
-              {custom && !image && <span className={`${styles.tileNote} mono-tag`}>24 HRS</span>}
+              {custom && <span className={`${styles.tileNote} mono-tag`}>24 HRS</span>}
             </div>
             <div className={styles.tileLabel}>{categoryShortLabel(category)}</div>
           </Link>

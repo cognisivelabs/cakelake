@@ -1,13 +1,10 @@
 import type { Category } from "@/types/catalog";
-import { getCatalog, getCategories } from "@/lib/catalog";
+import { getCatalog, getCategories, getCategoriesByKind } from "@/lib/catalog";
+import { categoryRoute, ROUTES } from "@/lib/routes";
 import { categoryPriceLabel } from "@/lib/pricing";
 
 export type MenuGroupEntry = { category: Category; priceLabel: string };
 export type MenuGroup = { id: string; label: string; entries: MenuGroupEntry[] };
-
-/** Categories that are a from-scratch custom brief rather than a menu
- * flavour — grouped on their own in menus. */
-const CUSTOM_CATEGORY_IDS = ["photo-cakes", "3d-cakes"];
 
 /**
  * The categories grouped by how soon they're ready — the layout of the
@@ -25,14 +22,21 @@ export function getMenuGroups(): MenuGroup[] {
     catalog.filter((item) => item.categoryId === category.id).every((item) => item.leadTimeHours === 0);
 
   const categories = getCategories();
-  const standard = categories.filter((c) => !CUSTOM_CATEGORY_IDS.includes(c.id));
+  const standard = categories.filter((c) => c.kind !== "custom");
   return [
     { id: "ready-1h", label: "CAKES · READY IN 1 HOUR", entries: standard.filter(isSameDay).map(entry) },
     { id: "notice-24h", label: "CAKES ON 24 HOURS", entries: standard.filter((c) => !isSameDay(c)).map(entry) },
     {
       id: "custom",
       label: "PHOTO & 3D",
-      entries: categories.filter((c) => CUSTOM_CATEGORY_IDS.includes(c.id)).map(entry),
+      entries: getCategoriesByKind("custom").map(entry),
     },
   ].filter((group) => group.entries.length > 0);
+}
+
+/** Where the "Photo & 3D" links go: the first custom category (Photo
+ * cakes), or the whole menu if a build has none. */
+export function getCustomCategoriesRoute(): string {
+  const first = getCategoriesByKind("custom")[0];
+  return first ? categoryRoute(first.id) : ROUTES.menu;
 }

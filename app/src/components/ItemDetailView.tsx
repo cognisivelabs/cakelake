@@ -8,8 +8,7 @@ import { formatAed, orderTotal, lineTotal } from "@/lib/pricing";
 import { resolveSelection, orderItemCount, resolveOrderLines, describeLine } from "@/lib/order";
 import { getCategory, getCatalog, getSiblingItems } from "@/lib/catalog";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
-import { hideBrokenImage, withBasePath } from "@/lib/assets";
-import { resolveImageStyle } from "@/lib/imageConfig";
+import { Photo } from "@/components/Photo";
 import { EXTERNAL_LINK_PROPS } from "@/lib/externalLink";
 import { ROUTES, categoryRoute, itemRoute } from "@/lib/routes";
 import { ResponsiveHeader } from "@/components/ResponsiveHeader";
@@ -147,16 +146,7 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
       <div className={styles.desktopGrid}>
         <div className={styles.leftCol}>
           <div className={styles.photo}>
-            {item.imageUrl && (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={withBasePath(item.imageUrl)}
-                alt={item.name}
-                className={styles.photoImage}
-                style={resolveImageStyle(item.imageUrl, "hero")}
-                onError={hideBrokenImage}
-              />
-            )}
+            <Photo src={item.imageUrl} alt={item.name} slot="hero" />
           </div>
         </div>
 
@@ -248,16 +238,7 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
                     className={styles.otherFlavourLink}
                   >
                     <span className={styles.otherFlavourSwatch}>
-                      {sibling.imageUrl && (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
-                          src={withBasePath(sibling.imageUrl)}
-                          alt=""
-                          className={styles.otherFlavourSwatchImage}
-                          style={resolveImageStyle(sibling.imageUrl, "thumbnail")}
-                          onError={hideBrokenImage}
-                        />
-                      )}
+                      <Photo src={sibling.imageUrl} slot="thumbnail" />
                     </span>
                     <span className={styles.otherFlavourLabel}>{sibling.name}</span>
                   </Link>
@@ -309,15 +290,7 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
 
             <div className={styles.addedCard}>
               <div className={styles.addedPhoto}>
-                {item.imageUrl && (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={withBasePath(item.imageUrl)}
-                    alt=""
-                    className={styles.addedPhotoImage}
-                    onError={hideBrokenImage}
-                  />
-                )}
+                <Photo src={item.imageUrl} />
               </div>
               <div className={styles.addedInfo}>
                 <div className={styles.addedName}>{item.name}</div>

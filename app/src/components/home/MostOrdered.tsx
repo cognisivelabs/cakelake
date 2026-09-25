@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { withBasePath } from "@/lib/assets";
+import { Photo } from "@/components/Photo";
 import { ROUTES } from "@/lib/routes";
 import styles from "./HomeSections.module.css";
 
@@ -57,10 +57,7 @@ export function MostOrdered({ cards, tabs }: { cards: MostOrderedCard[]; tabs: M
         {shown.map((card) => (
           <Link key={card.id} href={card.href} className={styles.product}>
             <div className={styles.productPhoto}>
-              {card.imageUrl && (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img src={withBasePath(card.imageUrl)} alt="" className={styles.coverImage} />
-              )}
+              <Photo src={card.imageUrl} />
               <span className={`${styles.leadBadge} mono-tag`}>{card.leadBadge}</span>
             </div>
             <div className={styles.productBody}>

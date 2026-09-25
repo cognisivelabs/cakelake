@@ -68,15 +68,10 @@
 }
 
 .primaryButton {
-  background: var(--color-accent);
-  color: var(--color-accent-ink);
-  border: none;
+  composes: btn-accent from global;
   border-radius: 7px;
   padding: 9px 14px;
-  font-weight: 800;
   font-size: 0.72rem;
-  box-shadow: 0 2px 0 var(--color-accent-shadow);
-  cursor: pointer;
   align-self: flex-start;
 }
 

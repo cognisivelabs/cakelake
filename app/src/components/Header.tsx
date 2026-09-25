@@ -9,6 +9,7 @@ import { getCustomCategoriesRoute } from "@/lib/menuGroups";
 import { buildWhatsAppUrl, formatLocalPhone } from "@/lib/whatsapp";
 import { EXTERNAL_LINK_PROPS } from "@/lib/externalLink";
 import { CartButton } from "@/components/CartButton";
+import { WhatsAppIcon } from "@/components/Icons";
 import { CakesMegaMenu, OccasionsMenu } from "@/components/MegaMenu";
 import { HeaderSearch } from "@/components/HeaderSearch";
 import { MobileMenuSheet } from "@/components/MobileMenuSheet";
@@ -16,23 +17,6 @@ import { UtilityBar } from "@/components/UtilityBar";
 import styles from "./Header.module.css";
 
 type OpenMenu = "cakes" | "occasions" | null;
-
-function WhatsAppGlyph({ size }: { size: number }) {
-  return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      aria-hidden="true"
-    >
-      <path d="M21 11.5a8.4 8.4 0 0 1-12.3 7.4L3 20.5l1.7-5.5A8.4 8.4 0 1 1 21 11.5z" />
-    </svg>
-  );
-}
 
 // The site header: a utility strip, then the yellow bar. Mobile is a
 // hamburger + centred wordmark whose menu is a full-screen sheet;
@@ -151,7 +135,7 @@ export function Header() {
           className={styles.whatsapp}
           aria-label={`WhatsApp us on ${whatsappNumber}`}
         >
-          <WhatsAppGlyph size={20} />
+          <WhatsAppIcon size={20} />
           <span className={styles.whatsappNumber}>{whatsappNumber}</span>
         </a>
         <div className={styles.cart}>

@@ -1,8 +1,7 @@
 import Link from "next/link";
 import type { CatalogItem } from "@/types/catalog";
 import { cheapestPrice, formatAed } from "@/lib/pricing";
-import { hideBrokenImage, withBasePath } from "@/lib/assets";
-import { resolveImageStyle } from "@/lib/imageConfig";
+import { Photo } from "@/components/Photo";
 import { itemRoute } from "@/lib/routes";
 import styles from "./ItemCard.module.css";
 
@@ -40,16 +39,7 @@ export function ItemCard({ item }: { item: CatalogItem }) {
   return (
     <Link href={itemRoute(item.id)} className={styles.card}>
       <div className={styles.photo}>
-        {item.imageUrl && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={withBasePath(item.imageUrl)}
-            alt=""
-            className={styles.photoImage}
-            style={resolveImageStyle(item.imageUrl, "thumbnail")}
-            onError={hideBrokenImage}
-          />
-        )}
+        <Photo src={item.imageUrl} slot="thumbnail" />
       </div>
       <div className={styles.body}>
         <div className={styles.name}>{item.name}</div>

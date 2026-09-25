@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import type { Banner } from "@/data/banners";
 import { BANNER_INTERVAL_MS, nextIndex, shouldAutoRotate } from "@/lib/carousel";
+import { Photo } from "@/components/Photo";
 import { withBasePath } from "@/lib/assets";
 import styles from "./HomeSections.module.css";
 
@@ -74,8 +75,7 @@ export function HeroBanners({ banners }: { banners: Banner[] }) {
           <div className={styles.slidePhoto}>
             <span className={styles.slideCircle} />
             <span className={styles.slideFrame}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={withBasePath(banner.photoUrl)} alt="" className={styles.slideImage} />
+              <Photo src={banner.photoUrl} />
             </span>
           </div>
         )}

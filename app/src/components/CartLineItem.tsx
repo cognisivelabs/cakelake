@@ -5,8 +5,7 @@ import type { CartLine } from "@/types/order";
 import { useCart } from "@/context/CartContext";
 import { lineTotal, formatAed } from "@/lib/pricing";
 import { resolveSelection } from "@/lib/order";
-import { hideBrokenImage, withBasePath } from "@/lib/assets";
-import { resolveImageStyle } from "@/lib/imageConfig";
+import { Photo } from "@/components/Photo";
 import styles from "./CartLineItem.module.css";
 
 export function CartLineItem({ item, line }: { item: CatalogItem; line: CartLine }) {
@@ -18,16 +17,7 @@ export function CartLineItem({ item, line }: { item: CatalogItem; line: CartLine
   return (
     <div className={styles.line}>
       <div className={styles.photo}>
-        {item.imageUrl && (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={withBasePath(item.imageUrl)}
-            alt=""
-            className={styles.photoImage}
-            style={resolveImageStyle(item.imageUrl, "thumbnail")}
-            onError={hideBrokenImage}
-          />
-        )}
+        <Photo src={item.imageUrl} slot="thumbnail" />
       </div>
       <div className={styles.info}>
         <div className={styles.nameRow}>

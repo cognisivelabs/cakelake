@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { CONFIG } from "@/lib/config";
-import { withBasePath } from "@/lib/assets";
+import { Photo } from "@/components/Photo";
 import {
   categoryShortLabel,
   getCatalog,
@@ -22,11 +22,6 @@ import { HeroBanners } from "./HeroBanners";
 import { MostOrdered, type MostOrderedCard } from "./MostOrdered";
 import { RailSection } from "./RailSection";
 import styles from "./HomeSections.module.css";
-
-function Photo({ src }: { src?: string }) {
-  // eslint-disable-next-line @next/next/no-img-element
-  return src ? <img src={withBasePath(src)} alt="" className={styles.coverImage} /> : null;
-}
 
 export function HomeHero() {
   return (

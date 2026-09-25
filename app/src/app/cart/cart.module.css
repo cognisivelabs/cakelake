@@ -338,18 +338,12 @@
 }
 
 .primaryButton {
-  background: var(--color-accent);
-  color: var(--color-accent-ink);
-  border: none;
+  composes: btn-accent from global;
   border-radius: var(--radius-md);
   padding: 14px;
   text-align: center;
-  font-weight: 800;
   font-size: 0.78rem;
   letter-spacing: 0.04em;
-  box-shadow: 0 2px 0 var(--color-accent-shadow);
-  cursor: pointer;
-  text-decoration: none;
 }
 
 .outlineButton {

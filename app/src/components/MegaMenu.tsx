@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { withBasePath } from "@/lib/assets";
+import { Photo } from "@/components/Photo";
 import { getCatalog, getFlavourTags, getMostOrdered, getCategory, getOccasions } from "@/lib/catalog";
 import { getMenuGroups } from "@/lib/menuGroups";
 import { formatAed } from "@/lib/pricing";
@@ -44,10 +44,7 @@ export function CakesMegaMenu({ onNavigate }: { onNavigate: () => void }) {
       {featured && (
         <Link href={itemRoute(featured.id)} className={styles.card} onClick={onNavigate}>
           <div className={styles.cardPhoto}>
-            {featured.imageUrl && (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={withBasePath(featured.imageUrl)} alt="" className={styles.cardImage} />
-            )}
+            <Photo src={featured.imageUrl} />
             <span className={`${styles.cardBadge} mono-tag`}>MOST ORDERED</span>
           </div>
           <div className={styles.cardBody}>

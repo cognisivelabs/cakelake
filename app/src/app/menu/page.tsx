@@ -13,6 +13,7 @@ import {
 } from "@/lib/catalog";
 import { PRICE_BANDS, getPriceBand, itemMatchesFilters, type MenuFilters } from "@/lib/search";
 import { ItemCard } from "@/components/ItemCard";
+import { SearchIcon } from "@/components/Icons";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import { EXTERNAL_LINK_PROPS } from "@/lib/externalLink";
 import { ROUTES } from "@/lib/routes";
@@ -243,19 +244,7 @@ export default function MenuPage() {
   // just the cart icon, same as every other desktop header.
   const desktopSearchBar = (
     <div className={styles.desktopSearchField} data-active={query.length > 0}>
-      <svg
-        width="17"
-        height="17"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        className={styles.desktopSearchIcon}
-      >
-        <circle cx="11" cy="11" r="7" />
-        <path d="M16.5 16.5 21 21" />
-      </svg>
+      <SearchIcon size={17} className={styles.desktopSearchIcon} />
       <input
         type="text"
         className={`${styles.desktopSearchInput} no-focus-ring`}

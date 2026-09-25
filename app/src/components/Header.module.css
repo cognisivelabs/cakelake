@@ -77,6 +77,7 @@
 }
 
 .navItem {
+  white-space: nowrap;
   display: flex;
   align-items: center;
   gap: 5px;
@@ -113,6 +114,7 @@
 
 .searchSlot {
   flex: 1;
+  min-width: 150px;
   max-width: 340px;
 }
 
@@ -129,6 +131,7 @@
 }
 
 .whatsappNumber {
+  white-space: nowrap;
   display: none;
   font-weight: 700;
   font-size: 0.78rem;
@@ -148,8 +151,8 @@
 @media (min-width: 1024px) {
   .bar {
     height: 76px;
-    padding: 0 var(--desktop-gutter);
-    gap: 34px;
+    padding: 0 clamp(24px, 5vw, var(--desktop-gutter));
+    gap: clamp(16px, 2.3vw, 34px);
     max-width: var(--desktop-content-max);
     margin: 0 auto;
   }
@@ -163,10 +166,11 @@
   }
 
   .nav {
-    gap: 24px;
+    gap: clamp(14px, 1.6vw, 24px);
   }
 
   .brand {
+    white-space: nowrap;
     position: static;
     transform: none;
     align-items: flex-start;

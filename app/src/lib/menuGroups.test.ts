@@ -32,8 +32,8 @@ describe("getMenuGroups", () => {
 });
 
 describe("getCustomCategoriesRoute", () => {
-  it("points the Photo & 3D links at the first custom category", () => {
-    expect(getCustomCategoriesRoute()).toBe("/menu?category=photo-cakes");
+  it("points the Photo & 3D links at Photo Cakes and 3D Cakes together", () => {
+    expect(getCustomCategoriesRoute()).toBe("/menu?category=photo-cakes,3d-cakes");
   });
 });
 

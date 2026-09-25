@@ -1,6 +1,6 @@
 import type { Category } from "@/types/catalog";
 import { getCatalog, getCategories, getCategoriesByKind } from "@/lib/catalog";
-import { categoryRoute, ROUTES } from "@/lib/routes";
+import { categoriesRoute, ROUTES } from "@/lib/routes";
 import { categoryPriceLabel } from "@/lib/pricing";
 
 type MenuGroupEntry = { category: Category; priceLabel: string };
@@ -34,9 +34,9 @@ export function getMenuGroups(): MenuGroup[] {
   ].filter((group) => group.entries.length > 0);
 }
 
-/** Where the "Photo & 3D" links go: the first custom category (Photo
- * cakes), or the whole menu if a build has none. */
+/** Where the "Photo & 3D" links go: every custom category (Photo Cakes and
+ * 3D Cakes) ticked together, or the whole menu if a build has none. */
 export function getCustomCategoriesRoute(): string {
-  const first = getCategoriesByKind("custom")[0];
-  return first ? categoryRoute(first.id) : ROUTES.menu;
+  const ids = getCategoriesByKind("custom").map((c) => c.id);
+  return ids.length > 0 ? categoriesRoute(ids) : ROUTES.menu;
 }

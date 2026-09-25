@@ -14,12 +14,17 @@ export function itemRoute(itemId: string): string {
   return `${ROUTES.menu}/${itemId}`;
 }
 
-/** The menu focused on one category — /menu?category=<categoryId>.
- * Mobile scrolls to that category's section; desktop's category rail
- * pre-selects it. A search param (not a hash) so a soft navigation from
- * a link while already on /menu is observable and updates the page. */
+/** The menu focused on one or more categories — /menu?category=<id>,<id>.
+ * Mobile scrolls to the first one's section; desktop ticks them all in
+ * the category filter. A search param (not a hash) so a soft navigation
+ * from a link while already on /menu is observable and updates the page. */
+export function categoriesRoute(categoryIds: string[]): string {
+  return `${ROUTES.menu}?category=${categoryIds.join(",")}`;
+}
+
+/** The menu focused on a single category. */
 export function categoryRoute(categoryId: string): string {
-  return `${ROUTES.menu}?category=${categoryId}`;
+  return categoriesRoute([categoryId]);
 }
 
 /** The menu filtered to a flavour tag — /menu?flavour=<flavourTagId>. */

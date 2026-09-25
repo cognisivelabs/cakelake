@@ -542,3 +542,9 @@ export function getCategoryImage(categoryId: string): string | undefined {
 export function getFlavourTagImage(tagId: string): string | undefined {
   return CATALOG.find((item) => item.flavours?.includes(tagId) && item.imageUrl)?.imageUrl;
 }
+
+/** A short tile/chip label for a category — "Exotic Premium" rather than
+ * "Exotic Premium Cakes", "Indian" rather than "Flavourful Indian Cakes". */
+export function categoryShortLabel(category: Category): string {
+  return category.label.replace(/^Flavourful /, "").replace(/ Cakes$/, "");
+}

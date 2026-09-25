@@ -4,6 +4,7 @@ import { Suspense, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   getCatalog,
+  categoryShortLabel,
   getCategories,
   getFlavourTag,
   getOccasion,
@@ -340,7 +341,7 @@ export default function MenuPage() {
                           : undefined
                       }
                     >
-                      {category.label.replace(/ Cakes$/, "")}
+                      {categoryShortLabel(category)}
                     </a>
                   );
                 })}

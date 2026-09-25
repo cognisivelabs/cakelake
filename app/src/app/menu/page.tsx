@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense } from "react";
 import { Footer } from "@/components/Footer";
 import { ResponsiveHeader } from "@/components/ResponsiveHeader";
 import { getCatalog, getCategories } from "@/lib/catalog";
@@ -14,15 +14,15 @@ import { useMenuFilters } from "./useMenuFilters";
 import { useScrollSpy } from "./useScrollSpy";
 import styles from "./menu.module.css";
 
-// The menu: mobile is one long scroll of every category, desktop shows one
-// category at a time. Both are driven by the same search and filters, and
-// by the URL (?q= ?price= ?flavour= ?occasion= ?category=), so links from
-// Home, the header menus and item pages land on the right view.
+// The menu: mobile is one long scroll of every category; desktop lists the
+// categories you tick (all, if none). Both are driven by the same search
+// and filters, and by the URL (?q= ?price= ?flavour= ?occasion=
+// ?category=), so links from Home, the header menus and item pages land
+// on the right view.
 export default function MenuPage() {
   const catalog = getCatalog();
   const categories = getCategories();
   const filters = useMenuFilters();
-  const [selectedCategoryId, setSelectedCategoryId] = useState(categories[0]?.id ?? "");
 
   const visibleCatalog = catalog.filter((item) => itemMatchesFilters(item, filters.values));
   const visibleCategoryIds = categories
@@ -32,12 +32,10 @@ export default function MenuPage() {
 
   function applyUrlParams(params: MenuUrlParams) {
     filters.applyParams(params);
-    if (categories.some((c) => c.id === params.category)) {
-      // Desktop shows one category at a time; mobile is one long scroll,
-      // so jump to that category's section.
-      setSelectedCategoryId(params.category);
-      document.getElementById(params.category)?.scrollIntoView({ behavior: "instant" });
-    }
+    // Desktop ticks the category as a filter; mobile is one long scroll,
+    // so jump to the (first) category's section.
+    const first = params.category.split(",").find((id) => categories.some((c) => c.id === id));
+    if (first) document.getElementById(first)?.scrollIntoView({ behavior: "instant" });
   }
 
   return (
@@ -52,13 +50,7 @@ export default function MenuPage() {
       <div className={styles.body}>
         <MobileMenu filters={filters} categories={categories} visibleCatalog={visibleCatalog} spy={spy} />
         {visibleCatalog.length === 0 && <NoResults variant="mobile" query={filters.values.query} />}
-        <DesktopMenu
-          filters={filters}
-          categories={categories}
-          visibleCatalog={visibleCatalog}
-          selectedCategoryId={selectedCategoryId}
-          onSelectCategory={setSelectedCategoryId}
-        />
+        <DesktopMenu filters={filters} categories={categories} visibleCatalog={visibleCatalog} />
         <Footer />
       </div>
     </div>

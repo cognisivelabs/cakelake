@@ -1,19 +1,19 @@
 "use client";
 
-import type { FilterGroup, FilterKey } from "@/lib/search";
+import type { FilterGroup } from "@/lib/search";
 import styles from "./menu.module.css";
 
-// The menu's Price / Flavour / Occasion filters. Each group is single-
-// choice — ticking one option replaces the group's previous pick, and
-// ticking it again clears it. The count beside an option is how many
-// cakes you'd get, given every other filter already set, and an option
-// that would leave nothing is greyed out.
+// The menu's filter checkboxes — categories, price, flavour, occasion. The
+// panel only reports which option was toggled; whether a group is single-
+// or multi-choice is the caller's rule. The count beside an option is how
+// many cakes you'd get, given every other filter already set, and an
+// option that would leave nothing is greyed out.
 export function FilterPanel({
   groups,
-  onChange,
+  onToggle,
 }: {
   groups: FilterGroup[];
-  onChange: (key: FilterKey, value: string) => void;
+  onToggle: (key: FilterGroup["key"], optionId: string) => void;
 }) {
   return (
     <div className={styles.filterPanel}>
@@ -22,7 +22,7 @@ export function FilterPanel({
           <div className={`${styles.filterGroupLabel} mono-tag`}>{group.label}</div>
           <div className={styles.filterList}>
             {group.options.map((option) => {
-              const checked = group.selected === option.id;
+              const checked = group.selected.includes(option.id);
               const disabled = option.count === 0 && !checked;
               return (
                 <label key={option.id} className={styles.filterOption} data-disabled={disabled}>
@@ -30,7 +30,7 @@ export function FilterPanel({
                     type="checkbox"
                     checked={checked}
                     disabled={disabled}
-                    onChange={() => onChange(group.key, checked ? "" : option.id)}
+                    onChange={() => onToggle(group.key, option.id)}
                   />
                   <span className={styles.filterOptionLabel}>{option.label}</span>
                   <span className={styles.filterCount}>{option.count}</span>

@@ -44,7 +44,7 @@ export function MobileMenu({
 
       <details className={styles.mobileFilters}>
         <summary>Filters{filters.chips.length > 0 ? ` (${filters.chips.length})` : ""}</summary>
-        <FilterPanel groups={filters.groups} onChange={filters.setFilter} />
+        <FilterPanel groups={filters.groups} onToggle={filters.toggle} />
       </details>
       <ActiveFilters chips={filters.chips} onRemove={(key) => filters.setFilter(key, "")} />
 

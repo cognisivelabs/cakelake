@@ -2,7 +2,9 @@ import { describe, expect, it } from "vitest";
 import { getCatalog, getItemById } from "@/lib/catalog";
 import {
   PRICE_BANDS,
+  CATEGORY_GROUP_KEY,
   getActiveFilterChips,
+  getCategoryFilterGroup,
   getFilterGroups,
   getPriceBand,
   itemMatchesFilters,
@@ -83,7 +85,8 @@ describe("getFilterGroups", () => {
   it("offers price, flavour and occasion, and marks the current pick", () => {
     const groups = getFilterGroups({ ...none, flavourId: "biscoff" });
     expect(groups.map((g) => g.key)).toEqual(["priceBandId", "flavourId", "occasionId"]);
-    expect(groups.find((g) => g.key === "flavourId")?.selected).toBe("biscoff");
+    expect(groups.find((g) => g.key === "flavourId")?.selected).toEqual(["biscoff"]);
+    expect(groups.find((g) => g.key === "priceBandId")?.selected).toEqual([]);
   });
 
   it("counts each option against every other filter, not its own group's", () => {
@@ -113,5 +116,30 @@ describe("getActiveFilterChips", () => {
       { key: "flavourId", label: "Flavour: Biscoff" },
       { key: "occasionId", label: "Occasion: Birthday" },
     ]);
+  });
+});
+
+describe("getCategoryFilterGroup", () => {
+  it("lists every category with its cake count and the ticked ones", () => {
+    const group = getCategoryFilterGroup(["cheesecakes"], none);
+    expect(group.key).toBe(CATEGORY_GROUP_KEY);
+    expect(group.selected).toEqual(["cheesecakes"]);
+    expect(group.options).toHaveLength(11);
+    expect(group.options.find((o) => o.id === "cheesecakes")?.count).toBe(5);
+    expect(group.options.reduce((sum, o) => sum + o.count, 0)).toBe(getCatalog().length);
+  });
+
+  it("counts within the other filters, so an option that would be empty shows 0", () => {
+    const group = getCategoryFilterGroup([], { ...none, flavourId: "biscoff" });
+    const counts = Object.fromEntries(group.options.map((o) => [o.id, o.count]));
+    expect(counts["exotic-premium-cakes"]).toBe(1);
+    expect(counts["cheesecakes"]).toBe(1);
+    expect(counts["classic-cakes"]).toBe(0);
+  });
+
+  it("doesn't let the ticked categories change the other categories' counts", () => {
+    const withTick = getCategoryFilterGroup(["classic-cakes"], none);
+    const without = getCategoryFilterGroup([], none);
+    expect(withTick.options).toEqual(without.options);
   });
 });

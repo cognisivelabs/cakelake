@@ -21,7 +21,7 @@ export const CONFIG = {
   /** Other places the bakery's cakes are sold, shown on Home. */
   alsoOnPlatforms: "talabat, noon and Careem",
   /** How a customer pays — nothing is charged in the app itself. */
-  paymentNote: "Pay at the shop, or by bank transfer and confirm on WhatsApp.",
+  paymentNote: "No online payment — pay at the shop, or by bank transfer and confirm on WhatsApp.",
   /** Shop landline — display only, not a WhatsApp number. */
   shopPhone: "04 221 7761",
   address: {

@@ -1,0 +1,159 @@
+.sheet {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  background: var(--color-bg);
+}
+
+.bar {
+  flex: none;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  padding: 0 12px 0 16px;
+  background: var(--color-accent);
+}
+
+.title {
+  flex: 1;
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 1.06rem;
+  letter-spacing: -0.02em;
+  color: var(--color-ink);
+}
+
+.close {
+  width: 44px;
+  height: 44px;
+  border: none;
+  background: none;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--color-ink);
+  cursor: pointer;
+}
+
+.body {
+  flex: 1;
+  overflow-y: auto;
+  padding-bottom: 32px;
+}
+
+.searchWrap {
+  padding: 14px 16px 0;
+}
+
+.group {
+  padding: 18px 16px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.label {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.66rem;
+  letter-spacing: 0.1em;
+  color: #6b5a42;
+}
+
+.card {
+  background: var(--color-surface);
+  border-radius: 11px;
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 13px 14px;
+  border: none;
+  border-bottom: 1px solid #f0e6d2;
+  background: none;
+  font-family: inherit;
+  text-align: left;
+  text-decoration: none;
+  color: var(--color-ink);
+  cursor: pointer;
+}
+
+.row:last-child {
+  border-bottom: none;
+}
+
+.dot {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.rowName {
+  flex: 1;
+  font-weight: 700;
+  font-size: 0.84rem;
+}
+
+.rowMeta {
+  font-size: 0.75rem;
+  color: var(--color-ink-muted);
+}
+
+.chevron {
+  font-size: 0.82rem;
+  color: #c0ad92;
+}
+
+.pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.pill {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 15px;
+  padding: 8px 13px;
+  font-weight: 700;
+  font-size: 0.72rem;
+  color: var(--color-ink);
+  text-decoration: none;
+}
+
+.installSteps {
+  padding: 12px 14px 14px;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--color-ink);
+}
+
+.installSteps ol {
+  margin: 0 0 10px;
+  padding-left: 18px;
+}
+
+.installSteps button {
+  border: none;
+  background: var(--color-accent);
+  color: var(--color-ink);
+  border-radius: var(--radius-sm);
+  padding: 8px 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.note {
+  margin: 0;
+  padding: 20px 16px 0;
+  font-size: 0.72rem;
+  line-height: 1.6;
+  color: var(--color-ink-muted);
+}

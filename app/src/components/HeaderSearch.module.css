@@ -1,0 +1,43 @@
+.field {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--color-surface);
+  color: var(--color-ink-faint);
+  box-sizing: border-box;
+}
+
+.mobile {
+  height: 42px;
+  padding: 0 13px;
+  border: 1px solid var(--color-border);
+  border-radius: 9px;
+}
+
+.desktop {
+  height: 42px;
+  padding: 0 14px;
+  border-radius: var(--radius-md);
+  flex: 1;
+  max-width: 340px;
+}
+
+.field:focus-within {
+  outline: 2px solid var(--color-accent-shadow);
+}
+
+.input {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  border: none;
+  background: none;
+  padding: 0;
+  font-size: 0.8125rem;
+  color: var(--color-ink);
+  outline: none;
+}
+
+.input::placeholder {
+  color: var(--color-ink-faint);
+}

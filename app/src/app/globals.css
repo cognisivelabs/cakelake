@@ -56,6 +56,9 @@
      this to stay a readable column instead of also stretching on large
      monitors. */
   --desktop-content-max: 1512px;
+  /* Side gutter for the desktop header, utility bar, footer and Home —
+     the Hi-Fi's merchandised layout (docs CLB Desktop Home). */
+  --desktop-gutter: 76px;
 }
 
 html {

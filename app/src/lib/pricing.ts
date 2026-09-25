@@ -1,3 +1,4 @@
+import { weightTierKg } from "@/lib/catalog";
 import type { CatalogItem } from "@/types/catalog";
 import type { CartLine, Order } from "@/types/order";
 import { CONFIG } from "@/lib/config";
@@ -45,4 +46,21 @@ export function cheapestPrice(items: CatalogItem[]): number | undefined {
     .map((tier) => tier.price)
     .filter((price): price is number => price !== undefined);
   return prices.length === 0 ? undefined : Math.min(...prices);
+}
+
+/**
+ * A category's price hint for menus: "from 55" for ranges sold by the
+ * cake, "180/kg" where even the smallest size is a whole kilo (so the
+ * price is per kg). "Ask us" when nothing has a fixed price.
+ */
+export function categoryPriceLabel(items: CatalogItem[]): string {
+  let best: { price: number; kg: number } | undefined;
+  for (const item of items) {
+    for (const tier of item.weightTiers) {
+      if (tier.price === undefined) continue;
+      if (!best || tier.price < best.price) best = { price: tier.price, kg: weightTierKg(tier) };
+    }
+  }
+  if (!best) return "Ask us";
+  return best.kg >= 1 ? `${best.price}/kg` : `from ${best.price}`;
 }

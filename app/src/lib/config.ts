@@ -16,6 +16,12 @@ export const CONFIG = {
    * the order handoff (ADR-003) and every general "message us" link.
    */
   bakeryWhatsAppNumber: "971503287761",
+  /** Year the bakery opened — "Baked to order in Karama since 2020". */
+  establishedYear: 2020,
+  /** Other places the bakery's cakes are sold, shown on Home. */
+  alsoOnPlatforms: "talabat, noon and Careem",
+  /** How a customer pays — nothing is charged in the app itself. */
+  paymentNote: "Pay at the shop, or by bank transfer and confirm on WhatsApp.",
   /** Shop landline — display only, not a WhatsApp number. */
   shopPhone: "04 221 7761",
   address: {

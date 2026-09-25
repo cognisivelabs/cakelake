@@ -1,4 +1,4 @@
-import type { Category, CatalogItem, WeightTier } from "@/types/catalog";
+import type { Category, CatalogItem, FlavourTag, Occasion, WeightTier } from "@/types/catalog";
 import { CONFIG } from "@/lib/config";
 
 /**
@@ -80,7 +80,7 @@ function categoryItems(
   });
 }
 
-const CATALOG: CatalogItem[] = [
+const BASE_CATALOG: CatalogItem[] = [
   ...categoryItems(
     "classic-cakes",
     "classic-cakes",
@@ -281,8 +281,8 @@ const CATALOG: CatalogItem[] = [
       { id: "half-kg", label: "½ kg", price: 95 },
       { id: "1kg", label: "1 kg", price: 170 },
     ],
-    "Ready in 1 hour",
-    0,
+    "24 hours notice",
+    24,
     [
       { label: "Oreo", imageUrl: "/images/cheesecake-oreo.jpg" },
       "Strawberry",
@@ -304,8 +304,8 @@ const CATALOG: CatalogItem[] = [
       { id: "half-kg", label: "½ kg", price: 105 },
       { id: "1kg", label: "1 kg", price: 190 },
     ],
-    "Ready in 1 hour",
-    0,
+    "24 hours notice",
+    24,
     [
       "Motichoor",
       "Kaju Katli",
@@ -387,6 +387,95 @@ const CATALOG: CatalogItem[] = [
   },
 ];
 
+const OCCASIONS: Occasion[] = [
+  { id: "birthday", label: "Birthday", imageUrl: "/images/exotic-premium-oreo.jpg" },
+  { id: "anniversary", label: "Anniversary", imageUrl: "/images/hammer-heart-shape.jpg" },
+  { id: "new-baby", label: "New baby", imageUrl: "/images/indian-rasmalai.jpg" },
+  { id: "graduation", label: "Graduation", imageUrl: "/images/photo-cakes.jpg" },
+  // Halloween and Valentine are in the design as seasonal occasions, but
+  // the client hasn't supplied their content yet — added with the
+  // matching seasonal categories above.
+];
+
+const FLAVOUR_TAGS: FlavourTag[] = [
+  { id: "chocolate-truffle", label: "Chocolate truffle" },
+  { id: "red-velvet", label: "Red velvet" },
+  { id: "biscoff", label: "Biscoff" },
+  { id: "black-forest", label: "Black forest" },
+  { id: "butterscotch", label: "Butterscotch" },
+  { id: "fresh-fruit", label: "Fresh fruit" },
+  { id: "pistachio-rose", label: "Pistachio & rose" },
+  { id: "indian-sweets", label: "Indian sweets" },
+];
+
+/**
+ * Which occasions each category suits. PLACEHOLDER mapping — the client
+ * hasn't said which cakes go with which occasion, so this is a sensible
+ * first pass by category; adjust here (or override per item below) once
+ * they do.
+ */
+const CATEGORY_OCCASIONS: Record<string, string[]> = {
+  "classic-cakes": ["birthday", "anniversary", "new-baby", "graduation"],
+  "premium-cakes": ["birthday", "anniversary", "new-baby", "graduation"],
+  "exotic-cakes": ["birthday", "anniversary", "new-baby", "graduation"],
+  "exotic-premium-cakes": ["birthday", "anniversary", "new-baby", "graduation"],
+  cheesecakes: ["birthday", "anniversary", "new-baby"],
+  "indian-cakes": ["birthday", "anniversary"],
+  "photo-cakes": ["birthday", "anniversary", "new-baby", "graduation"],
+  "3d-cakes": ["birthday", "anniversary", "new-baby", "graduation"],
+  "pull-me-up-cakes": ["birthday", "graduation"],
+  "hammer-cakes": ["birthday", "anniversary"],
+  "pinata-cakes": ["birthday", "graduation"],
+};
+
+/** Item ids grouped under each flavour tag (an item can be in several). */
+const FLAVOUR_ITEMS: Record<string, string[]> = {
+  "chocolate-truffle": ["premium-cakes-dark-chocolate-truffle", "premium-cakes-milk-chocolate-truffle"],
+  "red-velvet": ["exotic-premium-cakes-red-velvet", "pull-me-up-cakes-red-velvet"],
+  biscoff: [
+    "exotic-premium-cakes-lotus-biscoff",
+    "cheesecakes-lotus-biscoff",
+    "pull-me-up-cakes-biscoff",
+  ],
+  "black-forest": ["classic-cakes-black-forest"],
+  butterscotch: ["classic-cakes-butterscotch"],
+  "fresh-fruit": ["premium-cakes-fresh-fruit", "pinata-cakes-fresh-fruit"],
+  "pistachio-rose": ["exotic-premium-cakes-rose-pistachio"],
+  "indian-sweets": [
+    "indian-cakes-motichoor",
+    "indian-cakes-kaju-katli",
+    "indian-cakes-gulkand",
+    "indian-cakes-gulab-jamun",
+    "indian-cakes-rasmalai",
+  ],
+};
+
+/**
+ * Home's "Most ordered" row, in display order. Taken from the client's
+ * design — not yet confirmed as the real best-sellers.
+ */
+const MOST_ORDERED: string[] = [
+  "exotic-premium-cakes-nutella-rocher",
+  "classic-cakes-butterscotch",
+  "exotic-premium-cakes-lotus-biscoff",
+  "premium-cakes-dark-chocolate-truffle",
+];
+
+const CATALOG: CatalogItem[] = BASE_CATALOG.map((item) => {
+  const flavours = FLAVOUR_TAGS.filter((tag) => FLAVOUR_ITEMS[tag.id]?.includes(item.id)).map(
+    (tag) => tag.id,
+  );
+  const rank = MOST_ORDERED.indexOf(item.id);
+  return {
+    ...item,
+    occasions: CATEGORY_OCCASIONS[item.categoryId] ?? [],
+    ...(flavours.length > 0 ? { flavours } : {}),
+    ...(rank >= 0 ? { mostOrderedRank: rank + 1 } : {}),
+  };
+});
+
+export { CATEGORY_OCCASIONS, FLAVOUR_ITEMS, MOST_ORDERED };
+
 export function getCatalog(): CatalogItem[] {
   return CATALOG;
 }
@@ -418,4 +507,38 @@ export function weightTierKg(tier: { id: string }): number {
   if (tier.id.startsWith("half")) return 0.5;
   const match = tier.id.match(/^(\d+(?:\.\d+)?)kg/);
   return match ? Number(match[1]) : 0;
+}
+
+export function getOccasions(): Occasion[] {
+  return OCCASIONS;
+}
+
+export function getOccasion(id: string): Occasion | undefined {
+  return OCCASIONS.find((o) => o.id === id);
+}
+
+export function getFlavourTags(): FlavourTag[] {
+  return FLAVOUR_TAGS;
+}
+
+export function getFlavourTag(id: string): FlavourTag | undefined {
+  return FLAVOUR_TAGS.find((t) => t.id === id);
+}
+
+/** Home's "Most ordered" items, in display order. */
+export function getMostOrdered(): CatalogItem[] {
+  return CATALOG.filter((item) => item.mostOrderedRank !== undefined).sort(
+    (a, b) => (a.mostOrderedRank ?? 0) - (b.mostOrderedRank ?? 0),
+  );
+}
+
+/** The first photo among a category's items — a tile image for that
+ * category without keeping a second photo field in sync. */
+export function getCategoryImage(categoryId: string): string | undefined {
+  return CATALOG.find((item) => item.categoryId === categoryId && item.imageUrl)?.imageUrl;
+}
+
+/** Same idea for a flavour tag: the first tagged item that has a photo. */
+export function getFlavourTagImage(tagId: string): string | undefined {
+  return CATALOG.find((item) => item.flavours?.includes(tagId) && item.imageUrl)?.imageUrl;
 }

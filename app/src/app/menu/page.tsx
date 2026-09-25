@@ -1,23 +1,24 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import { getCatalog, getCategories, weightTierKg } from "@/lib/catalog";
+import { Suspense, useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import {
+  getCatalog,
+  getCategories,
+  getFlavourTag,
+  getOccasion,
+  weightTierKg,
+} from "@/lib/catalog";
+import { itemMatchesQuery } from "@/lib/search";
 import { ItemCard } from "@/components/ItemCard";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import { EXTERNAL_LINK_PROPS } from "@/lib/externalLink";
 import { ROUTES } from "@/lib/routes";
 import { ResponsiveHeader } from "@/components/ResponsiveHeader";
 import { Footer } from "@/components/Footer";
+import { UrlParamsSync, type MenuUrlParams } from "./UrlParamsSync";
 import type { CatalogItem } from "@/types/catalog";
 import styles from "./menu.module.css";
-
-// Sep 2026 recategorisation: flavour is the item now, so matching the
-// item's own name already covers what used to be a separate "search
-// each flavour inside this group" check.
-function matches(query: string, item: CatalogItem): boolean {
-  const q = query.trim().toLowerCase();
-  return !q || item.name.toLowerCase().includes(q);
-}
 
 type Filters = {
   readyToday: boolean;
@@ -40,9 +41,14 @@ function passesFilters(item: CatalogItem, filters: Filters): boolean {
 }
 
 export default function MenuPage() {
+  const router = useRouter();
   const catalog = getCatalog();
   const categories = getCategories();
   const [query, setQuery] = useState("");
+  // Set from the URL (?flavour= / ?occasion=), by Home's flavour and
+  // occasion tiles and the header menus — shown as removable chips.
+  const [flavourId, setFlavourId] = useState("");
+  const [occasionId, setOccasionId] = useState("");
   // Desktop only, see docs/design/CLB-Hi-Fi-Screens.dc.html's "Menu —
   // desktop" screen — a category rail + filter panel with no mobile
   // equivalent (mobile lists every category in one scroll instead), so
@@ -50,6 +56,56 @@ export default function MenuPage() {
   const [selectedCategoryId, setSelectedCategoryId] = useState(
     categories[0]?.id ?? "",
   );
+  function applyUrlParams(params: MenuUrlParams) {
+    setQuery(params.q);
+    setFlavourId(getFlavourTag(params.flavour) ? params.flavour : "");
+    setOccasionId(getOccasion(params.occasion) ? params.occasion : "");
+    if (categories.some((c) => c.id === params.category)) {
+      // Desktop shows one category at a time; mobile is one long scroll,
+      // so jump to that category's section.
+      setSelectedCategoryId(params.category);
+      document
+        .getElementById(params.category)
+        ?.scrollIntoView({ behavior: "instant" });
+    }
+  }
+
+  function removeUrlFilter(kind: "flavour" | "occasion") {
+    const nextFlavour = kind === "flavour" ? "" : flavourId;
+    const nextOccasion = kind === "occasion" ? "" : occasionId;
+    setFlavourId(nextFlavour);
+    setOccasionId(nextOccasion);
+    const params = new URLSearchParams();
+    if (nextFlavour) params.set("flavour", nextFlavour);
+    if (nextOccasion) params.set("occasion", nextOccasion);
+    const qs = params.toString();
+    router.replace(qs ? `${ROUTES.menu}?${qs}` : ROUTES.menu, { scroll: false });
+  }
+
+  const activeFilterChips: { kind: "flavour" | "occasion"; label: string }[] = [];
+  if (flavourId) {
+    activeFilterChips.push({ kind: "flavour", label: `Flavour: ${getFlavourTag(flavourId)?.label ?? flavourId}` });
+  }
+  if (occasionId) {
+    activeFilterChips.push({ kind: "occasion", label: `Occasion: ${getOccasion(occasionId)?.label ?? occasionId}` });
+  }
+  const activeFilters =
+    activeFilterChips.length > 0 ? (
+      <div className={styles.activeFilters}>
+        {activeFilterChips.map((chip) => (
+          <button
+            key={chip.kind}
+            type="button"
+            className={styles.activeFilter}
+            onClick={() => removeUrlFilter(chip.kind)}
+            aria-label={`Remove filter ${chip.label}`}
+          >
+            {chip.label} <span aria-hidden="true">×</span>
+          </button>
+        ))}
+      </div>
+    ) : null;
+
   // Item detail's category breadcrumb links to /menu#<categoryId> — pre-
   // select that category here (desktop) once mounted; mobile just
   // scrolls to the matching section anchor natively. Read in an effect,
@@ -78,7 +134,12 @@ export default function MenuPage() {
     canCarryMessage: false,
   });
 
-  const visibleCatalog = catalog.filter((item) => matches(query, item));
+  const visibleCatalog = catalog.filter(
+    (item) =>
+      itemMatchesQuery(item, query) &&
+      (!flavourId || item.flavours?.includes(flavourId)) &&
+      (!occasionId || item.occasions?.includes(occasionId)),
+  );
   const hasResults = visibleCatalog.length > 0;
   // Mobile's sticky category rail (below) only lists categories that
   // actually have something to jump to right now — same "skip if empty"
@@ -158,10 +219,16 @@ export default function MenuPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visibleCategoryIds]);
 
-  const selectedCategory = categories.find((c) => c.id === selectedCategoryId);
+  // A search or flavour/occasion filter can leave the picked category
+  // empty while others match — show the first category that has results
+  // instead of a bare "nothing here", and let the rail counts point the
+  // shopper at the rest.
+  const desktopCategoryId = visibleCategories.some((c) => c.id === selectedCategoryId)
+    ? selectedCategoryId
+    : (visibleCategories[0]?.id ?? selectedCategoryId);
+  const selectedCategory = categories.find((c) => c.id === desktopCategoryId);
   const desktopItems = visibleCatalog.filter(
-    (item) =>
-      item.categoryId === selectedCategoryId && passesFilters(item, filters),
+    (item) => item.categoryId === desktopCategoryId && passesFilters(item, filters),
   );
   const anyFilterActive =
     filters.readyToday || filters.oneKgPlus || filters.canCarryMessage;
@@ -211,6 +278,9 @@ export default function MenuPage() {
 
   return (
     <div className={styles.page}>
+      <Suspense fallback={null}>
+        <UrlParamsSync onParams={applyUrlParams} />
+      </Suspense>
       {/* Mobile keeps the back-link header; desktop gets the shared nav
           header with just the cart icon, same as every other desktop
           header — the search field lives in the main column instead
@@ -247,6 +317,8 @@ export default function MenuPage() {
               )}
             </div>
           </div>
+
+          {activeFilters}
 
           {hasResults && (
             <div className={styles.railChips}>
@@ -345,7 +417,7 @@ export default function MenuPage() {
                 const count = visibleCatalog.filter(
                   (item) => item.categoryId === category.id,
                 ).length;
-                const selected = category.id === selectedCategoryId;
+                const selected = category.id === desktopCategoryId;
                 return (
                   <button
                     key={category.id}
@@ -382,6 +454,7 @@ export default function MenuPage() {
 
           <section className={styles.mainColumn}>
             {desktopSearchBar}
+            {activeFilters}
 
             {hasResults ? (
               <>

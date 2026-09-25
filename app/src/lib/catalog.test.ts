@@ -1,9 +1,17 @@
 import { describe, expect, it } from "vitest";
 import {
+  CATEGORY_OCCASIONS,
+  FLAVOUR_ITEMS,
+  MOST_ORDERED,
   getCatalog,
   getCategories,
   getCategory,
+  getCategoryImage,
+  getFlavourTagImage,
+  getFlavourTags,
   getItemById,
+  getMostOrdered,
+  getOccasions,
   getSiblingItems,
   weightTierKg,
 } from "@/lib/catalog";
@@ -99,5 +107,49 @@ describe("getSiblingItems", () => {
   it("is empty for a category with only one item", () => {
     const photoCakes = getItemById("photo-cakes")!;
     expect(getSiblingItems(photoCakes)).toEqual([]);
+  });
+});
+
+describe("occasions, flavour tags and most ordered", () => {
+  it("every occasion an item lists is a real occasion, and every item lists at least one", () => {
+    const ids = new Set(getOccasions().map((o) => o.id));
+    for (const item of getCatalog()) {
+      expect(item.occasions?.length, item.id).toBeGreaterThan(0);
+      for (const id of item.occasions ?? []) expect(ids.has(id), `${item.id} -> ${id}`).toBe(true);
+    }
+  });
+
+  it("the per-category occasion map only names real categories", () => {
+    const categoryIds = new Set(getCategories().map((c) => c.id));
+    for (const id of Object.keys(CATEGORY_OCCASIONS)) expect(categoryIds.has(id), id).toBe(true);
+  });
+
+  it("every item id listed under a flavour tag exists, so a typo can't silently drop it", () => {
+    for (const [tag, itemIds] of Object.entries(FLAVOUR_ITEMS)) {
+      for (const id of itemIds) expect(getItemById(id), `${tag} -> ${id}`).toBeDefined();
+    }
+  });
+
+  it("every flavour tag has at least one item", () => {
+    for (const tag of getFlavourTags()) {
+      expect(getCatalog().some((i) => i.flavours?.includes(tag.id)), tag.id).toBe(true);
+    }
+  });
+
+  it("returns the most-ordered items in the configured order", () => {
+    expect(getMostOrdered().map((i) => i.id)).toEqual(MOST_ORDERED);
+    expect(getMostOrdered().map((i) => i.mostOrderedRank)).toEqual([1, 2, 3, 4]);
+  });
+
+  it("finds a tile photo from the items themselves", () => {
+    expect(getCategoryImage("classic-cakes")).toBe("/images/classic-butterscotch.jpg");
+    expect(getFlavourTagImage("indian-sweets")).toMatch(/^\/images\/indian-/);
+  });
+
+  it("Cheesecakes and Flavourful Indian cakes need 24 hours' notice", () => {
+    for (const item of getCatalog().filter((i) => ["cheesecakes", "indian-cakes"].includes(i.categoryId))) {
+      expect(item.leadTimeHours, item.id).toBe(24);
+      expect(item.readyLabel, item.id).toBe("24 hours notice");
+    }
   });
 });

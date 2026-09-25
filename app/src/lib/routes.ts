@@ -14,9 +14,25 @@ export function itemRoute(itemId: string): string {
   return `${ROUTES.menu}/${itemId}`;
 }
 
-/** The menu scrolled/filtered to one category — /menu#<categoryId>. Mobile
- * jumps to that category's section (each has the id as its anchor);
- * desktop's category rail reads the same hash to pre-select it. */
+/** The menu focused on one category — /menu?category=<categoryId>.
+ * Mobile scrolls to that category's section; desktop's category rail
+ * pre-selects it. A search param (not a hash) so a soft navigation from
+ * a link while already on /menu is observable and updates the page. */
 export function categoryRoute(categoryId: string): string {
-  return `${ROUTES.menu}#${categoryId}`;
+  return `${ROUTES.menu}?category=${categoryId}`;
+}
+
+/** The menu filtered to a flavour tag — /menu?flavour=<flavourTagId>. */
+export function flavourRoute(flavourTagId: string): string {
+  return `${ROUTES.menu}?flavour=${flavourTagId}`;
+}
+
+/** The menu filtered to an occasion — /menu?occasion=<occasionId>. */
+export function occasionRoute(occasionId: string): string {
+  return `${ROUTES.menu}?occasion=${occasionId}`;
+}
+
+/** The menu with a search pre-filled — /menu?q=<text>. */
+export function searchRoute(query: string): string {
+  return `${ROUTES.menu}?q=${encodeURIComponent(query)}`;
 }

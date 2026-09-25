@@ -31,6 +31,23 @@ export type Category = {
   accent: string;
 };
 
+/** A "shop by occasion" grouping (Birthday, Anniversary...). Which items
+ * suit it is stored on each item's `occasions` list. */
+export type Occasion = {
+  id: string;
+  label: string;
+  /** Tile photo on Home — one of our flavour photos that fits the mood. */
+  imageUrl?: string;
+};
+
+/** A "browse by flavour" grouping that cuts across categories — e.g.
+ * "Biscoff" covers the Exotic Premium cake, the cheesecake and the Pull
+ * Me Up. Which items belong is stored on each item's `flavours` list. */
+export type FlavourTag = {
+  id: string;
+  label: string;
+};
+
 export type CatalogItem = {
   id: string;
   name: string;
@@ -50,6 +67,15 @@ export type CatalogItem = {
   leadTimeHours: number;
   /** Max length for the optional per-item cake inscription; 0 = not offered. */
   cakeMessageMaxLength: number;
+  /** Occasion ids (see Occasion) this item suits — feeds "shop by
+   * occasion" and the menu's occasion filter. */
+  occasions?: string[];
+  /** Flavour-tag ids (see FlavourTag) this item belongs to — feeds
+   * "browse by flavour" and lets menu search match a flavour. */
+  flavours?: string[];
+  /** 1-based position in Home's "Most ordered" row; omit for items not
+   * featured there. */
+  mostOrderedRank?: number;
   /** Sold-out flag — see ADR-004. Safety valve, not a routine toggle. */
   available: boolean;
   /** Needs on-site installation/delivery — see ADR-003 (removes Pickup as a choice). */

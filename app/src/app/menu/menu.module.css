@@ -62,6 +62,25 @@
   cursor: pointer;
 }
 
+.activeFilters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  padding: 10px 20px 0;
+}
+
+.activeFilter {
+  border: 1.5px solid var(--color-pink);
+  border-radius: 16px;
+  background: var(--color-pink-bg);
+  color: var(--color-pink);
+  padding: 7px 12px;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
 .noResults {
   padding: 40px 30px 0;
   display: flex;
@@ -258,6 +277,10 @@
 
   .desktopSearchInput::placeholder {
     color: var(--color-ink-faint);
+  }
+
+  .activeFilters {
+    padding: 0 0 18px;
   }
 
   .desktopClearButton {

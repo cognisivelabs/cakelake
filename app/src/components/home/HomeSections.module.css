@@ -933,35 +933,6 @@
     font-size: 0.72rem;
   }
 
-  /* Flavours: a small-card grid of eight, not a rail of squares. */
-  section:has(.flavourTile) .rail {
-    display: grid;
-    grid-template-columns: repeat(8, 1fr);
-    gap: 12px;
-    overflow: visible;
-    padding: 0;
-  }
-
-  .flavourTile {
-    width: auto;
-    background: var(--color-surface);
-    border-radius: 10px;
-    padding: 14px 12px;
-    box-shadow: var(--shadow-card);
-    align-items: flex-start;
-    gap: 9px;
-  }
-
-  .flavourTile .tileImage {
-    width: 36px;
-    border-radius: 8px;
-  }
-
-  .flavourTile .tileLabel {
-    text-align: left;
-    font-size: 0.8125rem;
-  }
-
   /* Ordering + shop */
   .ordering {
     margin: 44px var(--desktop-gutter) 0;

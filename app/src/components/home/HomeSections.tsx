@@ -144,10 +144,11 @@ export function MostOrderedSection() {
 }
 
 export function FlavourTiles() {
+  const tags = getFlavourTags();
   return (
-    <RailSection title="Browse by flavour" mobileMeta="Swipe →" arrows={false}>
-      {getFlavourTags().map((tag) => (
-        <Link key={tag.id} href={flavourRoute(tag.id)} className={`${styles.tile} ${styles.flavourTile}`}>
+    <RailSection title="Browse by flavour" meta={`${tags.length} flavours`} mobileMeta={`${tags.length} · swipe →`}>
+      {tags.map((tag) => (
+        <Link key={tag.id} href={flavourRoute(tag.id)} className={styles.tile}>
           <div className={styles.tileImage}>
             <Photo src={getFlavourTagImage(tag.id)} />
           </div>

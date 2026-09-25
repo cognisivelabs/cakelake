@@ -44,9 +44,9 @@ export function MobileMenu({
 
       <details className={styles.mobileFilters}>
         <summary>Filters{filters.chips.length > 0 ? ` (${filters.chips.length})` : ""}</summary>
-        <FilterPanel groups={filters.groups} onToggle={filters.toggle} />
+        <FilterPanel groups={filters.groups} onToggle={filters.toggle} onPriceChange={filters.setPriceRange} />
       </details>
-      <ActiveFilters chips={filters.chips} onRemove={(key) => filters.setFilter(key, "")} />
+      <ActiveFilters chips={filters.chips} onRemove={filters.clear} />
 
       {sections.length > 0 && (
         <div className={styles.railChips}>

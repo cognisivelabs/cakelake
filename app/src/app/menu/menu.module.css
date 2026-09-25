@@ -153,6 +153,99 @@
   color: var(--color-ink-faint);
 }
 
+/* Price range: "AED min to max" boxes over a two-handle Radix slider. */
+.priceInputs {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.priceTo {
+  font-size: 0.8rem;
+  color: var(--color-ink);
+}
+
+.priceBox {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1.5px solid var(--color-surface-alt);
+  border-radius: 8px;
+  background: var(--color-surface);
+  padding: 8px 10px;
+}
+
+.priceBox:focus-within {
+  border-color: var(--color-accent);
+}
+
+.priceBoxCurrency {
+  font-size: 0.7rem;
+  color: var(--color-ink-faint);
+}
+
+.priceBox input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: none;
+  font: inherit;
+  font-size: 0.85rem;
+  color: var(--color-ink);
+}
+
+.priceSlider {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 24px;
+  margin: 4px 10px 0;
+  touch-action: none;
+  user-select: none;
+}
+
+.priceTrack {
+  position: relative;
+  flex: 1;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--color-surface-alt);
+}
+
+.priceRange {
+  position: absolute;
+  height: 100%;
+  border-radius: 2px;
+  background: var(--color-accent);
+}
+
+.priceThumb {
+  display: block;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 0;
+  background: var(--color-accent);
+  cursor: grab;
+}
+
+.priceThumb:active {
+  cursor: grabbing;
+}
+
+.priceThumb:focus-visible {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 2px;
+}
+
+.priceCount {
+  font-size: 0.72rem;
+  color: var(--color-ink-faint);
+}
+
 .activeFilters {
   display: flex;
   flex-wrap: wrap;

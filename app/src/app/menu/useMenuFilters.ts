@@ -1,29 +1,44 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getCategory, getFlavourTag, getOccasion } from "@/lib/catalog";
 import { ROUTES } from "@/lib/routes";
 import {
   CATEGORY_GROUP_KEY,
+  formatPriceRange,
   getActiveFilterChips,
   getCategoryFilterGroup,
   getFilterGroups,
-  getPriceBand,
+  getPriceBounds,
+  normalizePriceRange,
+  parsePriceRange,
   type FilterGroup,
   type FilterKey,
   type MenuFilters,
+  type PriceRange,
 } from "@/lib/search";
 import type { MenuUrlParams } from "./UrlParamsSync";
 
-type Selection = { categoryIds: string[]; priceBandId: string; flavourId: string; occasionId: string };
+type Selection = {
+  categoryIds: string[];
+  priceRange: PriceRange | null;
+  flavourId: string;
+  occasionId: string;
+};
+
+const NO_SELECTION: Selection = { categoryIds: [], priceRange: null, flavourId: "", occasionId: "" };
+
+/** How long the slider rests before the URL follows it — the results
+ * update as it moves, but the address shouldn't be rewritten per pixel. */
+const URL_DEBOUNCE_MS = 250;
 
 /**
- * The menu's search text and its filters: Price, Flavour and Occasion (one
- * choice each) and — on desktop — Category (any number ticked). The
- * choices live in the URL too (?category= ?price= ?flavour= ?occasion=),
- * so a filtered menu can be linked to and the back button undoes a
- * change; the search text is local, unless a link brings a ?q=.
+ * The menu's search text and its filters: Price (a range slider), Flavour
+ * and Occasion (one choice each) and — on desktop — Category (any number
+ * ticked). The choices live in the URL too (?category= ?price= ?flavour=
+ * ?occasion=), so a filtered menu can be linked to and the back button
+ * undoes a change; the search text is local, unless a link brings a ?q=.
  *
  * `values` is what filters the *items* (search, price, flavour,
  * occasion). Categories are kept apart: desktop narrows to the ticked
@@ -33,16 +48,19 @@ type Selection = { categoryIds: string[]; priceBandId: string; flavourId: string
 export function useMenuFilters() {
   const router = useRouter();
   const [query, setQuery] = useState("");
-  const [selection, setSelection] = useState<Selection>({
-    categoryIds: [],
-    priceBandId: "",
-    flavourId: "",
-    occasionId: "",
-  });
+  const [selection, setSelection] = useState<Selection>(NO_SELECTION);
+  const urlTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(
+    () => () => {
+      if (urlTimer.current) clearTimeout(urlTimer.current);
+    },
+    [],
+  );
 
   const values: MenuFilters = {
     query,
-    priceBandId: selection.priceBandId,
+    priceRange: selection.priceRange,
     flavourId: selection.flavourId,
     occasionId: selection.occasionId,
   };
@@ -56,32 +74,53 @@ export function useMenuFilters() {
     // Only a ?q= replaces what's typed — a link without one (a category
     // link, a filter change) shouldn't wipe the shopper's own search.
     if (params.q) setQuery(params.q);
-    setSelection({
+    setSelection((current) => ({
       categoryIds: params.category.split(",").filter((id) => getCategory(id)),
-      priceBandId: getPriceBand(params.price) ? params.price : "",
+      // The slider is mid-drag while a URL update is pending, and this
+      // echo would be stale — keep what's on screen.
+      priceRange: urlTimer.current ? current.priceRange : parsePriceRange(params.price),
       flavourId: getFlavourTag(params.flavour) ? params.flavour : "",
       occasionId: getOccasion(params.occasion) ? params.occasion : "",
-    });
+    }));
   }
 
-  function commit(next: Selection) {
-    setSelection(next);
+  function syncUrl(next: Selection) {
     const params = new URLSearchParams();
     if (next.categoryIds.length > 0) params.set("category", next.categoryIds.join(","));
-    if (next.priceBandId) params.set("price", next.priceBandId);
+    if (next.priceRange) params.set("price", formatPriceRange(next.priceRange));
     if (next.flavourId) params.set("flavour", next.flavourId);
     if (next.occasionId) params.set("occasion", next.occasionId);
     const qs = params.toString();
     router.replace(qs ? `${ROUTES.menu}?${qs}` : ROUTES.menu, { scroll: false });
   }
 
-  /** Sets (or, with "", clears) one of the single-choice filters. */
-  function setFilter(key: FilterKey, value: string) {
-    commit({ ...selection, [key]: value });
+  function commit(next: Selection) {
+    if (urlTimer.current) {
+      clearTimeout(urlTimer.current);
+      urlTimer.current = null;
+    }
+    setSelection(next);
+    syncUrl(next);
+  }
+
+  /** The slider moved (or was reset to full width, which clears it). */
+  function setPriceRange(range: PriceRange) {
+    const next = { ...selection, priceRange: normalizePriceRange(range, getPriceBounds()) };
+    setSelection(next);
+    if (urlTimer.current) clearTimeout(urlTimer.current);
+    urlTimer.current = setTimeout(() => {
+      urlTimer.current = null;
+      syncUrl(next);
+    }, URL_DEBOUNCE_MS);
+  }
+
+  /** Clears one filter (a chip's ×). */
+  function clear(key: FilterKey) {
+    commit({ ...selection, [key]: NO_SELECTION[key] });
   }
 
   /** A checkbox was toggled: categories add or drop, the others replace. */
-  function toggle(key: FilterGroup["key"], optionId: string) {
+  function toggle(key: Exclude<FilterGroup["key"], "priceRange">, optionId: string) {
     if (key === CATEGORY_GROUP_KEY) {
       const ticked = selection.categoryIds.includes(optionId);
       commit({
@@ -91,7 +130,7 @@ export function useMenuFilters() {
           : [...selection.categoryIds, optionId],
       });
     } else {
-      setFilter(key, selection[key] === optionId ? "" : optionId);
+      commit({ ...selection, [key]: selection[key] === optionId ? "" : optionId });
     }
   }
 
@@ -99,14 +138,15 @@ export function useMenuFilters() {
     values,
     categoryIds: selection.categoryIds,
     setQuery,
-    setFilter,
+    setPriceRange,
+    clear,
     toggle,
     applyParams,
     groups: getFilterGroups(values),
     desktopGroups: getFilterGroups(desktopValues),
     categoryGroup: getCategoryFilterGroup(selection.categoryIds, values),
     chips: getActiveFilterChips(values),
-    anyFilterActive: Boolean(selection.priceBandId || selection.flavourId || selection.occasionId),
+    anyFilterActive: Boolean(selection.priceRange || selection.flavourId || selection.occasionId),
   };
 }
 

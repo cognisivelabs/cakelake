@@ -33,12 +33,16 @@ export function DesktopMenu({
   return (
     <div className={styles.desktopLayout}>
       <aside className={styles.rail}>
-        <FilterPanel groups={[filters.categoryGroup, ...filters.desktopGroups]} onToggle={filters.toggle} />
+        <FilterPanel
+          groups={[filters.categoryGroup, ...filters.desktopGroups]}
+          onToggle={filters.toggle}
+          onPriceChange={filters.setPriceRange}
+        />
       </aside>
 
       <section className={styles.mainColumn}>
         <SearchField variant="desktop" value={filters.values.query} onChange={filters.setQuery} />
-        <ActiveFilters chips={filters.chips} onRemove={(key) => filters.setFilter(key, "")} />
+        <ActiveFilters chips={filters.chips} onRemove={filters.clear} />
 
         {visibleCatalog.length === 0 ? (
           <NoResults variant="desktop" query={filters.values.query} />

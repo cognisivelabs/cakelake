@@ -113,20 +113,12 @@
 }
 
 .pills {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 7px;
+  composes: pill-list from global;
 }
 
 .pill {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 15px;
+  composes: pill-link from global;
   padding: 8px 13px;
-  font-weight: 700;
-  font-size: 0.72rem;
-  color: var(--color-ink);
-  text-decoration: none;
 }
 
 .installSteps {

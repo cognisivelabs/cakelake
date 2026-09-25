@@ -59,18 +59,37 @@ carries the fields; the UI just doesn't act on all of them yet.
 
 ## Placeholder content
 
-`src/lib/catalog.ts` is **not the real catalogue** — the client will
-provide the actual items/prices/flavours (see the "Content checklist"
-in [requirements.md](../docs/requirements/requirements.md)). Every
-screen reads from `getCatalog()`/`getCategories()`; swapping in real
-data is a data change, not a code change. `src/lib/config.ts` holds the
-real contact numbers and address already confirmed by the client.
+The catalogue in `src/data/` (`categories.ts`, `items.ts`,
+`taxonomy.ts`) is **not final** — the client will provide the actual
+items/prices/flavours (see the "Content checklist" in
+[requirements.md](../docs/requirements/requirements.md)). Every screen
+reads it through `src/lib/catalog.ts` (`getCatalog()`,
+`getCategories()`, …); swapping in real data is a data change, not a
+code change. `src/lib/config.ts` holds the real contact numbers and
+address already confirmed by the client, and `CONFIG.theme` picks the
+colour theme (see [../docs/theming.md](../docs/theming.md)).
+
+## Project layout
+
+| Folder | What lives there |
+|---|---|
+| `src/app/` | Routes. Each page is a thin composition; the cart and menu split their screens into components and hooks (`useCheckout`, `useMenuFilters`, `useScrollSpy`). |
+| `src/components/` | Shared UI: header, footer, `Photo`, `Icons`, cards, and `home/` sections. |
+| `src/data/` | Content: categories, items, taxonomy (occasions, flavour tags, most ordered), hero banners, image framing. |
+| `src/lib/` | Pure logic — pricing, dates, search and filters, order summaries, WhatsApp messages — with unit tests beside it. |
+| `src/theme/` | The colour themes and the helpers that turn one into CSS variables. |
+| `src/context/`, `src/hooks/` | Cart state and the install-prompt hook. |
+
+Shared styles (`btn-accent`, `pill-link`, `fill-cover`, …) live in
+`src/app/globals.css` and are reused with `composes: … from global`.
+No stylesheet hard-codes a colour — they read theme variables.
 
 ## Local development
 
 ```bash
 npm install
 npm run dev
+npm run check   # type-check (incl. unused code), lint and tests
 ```
 
 ## Build

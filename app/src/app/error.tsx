@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ROUTES } from "@/lib/routes";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import { EXTERNAL_LINK_PROPS } from "@/lib/externalLink";
+import { errorWrapStyle } from "./errorStyles";
 
 // Inline styles, not a CSS Module — this boundary can activate on any
 // page at any moment, so Next preloads its CSS on every single page
@@ -13,17 +14,6 @@ import { EXTERNAL_LINK_PROPS } from "@/lib/externalLink";
 // warning. Inline styles mean there's no separate stylesheet to
 // preload at all, which also keeps the recovery UI from depending on
 // a stylesheet successfully loading in the first place.
-const wrapStyle: CSSProperties = {
-  minHeight: "100dvh",
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
-  justifyContent: "center",
-  gap: 13,
-  padding: "40px 30px",
-  textAlign: "center",
-};
-
 const mutedStyle: CSSProperties = {
   margin: 0,
   color: "var(--color-ink-muted)",
@@ -43,7 +33,7 @@ const actionsStyle: CSSProperties = {
 
 const primaryButtonStyle: CSSProperties = {
   background: "var(--color-accent)",
-  color: "var(--color-ink)",
+  color: "var(--color-accent-ink)",
   border: "none",
   borderRadius: "var(--radius-md)",
   padding: 14,
@@ -84,7 +74,7 @@ export default function Error({
   }, [error]);
 
   return (
-    <div style={wrapStyle}>
+    <div style={errorWrapStyle}>
       <h1>Something went wrong</h1>
       <p style={mutedStyle}>
         Sorry about that — nothing was lost, but this page hit a snag. Try

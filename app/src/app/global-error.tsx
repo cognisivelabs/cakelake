@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { getActiveTheme } from "@/theme";
+import { errorWrapStyle } from "./errorStyles";
 
 // Only fires if the root layout itself throws (Script setup, CartProvider,
 // etc.) — error.tsx handles everything below that. Next.js requires this
@@ -31,14 +32,7 @@ export default function GlobalError({
     <html lang="en">
       <body
         style={{
-          minHeight: "100dvh",
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: 13,
-          padding: "40px 30px",
-          textAlign: "center",
+          ...errorWrapStyle,
           fontFamily: "system-ui, sans-serif",
           background: colors.bg,
           color: colors.ink,

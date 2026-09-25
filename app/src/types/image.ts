@@ -30,7 +30,7 @@ export type ImageSlot = "hero" | "thumbnail";
  * crop trim, i.e. the crop percentages are measured against the box
  * *after* everything else has already been applied.
  */
-export type ImageFraming = {
+type ImageFraming = {
   /**
    * "cover" (default when omitted): crop to fill the box, discarding
    * whatever falls outside it — the site's plain default everywhere an

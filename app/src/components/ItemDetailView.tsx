@@ -8,25 +8,14 @@ import { formatAed, orderTotal, lineTotal } from "@/lib/pricing";
 import { resolveSelection, orderItemCount, resolveOrderLines, describeLine } from "@/lib/order";
 import { getCategory, getCatalog, getSiblingItems } from "@/lib/catalog";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
+import { AddedToOrderPanel, type AddedSnapshot } from "@/components/AddedToOrderPanel";
+import { CategoryTag, ReadyTag } from "@/components/ItemTags";
 import { Photo } from "@/components/Photo";
 import { EXTERNAL_LINK_PROPS } from "@/lib/externalLink";
 import { ROUTES, categoryRoute, itemRoute } from "@/lib/routes";
 import { ResponsiveHeader } from "@/components/ResponsiveHeader";
 import { Footer } from "@/components/Footer";
 import styles from "./ItemDetailView.module.css";
-
-type AddedSnapshot = {
-  tierLabel?: string;
-  cakeMessage?: string;
-  quantity: number;
-  lineTotal?: number;
-  itemCount: number;
-  orderTotalAmount: number;
-  // Desktop's panel lists what else is already in the order (see
-  // "Added to order — desktop" in the Hi-Fi) — mobile's sheet has no
-  // room and just shows the itemCount/orderTotalAmount summary above.
-  otherLines: { label: string; quantity: number; total?: number }[];
-};
 
 export function ItemDetailView({ item }: { item: CatalogItem }) {
   const { order, addLine } = useCart();
@@ -97,12 +86,9 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
         </div>
         <div className={styles.content}>
           {category && (
-            <span
-              className={`${styles.tag} mono-tag`}
-              style={{ background: category.tint, color: category.accent, alignSelf: "flex-start" }}
-            >
-              {category.label}
-            </span>
+            <div className={styles.tags}>
+              <CategoryTag category={category} />
+            </div>
           )}
           <h1 className={styles.title}>{item.name}</h1>
           <p className={styles.description}>{item.description}</p>
@@ -133,8 +119,8 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
       {/* Desktop only — see docs/design/CLB-Hi-Fi-Screens.dc.html's
           "Item detail — desktop": a breadcrumb replaces mobile's plain
           "← MENU" back-link once there's room for one. The category crumb
-          goes to /menu with that category pre-selected (hash-based, since
-          there's no per-category route). */}
+          opens the menu on that category (?category=, since there's no
+          per-category route). */}
       <nav className={styles.breadcrumb}>
         <Link href={ROUTES.menu}>← Menu</Link>
         <span className={styles.breadcrumbSep}>/</span>
@@ -153,22 +139,11 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
         <div className={styles.rightCol}>
           <div className={styles.content}>
             <div className={styles.tags}>
-              {category && (
-                <span
-                  className={`${styles.tag} mono-tag`}
-                  style={{ background: category.tint, color: category.accent }}
-                >
-                  {category.label}
-                </span>
-              )}
+              {category && <CategoryTag category={category} />}
               {item.requiresDelivery && (
                 <span className={`${styles.tag} ${styles.tagReady} mono-tag`}>Delivery only</span>
               )}
-              <span
-                className={`${styles.tag} ${item.leadTimeHours > 0 ? styles.tagNotice : styles.tagReady} mono-tag`}
-              >
-                {item.readyLabel}
-              </span>
+              <ReadyTag item={item} />
               <span className={`${styles.tag} ${styles.tagReady} mono-tag`}>Eggless</span>
             </div>
             <h1 className={styles.title}>{item.name}</h1>
@@ -269,88 +244,7 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
       </div>
 
       {addedSnapshot && (
-        <div className={styles.addedOverlay}>
-          <div className={styles.addedSheet}>
-            <div className={styles.addedHandle} />
-            <div className={styles.addedHeader}>
-              <span className={styles.addedCheck}>✓</span>
-              <span className={styles.addedTitle}>Added to your order</span>
-              <span className={styles.addedHeaderSpacer} />
-              {/* Desktop only — mobile dismisses via KEEP SHOPPING/REVIEW
-                  ORDER instead; see the .addedClose desktop override. */}
-              <button
-                type="button"
-                className={styles.addedClose}
-                aria-label="Close"
-                onClick={() => setAddedSnapshot(null)}
-              >
-                ✕
-              </button>
-            </div>
-
-            <div className={styles.addedCard}>
-              <div className={styles.addedPhoto}>
-                <Photo src={item.imageUrl} />
-              </div>
-              <div className={styles.addedInfo}>
-                <div className={styles.addedName}>{item.name}</div>
-                {addedSnapshot.tierLabel && (
-                  <div className={styles.addedMeta}>{addedSnapshot.tierLabel}</div>
-                )}
-                {addedSnapshot.cakeMessage && (
-                  <div className={styles.addedMessage}>&ldquo;{addedSnapshot.cakeMessage}&rdquo;</div>
-                )}
-                <div className={styles.addedTagsRow}>
-                  <span
-                    className={`${styles.tag} ${item.leadTimeHours > 0 ? styles.tagNotice : styles.tagReady} mono-tag`}
-                  >
-                    {item.readyLabel}
-                  </span>
-                  <span className={styles.addedQty}>Qty {addedSnapshot.quantity}</span>
-                </div>
-              </div>
-              <div className={styles.addedPrice}>
-                {addedSnapshot.lineTotal === undefined ? "Ask us" : formatAed(addedSnapshot.lineTotal)}
-              </div>
-            </div>
-
-            {/* Desktop only — mobile's sheet has no room for an itemized
-                list and just shows the summary row below. */}
-            {addedSnapshot.otherLines.length > 0 && (
-              <div className={styles.addedOtherSection}>
-                <div className={styles.addedOtherLabel}>ALSO IN YOUR ORDER</div>
-                {addedSnapshot.otherLines.map((line, i) => (
-                  <div key={i} className={styles.addedOtherRow}>
-                    <span>
-                      {line.quantity}× {line.label}
-                    </span>
-                    <span>{line.total === undefined ? "Ask us" : formatAed(line.total)}</span>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            <div className={styles.addedSummary}>
-              <span>
-                {addedSnapshot.itemCount} item{addedSnapshot.itemCount === 1 ? "" : "s"} in your order
-              </span>
-              <span className={styles.addedSummaryTotal}>{formatAed(addedSnapshot.orderTotalAmount)}</span>
-            </div>
-
-            <div className={styles.addedActions}>
-              <Link href={ROUTES.cart} className={styles.addedPrimary}>
-                REVIEW ORDER · {addedSnapshot.itemCount} ITEM{addedSnapshot.itemCount === 1 ? "" : "S"}
-              </Link>
-              <Link href={ROUTES.menu} className={styles.addedSecondary}>
-                KEEP SHOPPING
-              </Link>
-            </div>
-
-            <p className={styles.addedNote}>
-              Nothing is charged here — we confirm price and time on WhatsApp.
-            </p>
-          </div>
-        </div>
+        <AddedToOrderPanel item={item} snapshot={addedSnapshot} onClose={() => setAddedSnapshot(null)} />
       )}
 
       <Footer />

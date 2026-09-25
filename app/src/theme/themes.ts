@@ -331,7 +331,7 @@ export const THEMES = {
 export type ThemeId = keyof typeof THEMES;
 
 /** The tints derived from a theme's authored colours. */
-export function deriveTokens(c: ThemeColors) {
+function deriveTokens(c: ThemeColors) {
   return {
     surfaceAlt: mix(c.surfaceMuted, c.photoBg, 0.35),
     borderStrong: mix(c.border, c.placeholderBorder, 0.5),

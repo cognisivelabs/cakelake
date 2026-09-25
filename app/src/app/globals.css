@@ -128,6 +128,29 @@ a {
   text-decoration: none;
 }
 
+/* A wrapping row of pill links (flavours in the mega-menu and mobile
+   sheet); the composing rule sets the pill's padding. */
+.pill-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.pill-link {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 15px;
+  font-weight: 700;
+  font-size: 0.72rem;
+  color: var(--color-ink);
+  text-decoration: none;
+}
+
+.pill-link:hover {
+  border-color: var(--color-pink);
+  color: var(--color-pink);
+}
+
 /* A photo that fills its (position: relative) box — see components/Photo. */
 .fill-cover {
   position: absolute;

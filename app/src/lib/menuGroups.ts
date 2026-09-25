@@ -3,7 +3,7 @@ import { getCatalog, getCategories, getCategoriesByKind } from "@/lib/catalog";
 import { categoryRoute, ROUTES } from "@/lib/routes";
 import { categoryPriceLabel } from "@/lib/pricing";
 
-export type MenuGroupEntry = { category: Category; priceLabel: string };
+type MenuGroupEntry = { category: Category; priceLabel: string };
 export type MenuGroup = { id: string; label: string; entries: MenuGroupEntry[] };
 
 /**

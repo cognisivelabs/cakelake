@@ -143,3 +143,34 @@ describe("getCategoryFilterGroup", () => {
     expect(withTick.options).toEqual(without.options);
   });
 });
+
+describe("category-aware filtering", () => {
+  it("only matches cakes in the ticked categories", () => {
+    const classic = { ...none, categoryIds: ["classic-cakes"] };
+    expect(itemMatchesFilters(item("classic-cakes-butterscotch"), classic)).toBe(true);
+    expect(itemMatchesFilters(item("premium-cakes-strawberry"), classic)).toBe(false);
+    const several = { ...none, categoryIds: ["classic-cakes", "hammer-cakes"] };
+    expect(itemMatchesFilters(item("hammer-cakes-heart-shape-hammer-cake"), several)).toBe(true);
+  });
+
+  it("treats no ticked categories as all of them", () => {
+    expect(itemMatchesFilters(item("premium-cakes-strawberry"), { ...none, categoryIds: [] })).toBe(true);
+  });
+
+  it("counts the other filters inside the ticked categories", () => {
+    // Classic has 3 cakes, all under AED 100 — not 33.
+    const price = getFilterGroups({ ...none, categoryIds: ["classic-cakes"] }).find((g) => g.key === "priceBandId")!;
+    expect(price.options.map((o) => o.count)).toEqual([3, 0, 0]);
+    const flavour = getFilterGroups({ ...none, categoryIds: ["classic-cakes"] }).find((g) => g.key === "flavourId")!;
+    expect(flavour.options.filter((o) => o.count > 0).map((o) => o.id).sort()).toEqual(["black-forest", "butterscotch"]);
+    const occasion = getFilterGroups({ ...none, categoryIds: ["classic-cakes"] }).find((g) => g.key === "occasionId")!;
+    expect(Math.max(...occasion.options.map((o) => o.count))).toBe(3);
+  });
+
+  it("adds up across several ticked categories", () => {
+    const price = getFilterGroups({ ...none, categoryIds: ["classic-cakes", "hammer-cakes"] }).find(
+      (g) => g.key === "priceBandId",
+    )!;
+    expect(price.options.map((o) => o.count)).toEqual([3, 0, 1]);
+  });
+});

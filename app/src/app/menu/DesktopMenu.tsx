@@ -33,7 +33,7 @@ export function DesktopMenu({
   return (
     <div className={styles.desktopLayout}>
       <aside className={styles.rail}>
-        <FilterPanel groups={[filters.categoryGroup, ...filters.groups]} onToggle={filters.toggle} />
+        <FilterPanel groups={[filters.categoryGroup, ...filters.desktopGroups]} onToggle={filters.toggle} />
       </aside>
 
       <section className={styles.mainColumn}>

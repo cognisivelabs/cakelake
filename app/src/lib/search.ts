@@ -35,6 +35,8 @@ export function getPriceBand(id: string): PriceBand | undefined {
 
 /** The menu's filter selections — an empty string means "no filter". */
 export type MenuFilters = {
+  /** Categories ticked on desktop — none (or omitted) means every category. */
+  categoryIds?: string[];
   query: string;
   priceBandId: string;
   flavourId: string;
@@ -42,9 +44,10 @@ export type MenuFilters = {
 };
 
 /** Whether an item passes every active menu filter (search text plus
- * price band, flavour tag and occasion). */
+ * category, price band, flavour tag and occasion). */
 export function itemMatchesFilters(item: CatalogItem, filters: MenuFilters): boolean {
   if (!itemMatchesQuery(item, filters.query)) return false;
+  if (filters.categoryIds?.length && !filters.categoryIds.includes(item.categoryId)) return false;
   if (filters.flavourId && !item.flavours?.includes(filters.flavourId)) return false;
   if (filters.occasionId && !item.occasions?.includes(filters.occasionId)) return false;
   if (filters.priceBandId) {

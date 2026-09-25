@@ -46,6 +46,10 @@ export function useMenuFilters() {
     flavourId: selection.flavourId,
     occasionId: selection.occasionId,
   };
+  // Desktop also narrows to the ticked categories, so its filter counts
+  // are for the cakes inside them ("Under AED 100" can't say 33 when only
+  // Classic is ticked). Mobile lists every category and uses `values`.
+  const desktopValues: MenuFilters = { ...values, categoryIds: selection.categoryIds };
 
   /** Takes the filters from the URL — unknown ids are ignored. */
   function applyParams(params: MenuUrlParams) {
@@ -99,6 +103,7 @@ export function useMenuFilters() {
     toggle,
     applyParams,
     groups: getFilterGroups(values),
+    desktopGroups: getFilterGroups(desktopValues),
     categoryGroup: getCategoryFilterGroup(selection.categoryIds, values),
     chips: getActiveFilterChips(values),
     anyFilterActive: Boolean(selection.priceBandId || selection.flavourId || selection.occasionId),

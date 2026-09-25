@@ -1,15 +1,7 @@
 "use client";
 
+import type { FilterGroup, FilterKey } from "@/lib/search";
 import styles from "./menu.module.css";
-
-export type FilterKey = "priceBandId" | "flavourId" | "occasionId";
-
-export type FilterGroup = {
-  key: FilterKey;
-  label: string;
-  selected: string;
-  options: { id: string; label: string; count: number }[];
-};
 
 // The menu's Price / Flavour / Occasion filters. Each group is single-
 // choice — ticking one option replaces the group's previous pick, and

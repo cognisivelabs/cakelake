@@ -1,269 +1,44 @@
 "use client";
 
-import { Suspense, useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
-import {
-  getCatalog,
-  categoryShortLabel,
-  getCategories,
-  getFlavourTag,
-  getFlavourTags,
-  getOccasion,
-  getOccasions,
-} from "@/lib/catalog";
-import { PRICE_BANDS, getPriceBand, itemMatchesFilters, type MenuFilters } from "@/lib/search";
-import { ItemCard } from "@/components/ItemCard";
-import { SearchIcon } from "@/components/Icons";
-import { buildWhatsAppUrl } from "@/lib/whatsapp";
-import { EXTERNAL_LINK_PROPS } from "@/lib/externalLink";
-import { ROUTES } from "@/lib/routes";
-import { ResponsiveHeader } from "@/components/ResponsiveHeader";
+import { Suspense, useState } from "react";
 import { Footer } from "@/components/Footer";
-import { FilterPanel, type FilterGroup, type FilterKey } from "./FilterPanel";
+import { ResponsiveHeader } from "@/components/ResponsiveHeader";
+import { getCatalog, getCategories } from "@/lib/catalog";
+import { ROUTES } from "@/lib/routes";
+import { itemMatchesFilters } from "@/lib/search";
+import { DesktopMenu } from "./DesktopMenu";
+import { MobileMenu } from "./MobileMenu";
+import { NoResults } from "./NoResults";
 import { UrlParamsSync, type MenuUrlParams } from "./UrlParamsSync";
+import { useMenuFilters } from "./useMenuFilters";
+import { useScrollSpy } from "./useScrollSpy";
 import styles from "./menu.module.css";
 
+// The menu: mobile is one long scroll of every category, desktop shows one
+// category at a time. Both are driven by the same search and filters, and
+// by the URL (?q= ?price= ?flavour= ?occasion= ?category=), so links from
+// Home, the header menus and item pages land on the right view.
 export default function MenuPage() {
-  const router = useRouter();
   const catalog = getCatalog();
   const categories = getCategories();
-  const [query, setQuery] = useState("");
-  // Set from the URL (?flavour= / ?occasion=), by Home's flavour and
-  // occasion tiles and the header menus — shown as removable chips.
-  const [flavourId, setFlavourId] = useState("");
-  const [occasionId, setOccasionId] = useState("");
-  const [priceBandId, setPriceBandId] = useState("");
-  // Desktop only, see docs/design/CLB-Hi-Fi-Screens.dc.html's "Menu —
-  // desktop" screen — a category rail + filter panel with no mobile
-  // equivalent (mobile lists every category in one scroll instead), so
-  // this state never touches the unchanged mobile render below.
-  const [selectedCategoryId, setSelectedCategoryId] = useState(
-    categories[0]?.id ?? "",
-  );
+  const filters = useMenuFilters();
+  const [selectedCategoryId, setSelectedCategoryId] = useState(categories[0]?.id ?? "");
+
+  const visibleCatalog = catalog.filter((item) => itemMatchesFilters(item, filters.values));
+  const visibleCategoryIds = categories
+    .filter((c) => visibleCatalog.some((item) => item.categoryId === c.id))
+    .map((c) => c.id);
+  const spy = useScrollSpy(visibleCategoryIds);
+
   function applyUrlParams(params: MenuUrlParams) {
-    // Only a ?q= replaces what's typed — a link without one (a category
-    // link, a filter change) shouldn't wipe the shopper's own search.
-    if (params.q) setQuery(params.q);
-    setPriceBandId(getPriceBand(params.price) ? params.price : "");
-    setFlavourId(getFlavourTag(params.flavour) ? params.flavour : "");
-    setOccasionId(getOccasion(params.occasion) ? params.occasion : "");
+    filters.applyParams(params);
     if (categories.some((c) => c.id === params.category)) {
       // Desktop shows one category at a time; mobile is one long scroll,
       // so jump to that category's section.
       setSelectedCategoryId(params.category);
-      document
-        .getElementById(params.category)
-        ?.scrollIntoView({ behavior: "instant" });
+      document.getElementById(params.category)?.scrollIntoView({ behavior: "instant" });
     }
   }
-
-  // Filter choices live in the URL too (?price= ?flavour= ?occasion=), so
-  // a filtered menu can be linked to and the back button undoes a change.
-  function setFilter(key: FilterKey, value: string) {
-    const next = { priceBandId, flavourId, occasionId, [key]: value };
-    setPriceBandId(next.priceBandId);
-    setFlavourId(next.flavourId);
-    setOccasionId(next.occasionId);
-    const params = new URLSearchParams();
-    if (next.priceBandId) params.set("price", next.priceBandId);
-    if (next.flavourId) params.set("flavour", next.flavourId);
-    if (next.occasionId) params.set("occasion", next.occasionId);
-    const qs = params.toString();
-    router.replace(qs ? `${ROUTES.menu}?${qs}` : ROUTES.menu, { scroll: false });
-  }
-
-  const currentFilters: MenuFilters = { query, priceBandId, flavourId, occasionId };
-  const anyFilterActive = Boolean(priceBandId || flavourId || occasionId);
-
-  // How many cakes each option would show, given every *other* filter.
-  const countWith = (key: FilterKey, id: string) =>
-    catalog.filter((item) => itemMatchesFilters(item, { ...currentFilters, [key]: id })).length;
-  const filterGroups: FilterGroup[] = [
-    {
-      key: "priceBandId",
-      label: "PRICE",
-      selected: priceBandId,
-      options: PRICE_BANDS.map((b) => ({ id: b.id, label: b.label, count: countWith("priceBandId", b.id) })),
-    },
-    {
-      key: "flavourId",
-      label: "FLAVOUR",
-      selected: flavourId,
-      options: getFlavourTags().map((t) => ({ id: t.id, label: t.label, count: countWith("flavourId", t.id) })),
-    },
-    {
-      key: "occasionId",
-      label: "OCCASION",
-      selected: occasionId,
-      options: getOccasions().map((o) => ({ id: o.id, label: o.label, count: countWith("occasionId", o.id) })),
-    },
-  ];
-
-  const activeFilterChips: { key: FilterKey; label: string }[] = [];
-  if (priceBandId) {
-    activeFilterChips.push({ key: "priceBandId", label: `Price: ${getPriceBand(priceBandId)?.label ?? priceBandId}` });
-  }
-  if (flavourId) {
-    activeFilterChips.push({ key: "flavourId", label: `Flavour: ${getFlavourTag(flavourId)?.label ?? flavourId}` });
-  }
-  if (occasionId) {
-    activeFilterChips.push({ key: "occasionId", label: `Occasion: ${getOccasion(occasionId)?.label ?? occasionId}` });
-  }
-  const activeFilters =
-    activeFilterChips.length > 0 ? (
-      <div className={styles.activeFilters}>
-        {activeFilterChips.map((chip) => (
-          <button
-            key={chip.key}
-            type="button"
-            className={styles.activeFilter}
-            onClick={() => setFilter(chip.key, "")}
-            aria-label={`Remove filter ${chip.label}`}
-          >
-            {chip.label} <span aria-hidden="true">×</span>
-          </button>
-        ))}
-      </div>
-    ) : null;
-
-  // Item detail's category breadcrumb links to /menu#<categoryId> — pre-
-  // select that category here (desktop) once mounted; mobile just
-  // scrolls to the matching section anchor natively. Read in an effect,
-  // not initial state, since the server render has no hash to match.
-  useEffect(() => {
-    function selectFromHash() {
-      const id = window.location.hash.slice(1);
-      if (categories.some((c) => c.id === id)) setSelectedCategoryId(id);
-    }
-    selectFromHash();
-    // The prerendered anchor jump doesn't reliably survive hydration on
-    // mobile's long scroll — redo it once now that the sections exist
-    // (a no-op on desktop, where the mobile sections are display: none).
-    document
-      .getElementById(window.location.hash.slice(1))
-      ?.scrollIntoView({ behavior: "instant" });
-    window.addEventListener("hashchange", selectFromHash);
-    return () => window.removeEventListener("hashchange", selectFromHash);
-    // categories is a module-level constant (getCategories()), so this
-    // only needs to run once per mount.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-  const visibleCatalog = catalog.filter((item) => itemMatchesFilters(item, currentFilters));
-  const hasResults = visibleCatalog.length > 0;
-  // Mobile's sticky category rail (below) only lists categories that
-  // actually have something to jump to right now — same "skip if empty"
-  // rule the category sections themselves already use.
-  const visibleCategories = categories.filter((category) =>
-    visibleCatalog.some((item) => item.categoryId === category.id),
-  );
-  const visibleCategoryIds = visibleCategories.map((c) => c.id).join(",");
-
-  // Mobile only — see docs/design/CLB Menu Recategorised.dc.html's "1a"
-  // (chosen): a sticky horizontal chip rail for quick-jump navigation
-  // within the one long scroll (not a filter — that's desktop's rail,
-  // above). Tracks which section is currently in view so the matching
-  // chip highlights, the same way a scroll-spy nav does.
-  const [activeCategoryId, setActiveCategoryId] = useState(
-    visibleCategories[0]?.id ?? "",
-  );
-  const sectionRefs = useRef(new Map<string, HTMLElement>());
-  const chipRefs = useRef(new Map<string, HTMLAnchorElement>());
-
-  // Keeps the highlighted chip inside the horizontally-scrolling strip —
-  // otherwise a category several screens down highlights a chip that's
-  // scrolled off to the right, out of view in its own row.
-  useEffect(() => {
-    chipRefs.current.get(activeCategoryId)?.scrollIntoView({
-      behavior: "smooth",
-      inline: "center",
-      block: "nearest",
-    });
-  }, [activeCategoryId]);
-
-  // One scroll listener, one straightforward rule — a position scan,
-  // not IntersectionObserver's shrunk-viewport zone test. That approach
-  // (tried first) used a second, independent listener just to patch the
-  // case where a short last category could never scroll far enough to
-  // register as "intersecting" its own trigger zone — but a second
-  // listener races the first: whichever one's callback happens to run
-  // last on a given scroll event wins, so the patch could get silently
-  // overwritten right back to the wrong value. A single source of truth
-  // avoids that entirely, and turns out simpler regardless: the current
-  // category is just whichever section's heading has scrolled the
-  // furthest up past the trigger line without going past it entirely.
-  useEffect(() => {
-    const TRIGGER_LINE = 110; // px from viewport top, just under the sticky rail
-
-    function updateActiveCategory() {
-      const atBottom =
-        window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4;
-      const last = visibleCategories[visibleCategories.length - 1];
-      if (atBottom && last) {
-        setActiveCategoryId(last.id);
-        return;
-      }
-
-      let bestId: string | undefined;
-      let bestTop = -Infinity;
-      sectionRefs.current.forEach((el, id) => {
-        const top = el.getBoundingClientRect().top;
-        if (top <= TRIGGER_LINE && top > bestTop) {
-          bestTop = top;
-          bestId = id;
-        }
-      });
-      // Above the very first section (e.g. right at page top) — nothing
-      // has crossed the trigger line yet, so default to the first one.
-      setActiveCategoryId(bestId ?? visibleCategories[0]?.id ?? "");
-    }
-
-    window.addEventListener("scroll", updateActiveCategory, { passive: true });
-    updateActiveCategory();
-    return () => window.removeEventListener("scroll", updateActiveCategory);
-    // visibleCategoryIds is a stable stand-in for visibleCategories'
-    // contents (same array, joined into one string) — re-running this
-    // per that string's actual changes, not the array's reference
-    // identity, avoids tearing the scroll listener down and rebuilding
-    // it on every render for no reason.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [visibleCategoryIds]);
-
-  // A search or flavour/occasion filter can leave the picked category
-  // empty while others match — show the first category that has results
-  // instead of a bare "nothing here", and let the rail counts point the
-  // shopper at the rest.
-  const desktopCategoryId = visibleCategories.some((c) => c.id === selectedCategoryId)
-    ? selectedCategoryId
-    : (visibleCategories[0]?.id ?? selectedCategoryId);
-  const selectedCategory = categories.find((c) => c.id === desktopCategoryId);
-  const desktopItems = visibleCatalog.filter((item) => item.categoryId === desktopCategoryId);
-
-  // Desktop — see docs/design/CLB-Hi-Fi-Screens.dc.html's "Menu — desktop"
-  // screen: the search field now sits at the top of the main column
-  // (above the category heading), not in the header — the header keeps
-  // just the cart icon, same as every other desktop header.
-  const desktopSearchBar = (
-    <div className={styles.desktopSearchField} data-active={query.length > 0}>
-      <SearchIcon size={17} className={styles.desktopSearchIcon} />
-      <input
-        type="text"
-        className={`${styles.desktopSearchInput} no-focus-ring`}
-        value={query}
-        onChange={(e) => setQuery(e.target.value)}
-        placeholder="Search cakes…"
-      />
-      {query && (
-        <button
-          type="button"
-          className={styles.desktopClearButton}
-          onClick={() => setQuery("")}
-          aria-label="Clear search"
-        >
-          ×
-        </button>
-      )}
-    </div>
-  );
 
   return (
     <div className={styles.page}>
@@ -271,228 +46,19 @@ export default function MenuPage() {
         <UrlParamsSync onParams={applyUrlParams} />
       </Suspense>
       {/* Mobile keeps the back-link header; desktop gets the shared nav
-          header with just the cart icon, same as every other desktop
-          header — the search field lives in the main column instead
-          (see desktopSearchBar below). */}
+          header — its search field lives in the main column instead. */}
       <ResponsiveHeader title="Menu" backHref={ROUTES.home} backLabel="BACK" />
 
       <div className={styles.body}>
-        <div className={styles.mobileOnly}>
-          <div className={styles.intro}>
-            <p>
-              We only take cake orders through the website — for anything else
-              (cupcakes, cookies, pastries), message us on WhatsApp directly.
-            </p>
-          </div>
-
-          <div className={styles.searchRow}>
-            <div className={styles.searchField}>
-              <input
-                type="text"
-                className={`${styles.searchInput} no-focus-ring`}
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search items…"
-              />
-              {query && (
-                <button
-                  type="button"
-                  className={styles.clearButton}
-                  onClick={() => setQuery("")}
-                  aria-label="Clear search"
-                >
-                  ×
-                </button>
-              )}
-            </div>
-          </div>
-
-          <details className={styles.mobileFilters}>
-            <summary>
-              Filters{activeFilterChips.length > 0 ? ` (${activeFilterChips.length})` : ""}
-            </summary>
-            <FilterPanel groups={filterGroups} onChange={setFilter} />
-          </details>
-          {activeFilters}
-
-          {hasResults && (
-            <div className={styles.railChips}>
-              <div className={styles.railChipsScroll}>
-                {visibleCategories.map((category) => {
-                  const active = category.id === activeCategoryId;
-                  return (
-                    <a
-                      key={category.id}
-                      href={`#${category.id}`}
-                      ref={(el) => {
-                        if (el) chipRefs.current.set(category.id, el);
-                        else chipRefs.current.delete(category.id);
-                      }}
-                      className={styles.railChip}
-                      style={
-                        active
-                          ? { background: category.accent, borderColor: category.accent, color: "#fff" }
-                          : undefined
-                      }
-                    >
-                      {categoryShortLabel(category)}
-                    </a>
-                  );
-                })}
-              </div>
-              <p className={styles.railChipsHint}>
-                ← {visibleCategories.length} categories, scrolls sideways
-              </p>
-            </div>
-          )}
-
-          {categories.map((category) => {
-            const items = visibleCatalog.filter(
-              (item) => item.categoryId === category.id,
-            );
-            if (items.length === 0) return null;
-            return (
-              <section
-                key={category.id}
-                id={category.id}
-                ref={(el) => {
-                  if (el) sectionRefs.current.set(category.id, el);
-                  else sectionRefs.current.delete(category.id);
-                }}
-                className={styles.section}
-              >
-                <h2
-                  className={styles.categoryHeading}
-                  style={{
-                    borderColor: category.accent,
-                    color: category.accent,
-                  }}
-                >
-                  {category.label}
-                  <span className={styles.count}>{items.length} ranges</span>
-                </h2>
-                <div className={styles.grid}>
-                  {items.map((item) => (
-                    <ItemCard key={item.id} item={item} />
-                  ))}
-                </div>
-              </section>
-            );
-          })}
-        </div>
-
-        {!hasResults && (
-          <div className={styles.noResults}>
-            <div className={styles.noResultsTitle}>No {query.trim()} — yet</div>
-            <p className={styles.noResultsText}>
-              We bake to order, so if you want it, ask. We take on custom bakes
-              most weeks.
-            </p>
-            <a
-              href={buildWhatsAppUrl()}
-              {...EXTERNAL_LINK_PROPS}
-              className={styles.askButton}
-            >
-              ASK US ABOUT {query.trim().toUpperCase()}
-            </a>
-          </div>
-        )}
-
-        {/* Desktop — see docs/design/CLB-Hi-Fi-Screens.dc.html's "Menu —
-            desktop" and "Search, no results — desktop" screens: the rail
-            stays in place even with no search results, so a search that
-            comes up empty doesn't strand the shopper on a bare page —
-            only the main column's content swaps to the no-results
-            card. */}
-        <div className={styles.desktopLayout}>
-          <aside className={styles.rail}>
-            <div className={`${styles.railLabel} mono-tag`}>CATEGORIES</div>
-            <div className={styles.railList}>
-              {categories.map((category) => {
-                const count = visibleCatalog.filter(
-                  (item) => item.categoryId === category.id,
-                ).length;
-                const selected = category.id === desktopCategoryId;
-                return (
-                  <button
-                    key={category.id}
-                    type="button"
-                    className={styles.railItem}
-                    style={
-                      selected
-                        ? { background: category.accent, color: "#fff" }
-                        : undefined
-                    }
-                    onClick={() => setSelectedCategoryId(category.id)}
-                  >
-                    <span>{category.label}</span>
-                    <span className={styles.railCount}>{count}</span>
-                  </button>
-                );
-              })}
-            </div>
-
-            <FilterPanel groups={filterGroups} onChange={setFilter} />
-          </aside>
-
-          <section className={styles.mainColumn}>
-            {desktopSearchBar}
-            {activeFilters}
-
-            {hasResults ? (
-              <>
-                {selectedCategory && (
-                  <h2
-                    className={styles.desktopCategoryHeading}
-                    style={{
-                      borderColor: selectedCategory.accent,
-                      color: selectedCategory.accent,
-                    }}
-                  >
-                    {selectedCategory.label}
-                    <span className={styles.count}>
-                      {desktopItems.length} ranges
-                    </span>
-                  </h2>
-                )}
-                {desktopItems.length === 0 ? (
-                  <p className={styles.desktopEmpty}>
-                    Nothing here{anyFilterActive ? " with these filters" : ""} —
-                    try{" "}
-                    {anyFilterActive ? "clearing a filter" : "another category"}
-                    .
-                  </p>
-                ) : (
-                  <div className={styles.desktopGrid}>
-                    {desktopItems.map((item) => (
-                      <ItemCard key={item.id} item={item} />
-                    ))}
-                  </div>
-                )}
-              </>
-            ) : (
-              <div className={styles.desktopNoResults}>
-                <div className={styles.desktopNoResultsText}>
-                  <div className={styles.desktopNoResultsTitle}>
-                    No {query.trim()} — yet
-                  </div>
-                  <p>
-                    Nothing in the menu matches that. We bake to order though,
-                    so if you want it, ask — we take on custom bakes most weeks.
-                  </p>
-                </div>
-                <a
-                  href={buildWhatsAppUrl()}
-                  {...EXTERNAL_LINK_PROPS}
-                  className={styles.desktopNoResultsAsk}
-                >
-                  ASK US ABOUT {query.trim().toUpperCase()}
-                </a>
-              </div>
-            )}
-          </section>
-        </div>
-
+        <MobileMenu filters={filters} categories={categories} visibleCatalog={visibleCatalog} spy={spy} />
+        {visibleCatalog.length === 0 && <NoResults variant="mobile" query={filters.values.query} />}
+        <DesktopMenu
+          filters={filters}
+          categories={categories}
+          visibleCatalog={visibleCatalog}
+          selectedCategoryId={selectedCategoryId}
+          onSelectCategory={setSelectedCategoryId}
+        />
         <Footer />
       </div>
     </div>

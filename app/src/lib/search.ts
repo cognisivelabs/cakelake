@@ -1,5 +1,5 @@
 import type { CatalogItem } from "@/types/catalog";
-import { getCategory, getFlavourTag } from "@/lib/catalog";
+import { getCatalog, getCategory, getFlavourTag, getFlavourTags, getOccasion, getOccasions } from "@/lib/catalog";
 import { cheapestPrice } from "@/lib/pricing";
 
 /**
@@ -53,4 +53,43 @@ export function itemMatchesFilters(item: CatalogItem, filters: MenuFilters): boo
     if (band && (price === undefined || !band.includes(price))) return false;
   }
   return true;
+}
+
+export type FilterKey = "priceBandId" | "flavourId" | "occasionId";
+
+/** One group of choices in the filter panel, with how many cakes each
+ * choice would leave (given every *other* filter already set). */
+export type FilterGroup = {
+  key: FilterKey;
+  label: string;
+  selected: string;
+  options: { id: string; label: string; count: number }[];
+};
+
+/** The Price / Flavour / Occasion groups for the filter panel. */
+export function getFilterGroups(filters: MenuFilters, catalog: CatalogItem[] = getCatalog()): FilterGroup[] {
+  const countWith = (key: FilterKey, id: string) =>
+    catalog.filter((item) => itemMatchesFilters(item, { ...filters, [key]: id })).length;
+  const options = (key: FilterKey, list: { id: string; label: string }[]) =>
+    list.map(({ id, label }) => ({ id, label, count: countWith(key, id) }));
+  return [
+    { key: "priceBandId", label: "PRICE", selected: filters.priceBandId, options: options("priceBandId", PRICE_BANDS) },
+    { key: "flavourId", label: "FLAVOUR", selected: filters.flavourId, options: options("flavourId", getFlavourTags()) },
+    { key: "occasionId", label: "OCCASION", selected: filters.occasionId, options: options("occasionId", getOccasions()) },
+  ];
+}
+
+/** A removable "Price: Under AED 100" style chip for each active filter. */
+export function getActiveFilterChips(filters: MenuFilters): { key: FilterKey; label: string }[] {
+  const chips: { key: FilterKey; label: string }[] = [];
+  if (filters.priceBandId) {
+    chips.push({ key: "priceBandId", label: `Price: ${getPriceBand(filters.priceBandId)?.label ?? filters.priceBandId}` });
+  }
+  if (filters.flavourId) {
+    chips.push({ key: "flavourId", label: `Flavour: ${getFlavourTag(filters.flavourId)?.label ?? filters.flavourId}` });
+  }
+  if (filters.occasionId) {
+    chips.push({ key: "occasionId", label: `Occasion: ${getOccasion(filters.occasionId)?.label ?? filters.occasionId}` });
+  }
+  return chips;
 }

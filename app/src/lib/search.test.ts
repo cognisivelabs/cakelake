@@ -1,6 +1,13 @@
 import { describe, expect, it } from "vitest";
 import { getCatalog, getItemById } from "@/lib/catalog";
-import { PRICE_BANDS, getPriceBand, itemMatchesFilters, itemMatchesQuery } from "@/lib/search";
+import {
+  PRICE_BANDS,
+  getActiveFilterChips,
+  getFilterGroups,
+  getPriceBand,
+  itemMatchesFilters,
+  itemMatchesQuery,
+} from "@/lib/search";
 
 const item = (id: string) => {
   const found = getItemById(id);
@@ -69,5 +76,42 @@ describe("itemMatchesFilters", () => {
     expect(itemMatchesFilters(item("exotic-premium-cakes-lotus-biscoff"), filters)).toBe(true);
     expect(itemMatchesFilters(item("cheesecakes-lotus-biscoff"), filters)).toBe(true);
     expect(itemMatchesFilters(item("pull-me-up-cakes-biscoff"), filters)).toBe(false);
+  });
+});
+
+describe("getFilterGroups", () => {
+  it("offers price, flavour and occasion, and marks the current pick", () => {
+    const groups = getFilterGroups({ ...none, flavourId: "biscoff" });
+    expect(groups.map((g) => g.key)).toEqual(["priceBandId", "flavourId", "occasionId"]);
+    expect(groups.find((g) => g.key === "flavourId")?.selected).toBe("biscoff");
+  });
+
+  it("counts each option against every other filter, not its own group's", () => {
+    const groups = getFilterGroups({ ...none, flavourId: "biscoff" });
+    const flavour = groups.find((g) => g.key === "flavourId")!;
+    // Other flavours stay countable while one is picked (the group is single-choice).
+    expect(flavour.options.find((o) => o.id === "red-velvet")?.count).toBe(2);
+    // Price is narrowed to Biscoff cakes: two under AED 100, one over 150.
+    const price = groups.find((g) => g.key === "priceBandId")!;
+    expect(price.options.map((o) => o.count)).toEqual([2, 0, 1]);
+  });
+
+  it("splits the whole menu across the price bands when nothing is picked", () => {
+    const price = getFilterGroups(none).find((g) => g.key === "priceBandId")!;
+    expect(price.options.reduce((sum, o) => sum + o.count, 0)).toBe(getCatalog().length);
+  });
+});
+
+describe("getActiveFilterChips", () => {
+  it("has no chips without filters", () => {
+    expect(getActiveFilterChips(none)).toEqual([]);
+  });
+
+  it("labels each active filter, in price / flavour / occasion order", () => {
+    expect(getActiveFilterChips({ query: "x", priceBandId: "under-100", flavourId: "biscoff", occasionId: "birthday" })).toEqual([
+      { key: "priceBandId", label: "Price: Under AED 100" },
+      { key: "flavourId", label: "Flavour: Biscoff" },
+      { key: "occasionId", label: "Occasion: Birthday" },
+    ]);
   });
 });

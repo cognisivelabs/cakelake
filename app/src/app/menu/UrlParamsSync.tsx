@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useEffectEvent } from "react";
 import { useSearchParams } from "next/navigation";
 
 export type MenuUrlParams = {
@@ -20,23 +20,19 @@ export type MenuUrlParams = {
  */
 export function UrlParamsSync({ onParams }: { onParams: (params: MenuUrlParams) => void }) {
   const searchParams = useSearchParams();
-  const onParamsRef = useRef(onParams);
-  useEffect(() => {
-    onParamsRef.current = onParams;
-  });
-
-  const key = searchParams.toString();
-  useEffect(() => {
-    onParamsRef.current({
+  const report = useEffectEvent(() =>
+    onParams({
       q: searchParams.get("q") ?? "",
       flavour: searchParams.get("flavour") ?? "",
       occasion: searchParams.get("occasion") ?? "",
       price: searchParams.get("price") ?? "",
       category: searchParams.get("category") ?? "",
-    });
-    // key is searchParams' contents — re-run per its actual changes.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [key]);
+    }),
+  );
+
+  // Re-report per the params' actual contents, not the object's identity.
+  const key = searchParams.toString();
+  useEffect(() => report(), [key]);
 
   return null;
 }

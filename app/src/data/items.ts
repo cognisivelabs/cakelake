@@ -106,6 +106,7 @@ export const BASE_CATALOG: CatalogItem[] = [
       {
         label: "Dark Chocolate Truffle",
         description: "Love dark chocolate? This luxurious, ganache based cake is for you.",
+        imageUrl: "/images/premium-dark-chocolate-truffle.jpg",
       },
       {
         label: "Milk Chocolate Truffle",

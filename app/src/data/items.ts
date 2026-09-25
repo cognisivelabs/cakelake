@@ -267,7 +267,7 @@ export const BASE_CATALOG: CatalogItem[] = [
     24,
     [
       { label: "Oreo", imageUrl: "/images/cheesecake-oreo.jpg" },
-      "Strawberry",
+      { label: "Strawberry", imageUrl: "/images/cheesecake-strawberry.jpg" },
       { label: "Blueberry", imageUrl: "/images/cheesecake-blueberry.jpg" },
       { label: "Lotus Biscoff", imageUrl: "/images/cheesecake-lotus-biscoff.jpg" },
       { label: "New York", imageUrl: "/images/cheesecake-new-york.jpg" },

@@ -181,6 +181,7 @@ export const BASE_CATALOG: CatalogItem[] = [
         label: "White Chocolate Coconut",
         description:
           "Layered with white chocolate ganache and coconut flakes, garnished with white chocolate coconut truffle balls.",
+        imageUrl: "/images/exotic-white-chocolate-coconut.jpg",
       },
       {
         label: "Cafe Latte",

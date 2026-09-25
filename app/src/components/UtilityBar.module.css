@@ -3,14 +3,14 @@
   align-items: center;
   gap: 8px;
   padding: 7px 16px;
-  background: var(--color-ink);
+  background: var(--color-utility-bg);
   font-size: 0.72rem;
 }
 
 .place,
 .phone {
   font-weight: 700;
-  color: var(--color-accent);
+  color: var(--color-utility-strong);
   text-decoration: none;
   white-space: nowrap;
 }
@@ -23,12 +23,12 @@
 .divider {
   width: 1px;
   height: 11px;
-  background: #6d4f47;
+  background: var(--color-utility-divider);
   flex: none;
 }
 
 .tag {
-  color: #e8dcc6;
+  color: var(--color-utility-ink);
   white-space: nowrap;
 }
 

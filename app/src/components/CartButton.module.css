@@ -6,11 +6,11 @@
   align-items: center;
   justify-content: center;
   position: relative;
-  color: var(--color-ink);
+  color: var(--color-header-ink);
 }
 
 .button[data-empty="true"] {
-  color: rgba(79, 53, 47, 0.45);
+  opacity: 0.45;
 }
 
 .glyph {
@@ -27,7 +27,7 @@
   box-sizing: border-box;
   border-radius: 9px;
   background: var(--color-pink);
-  border: 2px solid var(--color-accent);
+  border: 2px solid var(--color-header-bg);
   display: flex;
   align-items: center;
   justify-content: center;

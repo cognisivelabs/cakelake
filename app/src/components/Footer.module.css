@@ -1,7 +1,8 @@
 .footer {
   margin-top: 24px;
-  background: var(--color-ink);
-  color: #e8dcc6;
+  background: var(--color-footer-bg);
+  border-top: 1px solid var(--color-footer-rule);
+  color: var(--color-footer-ink);
 }
 
 .brand {
@@ -9,31 +10,31 @@
   font-weight: 800;
   font-size: 1.12rem;
   letter-spacing: -0.02em;
-  color: var(--color-accent);
+  color: var(--color-footer-strong);
 }
 
 .text {
   margin: 0;
   font-size: 0.75rem;
   line-height: 1.7;
-  color: #c9b9a2;
+  color: var(--color-footer-muted);
 }
 
 .muted {
-  color: #b7a68c;
+  color: var(--color-footer-muted);
 }
 
 .smallNote {
   margin: 0;
   font-size: 0.72rem;
   line-height: 1.6;
-  color: #c9b9a2;
+  color: var(--color-footer-muted);
 }
 
 .payment {
   align-self: flex-start;
-  background: var(--color-warn-bg);
-  color: #6b5a42;
+  background: var(--color-ready-bg);
+  color: var(--color-ready-ink);
   border-radius: 6px;
   padding: 8px 11px;
   font-weight: 700;
@@ -42,12 +43,12 @@
 }
 
 .link {
-  color: #e8dcc6;
+  color: var(--color-footer-ink);
   text-decoration: none;
 }
 
 .link:hover {
-  color: var(--color-accent);
+  color: var(--color-footer-strong);
 }
 
 .linkList {
@@ -55,7 +56,7 @@
   flex-direction: column;
   gap: 7px;
   font-size: 0.78rem;
-  color: #e8dcc6;
+  color: var(--color-footer-ink);
 }
 
 /* — Mobile — */
@@ -72,14 +73,14 @@
 }
 
 .accordion {
-  border-top: 1px solid #6d4f47;
+  border-top: 1px solid var(--color-footer-rule);
   padding: 13px 0;
   display: flex;
   flex-direction: column;
 }
 
 .accordion:last-child {
-  border-bottom: 1px solid #6d4f47;
+  border-bottom: 1px solid var(--color-footer-rule);
 }
 
 .accordion summary {
@@ -89,7 +90,7 @@
   cursor: pointer;
   font-weight: 700;
   font-size: 0.82rem;
-  color: #e8dcc6;
+  color: var(--color-footer-ink);
 }
 
 .accordion summary::-webkit-details-marker {
@@ -100,11 +101,11 @@
   content: "+";
   margin-left: auto;
   font-weight: 400;
-  color: #c9b9a2;
+  color: var(--color-footer-muted);
 }
 
 .accordion[open] summary {
-  color: var(--color-accent);
+  color: var(--color-footer-strong);
   margin-bottom: 9px;
 }
 
@@ -160,17 +161,17 @@
 
   .text {
     font-size: 0.8125rem;
-    color: #e8dcc6;
+    color: var(--color-footer-ink);
   }
 
   .muted {
-    color: #b7a68c;
+    color: var(--color-footer-muted);
   }
 
   .phones {
     font-weight: 700;
     font-size: 0.8125rem;
-    color: var(--color-accent);
+    color: var(--color-footer-strong);
     margin-top: 4px;
   }
 
@@ -184,7 +185,7 @@
   .columnLabel {
     font-size: 0.6875rem !important;
     letter-spacing: 0.1em;
-    color: #c9b9a2;
+    color: var(--color-footer-muted);
   }
 
   .linkList {
@@ -194,7 +195,7 @@
 
   .rule {
     height: 1px;
-    background: #6d4f47;
+    background: var(--color-footer-rule);
   }
 
   .bottomRow {
@@ -204,7 +205,7 @@
   }
 
   .bottomRow .text {
-    color: #c9b9a2;
+    color: var(--color-footer-muted);
     font-size: 0.75rem;
   }
 

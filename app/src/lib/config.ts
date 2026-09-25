@@ -1,3 +1,4 @@
+import type { ThemeId } from "@/theme/themes";
 /**
  * Real values confirmed by the client, except where noted. Kept in one
  * place so changes are a one-line edit, not a hunt through the codebase.
@@ -59,14 +60,13 @@ export const CONFIG = {
   ],
   currency: "AED",
   /**
-   * PWA brand colours — must match `--color-accent`/`--color-bg` in
-   * globals.css (CSS custom properties can't read from this file, so
-   * that match has to be kept by hand), and are otherwise the single
-   * source for the manifest's theme/background colour and the root
-   * layout's viewport theme-color meta tag.
+   * The colour theme — the site's whole skin. Change this one value to
+   * re-skin every page, the browser's theme colour and the PWA manifest.
+   * The options (and how to add one) live in theme/themes.ts:
+   *   "strawberry-cream" · "balanced-yellow" · "pistachio-cream" ·
+   *   "vanilla-lilac" · "candy-white" · "blush-gold"
    */
-  themeColor: "#EFD400",
-  backgroundColor: "#FBF4E4",
+  theme: "strawberry-cream" as ThemeId,
   /** Same-day items are all "ready in an hour" — feeds the cart's "ready
    * by" estimate. Independent of each catalog item's own readyLabel
    * copy, which the client may phrase differently later. */

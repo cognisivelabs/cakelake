@@ -4,6 +4,7 @@ import Script from "next/script";
 import { CartProvider } from "@/context/CartContext";
 import { ServiceWorkerRegister } from "@/components/ServiceWorkerRegister";
 import { CONFIG } from "@/lib/config";
+import { getActiveTheme, getActiveThemeCss, getThemeColor } from "@/theme";
 import { INSTALL_PROMPT_EVENT, APP_INSTALLED_EVENT } from "@/lib/installEvents";
 import { withBasePath } from "@/lib/assets";
 import { SITE_NAME, DEFAULT_DESCRIPTION, DEFAULT_OG_IMAGE } from "@/lib/og";
@@ -38,12 +39,16 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: CONFIG.themeColor,
+  themeColor: getThemeColor(),
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="en" data-theme={getActiveTheme().id}>
+      <head>
+        {/* The active colour theme (CONFIG.theme) as CSS custom properties. */}
+        <style id="theme" dangerouslySetInnerHTML={{ __html: getActiveThemeCss() }} />
+      </head>
       <body>
         {/* Android can fire beforeinstallprompt before React hydrates, and
             a missed event can't be replayed later — this has to run ahead

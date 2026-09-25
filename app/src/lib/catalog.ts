@@ -24,23 +24,23 @@ import { CONFIG } from "@/lib/config";
  */
 
 const CATEGORIES: Category[] = [
-  { id: "classic-cakes", label: "Classic Cakes", accent: "#CD346F" },
-  { id: "premium-cakes", label: "Premium Cakes", accent: "#CD346F" },
-  { id: "exotic-cakes", label: "Exotic Cakes", accent: "#CD346F" },
-  { id: "exotic-premium-cakes", label: "Exotic Premium Cakes", accent: "#CD346F" },
-  { id: "cheesecakes", label: "Cheesecakes", accent: "#CD346F" },
-  { id: "indian-cakes", label: "Flavourful Indian Cakes", accent: "#CD346F" },
-  { id: "photo-cakes", label: "Photo Cakes", accent: "#CD346F" },
+  { id: "classic-cakes", label: "Classic Cakes", accent: "var(--color-pink)", tint: "var(--color-pink-bg)" },
+  { id: "premium-cakes", label: "Premium Cakes", accent: "var(--color-pink)", tint: "var(--color-pink-bg)" },
+  { id: "exotic-cakes", label: "Exotic Cakes", accent: "var(--color-pink)", tint: "var(--color-pink-bg)" },
+  { id: "exotic-premium-cakes", label: "Exotic Premium Cakes", accent: "var(--color-pink)", tint: "var(--color-pink-bg)" },
+  { id: "cheesecakes", label: "Cheesecakes", accent: "var(--color-pink)", tint: "var(--color-pink-bg)" },
+  { id: "indian-cakes", label: "Flavourful Indian Cakes", accent: "var(--color-pink)", tint: "var(--color-pink-bg)" },
+  { id: "photo-cakes", label: "Photo Cakes", accent: "var(--color-pink)", tint: "var(--color-pink-bg)" },
   // The one category that keeps a distinct colour — a from-scratch
   // design brief, not a menu flavour, so it reads as the odd one out.
-  { id: "3d-cakes", label: "3D Cakes", accent: "#91134B" },
-  { id: "pull-me-up-cakes", label: "Pull Me Up Cakes", accent: "#CD346F" },
-  { id: "hammer-cakes", label: "Hammer Cakes", accent: "#CD346F" },
-  { id: "pinata-cakes", label: "Pinata Cakes", accent: "#CD346F" },
+  { id: "3d-cakes", label: "3D Cakes", accent: "var(--color-berry)", tint: "var(--color-berry-bg)" },
+  { id: "pull-me-up-cakes", label: "Pull Me Up Cakes", accent: "var(--color-pink)", tint: "var(--color-pink-bg)" },
+  { id: "hammer-cakes", label: "Hammer Cakes", accent: "var(--color-pink)", tint: "var(--color-pink-bg)" },
+  { id: "pinata-cakes", label: "Pinata Cakes", accent: "var(--color-pink)", tint: "var(--color-pink-bg)" },
   // Seasonal — client-confirmed as coming, but flavours/prices aren't
   // set yet, so not shipped until there's real content to show.
-  // { id: "halloween-cakes", label: "Halloween Cakes", accent: "#CD346F" },
-  // { id: "valentine-cakes", label: "Valentine Cakes", accent: "#CD346F" },
+  // { id: "halloween-cakes", label: "Halloween Cakes", accent: "var(--color-pink)", tint: "var(--color-pink-bg)" },
+  // { id: "valentine-cakes", label: "Valentine Cakes", accent: "var(--color-pink)", tint: "var(--color-pink-bg)" },
 ];
 
 type ItemEntry = string | { label: string; description?: string; imageUrl?: string };

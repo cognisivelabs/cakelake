@@ -1,44 +1,9 @@
 @import url("https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=DM+Sans:wght@400;700;800&display=swap");
 
 :root {
-  --color-bg: #fbf4e4;
-  --color-surface: #ffffff;
-  --color-surface-muted: #f6efe0;
-  --color-surface-alt: #f3ecdc;
-  --color-photo-bg: #f3e7cf;
-  --color-border: #ece0c8;
-  --color-border-strong: #e6d8bd;
-  --color-placeholder-border: #cbb89a;
-
-  --color-ink: #4f352f;
-  --color-ink-muted: #7b6049;
-  --color-ink-faint: #a89a88;
-
-  --color-accent: #efd400; /* primary action colour (yellow) */
-  --color-accent-shadow: #c9b400;
-  --color-accent-ink: #4f352f; /* text on the accent colour */
-
-  --color-pink: #cd346f;
-  --color-pink-bg: #fce8ef;
-  --color-berry: #91134b;
-  --color-berry-bg: #f7e4ec;
-
-  --color-teal: #228883; /* WhatsApp / communication actions */
-  --color-teal-bg: #e2f5f4;
-  --color-teal-2: #2eb4b0;
-
-  --color-warn-bg: #fdf6d9;
-  --color-warn-ink: #8a7038;
-
-  --color-unavailable-bg: #7b6049;
-
-  /* Home's "LIVE BAKERY" badge — distinct from --color-warn-*
-     (a yellow caution tone) above, so keep the names distinguishable. */
-  --color-badge-warm-bg: #fdeae3;
-  --color-badge-warm-ink: #c33a0c;
-
-  --color-danger: #a33; /* "Remove" and other destructive actions */
-
+  /* Colours are not defined here: they come from the active theme
+     (CONFIG.theme → theme/themes.ts), which the root layout inlines as
+     `:root { --color-… }`. Only non-colour tokens live in this file. */
   --font-heading: "Bricolage Grotesque", system-ui, sans-serif;
   --font-body: "DM Sans", system-ui, sans-serif;
   --font-mono: ui-monospace, Menlo, monospace;

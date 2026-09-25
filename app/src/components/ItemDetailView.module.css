@@ -179,7 +179,7 @@
 
 .weightOption[data-selected="true"] {
   background: var(--color-accent);
-  color: var(--color-ink);
+  color: var(--color-accent-ink);
   font-weight: 800;
 }
 
@@ -276,7 +276,7 @@
 .addButton {
   flex: 1;
   background: var(--color-accent);
-  color: var(--color-ink);
+  color: var(--color-accent-ink);
   border: none;
   border-radius: var(--radius-md);
   padding: 14px;
@@ -356,7 +356,7 @@
   justify-content: center;
   font-weight: 800;
   font-size: 0.8rem;
-  color: var(--color-ink);
+  color: var(--color-accent-ink);
 }
 
 .addedTitle {
@@ -504,7 +504,7 @@
 
 .addedPrimary {
   background: var(--color-accent);
-  color: var(--color-ink);
+  color: var(--color-accent-ink);
   border-radius: var(--radius-md);
   padding: 14px;
   text-align: center;

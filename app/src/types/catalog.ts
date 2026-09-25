@@ -27,8 +27,11 @@ export type WeightTier = {
 export type Category = {
   id: string;
   label: string;
-  /** Accent colour for chips/headers, matching the Hi-Fi design. */
+  /** Accent colour for chips/headers — a CSS colour, normally a theme
+   * variable (var(--color-pink)) so it follows the active theme. */
   accent: string;
+  /** A pale wash of the accent, for a tag's background. */
+  tint: string;
 };
 
 /** A "shop by occasion" grouping (Birthday, Anniversary...). Which items

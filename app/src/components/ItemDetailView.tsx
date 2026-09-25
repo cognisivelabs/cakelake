@@ -100,7 +100,7 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
           {category && (
             <span
               className={`${styles.tag} mono-tag`}
-              style={{ background: `${category.accent}1a`, color: category.accent, alignSelf: "flex-start" }}
+              style={{ background: category.tint, color: category.accent, alignSelf: "flex-start" }}
             >
               {category.label}
             </span>
@@ -166,7 +166,7 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
               {category && (
                 <span
                   className={`${styles.tag} mono-tag`}
-                  style={{ background: `${category.accent}1a`, color: category.accent }}
+                  style={{ background: category.tint, color: category.accent }}
                 >
                   {category.label}
                 </span>

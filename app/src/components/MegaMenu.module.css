@@ -21,7 +21,7 @@
   font-weight: 700;
   font-size: 0.6875rem;
   letter-spacing: 0.1em;
-  color: #6b5a42;
+  color: var(--color-ink-muted);
 }
 
 .list {

@@ -37,7 +37,7 @@ export function HeroBanners({ banners }: { banners: Banner[] }) {
 
   return (
     <div
-      className={styles.banner}
+      className={`${styles.banner} ${banner.tone === "brand" ? styles.bannerBrand : ""}`}
       style={banner.imageUrl ? { backgroundImage: `url(${withBasePath(banner.imageUrl)})` } : undefined}
       role="group"
       aria-roledescription="carousel"
@@ -48,19 +48,37 @@ export function HeroBanners({ banners }: { banners: Banner[] }) {
       onBlur={() => setPaused(false)}
     >
       <div key={banner.id} className={styles.slide}>
-        <span className={`${styles.bannerBadge} mono-tag`}>{banner.badge}</span>
-        <h1 className={styles.bannerTitle}>
-          {banner.title.map((line, i) => (
-            <span key={i}>
-              {i > 0 && <br />}
-              {line}
+        <div className={styles.slideText}>
+          <span className={`${styles.bannerBadge} mono-tag`}>{banner.badge}</span>
+          <h1 className={styles.bannerTitle}>
+            {banner.title.map((line, i) => (
+              <span key={i}>
+                {i > 0 && <br />}
+                {line}
+              </span>
+            ))}
+          </h1>
+          <p className={styles.bannerBody}>{banner.body}</p>
+          <div className={styles.bannerActions}>
+            <Link href={banner.cta.href} className={styles.bannerCta}>
+              {banner.cta.label}
+            </Link>
+            {banner.secondaryCta && (
+              <Link href={banner.secondaryCta.href} className={styles.bannerLink}>
+                {banner.secondaryCta.label}
+              </Link>
+            )}
+          </div>
+        </div>
+        {banner.photoUrl && (
+          <div className={styles.slidePhoto}>
+            <span className={styles.slideCircle} />
+            <span className={styles.slideFrame}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={withBasePath(banner.photoUrl)} alt="" className={styles.slideImage} />
             </span>
-          ))}
-        </h1>
-        <p className={styles.bannerBody}>{banner.body}</p>
-        <Link href={banner.cta.href} className={styles.bannerCta}>
-          {banner.cta.label}
-        </Link>
+          </div>
+        )}
       </div>
 
       {banners.length > 1 && (

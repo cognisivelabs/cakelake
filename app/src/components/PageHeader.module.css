@@ -1,5 +1,5 @@
 .header {
-  background: var(--color-accent);
+  background: var(--color-header-bg);
 }
 
 .headerInner {
@@ -34,7 +34,7 @@
   padding: 0;
   font-weight: 700;
   font-size: 0.72rem;
-  color: var(--color-ink);
+  color: var(--color-header-ink);
   text-decoration: none;
   cursor: pointer;
   text-align: left;
@@ -47,7 +47,7 @@
   font-weight: 800;
   font-size: 1rem;
   letter-spacing: -0.02em;
-  color: var(--color-ink);
+  color: var(--color-header-ink);
   margin: 0;
 }
 

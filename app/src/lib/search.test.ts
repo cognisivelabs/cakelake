@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { getCatalog, getItemById } from "@/lib/catalog";
-import { itemMatchesQuery } from "@/lib/search";
+import { PRICE_BANDS, getPriceBand, itemMatchesFilters, itemMatchesQuery } from "@/lib/search";
 
 const item = (id: string) => {
   const found = getItemById(id);
@@ -26,5 +26,48 @@ describe("itemMatchesQuery", () => {
   it("matches by flavour tag label", () => {
     expect(itemMatchesQuery(item("indian-cakes-gulkand"), "indian sweets")).toBe(true);
     expect(itemMatchesQuery(item("cheesecakes-lotus-biscoff"), "biscoff")).toBe(true);
+  });
+});
+
+const none = { query: "", priceBandId: "", flavourId: "", occasionId: "" };
+
+describe("PRICE_BANDS", () => {
+  it("put every priced item in exactly one band", () => {
+    for (const item of getCatalog()) {
+      const hits = PRICE_BANDS.filter((band) => itemMatchesFilters(item, { ...none, priceBandId: band.id }));
+      expect(hits.length, item.id).toBe(1);
+    }
+  });
+
+  it("judges an item by its starting price", () => {
+    expect(itemMatchesFilters(item("classic-cakes-butterscotch"), { ...none, priceBandId: "under-100" })).toBe(true);
+    expect(itemMatchesFilters(item("indian-cakes-gulkand"), { ...none, priceBandId: "100-150" })).toBe(true);
+    expect(itemMatchesFilters(item("hammer-cakes-heart-shape-hammer-cake"), { ...none, priceBandId: "over-150" })).toBe(true);
+    expect(itemMatchesFilters(item("hammer-cakes-heart-shape-hammer-cake"), { ...none, priceBandId: "under-100" })).toBe(false);
+  });
+
+  it("ignores an unknown band id rather than hiding everything", () => {
+    expect(getPriceBand("nope")).toBeUndefined();
+    expect(itemMatchesFilters(item("classic-cakes-butterscotch"), { ...none, priceBandId: "nope" })).toBe(true);
+  });
+});
+
+describe("itemMatchesFilters", () => {
+  it("matches everything with no filters", () => {
+    expect(getCatalog().every((i) => itemMatchesFilters(i, none))).toBe(true);
+  });
+
+  it("filters by flavour tag and by occasion", () => {
+    expect(itemMatchesFilters(item("cheesecakes-lotus-biscoff"), { ...none, flavourId: "biscoff" })).toBe(true);
+    expect(itemMatchesFilters(item("classic-cakes-butterscotch"), { ...none, flavourId: "biscoff" })).toBe(false);
+    expect(itemMatchesFilters(item("pinata-cakes-chocolate"), { ...none, occasionId: "graduation" })).toBe(true);
+    expect(itemMatchesFilters(item("pinata-cakes-chocolate"), { ...none, occasionId: "anniversary" })).toBe(false);
+  });
+
+  it("requires every active filter together", () => {
+    const filters = { ...none, flavourId: "biscoff", priceBandId: "under-100" };
+    expect(itemMatchesFilters(item("exotic-premium-cakes-lotus-biscoff"), filters)).toBe(true);
+    expect(itemMatchesFilters(item("cheesecakes-lotus-biscoff"), filters)).toBe(true);
+    expect(itemMatchesFilters(item("pull-me-up-cakes-biscoff"), filters)).toBe(false);
   });
 });

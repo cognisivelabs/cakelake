@@ -7,39 +7,20 @@ import {
   categoryShortLabel,
   getCategories,
   getFlavourTag,
+  getFlavourTags,
   getOccasion,
-  weightTierKg,
+  getOccasions,
 } from "@/lib/catalog";
-import { itemMatchesQuery } from "@/lib/search";
+import { PRICE_BANDS, getPriceBand, itemMatchesFilters, type MenuFilters } from "@/lib/search";
 import { ItemCard } from "@/components/ItemCard";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import { EXTERNAL_LINK_PROPS } from "@/lib/externalLink";
 import { ROUTES } from "@/lib/routes";
 import { ResponsiveHeader } from "@/components/ResponsiveHeader";
 import { Footer } from "@/components/Footer";
+import { FilterPanel, type FilterGroup, type FilterKey } from "./FilterPanel";
 import { UrlParamsSync, type MenuUrlParams } from "./UrlParamsSync";
-import type { CatalogItem } from "@/types/catalog";
 import styles from "./menu.module.css";
-
-type Filters = {
-  readyToday: boolean;
-  oneKgPlus: boolean;
-  canCarryMessage: boolean;
-};
-
-const FILTER_OPTIONS: { key: keyof Filters; label: string }[] = [
-  { key: "readyToday", label: "Ready today" },
-  { key: "oneKgPlus", label: "1kg or larger" },
-  { key: "canCarryMessage", label: "Can carry a message" },
-];
-
-function passesFilters(item: CatalogItem, filters: Filters): boolean {
-  if (filters.readyToday && item.leadTimeHours !== 0) return false;
-  if (filters.oneKgPlus && !item.weightTiers.some((t) => weightTierKg(t) >= 1))
-    return false;
-  if (filters.canCarryMessage && item.cakeMessageMaxLength <= 0) return false;
-  return true;
-}
 
 export default function MenuPage() {
   const router = useRouter();
@@ -50,6 +31,7 @@ export default function MenuPage() {
   // occasion tiles and the header menus — shown as removable chips.
   const [flavourId, setFlavourId] = useState("");
   const [occasionId, setOccasionId] = useState("");
+  const [priceBandId, setPriceBandId] = useState("");
   // Desktop only, see docs/design/CLB-Hi-Fi-Screens.dc.html's "Menu —
   // desktop" screen — a category rail + filter panel with no mobile
   // equivalent (mobile lists every category in one scroll instead), so
@@ -58,7 +40,10 @@ export default function MenuPage() {
     categories[0]?.id ?? "",
   );
   function applyUrlParams(params: MenuUrlParams) {
-    setQuery(params.q);
+    // Only a ?q= replaces what's typed — a link without one (a category
+    // link, a filter change) shouldn't wipe the shopper's own search.
+    if (params.q) setQuery(params.q);
+    setPriceBandId(getPriceBand(params.price) ? params.price : "");
     setFlavourId(getFlavourTag(params.flavour) ? params.flavour : "");
     setOccasionId(getOccasion(params.occasion) ? params.occasion : "");
     if (categories.some((c) => c.id === params.category)) {
@@ -71,34 +56,67 @@ export default function MenuPage() {
     }
   }
 
-  function removeUrlFilter(kind: "flavour" | "occasion") {
-    const nextFlavour = kind === "flavour" ? "" : flavourId;
-    const nextOccasion = kind === "occasion" ? "" : occasionId;
-    setFlavourId(nextFlavour);
-    setOccasionId(nextOccasion);
+  // Filter choices live in the URL too (?price= ?flavour= ?occasion=), so
+  // a filtered menu can be linked to and the back button undoes a change.
+  function setFilter(key: FilterKey, value: string) {
+    const next = { priceBandId, flavourId, occasionId, [key]: value };
+    setPriceBandId(next.priceBandId);
+    setFlavourId(next.flavourId);
+    setOccasionId(next.occasionId);
     const params = new URLSearchParams();
-    if (nextFlavour) params.set("flavour", nextFlavour);
-    if (nextOccasion) params.set("occasion", nextOccasion);
+    if (next.priceBandId) params.set("price", next.priceBandId);
+    if (next.flavourId) params.set("flavour", next.flavourId);
+    if (next.occasionId) params.set("occasion", next.occasionId);
     const qs = params.toString();
     router.replace(qs ? `${ROUTES.menu}?${qs}` : ROUTES.menu, { scroll: false });
   }
 
-  const activeFilterChips: { kind: "flavour" | "occasion"; label: string }[] = [];
+  const currentFilters: MenuFilters = { query, priceBandId, flavourId, occasionId };
+  const anyFilterActive = Boolean(priceBandId || flavourId || occasionId);
+
+  // How many cakes each option would show, given every *other* filter.
+  const countWith = (key: FilterKey, id: string) =>
+    catalog.filter((item) => itemMatchesFilters(item, { ...currentFilters, [key]: id })).length;
+  const filterGroups: FilterGroup[] = [
+    {
+      key: "priceBandId",
+      label: "PRICE",
+      selected: priceBandId,
+      options: PRICE_BANDS.map((b) => ({ id: b.id, label: b.label, count: countWith("priceBandId", b.id) })),
+    },
+    {
+      key: "flavourId",
+      label: "FLAVOUR",
+      selected: flavourId,
+      options: getFlavourTags().map((t) => ({ id: t.id, label: t.label, count: countWith("flavourId", t.id) })),
+    },
+    {
+      key: "occasionId",
+      label: "OCCASION",
+      selected: occasionId,
+      options: getOccasions().map((o) => ({ id: o.id, label: o.label, count: countWith("occasionId", o.id) })),
+    },
+  ];
+
+  const activeFilterChips: { key: FilterKey; label: string }[] = [];
+  if (priceBandId) {
+    activeFilterChips.push({ key: "priceBandId", label: `Price: ${getPriceBand(priceBandId)?.label ?? priceBandId}` });
+  }
   if (flavourId) {
-    activeFilterChips.push({ kind: "flavour", label: `Flavour: ${getFlavourTag(flavourId)?.label ?? flavourId}` });
+    activeFilterChips.push({ key: "flavourId", label: `Flavour: ${getFlavourTag(flavourId)?.label ?? flavourId}` });
   }
   if (occasionId) {
-    activeFilterChips.push({ kind: "occasion", label: `Occasion: ${getOccasion(occasionId)?.label ?? occasionId}` });
+    activeFilterChips.push({ key: "occasionId", label: `Occasion: ${getOccasion(occasionId)?.label ?? occasionId}` });
   }
   const activeFilters =
     activeFilterChips.length > 0 ? (
       <div className={styles.activeFilters}>
         {activeFilterChips.map((chip) => (
           <button
-            key={chip.kind}
+            key={chip.key}
             type="button"
             className={styles.activeFilter}
-            onClick={() => removeUrlFilter(chip.kind)}
+            onClick={() => setFilter(chip.key, "")}
             aria-label={`Remove filter ${chip.label}`}
           >
             {chip.label} <span aria-hidden="true">×</span>
@@ -129,18 +147,7 @@ export default function MenuPage() {
     // only needs to run once per mount.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-  const [filters, setFilters] = useState<Filters>({
-    readyToday: false,
-    oneKgPlus: false,
-    canCarryMessage: false,
-  });
-
-  const visibleCatalog = catalog.filter(
-    (item) =>
-      itemMatchesQuery(item, query) &&
-      (!flavourId || item.flavours?.includes(flavourId)) &&
-      (!occasionId || item.occasions?.includes(occasionId)),
-  );
+  const visibleCatalog = catalog.filter((item) => itemMatchesFilters(item, currentFilters));
   const hasResults = visibleCatalog.length > 0;
   // Mobile's sticky category rail (below) only lists categories that
   // actually have something to jump to right now — same "skip if empty"
@@ -228,15 +235,7 @@ export default function MenuPage() {
     ? selectedCategoryId
     : (visibleCategories[0]?.id ?? selectedCategoryId);
   const selectedCategory = categories.find((c) => c.id === desktopCategoryId);
-  const desktopItems = visibleCatalog.filter(
-    (item) => item.categoryId === desktopCategoryId && passesFilters(item, filters),
-  );
-  const anyFilterActive =
-    filters.readyToday || filters.oneKgPlus || filters.canCarryMessage;
-
-  function toggleFilter(key: keyof Filters) {
-    setFilters((f) => ({ ...f, [key]: !f[key] }));
-  }
+  const desktopItems = visibleCatalog.filter((item) => item.categoryId === desktopCategoryId);
 
   // Desktop — see docs/design/CLB-Hi-Fi-Screens.dc.html's "Menu — desktop"
   // screen: the search field now sits at the top of the main column
@@ -319,6 +318,12 @@ export default function MenuPage() {
             </div>
           </div>
 
+          <details className={styles.mobileFilters}>
+            <summary>
+              Filters{activeFilterChips.length > 0 ? ` (${activeFilterChips.length})` : ""}
+            </summary>
+            <FilterPanel groups={filterGroups} onChange={setFilter} />
+          </details>
           {activeFilters}
 
           {hasResults && (
@@ -438,19 +443,7 @@ export default function MenuPage() {
               })}
             </div>
 
-            <div className={`${styles.railLabel} mono-tag`}>FILTER</div>
-            <div className={styles.filterList}>
-              {FILTER_OPTIONS.map((option) => (
-                <label key={option.key} className={styles.filterOption}>
-                  <input
-                    type="checkbox"
-                    checked={filters[option.key]}
-                    onChange={() => toggleFilter(option.key)}
-                  />
-                  {option.label}
-                </label>
-              ))}
-            </div>
+            <FilterPanel groups={filterGroups} onChange={setFilter} />
           </aside>
 
           <section className={styles.mainColumn}>

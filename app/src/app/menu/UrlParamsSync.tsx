@@ -7,6 +7,7 @@ export type MenuUrlParams = {
   q: string;
   flavour: string;
   occasion: string;
+  price: string;
   category: string;
 };
 
@@ -30,6 +31,7 @@ export function UrlParamsSync({ onParams }: { onParams: (params: MenuUrlParams) 
       q: searchParams.get("q") ?? "",
       flavour: searchParams.get("flavour") ?? "",
       occasion: searchParams.get("occasion") ?? "",
+      price: searchParams.get("price") ?? "",
       category: searchParams.get("category") ?? "",
     });
     // key is searchParams' contents — re-run per its actual changes.

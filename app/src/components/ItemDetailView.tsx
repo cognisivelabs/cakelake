@@ -33,6 +33,9 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
   const { order, addLine } = useCart();
   const category = getCategory(item.categoryId);
   const categoryLabel = category?.label ?? "Menu";
+  // Back goes to where this item's category sits in the menu, not the
+  // top of the whole long scroll.
+  const backHref = category ? categoryRoute(category.id) : ROUTES.menu;
   // Sep 2026 recategorisation: Photo Cakes/3D Cakes are the only items
   // still priced by open-ended weight (an unpriced "Ask us" tier at the
   // top end) rather than a fixed ½kg/1kg pair — used below to label the
@@ -89,7 +92,7 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
   if (!item.available) {
     return (
       <div className={styles.page}>
-        <ResponsiveHeader title={categoryLabel} backHref={ROUTES.menu} backLabel="MENU" />
+        <ResponsiveHeader title={categoryLabel} backHref={backHref} backLabel="MENU" />
         <div className={styles.photo}>
           <span className={`${styles.unavailableBadge} mono-tag`}>UNAVAILABLE</span>
         </div>
@@ -126,7 +129,7 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
 
   return (
     <div className={styles.page}>
-      <ResponsiveHeader title={categoryLabel} backHref={ROUTES.menu} backLabel="MENU" />
+      <ResponsiveHeader title={categoryLabel} backHref={backHref} backLabel="MENU" />
 
       {/* Desktop only — see docs/design/CLB-Hi-Fi-Screens.dc.html's
           "Item detail — desktop": a breadcrumb replaces mobile's plain
@@ -136,7 +139,7 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
       <nav className={styles.breadcrumb}>
         <Link href={ROUTES.menu}>← Menu</Link>
         <span className={styles.breadcrumbSep}>/</span>
-        <Link href={category ? categoryRoute(category.id) : ROUTES.menu}>{categoryLabel}</Link>
+        <Link href={backHref}>{categoryLabel}</Link>
         <span className={styles.breadcrumbSep}>/</span>
         <span>{item.name}</span>
       </nav>

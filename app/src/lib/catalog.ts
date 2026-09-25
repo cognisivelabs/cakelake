@@ -219,9 +219,6 @@ const CATALOG: CatalogItem[] = [
         description:
           "Three different chocolate frostings — white, milk and dark — creating an ombre effect. Every chocoholic's dream come true.",
       },
-      "Lush Berries",
-      "Raspberry & White Chocolate",
-      "Ragi Cake (Dry Fruits & Banana)",
     ],
   ),
 

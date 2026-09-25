@@ -13,3 +13,10 @@ export const ROUTES = {
 export function itemRoute(itemId: string): string {
   return `${ROUTES.menu}/${itemId}`;
 }
+
+/** The menu scrolled/filtered to one category — /menu#<categoryId>. Mobile
+ * jumps to that category's section (each has the id as its anchor);
+ * desktop's category rail reads the same hash to pre-select it. */
+export function categoryRoute(categoryId: string): string {
+  return `${ROUTES.menu}#${categoryId}`;
+}

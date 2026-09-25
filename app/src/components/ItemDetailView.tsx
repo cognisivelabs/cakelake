@@ -11,7 +11,7 @@ import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import { hideBrokenImage, withBasePath } from "@/lib/assets";
 import { resolveImageStyle } from "@/lib/imageConfig";
 import { EXTERNAL_LINK_PROPS } from "@/lib/externalLink";
-import { ROUTES, itemRoute } from "@/lib/routes";
+import { ROUTES, categoryRoute, itemRoute } from "@/lib/routes";
 import { ResponsiveHeader } from "@/components/ResponsiveHeader";
 import { Footer } from "@/components/Footer";
 import styles from "./ItemDetailView.module.css";
@@ -130,13 +130,13 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
 
       {/* Desktop only — see docs/design/CLB-Hi-Fi-Screens.dc.html's
           "Item detail — desktop": a breadcrumb replaces mobile's plain
-          "← MENU" back-link once there's room for one. Both links go to
-          the same /menu — no per-category route exists (unlike Header's
-          3D cakes link, which goes straight to that one item instead). */}
+          "← MENU" back-link once there's room for one. The category crumb
+          goes to /menu with that category pre-selected (hash-based, since
+          there's no per-category route). */}
       <nav className={styles.breadcrumb}>
         <Link href={ROUTES.menu}>← Menu</Link>
         <span className={styles.breadcrumbSep}>/</span>
-        <Link href={ROUTES.menu}>{categoryLabel}</Link>
+        <Link href={category ? categoryRoute(category.id) : ROUTES.menu}>{categoryLabel}</Link>
         <span className={styles.breadcrumbSep}>/</span>
         <span>{item.name}</span>
       </nav>

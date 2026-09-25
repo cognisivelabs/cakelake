@@ -50,6 +50,28 @@ export default function MenuPage() {
   const [selectedCategoryId, setSelectedCategoryId] = useState(
     categories[0]?.id ?? "",
   );
+  // Item detail's category breadcrumb links to /menu#<categoryId> — pre-
+  // select that category here (desktop) once mounted; mobile just
+  // scrolls to the matching section anchor natively. Read in an effect,
+  // not initial state, since the server render has no hash to match.
+  useEffect(() => {
+    function selectFromHash() {
+      const id = window.location.hash.slice(1);
+      if (categories.some((c) => c.id === id)) setSelectedCategoryId(id);
+    }
+    selectFromHash();
+    // The prerendered anchor jump doesn't reliably survive hydration on
+    // mobile's long scroll — redo it once now that the sections exist
+    // (a no-op on desktop, where the mobile sections are display: none).
+    document
+      .getElementById(window.location.hash.slice(1))
+      ?.scrollIntoView({ behavior: "instant" });
+    window.addEventListener("hashchange", selectFromHash);
+    return () => window.removeEventListener("hashchange", selectFromHash);
+    // categories is a module-level constant (getCategories()), so this
+    // only needs to run once per mount.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   const [filters, setFilters] = useState<Filters>({
     readyToday: false,
     oneKgPlus: false,

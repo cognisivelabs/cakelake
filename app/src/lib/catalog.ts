@@ -135,10 +135,12 @@ const CATALOG: CatalogItem[] = [
         label: "Chocolate Vanilla",
         description:
           "Soft, buttery, fluffy, moist, and filled with rich chocolate and vanilla flavor with zebra design.",
+        imageUrl: "/images/premium-chocolate-vanilla.jpg",
       },
       {
         label: "Chocolate Chips Loaded",
         description: "Delicious taste of chocolate cake with chocolate chips, moist and fluffy. Kids' favourite.",
+        imageUrl: "/images/premium-chocolate-chips-loaded.jpg",
       },
       {
         label: "Dark Chocolate Strawberry",
@@ -179,6 +181,7 @@ const CATALOG: CatalogItem[] = [
       {
         label: "Chocolate Mousse",
         description: "A classic with layers of moist chocolate cake and creamy chocolate mousse.",
+        imageUrl: "/images/exotic-chocolate-mousse.jpg",
       },
       {
         label: "Chocolate Brownie",
@@ -189,6 +192,7 @@ const CATALOG: CatalogItem[] = [
         label: "Hazelnut Crunch",
         description:
           "A rich hazelnut ganache in between layers of velvety chocolate sponge. A favourite with those who like a little crunch and texture in every bite.",
+        imageUrl: "/images/exotic-hazelnut-crunch.jpg",
       },
       {
         label: "White Chocolate Coconut",
@@ -208,6 +212,7 @@ const CATALOG: CatalogItem[] = [
       {
         label: "Caramel Chocolate",
         description: "Moist chocolate cake layered with delicious chocolate caramel and crunchy bits.",
+        imageUrl: "/images/exotic-caramel-chocolate.jpg",
       },
       {
         label: "Triple Chocolate Indulgence",
@@ -239,29 +244,34 @@ const CATALOG: CatalogItem[] = [
       {
         label: "Snickers",
         description: "A cake reminiscent of a Snickers bar, with a peanut nougat, salted caramel filling.",
+        imageUrl: "/images/exotic-premium-snickers.jpg",
       },
-      "Red Velvet",
+      { label: "Red Velvet", imageUrl: "/images/exotic-premium-red-velvet.jpg" },
       {
         label: "Pinacolada",
         description:
           "This unique, alcohol-free cake pays homage to the classic beverage — coconut, pineapple bits and whipped cream.",
+        imageUrl: "/images/exotic-premium-pinacolada.jpg",
       },
       {
         label: "Kinder Bueno",
         description:
           "A perfect celebration cake smothered in chocolate hazelnut cream and decorated with an array of Kinder Bueno chocolates.",
+        imageUrl: "/images/exotic-premium-kinder-bueno.jpg",
       },
       {
         label: "Lotus Biscoff",
         description: "The ultimate cake for Biscoff lovers — made with both crushed Biscoff biscuits and Biscoff spread.",
+        imageUrl: "/images/exotic-premium-lotus-biscoff.jpg",
       },
       {
         label: "Nutella Rocher",
         description:
           "Chocolate sponge layers sandwiched with Nutella cream and Ferrero Rocher bits. Recommended for all Nutella lovers out there.",
+        imageUrl: "/images/exotic-premium-nutella-rocher.jpg",
       },
-      "KitKat & Gems",
-      "Rose & Pistachio",
+      { label: "KitKat & Gems", imageUrl: "/images/exotic-premium-kitkat-gems.jpg" },
+      { label: "Rose & Pistachio", imageUrl: "/images/exotic-premium-rose-pistachio.jpg" },
     ],
   ),
 
@@ -276,7 +286,13 @@ const CATALOG: CatalogItem[] = [
     ],
     "Ready in 1 hour",
     0,
-    ["Oreo", "Strawberry", "Blueberry", "Lotus Biscoff", "New York"],
+    [
+      { label: "Oreo", imageUrl: "/images/cheesecake-oreo.jpg" },
+      "Strawberry",
+      { label: "Blueberry", imageUrl: "/images/cheesecake-blueberry.jpg" },
+      { label: "Lotus Biscoff", imageUrl: "/images/cheesecake-lotus-biscoff.jpg" },
+      { label: "New York", imageUrl: "/images/cheesecake-new-york.jpg" },
+    ],
   ),
 
   // NEW category (Sep 2026 recategorisation) — made in small batches
@@ -293,7 +309,13 @@ const CATALOG: CatalogItem[] = [
     ],
     "Ready in 1 hour",
     0,
-    ["Motichoor", "Kaju Katli", "Gulkand", "Gulab Jamun", "Rasmalai"],
+    [
+      "Motichoor",
+      "Kaju Katli",
+      { label: "Gulkand", imageUrl: "/images/indian-gulkand.jpg" },
+      { label: "Gulab Jamun", imageUrl: "/images/indian-gulab-jamun.jpg" },
+      { label: "Rasmalai", imageUrl: "/images/indian-rasmalai.jpg" },
+    ],
   ),
 
   ...categoryItems(
@@ -303,7 +325,7 @@ const CATALOG: CatalogItem[] = [
     [{ id: "1kg", label: "1 kg", price: 190 }],
     "24 hours notice",
     24,
-    ["Heart Shape Hammer Cake"],
+    [{ label: "Heart Shape Hammer Cake", imageUrl: "/images/hammer-heart-shape.jpg" }],
   ),
 
   ...categoryItems(
@@ -323,7 +345,11 @@ const CATALOG: CatalogItem[] = [
     [{ id: "1kg", label: "1 kg", price: 190 }],
     "24 hours notice",
     24,
-    ["Fresh Fruit", "Chocolate", "Rainbow"],
+    [
+      "Fresh Fruit",
+      { label: "Chocolate", imageUrl: "/images/pinata-chocolate.jpg" },
+      "Rainbow",
+    ],
   ),
 
   {
@@ -337,6 +363,7 @@ const CATALOG: CatalogItem[] = [
       { id: "2kg", label: "2 kg", price: 340 },
       { id: "3kg-plus", label: "3 kg+", price: undefined },
     ],
+    imageUrl: "/images/photo-cakes.jpg",
     readyLabel: "24 hours notice",
     leadTimeHours: 24,
     cakeMessageMaxLength: CONFIG.cakeMessageMaxLength,

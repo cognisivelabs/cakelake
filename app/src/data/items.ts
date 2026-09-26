@@ -202,6 +202,7 @@ export const BASE_CATALOG: CatalogItem[] = [
         label: "Triple Chocolate Indulgence",
         description:
           "Three different chocolate frostings — white, milk and dark — creating an ombre effect. Every chocoholic's dream come true.",
+        imageUrl: "/images/exotic-triple-chocolate-indulgence.jpg",
       },
     ],
   ),

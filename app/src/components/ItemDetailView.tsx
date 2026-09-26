@@ -24,11 +24,11 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
   // Back goes to where this item's category sits in the menu, not the
   // top of the whole long scroll.
   const backHref = category ? categoryRoute(category.id) : ROUTES.menu;
-  // Sep 2026 recategorisation: Photo Cakes/3D Cakes are the only items
-  // still priced by open-ended weight (an unpriced "Ask us" tier at the
-  // top end) rather than a fixed ½kg/1kg pair — used below to label the
-  // size section "WEIGHT ... PER KG" instead of "SIZE" for just those.
-  const isWeightPriced = item.weightTiers.some((t) => t.price === undefined);
+  // Photo Cakes/3D Cakes are priced by the kilo rather than as a fixed
+  // ½kg/1kg pair — used below to label the size section "WEIGHT ... PER KG"
+  // instead of "SIZE" for just those. (Not "any tier without a price":
+  // the larger sizes are unpriced on every cake until the client confirms.)
+  const isWeightPriced = category?.kind === "custom";
   const baseWeightPrice = item.weightTiers[0]?.price;
   // Flavour is no longer a picker on this page (Sep 2026
   // recategorisation) — every other item in the same category is

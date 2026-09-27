@@ -1143,11 +1143,11 @@
   }
 
   .bannerPhoto .slide {
-    /* The card floats closer to the edge than the page's 76px gutter, but
-       its own 48px padding brings the text back to ~80px — matching the
-       header logo and "Shop by category" below (design: CLB Desktop
-       Home v2, screen 6a). */
-    left: 32px;
+    /* 6a's 32px isn't updated for the width; 6b (2560 wide) shows the
+       real intent — the card's own left edge sits at 600px, exactly the
+       content column's edge at that width (design: CLB Desktop Home v2).
+       So the card aligns with the page gutter, same as the header logo. */
+    left: var(--desktop-gutter);
     padding: 0 48px;
     box-sizing: border-box;
     border-radius: 16px;

@@ -6,6 +6,11 @@ export function nextIndex(current: number, count: number): number {
   return count <= 0 ? 0 : (current + 1) % count;
 }
 
+/** The slide before `current`, wrapping round to the last. */
+export function previousIndex(current: number, count: number): number {
+  return count <= 0 ? 0 : (current - 1 + count) % count;
+}
+
 /**
  * Whether a carousel should rotate by itself: only with something to
  * rotate to, and never for someone who's asked their device for less

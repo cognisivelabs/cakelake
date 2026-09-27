@@ -17,6 +17,13 @@
   padding: 12px 16px 0;
 }
 
+/* The boxed hero stays in the same column as the sections below it (its
+   own .hero rule re-caps the width); the "photo" style ignores this and
+   bleeds to the screen edge. */
+.heroSlot {
+  width: 100%;
+}
+
 @media (min-width: 1024px) {
   .mobileSearch {
     display: none;

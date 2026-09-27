@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import type { Banner } from "@/data/banners";
-import { BANNER_INTERVAL_MS, nextIndex, shouldAutoRotate } from "@/lib/carousel";
+import { BANNER_INTERVAL_MS, nextIndex, previousIndex, shouldAutoRotate } from "@/lib/carousel";
+import type { HeroStyle } from "@/lib/config";
 import { Photo } from "@/components/Photo";
 import { withBasePath } from "@/lib/assets";
 import styles from "./HomeSections.module.css";
@@ -11,7 +12,14 @@ import styles from "./HomeSections.module.css";
 // Home's hero: the banners take turns on their own (paused while the
 // pointer or keyboard focus is on it, and never for reduced motion);
 // the dots jump to one. A single banner shows no dots and never moves.
-export function HeroBanners({ banners }: { banners: Banner[] }) {
+//
+// The markup is one card that mobile always shows as-is. On desktop,
+// `variant` restyles it: "boxed" leaves it as a card beside the side
+// cards; "photo" (CLB Desktop Home v2, screens 6a/6b/7a/7b) stretches it
+// edge to edge with the banner's own photo bleeding behind the whole
+// thing — a floating panel for a "light" banner, the text sitting
+// straight on the photo for a "brand" one — plus ← → arrows.
+export function HeroBanners({ banners, variant = "boxed" }: { banners: Banner[]; variant?: HeroStyle }) {
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
   const [reducedMotion, setReducedMotion] = useState(false);
@@ -34,12 +42,16 @@ export function HeroBanners({ banners }: { banners: Banner[] }) {
     return () => window.clearInterval(timer);
   }, [rotating, banners.length]);
 
-  const banner = banners[index % banners.length];
+  const current = index % banners.length;
+  const banner = banners[current];
+  const full = variant === "photo";
+  const brand = banner.tone === "brand";
+  const bleedPhoto = full ? (banner.imageUrl ?? banner.photoUrl) : undefined;
 
   return (
     <div
-      className={`${styles.banner} ${banner.tone === "brand" ? styles.bannerBrand : ""}`}
-      style={banner.imageUrl ? { backgroundImage: `url(${withBasePath(banner.imageUrl)})` } : undefined}
+      className={[styles.banner, brand && styles.bannerBrand, full && styles.bannerPhoto].filter(Boolean).join(" ")}
+      style={!full && banner.imageUrl ? { backgroundImage: `url(${withBasePath(banner.imageUrl)})` } : undefined}
       role="group"
       aria-roledescription="carousel"
       aria-label="Featured"
@@ -48,6 +60,15 @@ export function HeroBanners({ banners }: { banners: Banner[] }) {
       onFocus={() => setPaused(true)}
       onBlur={() => setPaused(false)}
     >
+      {bleedPhoto && (
+        <>
+          <span className={styles.bleedPhoto} aria-hidden="true">
+            <Photo src={bleedPhoto} />
+          </span>
+          <span className={styles.bleedFade} aria-hidden="true" />
+        </>
+      )}
+
       <div key={banner.id} className={styles.slide}>
         <div className={styles.slideText}>
           <span className={`${styles.bannerBadge} mono-tag`}>{banner.badge}</span>
@@ -71,7 +92,7 @@ export function HeroBanners({ banners }: { banners: Banner[] }) {
             )}
           </div>
         </div>
-        {banner.photoUrl && (
+        {!full && banner.photoUrl && (
           <div className={styles.slidePhoto}>
             <span className={styles.slideCircle} />
             <span className={styles.slideFrame}>
@@ -81,6 +102,27 @@ export function HeroBanners({ banners }: { banners: Banner[] }) {
         )}
       </div>
 
+      {full && banners.length > 1 && (
+        <>
+          <button
+            type="button"
+            className={`${styles.arrow} ${styles.arrowPrev}`}
+            aria-label="Previous banner"
+            onClick={() => setIndex(previousIndex(current, banners.length))}
+          >
+            ←
+          </button>
+          <button
+            type="button"
+            className={`${styles.arrow} ${styles.arrowNext}`}
+            aria-label="Next banner"
+            onClick={() => setIndex(nextIndex(current, banners.length))}
+          >
+            →
+          </button>
+        </>
+      )}
+
       {banners.length > 1 && (
         <div className={styles.dots}>
           {banners.map((b, i) => (
@@ -88,9 +130,9 @@ export function HeroBanners({ banners }: { banners: Banner[] }) {
               key={b.id}
               type="button"
               className={styles.dot}
-              data-active={i === index % banners.length}
+              data-active={i === current}
               aria-label={`Show banner ${i + 1} of ${banners.length}`}
-              aria-current={i === index % banners.length}
+              aria-current={i === current}
               onClick={() => setIndex(i)}
             />
           ))}

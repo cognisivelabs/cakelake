@@ -555,6 +555,8 @@
 /* ─────────── Desktop ─────────── */
 @media (min-width: 1024px) {
   .hero {
+    max-width: var(--desktop-content-max);
+    margin: 0 auto;
     padding: 24px var(--desktop-gutter) 0;
   }
 
@@ -1026,5 +1028,190 @@
 
   .counterCard {
     display: none;
+  }
+}
+
+/* — Hero "photo" style (CONFIG.heroStyle) — edge to edge, the banner's own
+   photo bleeding behind it. See docs CLB Desktop Home v2: 6a/6b (light —
+   a floating panel over the photo) and 7a/7b (brand — the text sits
+   straight on the photo, no panel). Desktop only: on mobile the banner
+   stays the plain card, so everything here is hidden below 1024px. */
+.heroFull {
+  width: 100%;
+}
+
+.bleedPhoto,
+.bleedFade,
+.arrow {
+  display: none;
+}
+
+@media (min-width: 1024px) {
+  .bannerPhoto {
+    height: 520px;
+    border: 0;
+    border-radius: 0;
+    padding: 0;
+  }
+
+  .bleedPhoto {
+    display: block;
+    position: absolute;
+    overflow: hidden;
+  }
+
+  .bleedPhoto :global(img) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .bleedFade {
+    display: block;
+    position: absolute;
+  }
+
+  .bannerPhoto .slidePhoto {
+    display: none;
+  }
+
+  .bannerPhoto .slide {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: min(560px, 44vw);
+    flex-direction: column;
+    justify-content: center;
+    gap: 0;
+  }
+
+  .bannerPhoto .slideText {
+    flex: none;
+    max-width: none;
+    gap: 16px;
+  }
+
+  .bannerPhoto .bannerTitle {
+    font-size: 3.625rem;
+    line-height: 1;
+    letter-spacing: -0.035em;
+  }
+
+  .bannerPhoto .bannerBody {
+    font-size: 1.0625rem;
+  }
+
+  .bannerPhoto .bannerCta {
+    padding: 16px 28px;
+    font-size: 0.8125rem;
+  }
+
+  .arrow {
+    display: flex;
+    position: absolute;
+    z-index: 2;
+    width: 44px;
+    height: 44px;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    border-radius: 50%;
+    background: #fff;
+    color: var(--color-ink);
+    font-size: 0.94rem;
+    font-weight: 700;
+    box-shadow: 0 1px 3px rgba(58, 42, 36, 0.2);
+    cursor: pointer;
+  }
+
+  /* 6a/6b — light tone: photo fills the whole banner, a floating panel
+     holds the copy at the screen edge, dots sit in a translucent chip. */
+  .bleedPhoto {
+    inset: 0;
+  }
+
+  .bleedFade {
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--color-bg) 90%, transparent) 0%,
+      color-mix(in srgb, var(--color-bg) 55%, transparent) 36%,
+      transparent 58%
+    );
+  }
+
+  .bannerPhoto .slide {
+    left: 32px;
+    padding: 0 48px;
+    box-sizing: border-box;
+    border-radius: 16px;
+    background: var(--color-bg);
+    box-shadow: 0 10px 30px rgba(67, 39, 46, 0.18);
+  }
+
+  .bannerPhoto .arrowNext {
+    right: 32px;
+    bottom: 28px;
+  }
+
+  .bannerPhoto .arrowPrev {
+    right: 90px;
+    bottom: 28px;
+  }
+
+  .bannerPhoto .dots {
+    left: auto;
+    right: 148px;
+    bottom: 35px;
+    background: color-mix(in srgb, var(--color-bg) 90%, transparent);
+    padding: 8px 10px;
+    border-radius: 10px;
+  }
+
+  /* 7a/7b — brand tone: the photo bleeds from the right; no panel, the
+     copy sits straight on the fade, pinned to the page gutter. */
+  .bannerPhoto.bannerBrand .bleedPhoto {
+    inset: 0 0 0 auto;
+    width: 58%;
+  }
+
+  .bannerPhoto.bannerBrand .bleedFade {
+    inset: 0 0 0 auto;
+    width: 58%;
+    background: linear-gradient(
+      90deg,
+      var(--color-banner-bg) 0%,
+      color-mix(in srgb, var(--color-banner-bg) 70%, transparent) 14%,
+      transparent 38%
+    );
+  }
+
+  .bannerPhoto.bannerBrand .slide {
+    left: var(--desktop-gutter);
+    padding: 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+  }
+
+  .bannerPhoto.bannerBrand .arrowNext {
+    right: var(--desktop-gutter);
+    bottom: 22px;
+  }
+
+  .bannerPhoto.bannerBrand .arrowPrev {
+    right: calc(var(--desktop-gutter) + 52px);
+    bottom: 22px;
+  }
+
+  .bannerPhoto.bannerBrand .dots {
+    left: var(--desktop-gutter);
+    right: auto;
+    bottom: 26px;
+    background: none;
+    padding: 0;
+    border-radius: 0;
   }
 }

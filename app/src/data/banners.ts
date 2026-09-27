@@ -15,9 +15,11 @@ export type Banner = {
   cta: { label: string; href: string };
   /** A quieter second link beside the button. */
   secondaryCta?: { label: string; href: string };
-  /** Photo behind a "light" banner — otherwise the design's placeholder panel. */
+  /** The banner's own photo. In the "photo" hero style (CONFIG.heroStyle)
+   * it bleeds behind the whole banner — see docs CLB Desktop Home v2,
+   * screens 6a/6b (light) and 7a/7b (brand). In "boxed" it's a plain
+   * background photo (light) or a framed picture beside the text (brand). */
   imageUrl?: string;
-  /** Framed picture beside a "brand" banner's text (desktop). */
   photoUrl?: string;
 };
 
@@ -40,6 +42,11 @@ export const HOME_BANNERS: Banner[] = [
     title: ["Eggless cakes,", "baked after you order"],
     body: "Classic, Premium, Exotic and Exotic Premium leave the counter about an hour after we confirm on WhatsApp.",
     cta: { label: "ORDER A CAKE", href: ROUTES.menu },
+    secondaryCta: { label: "See all categories →", href: ROUTES.menu },
+    // Stand-in, like the design's own placeholder photo — swap for a real
+    // shot of the Karama counter when the client supplies one.
+    imageUrl: "/images/premium-dark-chocolate-truffle.jpg",
+    photoUrl: "/images/premium-dark-chocolate-truffle.jpg",
   },
   {
     id: "photo-cakes",

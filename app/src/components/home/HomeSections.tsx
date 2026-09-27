@@ -23,7 +23,16 @@ import { MostOrdered, type MostOrderedCard } from "./MostOrdered";
 import { RailSection } from "./RailSection";
 import styles from "./HomeSections.module.css";
 
+// The "photo" style runs edge to edge on desktop and has no side cards
+// (see docs CLB Desktop Home v2, screens 6a/6b/7a/7b); "boxed" is unchanged.
 export function HomeHero() {
+  if (CONFIG.heroStyle === "photo") {
+    return (
+      <div className={styles.heroFull}>
+        <HeroBanners banners={HOME_BANNERS} variant="photo" />
+      </div>
+    );
+  }
   return (
     <div className={styles.hero}>
       <HeroBanners banners={HOME_BANNERS} />

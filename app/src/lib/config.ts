@@ -1,4 +1,11 @@
 import type { ThemeId } from "@/theme/themes";
+
+/** How Home's hero banner is laid out on desktop (mobile always shows the
+ * boxed card). "boxed" sits inside the page margins beside two side cards
+ * (the original layout). "photo" runs edge to edge with each banner's own
+ * photo bleeding behind it — see docs CLB Desktop Home v2, screens 6a/6b
+ * (the light "ready in an hour" banner) and 7a/7b (the deep "brand" one). */
+export type HeroStyle = "boxed" | "photo";
 /**
  * Real values confirmed by the client, except where noted. Kept in one
  * place so changes are a one-line edit, not a hunt through the codebase.
@@ -67,6 +74,9 @@ export const CONFIG = {
    *   "vanilla-lilac" · "candy-white" · "blush-gold"
    */
   theme: "strawberry-cream" as ThemeId,
+  /** Home's desktop hero banner: "boxed" (original) or "photo" (edge-to-edge,
+   * client testing this now) — see HeroStyle. */
+  heroStyle: "photo" as HeroStyle,
   /** Same-day items are all "ready in an hour" — feeds the cart's "ready
    * by" estimate. Independent of each catalog item's own readyLabel
    * copy, which the client may phrase differently later. */

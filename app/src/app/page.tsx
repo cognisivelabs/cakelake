@@ -23,13 +23,18 @@ export default function HomePage() {
       <Header />
 
       <div className={styles.body}>
-        <div className={styles.content}>
-          {/* Mobile only — desktop has the search in the header. */}
-          <div className={styles.mobileSearch}>
-            <HeaderSearch variant="mobile" />
-          </div>
+        {/* Mobile only — desktop has the search in the header. */}
+        <div className={styles.mobileSearch}>
+          <HeaderSearch variant="mobile" />
+        </div>
 
+        {/* Outside the width-capped column below so the "photo" hero style
+            can bleed its photo to the screen edge (CONFIG.heroStyle). */}
+        <div className={styles.heroSlot}>
           <HomeHero />
+        </div>
+
+        <div className={styles.content}>
           <TrustStrip />
           <CategoryTiles />
           <OccasionTiles />

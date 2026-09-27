@@ -1052,6 +1052,13 @@
     border: 0;
     border-radius: 0;
     padding: 0;
+    /* Past 1512px the page's own content column stops growing and just
+       gets more margin around it (see .hero above and the design's own
+       note on 6b/7b: "header, banner copy and page sit in a 1360px
+       column, centred"). Everything this banner positions by left/right
+       below is anchored to THIS column's edge, not the raw viewport
+       edge, so it never drifts past the header logo or page content. */
+    --content-inset: max(0px, (100vw - var(--desktop-content-max)) / 2);
   }
 
   .bleedPhoto {
@@ -1147,7 +1154,7 @@
        real intent — the card's own left edge sits at 600px, exactly the
        content column's edge at that width (design: CLB Desktop Home v2).
        So the card aligns with the page gutter, same as the header logo. */
-    left: var(--desktop-gutter);
+    left: calc(var(--content-inset) + var(--desktop-gutter));
     padding: 0 48px;
     box-sizing: border-box;
     border-radius: 16px;
@@ -1156,18 +1163,18 @@
   }
 
   .bannerPhoto .arrowNext {
-    right: 32px;
+    right: calc(var(--content-inset) + var(--desktop-gutter));
     bottom: 28px;
   }
 
   .bannerPhoto .arrowPrev {
-    right: 90px;
+    right: calc(var(--content-inset) + var(--desktop-gutter) + 58px);
     bottom: 28px;
   }
 
   .bannerPhoto .dots {
     left: auto;
-    right: 148px;
+    right: calc(var(--content-inset) + var(--desktop-gutter) + 116px);
     bottom: 35px;
     background: color-mix(in srgb, var(--color-bg) 90%, transparent);
     padding: 8px 10px;
@@ -1193,7 +1200,7 @@
   }
 
   .bannerPhoto.bannerBrand .slide {
-    left: var(--desktop-gutter);
+    left: calc(var(--content-inset) + var(--desktop-gutter));
     padding: 0;
     border-radius: 0;
     background: none;
@@ -1201,17 +1208,17 @@
   }
 
   .bannerPhoto.bannerBrand .arrowNext {
-    right: var(--desktop-gutter);
+    right: calc(var(--content-inset) + var(--desktop-gutter));
     bottom: 22px;
   }
 
   .bannerPhoto.bannerBrand .arrowPrev {
-    right: calc(var(--desktop-gutter) + 52px);
+    right: calc(var(--content-inset) + var(--desktop-gutter) + 52px);
     bottom: 22px;
   }
 
   .bannerPhoto.bannerBrand .dots {
-    left: var(--desktop-gutter);
+    left: calc(var(--content-inset) + var(--desktop-gutter));
     right: auto;
     bottom: 26px;
     background: none;

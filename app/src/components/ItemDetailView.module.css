@@ -127,6 +127,11 @@
   color: var(--color-warn-ink);
 }
 
+.tagMostOrdered {
+  background: var(--color-pink);
+  color: #fff;
+}
+
 .title {
   font-size: 1.35rem;
   line-height: 1.15;

@@ -19,3 +19,11 @@ export function ReadyTag({ item }: { item: CatalogItem }) {
     </span>
   );
 }
+
+/** "Most ordered" — one of Home's featured best-sellers (data/taxonomy.ts's
+ * MOST_ORDERED). Renders nothing for any other item, so callers can just
+ * always place it rather than checking `mostOrderedRank` themselves. */
+export function MostOrderedTag({ item }: { item: CatalogItem }) {
+  if (item.mostOrderedRank === undefined) return null;
+  return <span className={`${styles.tag} ${styles.tagMostOrdered} mono-tag`}>Most ordered</span>;
+}

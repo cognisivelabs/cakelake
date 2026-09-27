@@ -42,6 +42,22 @@
   font-size: 0.58rem !important;
 }
 
+.mostOrderedBadge {
+  /* The photo fills .photo via position: absolute, which paints above any
+     plain in-flow sibling regardless of DOM order — this badge needs its
+     own position to sit on top of it (unavailableBadge doesn't, since a
+     sold-out card never renders a photo underneath it to compete with). */
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  max-width: calc(100% - 10px);
+  background: var(--color-pink);
+  color: #fff;
+  border-radius: 3px;
+  padding: 2px 5px;
+  font-size: 0.58rem !important;
+}
+
 .body {
   flex: 1;
   display: flex;

@@ -9,7 +9,7 @@ import { resolveSelection, orderItemCount, resolveOrderLines, describeLine } fro
 import { getCategory, getCatalog, getSiblingItems } from "@/lib/catalog";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import { AddedToOrderPanel, type AddedSnapshot } from "@/components/AddedToOrderPanel";
-import { CategoryTag, ReadyTag } from "@/components/ItemTags";
+import { CategoryTag, MostOrderedTag, ReadyTag } from "@/components/ItemTags";
 import { Photo } from "@/components/Photo";
 import { EXTERNAL_LINK_PROPS } from "@/lib/externalLink";
 import { ROUTES, categoryRoute, itemRoute } from "@/lib/routes";
@@ -88,6 +88,7 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
           {category && (
             <div className={styles.tags}>
               <CategoryTag category={category} />
+              <MostOrderedTag item={item} />
             </div>
           )}
           <h1 className={styles.title}>{item.name}</h1>
@@ -140,6 +141,7 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
           <div className={styles.content}>
             <div className={styles.tags}>
               {category && <CategoryTag category={category} />}
+              <MostOrderedTag item={item} />
               {item.requiresDelivery && (
                 <span className={`${styles.tag} ${styles.tagReady} mono-tag`}>Delivery only</span>
               )}

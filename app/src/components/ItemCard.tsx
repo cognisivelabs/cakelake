@@ -40,6 +40,9 @@ export function ItemCard({ item }: { item: CatalogItem }) {
     <Link href={itemRoute(item.id)} className={styles.card}>
       <div className={styles.photo}>
         <Photo src={item.imageUrl} slot="thumbnail" />
+        {item.mostOrderedRank !== undefined && (
+          <span className={`${styles.mostOrderedBadge} mono-tag`}>Most ordered</span>
+        )}
       </div>
       <div className={styles.body}>
         <div className={styles.name}>{item.name}</div>

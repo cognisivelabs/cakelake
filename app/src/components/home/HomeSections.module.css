@@ -1098,10 +1098,14 @@
     /* Past 1512px the page's own content column stops growing and just
        gets more margin around it (see .hero above and the design's own
        note on 6b/7b: "header, banner copy and page sit in a 1360px
-       column, centred"). Everything this banner positions by left/right
-       below is anchored to THIS column's edge, not the raw viewport
-       edge, so it never drifts past the header logo or page content. */
+       column, centred"). --content-edge is that column's left/right
+       edge — everything below this banner positions by left/right is
+       anchored to it, not the raw viewport edge, so it never drifts
+       past the header logo or page content (as it once did — every
+       left/right value here MUST go through this one variable, not a
+       fresh calc(), or a future edit can drift the same way again). */
     --content-inset: max(0px, (100vw - var(--desktop-content-max)) / 2);
+    --content-edge: calc(var(--content-inset) + var(--desktop-gutter));
   }
 
   .bleedPhoto {
@@ -1195,7 +1199,7 @@
        real intent — the card's own left edge sits at 600px, exactly the
        content column's edge at that width (design: CLB Desktop Home v2).
        So the card aligns with the page gutter, same as the header logo. */
-    left: calc(var(--content-inset) + var(--desktop-gutter));
+    left: var(--content-edge);
     /* A floating card, not the full banner height — some breathing room
        above and below, same as the design. */
     top: 32px;
@@ -1208,12 +1212,12 @@
   }
 
   .bannerPhoto .arrowNext {
-    right: calc(var(--content-inset) + var(--desktop-gutter));
+    right: var(--content-edge);
     bottom: 28px;
   }
 
   .bannerPhoto .arrowPrev {
-    right: calc(var(--content-inset) + var(--desktop-gutter) + 58px);
+    right: calc(var(--content-edge) + 58px);
     bottom: 28px;
   }
 
@@ -1246,7 +1250,7 @@
   }
 
   .bannerPhoto.bannerBrand .slide {
-    left: calc(var(--content-inset) + var(--desktop-gutter));
+    left: var(--content-edge);
     /* No visible box here (see below), so it stays the full banner
        height — only the light-tone card above gets the top/bottom
        margin. */

@@ -1048,7 +1048,7 @@
 
 @media (min-width: 1024px) {
   .bannerPhoto {
-    height: 520px;
+    height: 600px;
     border: 0;
     border-radius: 0;
     padding: 0;
@@ -1175,9 +1175,10 @@
   }
 
   .bannerPhoto .dots {
-    left: auto;
-    right: calc(var(--content-inset) + var(--desktop-gutter) + 116px);
-    bottom: 35px;
+    left: 50%;
+    right: auto;
+    bottom: 28px;
+    transform: translateX(-50%);
     background: color-mix(in srgb, var(--color-bg) 90%, transparent);
     padding: 8px 10px;
     border-radius: 10px;
@@ -1225,11 +1226,6 @@
   }
 
   .bannerPhoto.bannerBrand .dots {
-    left: calc(var(--content-inset) + var(--desktop-gutter));
-    right: auto;
-    bottom: 26px;
-    background: none;
-    padding: 0;
-    border-radius: 0;
+    background: rgba(255, 255, 255, 0.16);
   }
 }

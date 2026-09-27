@@ -1215,15 +1215,9 @@
     box-shadow: none;
   }
 
-  .bannerPhoto.bannerBrand .arrowNext {
-    right: calc(var(--content-inset) + var(--desktop-gutter));
-    bottom: 22px;
-  }
-
-  .bannerPhoto.bannerBrand .arrowPrev {
-    right: calc(var(--content-inset) + var(--desktop-gutter) + 52px);
-    bottom: 22px;
-  }
+  /* Same arrow position as the light tone above (not a separate 22px/52px
+     offset) — the buttons would otherwise nudge a few pixels every time
+     the banner rotates between tones. */
 
   .bannerPhoto.bannerBrand .dots {
     background: rgba(255, 255, 255, 0.16);

@@ -1143,7 +1143,7 @@
   }
 
   .bannerPhoto .slide {
-    left: 32px;
+    left: var(--desktop-gutter);
     padding: 0 48px;
     box-sizing: border-box;
     border-radius: 16px;

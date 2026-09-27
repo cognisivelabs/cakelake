@@ -15,12 +15,16 @@ export type Banner = {
   cta: { label: string; href: string };
   /** A quieter second link beside the button. */
   secondaryCta?: { label: string; href: string };
-  /** The banner's own photo. In the "photo" hero style (CONFIG.heroStyle)
-   * it bleeds behind the whole banner — see docs CLB Desktop Home v2,
-   * screens 6a/6b (light) and 7a/7b (brand). In "boxed" it's a plain
-   * background photo (light) or a framed picture beside the text (brand). */
+  /** "boxed" hero style only: a plain background photo behind a "light"
+   * banner. */
   imageUrl?: string;
+  /** "boxed" hero style only: a framed picture beside a "brand" banner's
+   * text (desktop). */
   photoUrl?: string;
+  /** "photo" hero style only (CONFIG.heroStyle): this banner's photo,
+   * bleeding behind the whole thing — see docs CLB Desktop Home v2,
+   * screens 6a/6b (light) and 7a/7b (brand). */
+  bleedPhotoUrl?: string;
 };
 
 // The Photo cakes banner quotes the real per-kilo price rather than a
@@ -43,10 +47,10 @@ export const HOME_BANNERS: Banner[] = [
     body: "Classic, Premium, Exotic and Exotic Premium leave the counter about an hour after we confirm on WhatsApp.",
     cta: { label: "ORDER A CAKE", href: ROUTES.menu },
     secondaryCta: { label: "See all categories →", href: ROUTES.menu },
-    // Stand-in, like the design's own placeholder photo — swap for a real
-    // shot of the Karama counter when the client supplies one.
-    imageUrl: "/images/premium-dark-chocolate-truffle.jpg",
-    photoUrl: "/images/premium-dark-chocolate-truffle.jpg",
+    // The design's own stand-in (a bakery display case by Ulysse
+    // Pointcheval on Unsplash, free licence) — swap for a real shot of
+    // the Karama counter when the client supplies one.
+    bleedPhotoUrl: "/images/hero-bakery-case.jpg",
   },
   {
     id: "photo-cakes",
@@ -59,5 +63,9 @@ export const HOME_BANNERS: Banner[] = [
     cta: { label: "ORDER A PHOTO CAKE", href: itemRoute(SPECIAL_ITEM_IDS.photoCakes) },
     secondaryCta: { label: "See 3D cakes →", href: itemRoute(SPECIAL_ITEM_IDS.threeDCakes) },
     photoUrl: photoCakes?.imageUrl,
+    // The design's own stand-in (a pink-frosted celebration cake by
+    // Alexander Mass on Unsplash, free licence) — swap for a real photo
+    // cake when the client supplies one.
+    bleedPhotoUrl: "/images/hero-birthday-cake.jpg",
   },
 ];

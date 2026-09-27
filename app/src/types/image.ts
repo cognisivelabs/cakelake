@@ -9,7 +9,7 @@
  * crop/zoom tuning suits all of them. "hero" is ItemDetailView's single
  * large photo, a meaningfully different (wider) box.
  */
-export type ImageSlot = "hero" | "thumbnail";
+export type ImageSlot = "hero" | "thumbnail" | "heroBleed";
 
 /**
  * Per-slot display tuning for one photo. This adjusts how the existing

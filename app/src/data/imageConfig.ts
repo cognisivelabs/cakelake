@@ -12,4 +12,9 @@ import type { ImageFramingBySlot } from "@/types/image";
  * everywhere — today's existing behavior. See types/image.ts's
  * ImageFraming for what each field (fit/focalX/focalY/zoom) does.
  */
-export const IMAGE_CONFIG: Record<string, ImageFramingBySlot> = {};
+export const IMAGE_CONFIG: Record<string, ImageFramingBySlot> = {
+  // The two full-bleed hero photos (CONFIG.heroStyle: "photo") — vertical
+  // framing matched to the design (CLB Desktop Home v2, screens 6a/7a).
+  "/images/hero-bakery-case.jpg": { heroBleed: { focalY: 55 } },
+  "/images/hero-birthday-cake.jpg": { heroBleed: { focalY: 45 } },
+};

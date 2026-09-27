@@ -46,7 +46,7 @@ export function HeroBanners({ banners, variant = "boxed" }: { banners: Banner[];
   const banner = banners[current];
   const full = variant === "photo";
   const brand = banner.tone === "brand";
-  const bleedPhoto = full ? (banner.imageUrl ?? banner.photoUrl) : undefined;
+  const bleedPhoto = full ? banner.bleedPhotoUrl : undefined;
 
   return (
     <div
@@ -63,7 +63,7 @@ export function HeroBanners({ banners, variant = "boxed" }: { banners: Banner[];
       {bleedPhoto && (
         <>
           <span className={styles.bleedPhoto} aria-hidden="true">
-            <Photo src={bleedPhoto} />
+            <Photo src={bleedPhoto} slot="heroBleed" />
           </span>
           <span className={styles.bleedFade} aria-hidden="true" />
         </>

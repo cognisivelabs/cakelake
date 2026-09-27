@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 import Link from "next/link";
 import type { Banner } from "@/data/banners";
 import { BANNER_INTERVAL_MS, nextIndex, previousIndex, shouldAutoRotate } from "@/lib/carousel";
@@ -39,8 +39,12 @@ export function HeroBanners({ banners, variant = "boxed" }: { banners: Banner[];
       () => setIndex((current) => nextIndex(current, banners.length)),
       BANNER_INTERVAL_MS,
     );
+    // Restarting on `index` too (not just `rotating`) means a manual dot
+    // or arrow click resets the countdown — the same one the active
+    // dot's progress fill shows — instead of the next auto-advance
+    // landing early because the old interval kept ticking underneath.
     return () => window.clearInterval(timer);
-  }, [rotating, banners.length]);
+  }, [rotating, banners.length, index]);
 
   const current = index % banners.length;
   const banner = banners[current];
@@ -124,7 +128,11 @@ export function HeroBanners({ banners, variant = "boxed" }: { banners: Banner[];
       )}
 
       {banners.length > 1 && (
-        <div className={styles.dots}>
+        <div
+          className={styles.dots}
+          data-anim={reducedMotion ? "static" : rotating ? "running" : "paused"}
+          style={{ "--dot-duration": `${BANNER_INTERVAL_MS}ms` } as CSSProperties}
+        >
           {banners.map((b, i) => (
             <button
               key={b.id}
@@ -134,7 +142,13 @@ export function HeroBanners({ banners, variant = "boxed" }: { banners: Banner[];
               aria-label={`Show banner ${i + 1} of ${banners.length}`}
               aria-current={i === current}
               onClick={() => setIndex(i)}
-            />
+            >
+              {/* The active dot fills over BANNER_INTERVAL_MS, in step with
+                  the auto-advance timer above — a running countdown, not
+                  just a "which slide" marker. Paused (hover/focus) freezes
+                  it mid-fill; reduced motion shows it solid, no motion. */}
+              <span className={styles.dotFill} aria-hidden="true" />
+            </button>
           ))}
         </div>
       )}

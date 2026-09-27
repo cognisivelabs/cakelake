@@ -80,7 +80,7 @@
   background: rgba(255, 255, 255, 0.4);
 }
 
-.bannerBrand .dot[data-active="true"] {
+.bannerBrand .dotFill {
   background: #fff;
 }
 
@@ -150,6 +150,7 @@
 }
 
 .dot {
+  position: relative;
   width: 8px;
   height: 5px;
   border: none;
@@ -157,12 +158,54 @@
   padding: 0;
   background: var(--color-placeholder-border);
   cursor: pointer;
+  overflow: hidden;
   transition: width 0.2s ease;
 }
 
 .dot[data-active="true"] {
   width: 22px;
+}
+
+/* The active dot's running-time indicator — a plain rectangle that grows
+   left to right via scaleX, clipped to the dot's own rounded shape by
+   its overflow: hidden above. Idle (not the active dot) it's invisible
+   at scaleX(0); the active dot shows it static and full unless a .dots
+   `data-anim` below opts into the animated version. */
+.dotFill {
+  position: absolute;
+  inset: 0;
+  transform: scaleX(0);
+  transform-origin: left;
   background: var(--color-ink);
+}
+
+.dot[data-active="true"] .dotFill {
+  transform: scaleX(1);
+}
+
+.dots[data-anim="running"] .dot[data-active="true"] .dotFill,
+.dots[data-anim="paused"] .dot[data-active="true"] .dotFill {
+  animation: dotProgress var(--dot-duration, 6000ms) linear forwards;
+}
+
+.dots[data-anim="paused"] .dot[data-active="true"] .dotFill {
+  animation-play-state: paused;
+}
+
+@keyframes dotProgress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dotFill {
+    animation: none !important;
+    transform: scaleX(1);
+  }
 }
 
 .sideCards {

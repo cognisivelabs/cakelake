@@ -7,7 +7,7 @@ import type { Order } from "@/types/order";
 const order = (overrides: Partial<Order> = {}): Order => ({
   lines: [
     { lineId: "a", itemId: "classic-cakes-butterscotch", quantity: 2, weightTierId: "half-kg", cakeMessage: "Happy Birthday" },
-    { lineId: "b", itemId: "photo-cakes-round", quantity: 1, weightTierId: "3kg-plus" },
+    { lineId: "b", itemId: "photo-cakes-round-photo-cake", quantity: 1, weightTierId: "3kg-plus" },
   ],
   fulfillment: "pickup",
   whenNeeded: { kind: "tomorrow" },
@@ -32,7 +32,7 @@ describe("buildAckSummary", () => {
     const summary = buildAckSummary(order(), getCatalog(), "3:00 PM", sentAt);
     expect(summary.itemizedLines).toEqual([
       { quantity: 2, name: "Butterscotch", descriptor: "½ kg", message: "Happy Birthday", price: "AED 110" },
-      { quantity: 1, name: "Round", descriptor: "3 kg+", message: undefined, price: "Ask us" },
+      { quantity: 1, name: "Round Photo Cake", descriptor: "3 kg+", message: undefined, price: "Ask us" },
     ]);
     expect(summary.sentAt).toBe("2:30 PM");
   });

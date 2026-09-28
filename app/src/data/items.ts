@@ -389,19 +389,19 @@ export const BASE_CATALOG: CatalogItem[] = [
     24,
     [
       {
-        label: "Round",
+        label: "Round Photo Cake",
         description:
           "An edible print of your photo on a round cake — works with any flavour on this menu. Tell us which flavour you'd like and send the photo on WhatsApp after ordering.",
         imageUrl: "/images/photo-cakes-round.jpg",
       },
       {
-        label: "Rectangle",
+        label: "Rectangle Photo Cake",
         description:
           "An edible print of your photo on a rectangle cake — works with any flavour on this menu. Tell us which flavour you'd like and send the photo on WhatsApp after ordering.",
         imageUrl: "/images/photo-cakes-rectangle.jpg",
       },
       {
-        label: "Heart",
+        label: "Heart Photo Cake",
         description:
           "An edible print of your photo on a heart-shaped cake — works with any flavour on this menu. Tell us which flavour you'd like and send the photo on WhatsApp after ordering.",
         imageUrl: "/images/photo-cakes-heart.jpg",

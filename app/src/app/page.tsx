@@ -20,6 +20,10 @@ import styles from "./home.module.css";
 export default function HomePage() {
   return (
     <div className={styles.page}>
+      {/* Above the header, not a floating card over the page — it pushes
+          the header (and everything below) down, and scrolls away with
+          the page (design: CLB Install Banner, 1b/1c). */}
+      <InstallPrompt />
       <Header />
 
       <div className={styles.body}>
@@ -46,8 +50,6 @@ export default function HomePage() {
 
         <Footer />
       </div>
-
-      <InstallPrompt />
     </div>
   );
 }

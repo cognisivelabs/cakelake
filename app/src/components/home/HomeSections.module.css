@@ -1081,6 +1081,10 @@
    stays the plain card, so everything here is hidden below 1024px. */
 .heroFull {
   width: 100%;
+  /* Same top gap the search box above it already has — without this the
+     banner sits flush against it. Desktop bleeds edge to edge, so no
+     padding there (reset below). */
+  padding-top: 12px;
 }
 
 .bleedPhoto,
@@ -1090,6 +1094,10 @@
 }
 
 @media (min-width: 1024px) {
+  .heroFull {
+    padding-top: 0;
+  }
+
   .bannerPhoto {
     height: 600px;
     border: 0;

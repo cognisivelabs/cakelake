@@ -17,7 +17,8 @@ export const IMAGE_CONFIG: Record<string, ImageFramingBySlot> = {
   // framing matched to the design (CLB Desktop Home v2, screens 6a/7a).
   "/images/hero-bakery-case.jpg": { heroBleed: { focalY: 55 } },
   "/images/hero-birthday-cake.jpg": { heroBleed: { focalY: 45 } },
-  // Photo Cakes' banner bleed photo (Round, the first of its three shape
-  // items) is symmetric enough that plain centre-crop already looks
-  // right — no entry needed, unlike the two above.
+  // The banner's tall, narrow bleed crop discards most of this square
+  // photo's width — biased left of centre so the printed photo itself
+  // survives the crop rather than the "Happy Birthday" lettering.
+  "/images/hero-photo-cake.jpg": { heroBleed: { focalX: 40 } },
 };

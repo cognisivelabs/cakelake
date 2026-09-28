@@ -63,9 +63,10 @@ export const HOME_BANNERS: Banner[] = [
     cta: { label: "ORDER A PHOTO CAKE", href: itemRoute(SPECIAL_ITEM_IDS.photoCakes) },
     secondaryCta: { label: "See 3D cakes →", href: itemRoute(SPECIAL_ITEM_IDS.threeDCakes) },
     photoUrl: photoCakes?.imageUrl,
-    // The design's own stand-in (a pink-frosted celebration cake by
-    // Alexander Mass on Unsplash, free licence) — swap for a real photo
-    // cake when the client supplies one.
-    bleedPhotoUrl: "/images/hero-birthday-cake.jpg",
+    // The bakery's own real photo-print cake — a genuine edible photo
+    // print, unlike anything findable free on Unsplash/Pexels/Pixabay/
+    // Alamy/Freepik (that search turned up only cartoon prints or 3D
+    // fondant cakes, nothing with an actual personal photo on it).
+    bleedPhotoUrl: photoCakes?.imageUrl,
   },
 ];

@@ -42,11 +42,29 @@
   font-size: 0.58rem !important;
 }
 
+/* Mobile's photo thumbnail is only 66px — too small for the "Most
+   ordered" text to read as anything but clutter — so it gets a plain
+   star instead; desktop's bigger square photo keeps the text tag. Both
+   need their own position: the photo fills .photo via position: absolute,
+   which paints above any plain in-flow sibling regardless of DOM order
+   (unavailableBadge doesn't need this — a sold-out card never renders a
+   photo underneath it to compete with). */
+.mostOrderedStar {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--color-pink);
+  color: #fff;
+}
+
 .mostOrderedBadge {
-  /* The photo fills .photo via position: absolute, which paints above any
-     plain in-flow sibling regardless of DOM order — this badge needs its
-     own position to sit on top of it (unavailableBadge doesn't, since a
-     sold-out card never renders a photo underneath it to compete with). */
+  display: none;
   position: absolute;
   top: 5px;
   left: 5px;
@@ -134,5 +152,13 @@
 
   .footer {
     margin-top: 6px;
+  }
+
+  .mostOrderedStar {
+    display: none;
+  }
+
+  .mostOrderedBadge {
+    display: inline-block;
   }
 }

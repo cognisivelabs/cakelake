@@ -38,3 +38,15 @@ export function WhatsAppIcon({ size = 20, className }: IconProps) {
     </Icon>
   );
 }
+
+/** Solid, not outline (unlike the other icons here) — a small filled
+ * star reads at a glance where an outline one would just look grey at
+ * this size. Used as the mobile menu card's compact "Most ordered"
+ * marker, in place of the text tag desktop has room for. */
+export function StarIcon({ size = 16, className }: IconProps) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
+      <path d="M12 2.5l2.9 6.4 6.9.7-5.2 4.7 1.5 6.8L12 17.6l-6.1 3.5 1.5-6.8-5.2-4.7 6.9-.7z" />
+    </svg>
+  );
+}

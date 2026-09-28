@@ -86,16 +86,20 @@ export function QrCode({ value, size = 220 }: { value: string; size?: number }) 
     const n = matrix.size;
     const moduleSize = size / (n + MARGIN_MODULES * 2);
 
+    // Round dots, not square modules — matching CLB QR Codes.dc.html's
+    // "1a/2 series" ("All three use round modules"). .43 of a module,
+    // not .5, so neighbouring dots keep a hairline gap instead of
+    // touching into a solid block.
+    const dotRadius = 0.43 * moduleSize;
     ctx.fillStyle = QR_THEME.ink;
     for (let row = 0; row < n; row++) {
       for (let col = 0; col < n; col++) {
         if (isFinderZone(row, col, n) || !matrix.get(row, col)) continue;
-        ctx.fillRect(
-          (col + MARGIN_MODULES) * moduleSize,
-          (row + MARGIN_MODULES) * moduleSize,
-          moduleSize,
-          moduleSize
-        );
+        const cx = (col + MARGIN_MODULES + 0.5) * moduleSize;
+        const cy = (row + MARGIN_MODULES + 0.5) * moduleSize;
+        ctx.beginPath();
+        ctx.arc(cx, cy, dotRadius, 0, Math.PI * 2);
+        ctx.fill();
       }
     }
 

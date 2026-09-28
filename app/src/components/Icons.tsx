@@ -39,14 +39,16 @@ export function WhatsAppIcon({ size = 20, className }: IconProps) {
   );
 }
 
-/** Solid, not outline (unlike the other icons here) — a small filled
- * star reads at a glance where an outline one would just look grey at
- * this size. Used as the mobile menu card's compact "Most ordered"
- * marker, in place of the text tag desktop has room for. */
-export function StarIcon({ size = 16, className }: IconProps) {
+/** Solid, not outline (unlike the other icons here) — a filled glyph
+ * reads at a glance where an outline one would just look grey at this
+ * size. A flame, not a star: the standard marker for "popular" /
+ * "bestseller" on food ordering apps, and the one shoppers actually
+ * recognise for it. Used as the mobile menu card's compact "Most
+ * ordered" marker, in place of the text tag desktop has room for. */
+export function FlameIcon({ size = 16, className }: IconProps) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" className={className} aria-hidden="true">
-      <path d="M12 2.5l2.9 6.4 6.9.7-5.2 4.7 1.5 6.8L12 17.6l-6.1 3.5 1.5-6.8-5.2-4.7 6.9-.7z" />
+      <path d="M12.5 2c.3 2.3-.6 3.9-2 5.4-1.6 1.7-3.3 3.5-3.3 6.3a4.8 4.8 0 0 0 9.6 0c0-1-.3-1.8-.7-2.6.9.4 1.9 1.5 1.9 3.4a5.9 5.9 0 0 1-5.8 6 6.2 6.2 0 0 1-6.2-6.3c0-3.6 2.1-5.7 3.9-7.6C11.4 5 12.7 3.7 12.5 2z" />
     </svg>
   );
 }

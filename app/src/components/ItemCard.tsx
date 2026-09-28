@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { CatalogItem } from "@/types/catalog";
 import { cheapestPrice, formatAed } from "@/lib/pricing";
 import { Photo } from "@/components/Photo";
-import { StarIcon } from "@/components/Icons";
+import { FlameIcon } from "@/components/Icons";
 import { itemRoute } from "@/lib/routes";
 import styles from "./ItemCard.module.css";
 
@@ -45,8 +45,8 @@ export function ItemCard({ item }: { item: CatalogItem }) {
           <>
             {/* Mobile: a plain word wouldn't fit this card's small photo —
                 see ItemCard.module.css. Desktop: the text tag, as before. */}
-            <span className={styles.mostOrderedStar} aria-label="Most ordered">
-              <StarIcon size={15} />
+            <span className={styles.mostOrderedFlame} aria-label="Most ordered">
+              <FlameIcon size={16} />
             </span>
             <span className={`${styles.mostOrderedBadge} mono-tag`}>Most ordered</span>
           </>

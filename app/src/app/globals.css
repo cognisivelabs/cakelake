@@ -58,12 +58,16 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* No bottom padding — every page ends in <Footer />, a full-bleed
+   colour band that already carries its own top margin (see
+   Footer.module.css); trailing padding here left a gap of the page's
+   own background showing below that band instead of it reaching the
+   bottom of the screen. */
 main {
   flex: 1;
   width: 100%;
   max-width: 720px;
   margin: 0 auto;
-  padding: 0 0 32px;
 }
 
 /* Used directly (not via `composes`) by ResponsiveHeader.tsx, the shared

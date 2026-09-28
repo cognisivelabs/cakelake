@@ -925,9 +925,14 @@
     display: none;
   }
 
+  /* Fixed tracks, not 1fr — an unconstrained left column stretched the
+     message card to fill the whole 1512px canvas well past a readable
+     line length. 520px/400px matches the Hi-Fi's own column widths;
+     justify-content centers the pair instead of stretching them. */
   .desktopHandoff {
     display: grid;
-    grid-template-columns: 1fr 340px;
+    grid-template-columns: 520px 400px;
+    justify-content: center;
     align-items: start;
     gap: 32px;
     max-width: var(--desktop-content-max);

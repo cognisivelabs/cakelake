@@ -106,7 +106,7 @@ export function HandoffView({
 
         <div className={styles.qrPanel}>
           <div className={styles.qrTitle}>Scan with your phone</div>
-          <QrCode value={waUrl} />
+          <QrCode value={waUrl} size={280} />
           <button type="button" className={styles.openWaLink} onClick={onOpenWhatsApp}>
             Or open WhatsApp Web in another tab — the message will be
             waiting

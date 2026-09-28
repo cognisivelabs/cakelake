@@ -2,7 +2,6 @@ import Link from "next/link";
 import type { CatalogItem } from "@/types/catalog";
 import { cheapestPrice, formatAed } from "@/lib/pricing";
 import { Photo } from "@/components/Photo";
-import { CrownIcon } from "@/components/Icons";
 import { itemRoute } from "@/lib/routes";
 import styles from "./ItemCard.module.css";
 
@@ -42,14 +41,7 @@ export function ItemCard({ item }: { item: CatalogItem }) {
       <div className={styles.photo}>
         <Photo src={item.imageUrl} slot="thumbnail" />
         {item.mostOrderedRank !== undefined && (
-          <>
-            {/* Mobile: a plain word wouldn't fit this card's small photo —
-                see ItemCard.module.css. Desktop: the text tag, as before. */}
-            <span className={styles.mostOrderedIcon} aria-label="Most ordered">
-              <CrownIcon size={16} />
-            </span>
-            <span className={`${styles.mostOrderedBadge} mono-tag`}>Most ordered</span>
-          </>
+          <span className={styles.mostOrderedBadge}>Most ordered</span>
         )}
       </div>
       <div className={styles.body}>

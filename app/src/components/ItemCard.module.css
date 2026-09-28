@@ -42,52 +42,30 @@
   font-size: 0.58rem !important;
 }
 
-/* Mobile's photo thumbnail is only 66px — too small for the "Most
-   ordered" text to read as anything but clutter — so it gets a plain
-   crown instead ("bestseller", without a flame's "hot/spicy food"
-   read); desktop's bigger square photo keeps the text tag. Both need
-   their own position: the photo fills .photo via position: absolute,
-   which paints above any plain in-flow sibling regardless of DOM order
-   (unavailableBadge doesn't need this — a sold-out card never renders a
-   photo underneath it to compete with). */
-.mostOrderedIcon {
-  position: absolute;
-  top: 5px;
-  left: 5px;
-  color: #ffc700;
-  animation: mostOrderedGlow 2.2s ease-in-out infinite;
-}
-
-@keyframes mostOrderedGlow {
-  0%,
-  100% {
-    filter: drop-shadow(0 1px 2px rgba(40, 20, 10, 0.55)) drop-shadow(0 0 2px rgba(255, 199, 0, 0.8))
-      drop-shadow(0 0 4px rgba(255, 199, 0, 0.5));
-  }
-  50% {
-    filter: drop-shadow(0 1px 2px rgba(40, 20, 10, 0.55)) drop-shadow(0 0 6px rgba(255, 199, 0, 1))
-      drop-shadow(0 0 12px rgba(255, 199, 0, 0.9));
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .mostOrderedIcon {
-    animation: none;
-    filter: drop-shadow(0 1px 2px rgba(40, 20, 10, 0.55)) drop-shadow(0 0 3px rgba(255, 199, 0, 0.9));
-  }
-}
-
+/* Mobile: a small corner tag flush against the photo's top-left edge —
+   one line, small enough to read without wrapping in the 66px
+   thumbnail. Desktop's bigger square photo gets more room, so it moves
+   in from the edge and grows (below). Needs its own position: the photo
+   fills .photo via position: absolute, which paints above any plain
+   in-flow sibling regardless of DOM order (unavailableBadge doesn't
+   need this — a sold-out card never renders a photo underneath it to
+   compete with). */
 .mostOrderedBadge {
-  display: none;
   position: absolute;
-  top: 5px;
-  left: 5px;
-  max-width: calc(100% - 10px);
+  top: 0;
+  left: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: clip;
   background: var(--color-pink);
   color: #fff;
-  border-radius: 3px;
-  padding: 2px 5px;
-  font-size: 0.58rem !important;
+  font-weight: 700;
+  font-size: 0.5rem;
+  line-height: 1.4;
+  padding: 2px 4px;
+  border-radius: 0 0 5px 0;
 }
 
 .body {
@@ -168,11 +146,13 @@
     margin-top: 6px;
   }
 
-  .mostOrderedIcon {
-    display: none;
-  }
-
   .mostOrderedBadge {
-    display: inline-block;
+    top: 5px;
+    left: 5px;
+    max-width: calc(100% - 10px);
+    font-size: 0.58rem;
+    line-height: normal;
+    padding: 2px 5px;
+    border-radius: 3px;
   }
 }

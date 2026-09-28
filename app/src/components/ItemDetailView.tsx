@@ -24,7 +24,7 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
   // Back goes to where this item's category sits in the menu, not the
   // top of the whole long scroll.
   const backHref = category ? categoryRoute(category.id) : ROUTES.menu;
-  // Photo Cakes/3D Cakes are priced by the kilo rather than as a fixed
+  // Photo Cakes/Custom Cakes are priced by the kilo rather than as a fixed
   // ½kg/1kg pair — used below to label the size section "WEIGHT ... PER KG"
   // instead of "SIZE" for just those. (Not "any tier without a price":
   // the larger sizes are unpriced on every cake until the client confirms.)

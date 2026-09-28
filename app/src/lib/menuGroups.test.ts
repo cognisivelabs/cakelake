@@ -32,7 +32,7 @@ describe("getMenuGroups", () => {
 });
 
 describe("getCustomCategoriesRoute", () => {
-  it("points the Photo & 3D links at Photo Cakes and 3D Cakes together", () => {
+  it("points the Photo & Custom links at Photo Cakes and Custom Cakes together", () => {
     expect(getCustomCategoriesRoute()).toBe("/menu?category=photo-cakes,3d-cakes");
   });
 });

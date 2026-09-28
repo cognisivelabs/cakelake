@@ -42,7 +42,7 @@ export type ThemeColors = {
   accentShadow: string;
   /** Category colour, badges, counts — the brand's second voice. */
   pink: string;
-  /** The one category that stands apart (3D cakes). */
+  /** The one category that stands apart (Custom Cakes). */
   berry: string;
   /** Solid ground of the promotional (Photo cakes) hero banner. */
   bannerBg: string;

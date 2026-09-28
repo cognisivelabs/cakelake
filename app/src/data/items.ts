@@ -14,9 +14,9 @@ import { CONFIG } from "@/lib/config";
  *
  * Sep 2026 recategorisation (client-confirmed): each flavour is now its
  * own catalog item, and what used to be a multi-flavour "group" (e.g.
- * Premium Cakes) is now a Category instead. Photo Cakes and 3D Cakes
+ * Premium Cakes) is now a Category instead. Photo Cakes and Custom Cakes
  * stay single items (no per-flavour split — Photo Cakes works with any
- * flavour on this menu, chosen in the WhatsApp chat; 3D Cakes is a
+ * flavour on this menu, chosen in the WhatsApp chat; Custom Cakes is a
  * from-scratch design brief). Any customisation a customer wants — a
  * photo to print, a design idea, anything — is handled entirely in that
  * WhatsApp chat, not a form field in the app.
@@ -412,7 +412,7 @@ export const BASE_CATALOG: CatalogItem[] = [
 
   {
     id: "3d-cakes",
-    name: "3D Cakes",
+    name: "Custom Cakes",
     categoryId: "3d-cakes",
     description:
       "Designed to your idea in fondant. Describe what you have in mind — a reference photo helps — on WhatsApp after ordering.",

@@ -108,7 +108,7 @@ export function Header() {
             className={styles.navItem}
             onMouseEnter={() => setOpenMenu(null)}
           >
-            Photo &amp; 3D
+            Photo &amp; Custom
           </Link>
           <Link
             href={ROUTES.contact}

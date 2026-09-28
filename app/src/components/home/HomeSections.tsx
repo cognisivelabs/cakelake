@@ -39,7 +39,7 @@ export function HomeHero() {
       <div className={styles.sideCards}>
         <Link href={getCustomCategoriesRoute()} className={`${styles.sideCard} ${styles.sideCardWhite}`}>
           <span className={`${styles.sideBadge} mono-tag`}>24 HOURS</span>
-          <div className={styles.sideTitle}>Photo &amp; 3D cakes</div>
+          <div className={styles.sideTitle}>Photo &amp; Custom cakes</div>
           <div className={styles.sideText}>
             Send us the photo or the idea; we build it and confirm the price in chat.
           </div>
@@ -93,7 +93,7 @@ export function CategoryTiles() {
     >
       {categories.map((category) => {
         const image = getCategoryImage(category.id);
-        // A custom category with no photo of its own (3D cakes) gets the
+        // A custom category with no photo of its own (Custom Cakes) gets the
         // outlined "24 HRS" tile instead of an empty placeholder.
         const custom = category.kind === "custom" && !image;
         return (

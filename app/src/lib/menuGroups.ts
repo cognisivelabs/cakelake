@@ -28,14 +28,14 @@ export function getMenuGroups(): MenuGroup[] {
     { id: "notice-24h", label: "CAKES ON 24 HOURS", entries: standard.filter((c) => !isSameDay(c)).map(entry) },
     {
       id: "custom",
-      label: "PHOTO & 3D",
+      label: "PHOTO & CUSTOM",
       entries: getCategoriesByKind("custom").map(entry),
     },
   ].filter((group) => group.entries.length > 0);
 }
 
-/** Where the "Photo & 3D" links go: every custom category (Photo Cakes and
- * 3D Cakes) ticked together, or the whole menu if a build has none. */
+/** Where the "Photo & Custom" links go: every custom category (Photo Cakes and
+ * Custom Cakes) ticked together, or the whole menu if a build has none. */
 export function getCustomCategoriesRoute(): string {
   const ids = getCategoriesByKind("custom").map((c) => c.id);
   return ids.length > 0 ? categoriesRoute(ids) : ROUTES.menu;

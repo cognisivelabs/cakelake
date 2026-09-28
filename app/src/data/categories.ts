@@ -1,7 +1,7 @@
 import type { Category } from "@/types/catalog";
 
 const pink = { accent: "var(--color-pink)", tint: "var(--color-pink-bg)" };
-// The one category colour that stands apart: 3D cakes are a from-scratch
+// The one category colour that stands apart: Custom Cakes are a from-scratch
 // design brief, not a menu flavour.
 const berry = { accent: "var(--color-berry)", tint: "var(--color-berry-bg)" };
 
@@ -19,7 +19,7 @@ export const CATEGORIES: Category[] = [
   { id: "cheesecakes", label: "Cheesecakes", kind: "everyday", ...pink },
   { id: "indian-cakes", label: "Flavourful Indian Cakes", kind: "everyday", ...pink },
   { id: "photo-cakes", label: "Photo Cakes", kind: "custom", ...pink },
-  { id: "3d-cakes", label: "3D Cakes", kind: "custom", ...berry },
+  { id: "3d-cakes", label: "Custom Cakes", kind: "custom", ...berry },
   { id: "pull-me-up-cakes", label: "Pull Me Up Cakes", kind: "made-to-order", ...pink },
   { id: "hammer-cakes", label: "Hammer Cakes", kind: "made-to-order", ...pink },
   { id: "pinata-cakes", label: "Pinata Cakes", kind: "made-to-order", ...pink },

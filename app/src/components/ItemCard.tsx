@@ -46,7 +46,7 @@ export function ItemCard({ item }: { item: CatalogItem }) {
             {/* Mobile: a plain word wouldn't fit this card's small photo —
                 see ItemCard.module.css. Desktop: the text tag, as before. */}
             <span className={styles.mostOrderedStar} aria-label="Most ordered">
-              <StarIcon size={11} />
+              <StarIcon size={15} />
             </span>
             <span className={`${styles.mostOrderedBadge} mono-tag`}>Most ordered</span>
           </>

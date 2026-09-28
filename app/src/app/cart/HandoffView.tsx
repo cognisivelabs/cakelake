@@ -4,6 +4,24 @@ import { QrCode } from "@/components/QrCode";
 import { Footer } from "@/components/Footer";
 import styles from "./cart.module.css";
 
+// Groups the literal message on its own blank-line boundaries (see
+// buildOrderMessage: header / items / totals / footer) so the desktop
+// preview can bold the order header the way the Hi-Fi's message card
+// does, without changing a single character of what's actually sent.
+function MessagePreview({ message }: { message: string }) {
+  const [header, ...groups] = message.split("\n\n");
+  return (
+    <div className={styles.desktopPreview}>
+      <div className={styles.desktopPreviewHeader}>{header}</div>
+      {groups.map((group, index) => (
+        <div key={index} className={styles.desktopPreviewGroup}>
+          {group}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 // "This is the message we'll send" — then, once WhatsApp has been
 // opened, "did you send it?". Desktop swaps the open-WhatsApp button
 // for a QR code to scan on a phone.
@@ -72,13 +90,13 @@ export function HandoffView({
       <div className={styles.desktopHandoff}>
         <div className={styles.desktopHandoffMain}>
           <h1>Send this to us on WhatsApp</h1>
-          <p className={styles.muted}>
+          <p className={`${styles.muted} ${styles.desktopSubtitle}`}>
             Scan the code with your phone and the message below opens
             already typed. You still press send.
           </p>
           <div className={styles.desktopMessageBox}>
             <div className={styles.sectionLabel}>THE MESSAGE</div>
-            <pre className={styles.desktopPreview}>{message}</pre>
+            <MessagePreview message={message} />
           </div>
           <div className={styles.infoNote}>
             We can&apos;t see your WhatsApp, so tell us once you&apos;ve sent

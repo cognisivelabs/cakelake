@@ -22,7 +22,10 @@ import { CONFIG } from "@/lib/config";
  * WhatsApp chat, not a form field in the app.
  */
 
-/** Ids of the two single-item categories other screens link to directly. */
+/** "threeDCakes" is a single-item category's item id, used directly by
+ * other screens. "photoCakes" is the same string, but now only as a
+ * *category* id — Photo Cakes is three shape items (Round/Rectangle/
+ * Heart), not one, since the client supplied per-shape photos. */
 export const SPECIAL_ITEM_IDS = { photoCakes: "photo-cakes", threeDCakes: "3d-cakes" } as const;
 
 /**
@@ -370,24 +373,42 @@ export const BASE_CATALOG: CatalogItem[] = [
     ],
   ),
 
-  {
-    id: "photo-cakes",
-    name: "Photo Cakes",
-    categoryId: "photo-cakes",
-    description:
-      "An edible print of your photo on the cake — works with any flavour on this menu. Tell us which flavour you'd like and send the photo on WhatsApp after ordering.",
-    weightTiers: [
+  // Shape variants (client-supplied photos) — same pricing and notice as
+  // the single "Photo Cakes" item this replaces; the flavour is still
+  // chosen in the WhatsApp chat, not a picker here.
+  ...categoryItems(
+    "photo-cakes",
+    "photo-cakes",
+    "An edible print of your photo on the cake — works with any flavour on this menu. Tell us which flavour you'd like and send the photo on WhatsApp after ordering.",
+    [
       { id: "1kg", label: "1 kg", price: 170, serves: SERVES["1kg"] },
       ...largerSizes({ "2kg": 340 }),
       { id: "3kg-plus", label: "3 kg+", price: undefined, serves: SERVES["3kg-plus"] },
     ],
-    imageUrl: "/images/photo-cakes.jpg",
-    readyLabel: "24 hours notice",
-    leadTimeHours: 24,
-    cakeMessageMaxLength: CONFIG.cakeMessageMaxLength,
-    available: true,
-    requiresDelivery: true,
-  },
+    "24 hours notice",
+    24,
+    [
+      {
+        label: "Round",
+        description:
+          "An edible print of your photo on a round cake — works with any flavour on this menu. Tell us which flavour you'd like and send the photo on WhatsApp after ordering.",
+        imageUrl: "/images/photo-cakes-round.jpg",
+      },
+      {
+        label: "Rectangle",
+        description:
+          "An edible print of your photo on a rectangle cake — works with any flavour on this menu. Tell us which flavour you'd like and send the photo on WhatsApp after ordering.",
+        imageUrl: "/images/photo-cakes-rectangle.jpg",
+      },
+      {
+        label: "Heart",
+        description:
+          "An edible print of your photo on a heart-shaped cake — works with any flavour on this menu. Tell us which flavour you'd like and send the photo on WhatsApp after ordering.",
+        imageUrl: "/images/photo-cakes-heart.jpg",
+      },
+    ],
+    true,
+  ),
 
   {
     id: "3d-cakes",

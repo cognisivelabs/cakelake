@@ -104,8 +104,8 @@ describe("getSiblingItems", () => {
   });
 
   it("is empty for a category with only one item", () => {
-    const photoCakes = getItemById("photo-cakes")!;
-    expect(getSiblingItems(photoCakes)).toEqual([]);
+    const threeDCakes = getItemById("3d-cakes")!;
+    expect(getSiblingItems(threeDCakes)).toEqual([]);
   });
 });
 

@@ -1,7 +1,7 @@
 import { SPECIAL_ITEM_IDS } from "@/data/items";
-import { getItemById } from "@/lib/catalog";
+import { getCatalog } from "@/lib/catalog";
 import { formatAed } from "@/lib/pricing";
-import { itemRoute, ROUTES } from "@/lib/routes";
+import { categoryRoute, itemRoute, ROUTES } from "@/lib/routes";
 
 export type Banner = {
   id: string;
@@ -27,9 +27,11 @@ export type Banner = {
   bleedPhotoUrl?: string;
 };
 
-// The Photo cakes banner quotes the real per-kilo price rather than a
-// typed-in number that could drift from the menu.
-const photoCakes = getItemById(SPECIAL_ITEM_IDS.photoCakes);
+// The Photo cakes banner quotes the real per-kilo price, and bleeds a
+// real photo-print photo, rather than typing either in by hand — Photo
+// Cakes is now three shape items (Round/Rectangle/Heart), not one, so
+// this picks the first as a representative rather than a single id.
+const photoCakes = getCatalog().find((item) => item.categoryId === SPECIAL_ITEM_IDS.photoCakes);
 const photoPerKg = photoCakes?.weightTiers.find((tier) => tier.id === "1kg")?.price;
 
 /**
@@ -60,7 +62,7 @@ export const HOME_BANNERS: Banner[] = [
     body: `Send the picture on WhatsApp with your order. Eggless sponge in any of our flavours${
       photoPerKg !== undefined ? `, ${formatAed(photoPerKg)} a kilo` : ""
     }.`,
-    cta: { label: "ORDER A PHOTO CAKE", href: itemRoute(SPECIAL_ITEM_IDS.photoCakes) },
+    cta: { label: "ORDER A PHOTO CAKE", href: categoryRoute(SPECIAL_ITEM_IDS.photoCakes) },
     secondaryCta: { label: "See 3D cakes →", href: itemRoute(SPECIAL_ITEM_IDS.threeDCakes) },
     photoUrl: photoCakes?.imageUrl,
     // The bakery's own real photo-print cake — a genuine edible photo

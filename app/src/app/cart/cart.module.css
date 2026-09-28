@@ -2,6 +2,15 @@
   composes: page-shell breakout720 from global;
 }
 
+/* Everything between the header and <Footer /> — growing to fill any
+   leftover viewport height (see globals.css's `main` comment) is what
+   pushes Footer to the true bottom on a short screen like Handoff,
+   instead of leaving a gap below it. Footer stays a sibling after
+   this, not inside it, so it isn't stretched itself. */
+.body {
+  composes: page-body from global;
+}
+
 /* Review/empty states swap PageHeader (mobile) for the shared nav Header
    (desktop) via ResponsiveHeader — same toggle Menu uses. The
    handoff/confirming state keeps PageHeader at both breakpoints instead

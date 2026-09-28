@@ -2,6 +2,13 @@
   composes: page-shell breakout720 from global;
 }
 
+/* Everything between the header and <Footer /> — grows to fill any
+   leftover viewport height so Footer reaches the true bottom on a
+   page shorter than the screen, instead of leaving a gap below it. */
+.body {
+  composes: page-body from global;
+}
+
 .breadcrumb {
   display: none;
 }

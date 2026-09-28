@@ -81,31 +81,33 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
     return (
       <div className={styles.page}>
         <ResponsiveHeader title={categoryLabel} backHref={backHref} backLabel="MENU" />
-        <div className={styles.photo}>
-          <span className={`${styles.unavailableBadge} mono-tag`}>UNAVAILABLE</span>
-        </div>
-        <div className={styles.content}>
-          {category && (
-            <div className={styles.tags}>
-              <CategoryTag category={category} />
-              <MostOrderedTag item={item} />
-            </div>
-          )}
-          <h1 className={styles.title}>{item.name}</h1>
-          <p className={styles.description}>{item.description}</p>
-          <div className={styles.infoBox}>
-            Not available for new orders right now. Message us and we&apos;ll tell
-            you when it&apos;s back.
+        <div className={styles.body}>
+          <div className={styles.photo}>
+            <span className={`${styles.unavailableBadge} mono-tag`}>UNAVAILABLE</span>
           </div>
-        </div>
-        <div className={styles.footer}>
-          <a
-            href={buildWhatsAppUrl()}
-            {...EXTERNAL_LINK_PROPS}
-            className={styles.askButton}
-          >
-            ASK US ABOUT THIS CAKE
-          </a>
+          <div className={styles.content}>
+            {category && (
+              <div className={styles.tags}>
+                <CategoryTag category={category} />
+                <MostOrderedTag item={item} />
+              </div>
+            )}
+            <h1 className={styles.title}>{item.name}</h1>
+            <p className={styles.description}>{item.description}</p>
+            <div className={styles.infoBox}>
+              Not available for new orders right now. Message us and we&apos;ll tell
+              you when it&apos;s back.
+            </div>
+          </div>
+          <div className={styles.footer}>
+            <a
+              href={buildWhatsAppUrl()}
+              {...EXTERNAL_LINK_PROPS}
+              className={styles.askButton}
+            >
+              ASK US ABOUT THIS CAKE
+            </a>
+          </div>
         </div>
 
         <Footer />
@@ -117,148 +119,150 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
     <div className={styles.page}>
       <ResponsiveHeader title={categoryLabel} backHref={backHref} backLabel="MENU" />
 
-      {/* Desktop only — see docs/design/CLB-Hi-Fi-Screens.dc.html's
-          "Item detail — desktop": a breadcrumb replaces mobile's plain
-          "← MENU" back-link once there's room for one. The category crumb
-          opens the menu on that category (?category=, since there's no
-          per-category route). */}
-      <nav className={styles.breadcrumb}>
-        <Link href={ROUTES.menu}>← Menu</Link>
-        <span className={styles.breadcrumbSep}>/</span>
-        <Link href={backHref}>{categoryLabel}</Link>
-        <span className={styles.breadcrumbSep}>/</span>
-        <span>{item.name}</span>
-      </nav>
+      <div className={styles.body}>
+        {/* Desktop only — see docs/design/CLB-Hi-Fi-Screens.dc.html's
+            "Item detail — desktop": a breadcrumb replaces mobile's plain
+            "← MENU" back-link once there's room for one. The category crumb
+            opens the menu on that category (?category=, since there's no
+            per-category route). */}
+        <nav className={styles.breadcrumb}>
+          <Link href={ROUTES.menu}>← Menu</Link>
+          <span className={styles.breadcrumbSep}>/</span>
+          <Link href={backHref}>{categoryLabel}</Link>
+          <span className={styles.breadcrumbSep}>/</span>
+          <span>{item.name}</span>
+        </nav>
 
-      <div className={styles.desktopGrid}>
-        <div className={styles.leftCol}>
-          <div className={styles.photo}>
-            <Photo src={item.imageUrl} alt={item.name} slot="hero" />
-          </div>
-        </div>
-
-        <div className={styles.rightCol}>
-          <div className={styles.content}>
-            <div className={styles.tags}>
-              {category && <CategoryTag category={category} />}
-              <MostOrderedTag item={item} />
-              {item.requiresDelivery && (
-                <span className={`${styles.tag} ${styles.tagReady} mono-tag`}>Delivery only</span>
-              )}
-              <ReadyTag item={item} />
-              <span className={`${styles.tag} ${styles.tagReady} mono-tag`}>Eggless</span>
-            </div>
-            <h1 className={styles.title}>{item.name}</h1>
-            <p className={styles.description}>{item.description}</p>
-          </div>
-
-          <div className={styles.content}>
-            <div className={styles.sectionLabelRow}>
-              <div className={styles.sectionLabel}>
-                {isWeightPriced
-                  ? `WEIGHT${baseWeightPrice !== undefined ? ` · ${formatAed(baseWeightPrice)} PER KG` : ""}`
-                  : "WEIGHT"}
-              </div>
-              {/* The picked tier's own weight + who it serves — a live
-                  answer to "so how much cake is that", not just a size
-                  label (design: CLB Weight Picker). */}
-              {selectedTier?.serves && (
-                <div className={styles.servesLine}>
-                  {selectedTier.label} · {selectedTier.serves.toLowerCase()}
-                </div>
-              )}
-            </div>
-            <div className={styles.weightGrid}>
-              {item.weightTiers.map((tier) => (
-                <button
-                  key={tier.id}
-                  type="button"
-                  className={styles.weightTile}
-                  data-selected={tier.id === weightTierId}
-                  onClick={() => setWeightTierId(tier.id)}
-                >
-                  <span className={styles.weightTileLabel}>{tier.label}</span>
-                  <span className={styles.weightTileServes}>{tier.serves}</span>
-                  <span className={styles.weightTilePrice}>
-                    {tier.price === undefined ? "Ask us" : formatAed(tier.price)}
-                  </span>
-                </button>
-              ))}
+        <div className={styles.desktopGrid}>
+          <div className={styles.leftCol}>
+            <div className={styles.photo}>
+              <Photo src={item.imageUrl} alt={item.name} slot="hero" />
             </div>
           </div>
 
-          {item.cakeMessageMaxLength > 0 && (
+          <div className={styles.rightCol}>
             <div className={styles.content}>
-              <div className={styles.sectionLabel}>MESSAGE ON THE CAKE</div>
-              <div className={styles.messageField}>
-                <input
-                  type="text"
-                  className="no-focus-ring"
-                  value={cakeMessage}
-                  maxLength={item.cakeMessageMaxLength}
-                  onChange={(e) => setCakeMessage(e.target.value)}
-                  placeholder="Optional"
-                />
-                <span className={styles.charCount}>
-                  {cakeMessage.length}/{item.cakeMessageMaxLength}
-                </span>
+              <div className={styles.tags}>
+                {category && <CategoryTag category={category} />}
+                <MostOrderedTag item={item} />
+                {item.requiresDelivery && (
+                  <span className={`${styles.tag} ${styles.tagReady} mono-tag`}>Delivery only</span>
+                )}
+                <ReadyTag item={item} />
+                <span className={`${styles.tag} ${styles.tagReady} mono-tag`}>Eggless</span>
               </div>
-              <p className={styles.hint}>Leave blank if you&apos;d rather have it plain.</p>
+              <h1 className={styles.title}>{item.name}</h1>
+              <p className={styles.description}>{item.description}</p>
             </div>
-          )}
 
-          <div className={styles.content}>
-            <div className={styles.infoBox}>
-              {item.requiresDelivery
-                ? "This needs a day's notice and is delivered by us — the fee is confirmed in chat."
-                : `Baked to order in the shop — ${item.readyLabel.toLowerCase()}.`}
-            </div>
-          </div>
-
-          {siblingItems.length > 0 && (
-            <div className={styles.otherFlavoursSection}>
-              <div className={styles.sectionLabel}>OTHER FLAVOURS IN {categoryLabel.toUpperCase()}</div>
-              <div className={styles.otherFlavoursStrip}>
-                {siblingItems.map((sibling) => (
-                  <Link
-                    key={sibling.id}
-                    href={itemRoute(sibling.id)}
-                    className={styles.otherFlavourLink}
+            <div className={styles.content}>
+              <div className={styles.sectionLabelRow}>
+                <div className={styles.sectionLabel}>
+                  {isWeightPriced
+                    ? `WEIGHT${baseWeightPrice !== undefined ? ` · ${formatAed(baseWeightPrice)} PER KG` : ""}`
+                    : "WEIGHT"}
+                </div>
+                {/* The picked tier's own weight + who it serves — a live
+                    answer to "so how much cake is that", not just a size
+                    label (design: CLB Weight Picker). */}
+                {selectedTier?.serves && (
+                  <div className={styles.servesLine}>
+                    {selectedTier.label} · {selectedTier.serves.toLowerCase()}
+                  </div>
+                )}
+              </div>
+              <div className={styles.weightGrid}>
+                {item.weightTiers.map((tier) => (
+                  <button
+                    key={tier.id}
+                    type="button"
+                    className={styles.weightTile}
+                    data-selected={tier.id === weightTierId}
+                    onClick={() => setWeightTierId(tier.id)}
                   >
-                    <span className={styles.otherFlavourSwatch}>
-                      <Photo src={sibling.imageUrl} slot="thumbnail" />
+                    <span className={styles.weightTileLabel}>{tier.label}</span>
+                    <span className={styles.weightTileServes}>{tier.serves}</span>
+                    <span className={styles.weightTilePrice}>
+                      {tier.price === undefined ? "Ask us" : formatAed(tier.price)}
                     </span>
-                    <span className={styles.otherFlavourLabel}>{sibling.name}</span>
-                  </Link>
+                  </button>
                 ))}
               </div>
             </div>
-          )}
 
-          <div className={styles.footer}>
-            <div className={styles.quantityStepper}>
-              <button
-                type="button"
-                aria-label="Decrease quantity"
-                onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-              >
-                −
-              </button>
-              <span>{quantity}</span>
-              <button type="button" aria-label="Increase quantity" onClick={() => setQuantity((q) => q + 1)}>
-                +
+            {item.cakeMessageMaxLength > 0 && (
+              <div className={styles.content}>
+                <div className={styles.sectionLabel}>MESSAGE ON THE CAKE</div>
+                <div className={styles.messageField}>
+                  <input
+                    type="text"
+                    className="no-focus-ring"
+                    value={cakeMessage}
+                    maxLength={item.cakeMessageMaxLength}
+                    onChange={(e) => setCakeMessage(e.target.value)}
+                    placeholder="Optional"
+                  />
+                  <span className={styles.charCount}>
+                    {cakeMessage.length}/{item.cakeMessageMaxLength}
+                  </span>
+                </div>
+                <p className={styles.hint}>Leave blank if you&apos;d rather have it plain.</p>
+              </div>
+            )}
+
+            <div className={styles.content}>
+              <div className={styles.infoBox}>
+                {item.requiresDelivery
+                  ? "This needs a day's notice and is delivered by us — the fee is confirmed in chat."
+                  : `Baked to order in the shop — ${item.readyLabel.toLowerCase()}.`}
+              </div>
+            </div>
+
+            {siblingItems.length > 0 && (
+              <div className={styles.otherFlavoursSection}>
+                <div className={styles.sectionLabel}>OTHER FLAVOURS IN {categoryLabel.toUpperCase()}</div>
+                <div className={styles.otherFlavoursStrip}>
+                  {siblingItems.map((sibling) => (
+                    <Link
+                      key={sibling.id}
+                      href={itemRoute(sibling.id)}
+                      className={styles.otherFlavourLink}
+                    >
+                      <span className={styles.otherFlavourSwatch}>
+                        <Photo src={sibling.imageUrl} slot="thumbnail" />
+                      </span>
+                      <span className={styles.otherFlavourLabel}>{sibling.name}</span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div className={styles.footer}>
+              <div className={styles.quantityStepper}>
+                <button
+                  type="button"
+                  aria-label="Decrease quantity"
+                  onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+                >
+                  −
+                </button>
+                <span>{quantity}</span>
+                <button type="button" aria-label="Increase quantity" onClick={() => setQuantity((q) => q + 1)}>
+                  +
+                </button>
+              </div>
+              <button type="button" className={styles.addButton} disabled={!canAdd} onClick={handleAdd}>
+                ADD{total !== undefined ? ` · ${formatAed(total)}` : ""}
               </button>
             </div>
-            <button type="button" className={styles.addButton} disabled={!canAdd} onClick={handleAdd}>
-              ADD{total !== undefined ? ` · ${formatAed(total)}` : ""}
-            </button>
           </div>
         </div>
-      </div>
 
-      {addedSnapshot && (
-        <AddedToOrderPanel item={item} snapshot={addedSnapshot} onClose={() => setAddedSnapshot(null)} />
-      )}
+        {addedSnapshot && (
+          <AddedToOrderPanel item={item} snapshot={addedSnapshot} onClose={() => setAddedSnapshot(null)} />
+        )}
+      </div>
 
       <Footer />
     </div>

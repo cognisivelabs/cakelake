@@ -29,80 +29,82 @@ export default function ContactPage() {
     <div className={styles.page}>
       <ResponsiveHeader title="Find us" backHref={ROUTES.home} backLabel="BACK" />
 
-      <div className={styles.desktopGrid}>
-        <iframe
-          className={styles.map}
-          src={CONFIG.mapsEmbedSrc}
-          title={`${CONFIG.name} location`}
-          loading="lazy"
-          referrerPolicy="strict-origin-when-cross-origin"
-          allowFullScreen
-        />
+      <div className={styles.body}>
+        <div className={styles.desktopGrid}>
+          <iframe
+            className={styles.map}
+            src={CONFIG.mapsEmbedSrc}
+            title={`${CONFIG.name} location`}
+            loading="lazy"
+            referrerPolicy="strict-origin-when-cross-origin"
+            allowFullScreen
+          />
 
-        <div className={styles.leftCol}>
-          {/* Desktop only — see docs/design/CLB-Hi-Fi-Screens.dc.html's
-              "Find us — desktop": mobile's PageHeader title already says
-              "Find us", so this heading + subtitle is new content, not
-              a copy of anything mobile shows. Lives inside .leftCol
-              (not as its own row above the grid) so its top lines up
-              with the map's, matching the Hi-Fi — measured directly off
-              the rendered canvas, both start at the same y. */}
-          <div className={styles.desktopIntro}>
-            <h1>Find us in Karama</h1>
-            <p>A live bakery — walk in and collect, or message us and we&apos;ll bake it for a time that suits you.</p>
-          </div>
+          <div className={styles.leftCol}>
+            {/* Desktop only — see docs/design/CLB-Hi-Fi-Screens.dc.html's
+                "Find us — desktop": mobile's PageHeader title already says
+                "Find us", so this heading + subtitle is new content, not
+                a copy of anything mobile shows. Lives inside .leftCol
+                (not as its own row above the grid) so its top lines up
+                with the map's, matching the Hi-Fi — measured directly off
+                the rendered canvas, both start at the same y. */}
+            <div className={styles.desktopIntro}>
+              <h1>Find us in Karama</h1>
+              <p>A live bakery — walk in and collect, or message us and we&apos;ll bake it for a time that suits you.</p>
+            </div>
 
-          <div className={styles.content}>
-            <section>
-              <div className={styles.sectionLabel}>WHERE</div>
-              <div className={styles.sectionContent}>
-                <p className={styles.text}>
-                  {CONFIG.address.line1}
-                  <br />
-                  {CONFIG.address.line2}
-                  <br />
-                  {CONFIG.address.line3}
-                </p>
-              </div>
-            </section>
-
-            <section>
-              <div className={styles.sectionLabel}>WHEN</div>
-              <div className={styles.sectionContent}>
-                <div className={styles.hoursList}>
-                  {CONFIG.openingHoursByDay.map((entry) => (
-                    <div key={entry.day} className={styles.row}>
-                      <span>{entry.day}</span>
-                      <span>{entry.hours}</span>
-                    </div>
-                  ))}
+            <div className={styles.content}>
+              <section>
+                <div className={styles.sectionLabel}>WHERE</div>
+                <div className={styles.sectionContent}>
+                  <p className={styles.text}>
+                    {CONFIG.address.line1}
+                    <br />
+                    {CONFIG.address.line2}
+                    <br />
+                    {CONFIG.address.line3}
+                  </p>
                 </div>
-              </div>
-            </section>
+              </section>
 
-            <section>
-              <div className={styles.sectionLabel}>CALL OR MESSAGE</div>
-              <div className={styles.sectionContent}>
-                <div className={styles.row}>
-                  <span>Shop</span>
-                  <span>{CONFIG.shopPhone}</span>
+              <section>
+                <div className={styles.sectionLabel}>WHEN</div>
+                <div className={styles.sectionContent}>
+                  <div className={styles.hoursList}>
+                    {CONFIG.openingHoursByDay.map((entry) => (
+                      <div key={entry.day} className={styles.row}>
+                        <span>{entry.day}</span>
+                        <span>{entry.hours}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
-                <div className={styles.row}>
-                  <span>WhatsApp</span>
-                  <span>{formatLocalPhone(CONFIG.bakeryWhatsAppNumber)}</span>
-                </div>
-              </div>
-            </section>
-          </div>
+              </section>
 
-          <div className={styles.actions}>
-            <a
-              href={CONFIG.mapsUrl}
-              {...EXTERNAL_LINK_PROPS}
-              className={styles.outlineButton}
-            >
-              OPEN IN MAPS
-            </a>
+              <section>
+                <div className={styles.sectionLabel}>CALL OR MESSAGE</div>
+                <div className={styles.sectionContent}>
+                  <div className={styles.row}>
+                    <span>Shop</span>
+                    <span>{CONFIG.shopPhone}</span>
+                  </div>
+                  <div className={styles.row}>
+                    <span>WhatsApp</span>
+                    <span>{formatLocalPhone(CONFIG.bakeryWhatsAppNumber)}</span>
+                  </div>
+                </div>
+              </section>
+            </div>
+
+            <div className={styles.actions}>
+              <a
+                href={CONFIG.mapsUrl}
+                {...EXTERNAL_LINK_PROPS}
+                className={styles.outlineButton}
+              >
+                OPEN IN MAPS
+              </a>
+            </div>
           </div>
         </div>
       </div>

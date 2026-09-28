@@ -54,26 +54,26 @@
   position: absolute;
   top: 5px;
   left: 5px;
-  color: #f0b429;
+  color: #ffc700;
   animation: mostOrderedGlow 2.2s ease-in-out infinite;
 }
 
 @keyframes mostOrderedGlow {
   0%,
   100% {
-    filter: drop-shadow(0 1px 2px rgba(40, 20, 10, 0.55)) drop-shadow(0 0 2px rgba(240, 180, 41, 0.75))
-      drop-shadow(0 0 4px rgba(240, 180, 41, 0.45));
+    filter: drop-shadow(0 1px 2px rgba(40, 20, 10, 0.55)) drop-shadow(0 0 2px rgba(255, 199, 0, 0.8))
+      drop-shadow(0 0 4px rgba(255, 199, 0, 0.5));
   }
   50% {
-    filter: drop-shadow(0 1px 2px rgba(40, 20, 10, 0.55)) drop-shadow(0 0 5px rgba(240, 180, 41, 1))
-      drop-shadow(0 0 10px rgba(240, 180, 41, 0.85));
+    filter: drop-shadow(0 1px 2px rgba(40, 20, 10, 0.55)) drop-shadow(0 0 6px rgba(255, 199, 0, 1))
+      drop-shadow(0 0 12px rgba(255, 199, 0, 0.9));
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .mostOrderedIcon {
     animation: none;
-    filter: drop-shadow(0 1px 2px rgba(40, 20, 10, 0.55)) drop-shadow(0 0 3px rgba(240, 180, 41, 0.85));
+    filter: drop-shadow(0 1px 2px rgba(40, 20, 10, 0.55)) drop-shadow(0 0 3px rgba(255, 199, 0, 0.9));
   }
 }
 

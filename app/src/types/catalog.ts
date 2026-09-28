@@ -22,6 +22,10 @@ export type WeightTier = {
   label: string; // "½ kg", "1 kg", "3 kg+"
   /** AED. Omitted means "Ask us" — no fixed price at this weight. */
   price?: number;
+  /** "Serves 5–6" — shown beside the weight on the item page's picker
+   * (design: CLB Weight Picker). Proposed counts, not yet client-
+   * confirmed. */
+  serves?: string;
 };
 
 /** How a category is sold: everyday menu ranges, ranges that need notice

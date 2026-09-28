@@ -57,6 +57,26 @@
   padding: 0 20px;
 }
 
+/* Weight section only — the label plus the picked tier's own "1 kg ·
+   serves 5–6" readout, at opposite ends of the same row. */
+.sectionLabelRow {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 0 20px;
+}
+
+.sectionLabelRow .sectionLabel {
+  padding: 0;
+}
+
+.servesLine {
+  font-size: 0.72rem;
+  color: var(--color-ink-muted);
+  white-space: nowrap;
+}
+
 /* Sep 2026 recategorisation — flavour is no longer a picker on this
    page (each flavour has its own item/page now); this cross-links every
    other item in the same category instead. Same visual language as the
@@ -144,38 +164,50 @@
   color: var(--color-ink-muted);
 }
 
-.weightRow {
-  display: flex;
+/* Weight picker — design: CLB Weight Picker, "Mobile · proposed". Three
+   tiles per row (was six-in-a-row, one line each) so every tile stays a
+   comfortable tap target and there's room for a serves line. */
+.weightGrid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 8px;
   padding: 0 20px;
 }
 
-.weightOption {
-  flex: 1;
+.weightTile {
+  box-sizing: border-box;
+  min-height: 68px;
   background: var(--color-surface-alt);
-  color: var(--color-ink-muted);
+  color: var(--color-ink);
   border: none;
   border-radius: var(--radius-md);
-  padding: 11px 4px;
+  padding: 10px 6px;
   text-align: center;
-  font-weight: 700;
-  font-size: 0.75rem;
   cursor: pointer;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   gap: 2px;
 }
 
-.weightOption[data-selected="true"] {
+.weightTile[data-selected="true"] {
   background: var(--color-accent);
   color: var(--color-accent-ink);
-  font-weight: 800;
 }
 
-.weightPrice {
-  font-size: 0.7rem;
-  font-weight: 400;
+.weightTileLabel {
+  font-weight: 800;
+  font-size: 0.82rem;
+}
+
+.weightTileServes {
+  font-size: 0.68rem;
   opacity: 0.75;
+}
+
+.weightTilePrice {
+  font-weight: 700;
+  font-size: 0.68rem;
 }
 
 .messageField input {
@@ -697,8 +729,26 @@
     padding: 0;
   }
 
-  .weightRow {
+  .sectionLabelRow {
     padding: 0;
+  }
+
+  .weightGrid {
+    padding: 0;
+  }
+
+  .weightTile {
+    min-height: 76px;
+    padding: 12px 8px;
+  }
+
+  .weightTileLabel {
+    font-size: 0.94rem;
+  }
+
+  .weightTileServes,
+  .weightTilePrice {
+    font-size: 0.75rem;
   }
 
   .title {

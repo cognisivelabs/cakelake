@@ -38,8 +38,21 @@ const LARGER_SIZES = [
   { id: "3kg", label: "3 kg" },
 ] as const;
 
+/** How many people a weight serves — shown beside the weight on the item
+ * page's picker (design: CLB Weight Picker). Proposed counts, not yet
+ * client-confirmed. */
+const SERVES: Record<string, string> = {
+  "half-kg": "Serves 2–4",
+  "1kg": "Serves 5–6",
+  "1.5kg": "Serves 8–10",
+  "2kg": "Serves 10–12",
+  "2.5kg": "Serves 12–15",
+  "3kg": "Serves 15–18",
+  "3kg-plus": "Serves 18+",
+};
+
 function largerSizes(prices: Partial<Record<(typeof LARGER_SIZES)[number]["id"], number>> = {}): WeightTier[] {
-  return LARGER_SIZES.map((size) => ({ ...size, price: prices[size.id] }));
+  return LARGER_SIZES.map((size) => ({ ...size, price: prices[size.id], serves: SERVES[size.id] }));
 }
 
 type ItemEntry = string | { label: string; description?: string; imageUrl?: string };
@@ -85,8 +98,8 @@ export const BASE_CATALOG: CatalogItem[] = [
     "classic-cakes",
     "Ultra moist, ready in an hour.",
     [
-      { id: "half-kg", label: "½ kg", price: 55 },
-      { id: "1kg", label: "1 kg", price: 100 },
+      { id: "half-kg", label: "½ kg", price: 55, serves: SERVES["half-kg"] },
+      { id: "1kg", label: "1 kg", price: 100, serves: SERVES["1kg"] },
       ...largerSizes(),
     ],
     "Ready in 1 hour",
@@ -115,8 +128,8 @@ export const BASE_CATALOG: CatalogItem[] = [
     "premium-cakes",
     "Truffle, fresh fruit, and berry finishes.",
     [
-      { id: "half-kg", label: "½ kg", price: 65 },
-      { id: "1kg", label: "1 kg", price: 115 },
+      { id: "half-kg", label: "½ kg", price: 65, serves: SERVES["half-kg"] },
+      { id: "1kg", label: "1 kg", price: 115, serves: SERVES["1kg"] },
       ...largerSizes(),
     ],
     "Ready in 1 hour",
@@ -174,8 +187,8 @@ export const BASE_CATALOG: CatalogItem[] = [
     "exotic-cakes",
     "Our more distinctive flavours.",
     [
-      { id: "half-kg", label: "½ kg", price: 75 },
-      { id: "1kg", label: "1 kg", price: 140 },
+      { id: "half-kg", label: "½ kg", price: 75, serves: SERVES["half-kg"] },
+      { id: "1kg", label: "1 kg", price: 140, serves: SERVES["1kg"] },
       ...largerSizes(),
     ],
     "Ready in 1 hour",
@@ -232,8 +245,8 @@ export const BASE_CATALOG: CatalogItem[] = [
     "exotic-premium-cakes",
     "Our top-tier range — whole Rocher, Kinder Bueno, and more.",
     [
-      { id: "half-kg", label: "½ kg", price: 85 },
-      { id: "1kg", label: "1 kg", price: 160 },
+      { id: "half-kg", label: "½ kg", price: 85, serves: SERVES["half-kg"] },
+      { id: "1kg", label: "1 kg", price: 160, serves: SERVES["1kg"] },
       ...largerSizes(),
     ],
     "Ready in 1 hour",
@@ -284,8 +297,8 @@ export const BASE_CATALOG: CatalogItem[] = [
     "cheesecakes",
     "Creamy baked cheesecake, whole cakes only.",
     [
-      { id: "half-kg", label: "½ kg", price: 95 },
-      { id: "1kg", label: "1 kg", price: 170 },
+      { id: "half-kg", label: "½ kg", price: 95, serves: SERVES["half-kg"] },
+      { id: "1kg", label: "1 kg", price: 170, serves: SERVES["1kg"] },
       ...largerSizes(),
     ],
     "24 hours notice",
@@ -308,8 +321,8 @@ export const BASE_CATALOG: CatalogItem[] = [
     "indian-cakes",
     "Traditional Indian mithai flavours in cake form, made fresh each morning.",
     [
-      { id: "half-kg", label: "½ kg", price: 105 },
-      { id: "1kg", label: "1 kg", price: 190 },
+      { id: "half-kg", label: "½ kg", price: 105, serves: SERVES["half-kg"] },
+      { id: "1kg", label: "1 kg", price: 190, serves: SERVES["1kg"] },
       ...largerSizes(),
     ],
     "24 hours notice",
@@ -327,7 +340,7 @@ export const BASE_CATALOG: CatalogItem[] = [
     "hammer-cakes",
     "hammer-cakes",
     "A chocolate shell cake you crack open with a hammer.",
-    [{ id: "1kg", label: "1 kg", price: 190 }, ...largerSizes()],
+    [{ id: "1kg", label: "1 kg", price: 190, serves: SERVES["1kg"] }, ...largerSizes()],
     "24 hours notice",
     24,
     [{ label: "Heart Shape Hammer Cake", imageUrl: "/images/hammer-heart-shape.jpg" }],
@@ -337,7 +350,7 @@ export const BASE_CATALOG: CatalogItem[] = [
     "pull-me-up-cakes",
     "pull-me-up-cakes",
     "Pull the ribbons to reveal a surprise inside.",
-    [{ id: "1kg", label: "1 kg", price: 180 }, ...largerSizes()],
+    [{ id: "1kg", label: "1 kg", price: 180, serves: SERVES["1kg"] }, ...largerSizes()],
     "24 hours notice",
     24,
     ["Biscoff", "Coffee", "Nutella Strawberry", "Triple Chocolate", "Mango", "Red Velvet"],
@@ -347,7 +360,7 @@ export const BASE_CATALOG: CatalogItem[] = [
     "pinata-cakes",
     "pinata-cakes",
     "Break it open for the treats hidden inside.",
-    [{ id: "1kg", label: "1 kg", price: 190 }, ...largerSizes()],
+    [{ id: "1kg", label: "1 kg", price: 190, serves: SERVES["1kg"] }, ...largerSizes()],
     "24 hours notice",
     24,
     [
@@ -364,9 +377,9 @@ export const BASE_CATALOG: CatalogItem[] = [
     description:
       "An edible print of your photo on the cake — works with any flavour on this menu. Tell us which flavour you'd like and send the photo on WhatsApp after ordering.",
     weightTiers: [
-      { id: "1kg", label: "1 kg", price: 170 },
+      { id: "1kg", label: "1 kg", price: 170, serves: SERVES["1kg"] },
       ...largerSizes({ "2kg": 340 }),
-      { id: "3kg-plus", label: "3 kg+", price: undefined },
+      { id: "3kg-plus", label: "3 kg+", price: undefined, serves: SERVES["3kg-plus"] },
     ],
     imageUrl: "/images/photo-cakes.jpg",
     readyLabel: "24 hours notice",
@@ -383,9 +396,9 @@ export const BASE_CATALOG: CatalogItem[] = [
     description:
       "Designed to your idea in fondant. Describe what you have in mind — a reference photo helps — on WhatsApp after ordering.",
     weightTiers: [
-      { id: "1kg", label: "1 kg", price: 190 },
+      { id: "1kg", label: "1 kg", price: 190, serves: SERVES["1kg"] },
       ...largerSizes({ "2kg": 380 }),
-      { id: "3kg-plus", label: "3 kg+", price: undefined },
+      { id: "3kg-plus", label: "3 kg+", price: undefined, serves: SERVES["3kg-plus"] },
     ],
     readyLabel: "24 hours notice",
     leadTimeHours: 24,

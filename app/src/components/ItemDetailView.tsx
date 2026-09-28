@@ -153,22 +153,33 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
           </div>
 
           <div className={styles.content}>
-            <div className={styles.sectionLabel}>
-              {isWeightPriced
-                ? `WEIGHT${baseWeightPrice !== undefined ? ` · ${formatAed(baseWeightPrice)} PER KG` : ""}`
-                : "SIZE"}
+            <div className={styles.sectionLabelRow}>
+              <div className={styles.sectionLabel}>
+                {isWeightPriced
+                  ? `WEIGHT${baseWeightPrice !== undefined ? ` · ${formatAed(baseWeightPrice)} PER KG` : ""}`
+                  : "WEIGHT"}
+              </div>
+              {/* The picked tier's own weight + who it serves — a live
+                  answer to "so how much cake is that", not just a size
+                  label (design: CLB Weight Picker). */}
+              {selectedTier?.serves && (
+                <div className={styles.servesLine}>
+                  {selectedTier.label} · {selectedTier.serves.toLowerCase()}
+                </div>
+              )}
             </div>
-            <div className={styles.weightRow}>
+            <div className={styles.weightGrid}>
               {item.weightTiers.map((tier) => (
                 <button
                   key={tier.id}
                   type="button"
-                  className={styles.weightOption}
+                  className={styles.weightTile}
                   data-selected={tier.id === weightTierId}
                   onClick={() => setWeightTierId(tier.id)}
                 >
-                  {tier.label}
-                  <span className={styles.weightPrice}>
+                  <span className={styles.weightTileLabel}>{tier.label}</span>
+                  <span className={styles.weightTileServes}>{tier.serves}</span>
+                  <span className={styles.weightTilePrice}>
                     {tier.price === undefined ? "Ask us" : formatAed(tier.price)}
                   </span>
                 </button>

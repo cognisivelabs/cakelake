@@ -2,7 +2,16 @@
 
 import { useEffect, useRef, useState } from "react";
 import QRCode from "qrcode";
+import { CONFIG } from "@/lib/config";
+import { THEMES } from "@/theme/themes";
 import styles from "./QrCode.module.css";
+
+// Plum dots on the theme's own cream, matching "2a/2b/2c" in
+// Downloads/Cake Lake Bakery/CLB QR Codes.dc.html — that design's
+// palette (ink #43272E, accent #CE4469) turned out to already be this
+// site's "strawberry-cream" theme, so this reads it from the live
+// theme rather than repeating the hex values.
+const QR_THEME = THEMES[CONFIG.theme].colors;
 
 // Highest correction first — safest for the centered "CL" badge below,
 // which needs headroom to be scanned around. A very large order's
@@ -31,8 +40,8 @@ export function QrCode({ value, size = 220 }: { value: string; size?: number }) 
             width: size,
             errorCorrectionLevel: level,
             color: {
-              dark: "#000000",
-              light: "#ffffff",
+              dark: QR_THEME.ink,
+              light: QR_THEME.surface,
             },
           });
           if (!cancelled) setRendered(true);

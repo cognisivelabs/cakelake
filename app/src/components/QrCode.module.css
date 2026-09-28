@@ -12,7 +12,9 @@
 /* Centered "CL" monogram — safe to overlay because the code is
    generated with errorCorrectionLevel "H" (tolerates ~30% obscured)
    and this covers well under that, clear of the three corner finder
-   squares. */
+   squares. Accent (strawberry), not plain black, to pair with the
+   dots' ink colour the way CLB QR Codes.dc.html's "2" series pairs
+   plum dots with a strawberry accent. */
 .badge {
   position: absolute;
   top: 50%;
@@ -23,9 +25,9 @@
   min-width: 40px;
   min-height: 40px;
   border-radius: 50%;
-  background: #000;
-  color: #fff;
-  border: 3px solid #fff;
+  background: var(--color-accent);
+  color: var(--color-accent-ink);
+  border: 3px solid var(--color-surface);
   display: flex;
   align-items: center;
   justify-content: center;

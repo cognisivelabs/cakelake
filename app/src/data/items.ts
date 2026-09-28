@@ -331,8 +331,8 @@ export const BASE_CATALOG: CatalogItem[] = [
     "24 hours notice",
     24,
     [
-      "Motichoor",
-      "Kaju Katli",
+      { label: "Motichoor", imageUrl: "/images/indian-motichoor.jpg" },
+      { label: "Kaju Katli", imageUrl: "/images/indian-kaju-katli.jpg" },
       { label: "Gulkand", imageUrl: "/images/indian-gulkand.jpg" },
       { label: "Gulab Jamun", imageUrl: "/images/indian-gulab-jamun.jpg" },
       { label: "Rasmalai", imageUrl: "/images/indian-rasmalai.jpg" },

@@ -1,16 +1,12 @@
 import type { Category } from "@/types/catalog";
 
+/** Pink accent and tint colours. */
 const pink = { accent: "var(--color-pink)", tint: "var(--color-pink-bg)" };
-// The one category colour that stands apart: Custom Cakes are a from-scratch
-// design brief, not a menu flavour.
+/** Berry accent and tint colours, used by Custom Cakes. */
 const berry = { accent: "var(--color-berry)", tint: "var(--color-berry-bg)" };
 
-/**
- * The menu's categories, in display order. `kind` says how a category is
- * sold — it drives the footer's columns, the mega-menu's groups and which
- * tiles get the "custom" look, so none of those hard-code category ids.
- * Halloween and Valentine join once the client supplies their cakes.
- */
+/** The menu's categories, in display order, each with its kind
+ * (everyday, made-to-order or custom) and colours. */
 export const CATEGORIES: Category[] = [
   { id: "classic-cakes", label: "Classic Cakes", kind: "everyday", ...pink },
   { id: "premium-cakes", label: "Premium Cakes", kind: "everyday", ...pink },

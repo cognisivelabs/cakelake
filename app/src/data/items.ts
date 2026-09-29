@@ -57,15 +57,13 @@ function weightTiers(sizes: SizeId[], prices: Partial<Record<SizeId, number>>): 
 type ItemEntry = string | { label: string; description?: string; imageUrl?: string };
 
 /**
- * Builds one category's flattened item list — one CatalogItem per
- * flavour, all sharing that category's weight tiers and lead time. A
- * bare string entry falls back to `fallbackDescription`, same as a
- * flavour with no description of its own used to fall back to its
- * group's description before the recategorisation.
+ * One CatalogItem per flavour in a category, with id
+ * "<categoryId>-<flavour>", all sharing the category's weight tiers and
+ * lead time. An entry without its own description uses
+ * `fallbackDescription`.
  */
 function categoryItems(
   categoryId: string,
-  idPrefix: string,
   fallbackDescription: string,
   weightTiers: WeightTier[],
   leadTimeHours: number,
@@ -75,7 +73,7 @@ function categoryItems(
   return entries.map((entry) => {
     const { label, description, imageUrl } = typeof entry === "string" ? { label: entry } : entry;
     return {
-      id: `${idPrefix}-${label.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`,
+      id: `${categoryId}-${label.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`,
       name: label,
       categoryId,
       description: description ?? fallbackDescription,
@@ -91,7 +89,6 @@ function categoryItems(
 
 export const BASE_CATALOG: CatalogItem[] = [
   ...categoryItems(
-    "classic-cakes",
     "classic-cakes",
     "Ultra moist, ready in an hour.",
     weightTiers(HALF_TO_3KG, { "half-kg": 55, "1kg": 100 }),
@@ -116,7 +113,6 @@ export const BASE_CATALOG: CatalogItem[] = [
   ),
 
   ...categoryItems(
-    "premium-cakes",
     "premium-cakes",
     "Truffle, fresh fruit, and berry finishes.",
     weightTiers(HALF_TO_3KG, { "half-kg": 65, "1kg": 115 }),
@@ -171,7 +167,6 @@ export const BASE_CATALOG: CatalogItem[] = [
 
   ...categoryItems(
     "exotic-cakes",
-    "exotic-cakes",
     "Our more distinctive flavours.",
     weightTiers(HALF_TO_3KG, { "half-kg": 75, "1kg": 140 }),
     0,
@@ -224,7 +219,6 @@ export const BASE_CATALOG: CatalogItem[] = [
 
   ...categoryItems(
     "exotic-premium-cakes",
-    "exotic-premium-cakes",
     "Our top-tier range — whole Rocher, Kinder Bueno, and more.",
     weightTiers(HALF_TO_3KG, { "half-kg": 85, "1kg": 160 }),
     0,
@@ -271,7 +265,6 @@ export const BASE_CATALOG: CatalogItem[] = [
   // NEW category (Sep 2026 recategorisation) — whole cakes only.
   ...categoryItems(
     "cheesecakes",
-    "cheesecakes",
     "Creamy baked cheesecake, whole cakes only.",
     weightTiers(HALF_TO_3KG, { "half-kg": 95, "1kg": 170 }),
     24,
@@ -284,12 +277,8 @@ export const BASE_CATALOG: CatalogItem[] = [
     ],
   ),
 
-  // NEW category (Sep 2026 recategorisation) — made in small batches
-  // each morning, per the client. Ready time/lead time follow the
-  // standard same-day cakes until the client says otherwise (see
-  // docs/design/CLAUDE.md — still TBC).
+  // Made in small batches each morning; 24 hours notice.
   ...categoryItems(
-    "indian-cakes",
     "indian-cakes",
     "Traditional Indian mithai flavours in cake form, made fresh each morning.",
     weightTiers(HALF_TO_3KG, { "half-kg": 105, "1kg": 190 }),
@@ -305,7 +294,6 @@ export const BASE_CATALOG: CatalogItem[] = [
 
   ...categoryItems(
     "hammer-cakes",
-    "hammer-cakes",
     "A chocolate shell cake you crack open with a hammer.",
     weightTiers(HALF_TO_1_5KG, { "1kg": 190 }),
     24,
@@ -314,7 +302,6 @@ export const BASE_CATALOG: CatalogItem[] = [
 
   ...categoryItems(
     "pull-me-up-cakes",
-    "pull-me-up-cakes",
     "Pull the ribbons to reveal a surprise inside.",
     weightTiers(HALF_TO_3KG, { "1kg": 180 }),
     24,
@@ -322,7 +309,6 @@ export const BASE_CATALOG: CatalogItem[] = [
   ),
 
   ...categoryItems(
-    "pinata-cakes",
     "pinata-cakes",
     "Break it open for the treats hidden inside.",
     weightTiers(HALF_TO_1_5KG, { "1kg": 190 }),
@@ -338,7 +324,6 @@ export const BASE_CATALOG: CatalogItem[] = [
   // the single "Photo Cakes" item this replaces; the flavour is still
   // chosen in the WhatsApp chat, not a picker here.
   ...categoryItems(
-    "photo-cakes",
     "photo-cakes",
     "An edible print of your photo on the cake — works with any flavour on this menu. Tell us which flavour you'd like and send the photo on WhatsApp after ordering.",
     weightTiers(HALF_TO_3KG, { "1kg": 170, "2kg": 340 }),

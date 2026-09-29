@@ -1,51 +1,36 @@
+/** One line in the cart: an item at one weight, with a quantity. */
 export type CartLine = {
-  /** Unique per line, not per item — the same item can appear twice
-   * with different weight/message combinations. */
+  /** Unique per line; the same item can appear on several lines. */
   lineId: string;
   itemId: string;
   quantity: number;
   weightTierId: string;
-  /**
-   * Cake inscription — per item, per ADR-003. Optional, always asked at
-   * the point of adding the item, never inferred from the customer.
-   */
+  /** Optional inscription for the cake. */
   cakeMessage?: string;
 };
 
 export type Fulfillment = "pickup" | "delivery";
 
+/** When the customer needs the order. */
 export type WhenNeeded =
   | { kind: "today" }
   | { kind: "tomorrow" }
   | { kind: "date"; date: string } // ISO yyyy-mm-dd
   | { kind: "unsure" };
 
+/** The cart, saved in localStorage. */
 export type Order = {
   lines: CartLine[];
   fulfillment: Fulfillment;
   whenNeeded: WhenNeeded;
-  /**
-   * Optional — client-confirmed: keep the name field, but omit it from
-   * the WhatsApp message entirely if left blank, rather than sending a
-   * placeholder.
-   */
+  /** The customer's name; may be empty. */
   customerName: string;
-  /**
-   * Set right before handing off to WhatsApp, cleared once the customer
-   * answers "did you send it?". Persisted (not just component state) so
-   * the "did you send it?" screen survives a reload — in an installed
-   * PWA, opening the wa.me link can navigate the app's own single window
-   * instead of a separate tab, wiping in-memory state when the customer
-   * returns.
-   */
+  /** True from handing the order to WhatsApp until the customer answers
+   * "did you send it?". */
   pendingHandoff: boolean;
-  /**
-   * Epoch ms — per ADR-003, an unanswered "did you send it?" is treated
-   * as abandoned after 2 hours, while an explicit "not yet, back to my
-   * cart" gets a more forgiving 24 hours. Absent for a cart that hasn't
-   * reached either point yet (an ordinary in-progress cart has no
-   * expiry). Checked once per visit, not live while a tab sits open —
-   * see lib/cartExpiry.ts.
-   */
+  /** When the cart expires, in epoch ms: set on handoff
+   * (CONFIG.pendingHandoffExpiryHours) and on "not yet, back to my cart"
+   * (CONFIG.declinedHandoffExpiryHours). Absent for a cart with no
+   * expiry. */
   expiresAt?: number;
 };

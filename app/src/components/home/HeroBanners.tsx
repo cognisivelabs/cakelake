@@ -2,7 +2,7 @@
 
 import { useEffect, useState, type CSSProperties } from "react";
 import Link from "next/link";
-import type { Banner } from "@/data/banners";
+import type { Banner } from "@/types/banner";
 import { BANNER_INTERVAL_MS, nextIndex, previousIndex, shouldAutoRotate } from "@/lib/carousel";
 import type { HeroStyle } from "@/lib/config";
 import { Photo } from "@/components/Photo";

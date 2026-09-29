@@ -63,7 +63,7 @@ export const HOME_BANNERS: Banner[] = [
       photoPerKg !== undefined ? `, ${formatAed(photoPerKg)} a kilo` : ""
     }.`,
     cta: { label: "ORDER A PHOTO CAKE", href: categoryRoute(SPECIAL_ITEM_IDS.photoCakes) },
-    secondaryCta: { label: "See custom cakes →", href: itemRoute(SPECIAL_ITEM_IDS.threeDCakes) },
+    secondaryCta: { label: "See custom cakes →", href: itemRoute(SPECIAL_ITEM_IDS.customCakes) },
     photoUrl: photoCakes?.imageUrl,
     // The banner's own photo, kept separate from the catalog's — reusing
     // an item's imageUrl here meant renaming or re-cropping a catalog

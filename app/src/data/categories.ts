@@ -19,7 +19,7 @@ export const CATEGORIES: Category[] = [
   { id: "cheesecakes", label: "Cheesecakes", kind: "everyday", ...pink },
   { id: "indian-cakes", label: "Flavourful Indian Cakes", kind: "everyday", ...pink },
   { id: "photo-cakes", label: "Photo Cakes", kind: "custom", ...pink },
-  { id: "3d-cakes", label: "Custom Cakes", kind: "custom", ...berry },
+  { id: "custom-cakes", label: "Custom Cakes", kind: "custom", ...berry },
   { id: "pull-me-up-cakes", label: "Pull Me Up Cakes", kind: "made-to-order", ...pink },
   { id: "hammer-cakes", label: "Hammer Cakes", kind: "made-to-order", ...pink },
   { id: "pinata-cakes", label: "Pinata Cakes", kind: "made-to-order", ...pink },

@@ -22,11 +22,10 @@ import { CONFIG } from "@/lib/config";
  * WhatsApp chat, not a form field in the app.
  */
 
-/** "threeDCakes" is a single-item category's item id, used directly by
- * other screens. "photoCakes" is the same string, but now only as a
- * *category* id — Photo Cakes is three shape items (Round/Rectangle/
- * Heart), not one, since the client supplied per-shape photos. */
-export const SPECIAL_ITEM_IDS = { photoCakes: "photo-cakes", threeDCakes: "3d-cakes" } as const;
+/** Ids other screens link to directly: `customCakes` is the Custom Cakes
+ * item (and its single-item category); `photoCakes` is the Photo Cakes
+ * category, which holds the Round/Rectangle/Heart items. */
+export const SPECIAL_ITEM_IDS = { photoCakes: "photo-cakes", customCakes: "custom-cakes" } as const;
 
 /** Every weight a cake can be ordered in, smallest first: its label,
  * weight in kg and how many people it serves. Serves counts are
@@ -352,9 +351,9 @@ export const BASE_CATALOG: CatalogItem[] = [
   ),
 
   {
-    id: "3d-cakes",
+    id: "custom-cakes",
     name: "Custom Cakes",
-    categoryId: "3d-cakes",
+    categoryId: "custom-cakes",
     description:
       "Designed to your idea in fondant. Describe what you have in mind — a reference photo helps — on WhatsApp after ordering.",
     weightTiers: weightTiers(CUSTOM_SIZES, { "1kg": 190, "2kg": 380 }),

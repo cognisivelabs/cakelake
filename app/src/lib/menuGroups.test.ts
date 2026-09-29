@@ -27,7 +27,7 @@ describe("getMenuGroups", () => {
       "hammer-cakes",
       "pinata-cakes",
     ]);
-    expect(groups.custom).toEqual(["photo-cakes", "3d-cakes"]);
+    expect(groups.custom).toEqual(["photo-cakes", "custom-cakes"]);
   });
 
   it("labels the lead-time groups from the catalog's hours", () => {
@@ -39,7 +39,7 @@ describe("getMenuGroups", () => {
 
 describe("getCustomCategoriesRoute", () => {
   it("points the Photo & Custom links at Photo Cakes and Custom Cakes together", () => {
-    expect(getCustomCategoriesRoute()).toBe("/menu?category=photo-cakes,3d-cakes");
+    expect(getCustomCategoriesRoute()).toBe("/menu?category=photo-cakes,custom-cakes");
   });
 });
 
@@ -52,6 +52,6 @@ describe("categoryPriceLabel", () => {
   it("says 'N/kg' when the smallest size is a whole kilo", () => {
     expect(categoryPriceLabel(items("pull-me-up-cakes"))).toBe("180/kg");
     expect(categoryPriceLabel(items("photo-cakes"))).toBe("170/kg");
-    expect(categoryPriceLabel(items("3d-cakes"))).toBe("190/kg");
+    expect(categoryPriceLabel(items("custom-cakes"))).toBe("190/kg");
   });
 });

@@ -108,7 +108,7 @@ describe("weight tiers", () => {
     for (const id of ["hammer-cakes", "pinata-cakes"]) {
       expect(sizesOf(id), id).toEqual(["half-kg", "1kg", "1.5kg"]);
     }
-    expect(sizesOf("3d-cakes")).toEqual(["1kg", "1.5kg", "2kg", "2.5kg", "3kg-plus"]);
+    expect(sizesOf("custom-cakes")).toEqual(["1kg", "1.5kg", "2kg", "2.5kg", "3kg-plus"]);
   });
 
   it("gives every tier a label and a serves count", () => {
@@ -131,8 +131,8 @@ describe("getSiblingItems", () => {
   });
 
   it("is empty for a category with only one item", () => {
-    const threeDCakes = getItemById("3d-cakes")!;
-    expect(getSiblingItems(threeDCakes)).toEqual([]);
+    const customCakes = getItemById("custom-cakes")!;
+    expect(getSiblingItems(customCakes)).toEqual([]);
   });
 });
 
@@ -199,7 +199,7 @@ describe("getCategoriesByKind", () => {
       "indian-cakes",
     ]);
     expect(ids("made-to-order")).toEqual(["pull-me-up-cakes", "hammer-cakes", "pinata-cakes"]);
-    expect(ids("custom")).toEqual(["photo-cakes", "3d-cakes"]);
+    expect(ids("custom")).toEqual(["photo-cakes", "custom-cakes"]);
   });
 
   it("covers every category exactly once", () => {

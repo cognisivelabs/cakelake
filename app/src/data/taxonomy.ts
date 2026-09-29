@@ -35,7 +35,7 @@ export const CATEGORY_OCCASIONS: Record<string, string[]> = {
   cheesecakes: ["birthday", "anniversary", "new-baby"],
   "indian-cakes": ["birthday", "anniversary"],
   "photo-cakes": ["birthday", "anniversary", "new-baby", "graduation"],
-  "3d-cakes": ["birthday", "anniversary", "new-baby", "graduation"],
+  "custom-cakes": ["birthday", "anniversary", "new-baby", "graduation"],
   "pull-me-up-cakes": ["birthday", "graduation"],
   "hammer-cakes": ["birthday", "anniversary"],
   "pinata-cakes": ["birthday", "graduation"],

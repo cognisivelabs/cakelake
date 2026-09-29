@@ -6,7 +6,6 @@ import type { Banner } from "@/types/banner";
 import { BANNER_INTERVAL_MS, nextIndex, previousIndex, shouldAutoRotate } from "@/lib/carousel";
 import type { HeroStyle } from "@/lib/config";
 import { Photo } from "@/components/Photo";
-import { withBasePath } from "@/lib/assets";
 import styles from "./HomeSections.module.css";
 
 // Home's hero: the banners take turns on their own (paused while the
@@ -55,7 +54,6 @@ export function HeroBanners({ banners, variant = "boxed" }: { banners: Banner[];
   return (
     <div
       className={[styles.banner, brand && styles.bannerBrand, full && styles.bannerPhoto].filter(Boolean).join(" ")}
-      style={!full && banner.imageUrl ? { backgroundImage: `url(${withBasePath(banner.imageUrl)})` } : undefined}
       role="group"
       aria-roledescription="carousel"
       aria-label="Featured"
@@ -96,14 +94,6 @@ export function HeroBanners({ banners, variant = "boxed" }: { banners: Banner[];
             )}
           </div>
         </div>
-        {!full && banner.photoUrl && (
-          <div className={styles.slidePhoto}>
-            <span className={styles.slideCircle} />
-            <span className={styles.slideFrame}>
-              <Photo src={banner.photoUrl} />
-            </span>
-          </div>
-        )}
       </div>
 
       {full && banners.length > 1 && (

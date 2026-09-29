@@ -1,13 +1,6 @@
 import type { Banner } from "@/types/banner";
 import { SPECIAL_ITEM_IDS } from "@/data/items";
-import { getCatalog } from "@/lib/catalog";
-import { formatAed } from "@/lib/pricing";
 import { categoryRoute, itemRoute, ROUTES } from "@/lib/routes";
-
-/** The first Photo Cakes item (Round Photo Cake). */
-const photoCakes = getCatalog().find((item) => item.categoryId === SPECIAL_ITEM_IDS.photoCakes);
-/** That item's 1 kg price. */
-const photoPerKg = photoCakes?.weightTiers.find((tier) => tier.id === "1kg")?.price;
 
 /** Home's hero banners, in rotation order. */
 export const HOME_BANNERS: Banner[] = [
@@ -27,12 +20,9 @@ export const HOME_BANNERS: Banner[] = [
     tone: "brand",
     badge: "ORDER 24 HOURS AHEAD",
     title: ["Your photo,", "printed on the cake"],
-    body: `Send the picture on WhatsApp with your order. Eggless sponge in any of our flavours${
-      photoPerKg !== undefined ? `, ${formatAed(photoPerKg)} a kilo` : ""
-    }.`,
+    body: "Send the picture on WhatsApp with your order. Eggless sponge in any of our flavours, AED 170 a kilo.",
     cta: { label: "ORDER A PHOTO CAKE", href: categoryRoute(SPECIAL_ITEM_IDS.photoCakes) },
     secondaryCta: { label: "See custom cakes →", href: itemRoute(SPECIAL_ITEM_IDS.customCakes) },
-    photoUrl: photoCakes?.imageUrl,
     // A cake with an edible photo print.
     bleedPhotoUrl: "/images/hero-photo-cake.jpg",
   },

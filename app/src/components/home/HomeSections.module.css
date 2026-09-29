@@ -84,10 +84,6 @@
   background: #fff;
 }
 
-.slidePhoto {
-  display: none;
-}
-
 @keyframes slideIn {
   from {
     opacity: 0;
@@ -635,37 +631,6 @@
     font-size: 0.8125rem;
   }
 
-  .bannerBrand {
-    padding-right: 0;
-  }
-
-  .slidePhoto {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 430px;
-    flex: none;
-  }
-
-  .slideCircle {
-    position: absolute;
-    inset: 34px 44px 34px 0;
-    border-radius: 50%;
-    background: var(--color-banner-circle);
-  }
-
-  .slideFrame {
-    position: relative;
-    width: 300px;
-    height: 300px;
-    border-radius: 14px;
-    overflow: hidden;
-    background: var(--color-photo-bg);
-    transform: rotate(-3deg);
-    box-shadow: 0 12px 26px rgba(40, 4, 20, 0.35);
-  }
-
   
 
   .bannerBadge {
@@ -1133,10 +1098,6 @@
   .bleedFade {
     display: block;
     position: absolute;
-  }
-
-  .bannerPhoto .slidePhoto {
-    display: none;
   }
 
   .bannerPhoto .slide {

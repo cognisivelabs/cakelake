@@ -13,12 +13,6 @@ export type Banner = {
   cta: { label: string; href: string };
   /** A quieter second link beside the button. */
   secondaryCta?: { label: string; href: string };
-  /** "boxed" hero style only: a plain background photo behind a "light"
-   * banner. */
-  imageUrl?: string;
-  /** "boxed" hero style only: a framed picture beside a "brand" banner's
-   * text (desktop). */
-  photoUrl?: string;
   /** "photo" hero style only: a photo filling the whole banner, behind
    * its text. */
   bleedPhotoUrl?: string;

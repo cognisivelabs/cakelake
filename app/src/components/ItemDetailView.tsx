@@ -6,7 +6,7 @@ import type { CatalogItem } from "@/types/catalog";
 import { useCart } from "@/context/CartContext";
 import { formatAed, orderTotal, lineTotal } from "@/lib/pricing";
 import { resolveSelection, orderItemCount, resolveOrderLines, describeLine } from "@/lib/order";
-import { getCategory, getCatalog, getSiblingItems } from "@/lib/catalog";
+import { getCategory, getCatalog, getSiblingItems, readyLabel } from "@/lib/catalog";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import { AddedToOrderPanel, type AddedSnapshot } from "@/components/AddedToOrderPanel";
 import { CategoryTag, MostOrderedTag, ReadyTag } from "@/components/ItemTags";
@@ -214,7 +214,7 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
               <div className={styles.infoBox}>
                 {item.requiresDelivery
                   ? "This needs a day's notice and is delivered by us — the fee is confirmed in chat."
-                  : `Baked to order in the shop — ${item.readyLabel.toLowerCase()}.`}
+                  : `Baked to order in the shop — ${readyLabel(item).toLowerCase()}.`}
               </div>
             </div>
 

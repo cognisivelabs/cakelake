@@ -15,7 +15,6 @@ export type MostOrderedCard = {
   href: string;
   /** "1 HOUR" / "24 HOURS" */
   leadBadge: string;
-  sameDay: boolean;
   price: string;
 };
 

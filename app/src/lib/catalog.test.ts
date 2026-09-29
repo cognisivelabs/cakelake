@@ -12,6 +12,8 @@ import {
   getMostOrdered,
   getOccasions,
   getSiblingItems,
+  readyBadge,
+  readyLabel,
   weightTierKg,
 } from "@/lib/catalog";
 
@@ -148,8 +150,15 @@ describe("occasions, flavour tags and most ordered", () => {
   it("Cheesecakes and Flavourful Indian cakes need 24 hours' notice", () => {
     for (const item of getCatalog().filter((i) => ["cheesecakes", "indian-cakes"].includes(i.categoryId))) {
       expect(item.leadTimeHours, item.id).toBe(24);
-      expect(item.readyLabel, item.id).toBe("24 hours notice");
+      expect(readyLabel(item), item.id).toBe("24 hours notice");
     }
+  });
+
+  it("builds the ready text from leadTimeHours", () => {
+    expect(readyLabel({ leadTimeHours: 0 })).toBe("Ready in 1 hour");
+    expect(readyBadge({ leadTimeHours: 0 })).toBe("1 HOUR");
+    expect(readyLabel({ leadTimeHours: 72 })).toBe("72 hours notice");
+    expect(readyBadge({ leadTimeHours: 72 })).toBe("72 HOURS");
   });
 });
 

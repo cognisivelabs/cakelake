@@ -1,5 +1,5 @@
 import type { Category } from "@/types/catalog";
-import { getCatalog, getCategories, getCategoriesByKind } from "@/lib/catalog";
+import { getCatalog, getCategories, getCategoriesByKind, readyBadge } from "@/lib/catalog";
 import { categoriesRoute, ROUTES } from "@/lib/routes";
 import { categoryPriceLabel } from "@/lib/pricing";
 
@@ -14,18 +14,22 @@ export type MenuGroup = { id: string; label: string; entries: MenuGroupEntry[] }
  */
 export function getMenuGroups(): MenuGroup[] {
   const catalog = getCatalog();
-  const entry = (category: Category): MenuGroupEntry => ({
-    category,
-    priceLabel: categoryPriceLabel(catalog.filter((item) => item.categoryId === category.id)),
-  });
-  const isSameDay = (category: Category) =>
-    catalog.filter((item) => item.categoryId === category.id).every((item) => item.leadTimeHours === 0);
+  const itemsIn = (category: Category) => catalog.filter((item) => item.categoryId === category.id);
+  const entry = (category: Category): MenuGroupEntry => ({ category, priceLabel: categoryPriceLabel(itemsIn(category)) });
+  const isSameDay = (category: Category) => itemsIn(category).every((item) => item.leadTimeHours === 0);
 
   const categories = getCategories();
   const standard = categories.filter((c) => c.kind !== "custom");
+  const sameDay = standard.filter(isSameDay);
+  const notice = standard.filter((c) => !isSameDay(c));
+  const noticeHours = Math.max(0, ...notice.flatMap(itemsIn).map((item) => item.leadTimeHours));
   return [
-    { id: "ready-1h", label: "CAKES · READY IN 1 HOUR", entries: standard.filter(isSameDay).map(entry) },
-    { id: "notice-24h", label: "CAKES ON 24 HOURS", entries: standard.filter((c) => !isSameDay(c)).map(entry) },
+    {
+      id: "ready-1h",
+      label: `CAKES · READY IN ${readyBadge({ leadTimeHours: 0 })}`,
+      entries: sameDay.map(entry),
+    },
+    { id: "notice-24h", label: `CAKES ON ${readyBadge({ leadTimeHours: noticeHours })}`, entries: notice.map(entry) },
     {
       id: "custom",
       label: "PHOTO & CUSTOM",

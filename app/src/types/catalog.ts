@@ -1,8 +1,6 @@
 // The shape of the bakery's catalogue: categories, items, occasions and
 // flavour tags.
 //
-// Each item has a list of weight tiers, each with its own price. A tier
-// with no price shows as "Ask us".
 
 export type WeightTier = {
   id: string;
@@ -45,27 +43,32 @@ export type FlavourTag = {
   label: string;
 };
 
+/**
+ * Represent a single item in the catalogue
+ */
 export type CatalogItem = {
+  /** Unique identifier for CatalogItem. */
   id: string;
+  /** Name of the item. */
   name: string;
+  /** Id of the category this item belongs to. */
   categoryId: string;
+  /** Short description of the item. */
   description: string;
-  /** Item photo. Without one, a placeholder box shows. Framing and crop
-   * per display size live in lib/imageConfig.ts, keyed by this URL. */
+  /** The URL is relative to the public folder. */
   imageUrl?: string;
+  /** The available weight tiers for this item. */
   weightTiers: WeightTier[];
-  /** Ready-time badge text, e.g. "Ready in 1 hour". */
-  readyLabel: string;
-  /** Advance notice needed, in hours. 0 = same-day is fine. */
+  /** Advance notice needed, in hours. 0 = same-day, ready in
+   * CONFIG.sameDayPrepHours. */
   leadTimeHours: number;
-  /** Max length for the optional per-item cake inscription; 0 = not offered. */
+  /** Max length for the optional per-item cake inscription. */
   cakeMessageMaxLength: number;
   /** Ids of the occasions (see Occasion) this item suits. */
   occasions?: string[];
   /** Ids of the flavour tags (see FlavourTag) this item belongs to. */
   flavours?: string[];
-  /** 1-based position in Home's "Most ordered" row; omit for items not
-   * featured there. */
+  /** 1-based position in Home's "Most ordered" row; omit for items not featured there. */
   mostOrderedRank?: number;
   /** False when the item is sold out. */
   available: boolean;

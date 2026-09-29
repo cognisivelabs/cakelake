@@ -1,4 +1,5 @@
 import type { CatalogItem, Category } from "@/types/catalog";
+import { readyLabel } from "@/lib/catalog";
 import styles from "./ItemDetailView.module.css";
 
 /** The category as a coloured tag. */
@@ -15,7 +16,7 @@ export function CategoryTag({ category }: { category: Category }) {
 export function ReadyTag({ item }: { item: CatalogItem }) {
   return (
     <span className={`${styles.tag} ${item.leadTimeHours > 0 ? styles.tagNotice : styles.tagReady} mono-tag`}>
-      {item.readyLabel}
+      {readyLabel(item)}
     </span>
   );
 }

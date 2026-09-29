@@ -20,7 +20,6 @@ export const item: CatalogItem = {
     { id: "1kg", label: "1 kg", price: 100 },
     { id: "3kg-plus", label: "3 kg+" }, // "Ask us" — no fixed price
   ],
-  readyLabel: "Ready in 1 hour",
   leadTimeHours: 0,
   cakeMessageMaxLength: CONFIG.cakeMessageMaxLength,
   available: true,

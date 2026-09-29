@@ -77,9 +77,8 @@ export const CONFIG = {
   /** Home's desktop hero banner: "boxed" (original) or "photo" (edge-to-edge,
    * client testing this now) — see HeroStyle. */
   heroStyle: "photo" as HeroStyle,
-  /** Same-day items are all "ready in an hour" — feeds the cart's "ready
-   * by" estimate. Independent of each catalog item's own readyLabel
-   * copy, which the client may phrase differently later. */
+  /** Hours a same-day item (leadTimeHours 0) takes to be ready — the
+   * "Ready in 1 hour" tag and badge, and the cart's "ready by" estimate. */
   sameDayPrepHours: 1,
   /** Earliest local time a same-day order (pickup or delivery) can be
    * placed — matches openingHoursByDay's opening time (10am every day

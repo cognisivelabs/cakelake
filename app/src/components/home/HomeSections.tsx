@@ -11,6 +11,7 @@ import {
   getCategoryImage,
   getMostOrdered,
   getOccasions,
+  readyBadge,
 } from "@/lib/catalog";
 import { cheapestPrice, formatAed } from "@/lib/pricing";
 import { categoryRoute, flavourRoute, itemRoute, occasionRoute } from "@/lib/routes";
@@ -141,8 +142,7 @@ export function MostOrderedSection() {
       categoryLabel: getCategory(item.categoryId)?.label ?? "",
       imageUrl: item.imageUrl,
       href: itemRoute(item.id),
-      leadBadge: item.leadTimeHours === 0 ? "1 HOUR" : "24 HOURS",
-      sameDay: item.leadTimeHours === 0,
+      leadBadge: readyBadge(item),
       price: price === undefined ? "Ask us" : formatAed(price),
     };
   });

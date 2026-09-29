@@ -29,6 +29,12 @@ describe("getMenuGroups", () => {
     ]);
     expect(groups.custom).toEqual(["photo-cakes", "3d-cakes"]);
   });
+
+  it("labels the lead-time groups from the catalog's hours", () => {
+    const labels = Object.fromEntries(getMenuGroups().map((g) => [g.id, g.label]));
+    expect(labels["ready-1h"]).toBe("CAKES · READY IN 1 HOUR");
+    expect(labels["notice-24h"]).toBe("CAKES ON 24 HOURS");
+  });
 });
 
 describe("getCustomCategoriesRoute", () => {

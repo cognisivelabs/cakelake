@@ -62,9 +62,9 @@ type ItemEntry = string | { label: string; description?: string; imageUrl?: stri
 
 /**
  * Builds one category's flattened item list — one CatalogItem per
- * flavour, all sharing that category's weight tiers/ready time/lead
- * time. A bare string entry falls back to `fallbackDescription`, same
- * as a flavour with no description of its own used to fall back to its
+ * flavour, all sharing that category's weight tiers and lead time. A
+ * bare string entry falls back to `fallbackDescription`, same as a
+ * flavour with no description of its own used to fall back to its
  * group's description before the recategorisation.
  */
 function categoryItems(
@@ -72,7 +72,6 @@ function categoryItems(
   idPrefix: string,
   fallbackDescription: string,
   weightTiers: WeightTier[],
-  readyLabel: string,
   leadTimeHours: number,
   entries: ItemEntry[],
   requiresDelivery = false,
@@ -85,7 +84,6 @@ function categoryItems(
       categoryId,
       description: description ?? fallbackDescription,
       weightTiers,
-      readyLabel,
       leadTimeHours,
       cakeMessageMaxLength: CONFIG.cakeMessageMaxLength,
       available: true,
@@ -105,7 +103,6 @@ export const BASE_CATALOG: CatalogItem[] = [
       { id: "1kg", label: "1 kg", price: 100, serves: SERVES["1kg"] },
       ...largerSizes(),
     ],
-    "Ready in 1 hour",
     0,
     [
       {
@@ -135,7 +132,6 @@ export const BASE_CATALOG: CatalogItem[] = [
       { id: "1kg", label: "1 kg", price: 115, serves: SERVES["1kg"] },
       ...largerSizes(),
     ],
-    "Ready in 1 hour",
     0,
     [
       {
@@ -194,7 +190,6 @@ export const BASE_CATALOG: CatalogItem[] = [
       { id: "1kg", label: "1 kg", price: 140, serves: SERVES["1kg"] },
       ...largerSizes(),
     ],
-    "Ready in 1 hour",
     0,
     [
       {
@@ -252,7 +247,6 @@ export const BASE_CATALOG: CatalogItem[] = [
       { id: "1kg", label: "1 kg", price: 160, serves: SERVES["1kg"] },
       ...largerSizes(),
     ],
-    "Ready in 1 hour",
     0,
     [
       {
@@ -304,7 +298,6 @@ export const BASE_CATALOG: CatalogItem[] = [
       { id: "1kg", label: "1 kg", price: 170, serves: SERVES["1kg"] },
       ...largerSizes(),
     ],
-    "24 hours notice",
     24,
     [
       { label: "Oreo", imageUrl: "/images/cheesecake-oreo.jpg" },
@@ -328,7 +321,6 @@ export const BASE_CATALOG: CatalogItem[] = [
       { id: "1kg", label: "1 kg", price: 190, serves: SERVES["1kg"] },
       ...largerSizes(),
     ],
-    "24 hours notice",
     24,
     [
       { label: "Motichoor", imageUrl: "/images/indian-motichoor.jpg" },
@@ -344,7 +336,6 @@ export const BASE_CATALOG: CatalogItem[] = [
     "hammer-cakes",
     "A chocolate shell cake you crack open with a hammer.",
     [{ id: "1kg", label: "1 kg", price: 190, serves: SERVES["1kg"] }, ...largerSizes()],
-    "24 hours notice",
     24,
     [{ label: "Heart Shape Hammer Cake", imageUrl: "/images/hammer-heart-shape.jpg" }],
   ),
@@ -354,7 +345,6 @@ export const BASE_CATALOG: CatalogItem[] = [
     "pull-me-up-cakes",
     "Pull the ribbons to reveal a surprise inside.",
     [{ id: "1kg", label: "1 kg", price: 180, serves: SERVES["1kg"] }, ...largerSizes()],
-    "24 hours notice",
     24,
     ["Biscoff", "Coffee", "Nutella Strawberry", "Triple Chocolate", "Mango", "Red Velvet"],
   ),
@@ -364,7 +354,6 @@ export const BASE_CATALOG: CatalogItem[] = [
     "pinata-cakes",
     "Break it open for the treats hidden inside.",
     [{ id: "1kg", label: "1 kg", price: 190, serves: SERVES["1kg"] }, ...largerSizes()],
-    "24 hours notice",
     24,
     [
       "Fresh Fruit",
@@ -385,7 +374,6 @@ export const BASE_CATALOG: CatalogItem[] = [
       ...largerSizes({ "2kg": 340 }),
       { id: "3kg-plus", label: "3 kg+", price: undefined, serves: SERVES["3kg-plus"] },
     ],
-    "24 hours notice",
     24,
     [
       {
@@ -421,7 +409,6 @@ export const BASE_CATALOG: CatalogItem[] = [
       ...largerSizes({ "2kg": 380 }),
       { id: "3kg-plus", label: "3 kg+", price: undefined, serves: SERVES["3kg-plus"] },
     ],
-    readyLabel: "24 hours notice",
     leadTimeHours: 24,
     cakeMessageMaxLength: CONFIG.cakeMessageMaxLength,
     available: true,

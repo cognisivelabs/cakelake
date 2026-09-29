@@ -1,4 +1,5 @@
 import type { CatalogItem, Category, CategoryKind, FlavourTag, Occasion } from "@/types/catalog";
+import { CONFIG } from "@/lib/config";
 import { CATEGORIES } from "@/data/categories";
 import { BASE_CATALOG } from "@/data/items";
 import { CATEGORY_OCCASIONS, FLAVOUR_ITEMS, FLAVOUR_TAGS, MOST_ORDERED, OCCASIONS } from "@/data/taxonomy";
@@ -93,6 +94,30 @@ export function getCategoryImage(categoryId: string): string | undefined {
 /** Same idea for a flavour tag: the first tagged item that has a photo. */
 export function getFlavourTagImage(tagId: string): string | undefined {
   return CATALOG.find((item) => item.flavours?.includes(tagId) && item.imageUrl)?.imageUrl;
+}
+
+/** Anything carrying a lead time — an item, or just `{ leadTimeHours }`. */
+type LeadTime = Pick<CatalogItem, "leadTimeHours">;
+
+/** "1 hour" / "24 hours". */
+function hoursText(hours: number): string {
+  return hours === 1 ? "1 hour" : `${hours} hours`;
+}
+
+/** Hours until an item can be ready: CONFIG.sameDayPrepHours for a
+ * same-day item, otherwise its leadTimeHours. */
+export function readyHours(item: LeadTime): number {
+  return item.leadTimeHours === 0 ? CONFIG.sameDayPrepHours : item.leadTimeHours;
+}
+
+/** "Ready in 1 hour" for a same-day item, "24 hours notice" otherwise. */
+export function readyLabel(item: LeadTime): string {
+  return item.leadTimeHours === 0 ? `Ready in ${hoursText(readyHours(item))}` : `${hoursText(item.leadTimeHours)} notice`;
+}
+
+/** "1 HOUR" / "24 HOURS" — the short badge form of readyLabel. */
+export function readyBadge(item: LeadTime): string {
+  return hoursText(readyHours(item)).toUpperCase();
 }
 
 /** A short tile/chip label for a category — "Exotic Premium" rather than

@@ -3,6 +3,7 @@ import { getCatalog } from "@/lib/catalog";
 import { formatAed } from "@/lib/pricing";
 import { categoryRoute, itemRoute, ROUTES } from "@/lib/routes";
 
+/** One of Home's hero banners. */
 export type Banner = {
   id: string;
   /** "light" is the soft panel; "brand" is the deep, promotional one. */
@@ -11,7 +12,9 @@ export type Banner = {
   badge: string;
   /** Headline, one entry per line. */
   title: string[];
+  /** Text under the headline. */
   body: string;
+  /** The main button. */
   cta: { label: string; href: string };
   /** A quieter second link beside the button. */
   secondaryCta?: { label: string; href: string };
@@ -21,25 +24,17 @@ export type Banner = {
   /** "boxed" hero style only: a framed picture beside a "brand" banner's
    * text (desktop). */
   photoUrl?: string;
-  /** "photo" hero style only (CONFIG.heroStyle): this banner's photo,
-   * bleeding behind the whole thing — see docs CLB Desktop Home v2,
-   * screens 6a/6b (light) and 7a/7b (brand). */
+  /** "photo" hero style only: a photo filling the whole banner, behind
+   * its text. */
   bleedPhotoUrl?: string;
 };
 
-// The Photo cakes banner quotes the real per-kilo price, and bleeds a
-// real photo-print photo, rather than typing either in by hand — Photo
-// Cakes is now three shape items (Round/Rectangle/Heart), not one, so
-// this picks the first as a representative rather than a single id.
+/** The first Photo Cakes item (Round Photo Cake). */
 const photoCakes = getCatalog().find((item) => item.categoryId === SPECIAL_ITEM_IDS.photoCakes);
+/** That item's 1 kg price. */
 const photoPerKg = photoCakes?.weightTiers.find((tier) => tier.id === "1kg")?.price;
 
-/**
- * Home's hero banners, auto-rotating in order when there's more than
- * one (see docs CLB Desktop Home v2). The design's third slide — a
- * seasonal Halloween banner — is left out until the client supplies
- * the seasonal cakes it would link to; add it here as another entry.
- */
+/** Home's hero banners, in rotation order. */
 export const HOME_BANNERS: Banner[] = [
   {
     id: "ready-in-an-hour",
@@ -49,9 +44,7 @@ export const HOME_BANNERS: Banner[] = [
     body: "Classic, Premium, Exotic and Exotic Premium leave the counter about an hour after we confirm on WhatsApp.",
     cta: { label: "ORDER A CAKE", href: ROUTES.menu },
     secondaryCta: { label: "See all categories →", href: ROUTES.menu },
-    // The design's own stand-in (a bakery display case by Ulysse
-    // Pointcheval on Unsplash, free licence) — swap for a real shot of
-    // the Karama counter when the client supplies one.
+    // A bakery display case, by Ulysse Pointcheval on Unsplash.
     bleedPhotoUrl: "/images/hero-bakery-case.jpg",
   },
   {
@@ -65,12 +58,7 @@ export const HOME_BANNERS: Banner[] = [
     cta: { label: "ORDER A PHOTO CAKE", href: categoryRoute(SPECIAL_ITEM_IDS.photoCakes) },
     secondaryCta: { label: "See custom cakes →", href: itemRoute(SPECIAL_ITEM_IDS.customCakes) },
     photoUrl: photoCakes?.imageUrl,
-    // The banner's own photo, kept separate from the catalog's — reusing
-    // an item's imageUrl here meant renaming or re-cropping a catalog
-    // photo could silently change the banner too. A genuine edible photo
-    // print (unlike anything findable free on Unsplash/Pexels/Pixabay/
-    // Alamy/Freepik — that search turned up only cartoon prints or 3D
-    // fondant cakes, nothing with an actual personal photo on it).
+    // A cake with an edible photo print.
     bleedPhotoUrl: "/images/hero-photo-cake.jpg",
   },
 ];

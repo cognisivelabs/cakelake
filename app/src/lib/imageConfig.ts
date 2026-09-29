@@ -3,10 +3,9 @@ import type { ImageFramingBySlot, ImageSlot } from "@/types/image";
 import { IMAGE_CONFIG } from "@/data/imageConfig";
 
 /**
- * Looks up imageUrl in `config` (IMAGE_CONFIG by default — overridable
- * for tests), resolves the given slot's framing (falling back to
- * "default"), and turns it into inline CSS for that <img>. See
- * types/image.ts's ImageFraming for what each field does.
+ * Inline CSS for an image in `slot`: its framing for that slot in
+ * `config` (IMAGE_CONFIG by default), else its "default" framing; {}
+ * when it has neither.
  */
 export function resolveImageStyle(
   imageUrl: string | undefined,

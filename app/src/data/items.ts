@@ -36,31 +36,41 @@ function weightTiers(sizes: SizeId[], prices: Partial<Record<SizeId, number>>): 
 }
 
 /** One flavour of a category: its name alone, or with its own
- * description and photo. */
-type ItemEntry = string | { label: string; description?: string; imageUrl?: string };
+ * description and photo. `id` replaces the generated
+ * "<categoryId>-<flavour>" id. */
+type ItemEntry = string | { label: string; description?: string; imageUrl?: string; id?: string };
 
-/**
- * One CatalogItem per flavour in a category, with id
- * "<categoryId>-<flavour>", all sharing the category's weight tiers and
- * lead time. An entry without its own description uses
- * `fallbackDescription`.
- */
-function categoryItems(
-  categoryId: string,
-  fallbackDescription: string,
-  weightTiers: WeightTier[],
-  leadTimeHours: number,
-  entries: ItemEntry[],
+/** One category's items and what they share. */
+type CategorySpec = {
+  categoryId: string;
+  /** Description for items without their own. */
+  fallbackDescription?: string;
+  tiers: WeightTier[];
+  leadTimeHours: number;
+  /** Defaults to false. */
+  requiresDelivery?: boolean;
+  items: ItemEntry[];
+};
+
+/** One CatalogItem per entry, with id "<categoryId>-<flavour>" unless the
+ * entry sets its own, all sharing the category's tiers, lead time and
+ * delivery rule. */
+function categoryItems({
+  categoryId,
+  fallbackDescription = "",
+  tiers,
+  leadTimeHours,
   requiresDelivery = false,
-): CatalogItem[] {
-  return entries.map((entry) => {
-    const { label, description, imageUrl } = typeof entry === "string" ? { label: entry } : entry;
+  items,
+}: CategorySpec): CatalogItem[] {
+  return items.map((entry) => {
+    const { label, description, imageUrl, id } = typeof entry === "string" ? { label: entry } : entry;
     return {
-      id: `${categoryId}-${label.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`,
+      id: id ?? `${categoryId}-${label.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`,
       name: label,
       categoryId,
       description: description ?? fallbackDescription,
-      weightTiers,
+      weightTiers: tiers,
       leadTimeHours,
       cakeMessageMaxLength: CONFIG.cakeMessageMaxLength,
       available: true,
@@ -70,14 +80,18 @@ function categoryItems(
   });
 }
 
+/** A Photo Cake's description, for one shape ("round", "heart-shaped"…). */
+function photoCakeDescription(shape: string): string {
+  return `An edible print of your photo on a ${shape} cake — works with any flavour on this menu. Tell us which flavour you'd like and send the photo on WhatsApp after ordering.`;
+}
+
 /** Every item on the menu, in menu order. */
 export const BASE_CATALOG: CatalogItem[] = [
-  ...categoryItems(
-    "classic-cakes",
-    "Ultra moist, ready in an hour.",
-    weightTiers(HALF_TO_3KG, { "half-kg": 55, "1kg": 100 }),
-    0,
-    [
+  ...categoryItems({
+    categoryId: "classic-cakes",
+    tiers: weightTiers(HALF_TO_3KG, { "half-kg": 55, "1kg": 100 }),
+    leadTimeHours: 0,
+    items: [
       {
         label: "Butterscotch",
         description: "Ultra moist cake with each bite having a creamy butterscotch mouthfeel.",
@@ -94,14 +108,13 @@ export const BASE_CATALOG: CatalogItem[] = [
         imageUrl: "/images/classic-pineapple.jpg",
       },
     ],
-  ),
+  }),
 
-  ...categoryItems(
-    "premium-cakes",
-    "Truffle, fresh fruit, and berry finishes.",
-    weightTiers(HALF_TO_3KG, { "half-kg": 65, "1kg": 115 }),
-    0,
-    [
+  ...categoryItems({
+    categoryId: "premium-cakes",
+    tiers: weightTiers(HALF_TO_3KG, { "half-kg": 65, "1kg": 115 }),
+    leadTimeHours: 0,
+    items: [
       {
         label: "Dark Chocolate Truffle",
         description: "Love dark chocolate? This luxurious, ganache based cake is for you.",
@@ -147,14 +160,13 @@ export const BASE_CATALOG: CatalogItem[] = [
         imageUrl: "/images/premium-fresh-fruit.jpg",
       },
     ],
-  ),
+  }),
 
-  ...categoryItems(
-    "exotic-cakes",
-    "Our more distinctive flavours.",
-    weightTiers(HALF_TO_3KG, { "half-kg": 75, "1kg": 140 }),
-    0,
-    [
+  ...categoryItems({
+    categoryId: "exotic-cakes",
+    tiers: weightTiers(HALF_TO_3KG, { "half-kg": 75, "1kg": 140 }),
+    leadTimeHours: 0,
+    items: [
       {
         label: "Chocolate Mousse",
         description: "A classic with layers of moist chocolate cake and creamy chocolate mousse.",
@@ -199,14 +211,14 @@ export const BASE_CATALOG: CatalogItem[] = [
         imageUrl: "/images/exotic-triple-chocolate-indulgence.jpg",
       },
     ],
-  ),
+  }),
 
-  ...categoryItems(
-    "exotic-premium-cakes",
-    "Our top-tier range — whole Rocher, Kinder Bueno, and more.",
-    weightTiers(HALF_TO_3KG, { "half-kg": 85, "1kg": 160 }),
-    0,
-    [
+  ...categoryItems({
+    categoryId: "exotic-premium-cakes",
+    fallbackDescription: "From our top-tier range.",
+    tiers: weightTiers(HALF_TO_3KG, { "half-kg": 85, "1kg": 160 }),
+    leadTimeHours: 0,
+    items: [
       {
         label: "Oreo",
         description: "The perfect combo of an incredibly moist chocolate cake with crushed Oreo cookies.",
@@ -244,103 +256,101 @@ export const BASE_CATALOG: CatalogItem[] = [
       { label: "KitKat & Gems", imageUrl: "/images/exotic-premium-kitkat-gems.jpg" },
       { label: "Rose & Pistachio", imageUrl: "/images/exotic-premium-rose-pistachio.jpg" },
     ],
-  ),
+  }),
 
-  ...categoryItems(
-    "cheesecakes",
-    "Creamy baked cheesecake, whole cakes only.",
-    weightTiers(HALF_TO_3KG, { "half-kg": 95, "1kg": 170 }),
-    24,
-    [
+  ...categoryItems({
+    categoryId: "cheesecakes",
+    fallbackDescription: "Creamy baked cheesecake, whole cakes only.",
+    tiers: weightTiers(HALF_TO_3KG, { "half-kg": 95, "1kg": 170 }),
+    leadTimeHours: 24,
+    items: [
       { label: "Oreo", imageUrl: "/images/cheesecake-oreo.jpg" },
       { label: "Strawberry", imageUrl: "/images/cheesecake-strawberry.jpg" },
       { label: "Blueberry", imageUrl: "/images/cheesecake-blueberry.jpg" },
       { label: "Lotus Biscoff", imageUrl: "/images/cheesecake-lotus-biscoff.jpg" },
       { label: "New York", imageUrl: "/images/cheesecake-new-york.jpg" },
     ],
-  ),
+  }),
 
-  ...categoryItems(
-    "indian-cakes",
-    "Traditional Indian mithai flavours in cake form, made fresh each morning.",
-    weightTiers(HALF_TO_3KG, { "half-kg": 105, "1kg": 190 }),
-    24,
-    [
+  ...categoryItems({
+    categoryId: "indian-cakes",
+    fallbackDescription: "Traditional Indian mithai flavours in cake form, made fresh each morning.",
+    tiers: weightTiers(HALF_TO_3KG, { "half-kg": 105, "1kg": 190 }),
+    leadTimeHours: 24,
+    items: [
       { label: "Motichoor", imageUrl: "/images/indian-motichoor.jpg" },
       { label: "Kaju Katli", imageUrl: "/images/indian-kaju-katli.jpg" },
       { label: "Gulkand", imageUrl: "/images/indian-gulkand.jpg" },
       { label: "Gulab Jamun", imageUrl: "/images/indian-gulab-jamun.jpg" },
       { label: "Rasmalai", imageUrl: "/images/indian-rasmalai.jpg" },
     ],
-  ),
+  }),
 
-  ...categoryItems(
-    "hammer-cakes",
-    "A chocolate shell cake you crack open with a hammer.",
-    weightTiers(HALF_TO_1_5KG, { "1kg": 190 }),
-    24,
-    [{ label: "Heart Shape Hammer Cake", imageUrl: "/images/hammer-heart-shape.jpg" }],
-  ),
+  ...categoryItems({
+    categoryId: "hammer-cakes",
+    fallbackDescription: "A chocolate shell cake you crack open with a hammer.",
+    tiers: weightTiers(HALF_TO_1_5KG, { "1kg": 190 }),
+    leadTimeHours: 24,
+    items: [{ label: "Heart Shape Hammer Cake", imageUrl: "/images/hammer-heart-shape.jpg" }],
+  }),
 
-  ...categoryItems(
-    "pull-me-up-cakes",
-    "Pull the ribbons to reveal a surprise inside.",
-    weightTiers(HALF_TO_3KG, { "1kg": 180 }),
-    24,
-    ["Biscoff", "Coffee", "Nutella Strawberry", "Triple Chocolate", "Mango", "Red Velvet"],
-  ),
+  ...categoryItems({
+    categoryId: "pull-me-up-cakes",
+    fallbackDescription: "Pull the ribbons to reveal a surprise inside.",
+    tiers: weightTiers(HALF_TO_3KG, { "1kg": 180 }),
+    leadTimeHours: 24,
+    items: ["Biscoff", "Coffee", "Nutella Strawberry", "Triple Chocolate", "Mango", "Red Velvet"],
+  }),
 
-  ...categoryItems(
-    "pinata-cakes",
-    "Break it open for the treats hidden inside.",
-    weightTiers(HALF_TO_1_5KG, { "1kg": 190 }),
-    24,
-    [
+  ...categoryItems({
+    categoryId: "pinata-cakes",
+    fallbackDescription: "Break it open for the treats hidden inside.",
+    tiers: weightTiers(HALF_TO_1_5KG, { "1kg": 190 }),
+    leadTimeHours: 24,
+    items: [
       "Fresh Fruit",
       { label: "Chocolate", imageUrl: "/images/pinata-chocolate.jpg" },
       "Rainbow",
     ],
-  ),
+  }),
 
   // One item per shape; the flavour is chosen in the WhatsApp chat.
-  ...categoryItems(
-    "photo-cakes",
-    "An edible print of your photo on the cake — works with any flavour on this menu. Tell us which flavour you'd like and send the photo on WhatsApp after ordering.",
-    weightTiers(HALF_TO_3KG, { "1kg": 170, "2kg": 340 }),
-    24,
-    [
+  ...categoryItems({
+    categoryId: "photo-cakes",
+    tiers: weightTiers(HALF_TO_3KG, { "1kg": 170, "2kg": 340 }),
+    leadTimeHours: 24,
+    requiresDelivery: true,
+    items: [
       {
         label: "Round Photo Cake",
-        description:
-          "An edible print of your photo on a round cake — works with any flavour on this menu. Tell us which flavour you'd like and send the photo on WhatsApp after ordering.",
+        description: photoCakeDescription("round"),
         imageUrl: "/images/photo-cakes-round.jpg",
       },
       {
         label: "Rectangle Photo Cake",
-        description:
-          "An edible print of your photo on a rectangle cake — works with any flavour on this menu. Tell us which flavour you'd like and send the photo on WhatsApp after ordering.",
+        description: photoCakeDescription("rectangle"),
         imageUrl: "/images/photo-cakes-rectangle.jpg",
       },
       {
         label: "Heart Photo Cake",
-        description:
-          "An edible print of your photo on a heart-shaped cake — works with any flavour on this menu. Tell us which flavour you'd like and send the photo on WhatsApp after ordering.",
+        description: photoCakeDescription("heart-shaped"),
         imageUrl: "/images/photo-cakes-heart.jpg",
       },
     ],
-    true,
-  ),
+  }),
 
-  {
-    id: "custom-cakes",
-    name: "Custom Cakes",
-    categoryId: "custom-cakes",
-    description:
-      "Designed to your idea in fondant. Describe what you have in mind — a reference photo helps — on WhatsApp after ordering.",
-    weightTiers: weightTiers(CUSTOM_SIZES, { "1kg": 190, "2kg": 380 }),
+  ...categoryItems({
+    categoryId: SPECIAL_ITEM_IDS.customCakes,
+    tiers: weightTiers(CUSTOM_SIZES, { "1kg": 190, "2kg": 380 }),
     leadTimeHours: 24,
-    cakeMessageMaxLength: CONFIG.cakeMessageMaxLength,
-    available: true,
     requiresDelivery: true,
-  },
+    items: [
+      {
+        id: SPECIAL_ITEM_IDS.customCakes,
+        label: "Custom Cakes",
+        description:
+          "Designed to your idea in fondant. Describe what you have in mind — a reference photo helps — on WhatsApp after ordering.",
+      },
+    ],
+  }),
 ];

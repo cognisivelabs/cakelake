@@ -111,6 +111,10 @@ describe("weight tiers", () => {
     expect(sizesOf("custom-cakes")).toEqual(["1kg", "1.5kg", "2kg", "2.5kg", "3kg-plus"]);
   });
 
+  it("gives every item a description", () => {
+    for (const item of getCatalog()) expect(item.description, item.id).toBeTruthy();
+  });
+
   it("gives every tier a label and a serves count", () => {
     for (const item of getCatalog()) {
       for (const tier of item.weightTiers) {

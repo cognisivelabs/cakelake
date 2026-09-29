@@ -1,7 +1,7 @@
 import type { CatalogItem, Category, CategoryKind, FlavourTag, Occasion } from "@/types/catalog";
 import { CONFIG } from "@/lib/config";
 import { CATEGORIES } from "@/data/categories";
-import { BASE_CATALOG } from "@/data/items";
+import { BASE_CATALOG, SIZES } from "@/data/items";
 import { CATEGORY_OCCASIONS, FLAVOUR_ITEMS, FLAVOUR_TAGS, MOST_ORDERED, OCCASIONS } from "@/data/taxonomy";
 
 // The catalogue's content lives in src/data (categories, items, taxonomy);
@@ -52,14 +52,9 @@ export function getSiblingItems(item: CatalogItem): CatalogItem[] {
   return CATALOG.filter((c) => c.categoryId === item.categoryId && c.id !== item.id);
 }
 
-// Weight tier ids are our own naming convention, assigned above
-// ("half-kg", "1kg", "2kg", "3kg-plus", …) — parsed here once for the
-// Menu — desktop "1kg or larger" filter rather than adding a parallel
-// numeric field to every tier for a single filter's sake.
+/** A weight tier's weight in kg (SIZES); 0 for an id that isn't a size. */
 export function weightTierKg(tier: { id: string }): number {
-  if (tier.id.startsWith("half")) return 0.5;
-  const match = tier.id.match(/^(\d+(?:\.\d+)?)kg/);
-  return match ? Number(match[1]) : 0;
+  return tier.id in SIZES ? SIZES[tier.id as keyof typeof SIZES].kg : 0;
 }
 
 export function getOccasions(): Occasion[] {

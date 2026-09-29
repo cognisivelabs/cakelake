@@ -28,34 +28,30 @@ import { CONFIG } from "@/lib/config";
  * Heart), not one, since the client supplied per-shape photos. */
 export const SPECIAL_ITEM_IDS = { photoCakes: "photo-cakes", threeDCakes: "3d-cakes" } as const;
 
-/**
- * The larger sizes every cake can be ordered in, after its 1 kg (or ½ kg)
- * tiers. The client hasn't confirmed prices for them yet, so they show
- * "Ask us" and the price is settled in the WhatsApp chat. When the prices
- * arrive, pass them per category: `...largerSizes({ "1.5kg": 250, "2kg": 320 })`.
- */
-const LARGER_SIZES = [
-  { id: "1.5kg", label: "1½ kg" },
-  { id: "2kg", label: "2 kg" },
-  { id: "2.5kg", label: "2½ kg" },
-  { id: "3kg", label: "3 kg" },
-] as const;
+/** Every weight a cake can be ordered in, smallest first: its label,
+ * weight in kg and how many people it serves. Serves counts are
+ * proposed, not yet client-confirmed. */
+export const SIZES = {
+  "half-kg": { label: "½ kg", kg: 0.5, serves: "Serves 2–4" },
+  "1kg": { label: "1 kg", kg: 1, serves: "Serves 5–6" },
+  "1.5kg": { label: "1½ kg", kg: 1.5, serves: "Serves 8–10" },
+  "2kg": { label: "2 kg", kg: 2, serves: "Serves 10–12" },
+  "2.5kg": { label: "2½ kg", kg: 2.5, serves: "Serves 12–15" },
+  "3kg": { label: "3 kg", kg: 3, serves: "Serves 15–18" },
+  "3kg-plus": { label: "3 kg+", kg: 3, serves: "Serves 18+" },
+} as const;
 
-/** How many people a weight serves — shown beside the weight on the item
- * page's picker (design: CLB Weight Picker). Proposed counts, not yet
- * client-confirmed. */
-const SERVES: Record<string, string> = {
-  "half-kg": "Serves 2–4",
-  "1kg": "Serves 5–6",
-  "1.5kg": "Serves 8–10",
-  "2kg": "Serves 10–12",
-  "2.5kg": "Serves 12–15",
-  "3kg": "Serves 15–18",
-  "3kg-plus": "Serves 18+",
-};
+type SizeId = keyof typeof SIZES;
 
-function largerSizes(prices: Partial<Record<(typeof LARGER_SIZES)[number]["id"], number>> = {}): WeightTier[] {
-  return LARGER_SIZES.map((size) => ({ ...size, price: prices[size.id], serves: SERVES[size.id] }));
+/** The size ranges categories are sold in. */
+const HALF_TO_3KG: SizeId[] = ["half-kg", "1kg", "1.5kg", "2kg", "2.5kg", "3kg"];
+const HALF_TO_1_5KG: SizeId[] = ["half-kg", "1kg", "1.5kg"];
+const CUSTOM_SIZES: SizeId[] = ["1kg", "1.5kg", "2kg", "2.5kg", "3kg-plus"];
+
+/** One weight tier per size, priced from `prices`; a size missing from
+ * `prices` shows "Ask us". */
+function weightTiers(sizes: SizeId[], prices: Partial<Record<SizeId, number>>): WeightTier[] {
+  return sizes.map((id) => ({ id, label: SIZES[id].label, price: prices[id], serves: SIZES[id].serves }));
 }
 
 type ItemEntry = string | { label: string; description?: string; imageUrl?: string };
@@ -98,11 +94,7 @@ export const BASE_CATALOG: CatalogItem[] = [
     "classic-cakes",
     "classic-cakes",
     "Ultra moist, ready in an hour.",
-    [
-      { id: "half-kg", label: "½ kg", price: 55, serves: SERVES["half-kg"] },
-      { id: "1kg", label: "1 kg", price: 100, serves: SERVES["1kg"] },
-      ...largerSizes(),
-    ],
+    weightTiers(HALF_TO_3KG, { "half-kg": 55, "1kg": 100 }),
     0,
     [
       {
@@ -127,11 +119,7 @@ export const BASE_CATALOG: CatalogItem[] = [
     "premium-cakes",
     "premium-cakes",
     "Truffle, fresh fruit, and berry finishes.",
-    [
-      { id: "half-kg", label: "½ kg", price: 65, serves: SERVES["half-kg"] },
-      { id: "1kg", label: "1 kg", price: 115, serves: SERVES["1kg"] },
-      ...largerSizes(),
-    ],
+    weightTiers(HALF_TO_3KG, { "half-kg": 65, "1kg": 115 }),
     0,
     [
       {
@@ -185,11 +173,7 @@ export const BASE_CATALOG: CatalogItem[] = [
     "exotic-cakes",
     "exotic-cakes",
     "Our more distinctive flavours.",
-    [
-      { id: "half-kg", label: "½ kg", price: 75, serves: SERVES["half-kg"] },
-      { id: "1kg", label: "1 kg", price: 140, serves: SERVES["1kg"] },
-      ...largerSizes(),
-    ],
+    weightTiers(HALF_TO_3KG, { "half-kg": 75, "1kg": 140 }),
     0,
     [
       {
@@ -242,11 +226,7 @@ export const BASE_CATALOG: CatalogItem[] = [
     "exotic-premium-cakes",
     "exotic-premium-cakes",
     "Our top-tier range — whole Rocher, Kinder Bueno, and more.",
-    [
-      { id: "half-kg", label: "½ kg", price: 85, serves: SERVES["half-kg"] },
-      { id: "1kg", label: "1 kg", price: 160, serves: SERVES["1kg"] },
-      ...largerSizes(),
-    ],
+    weightTiers(HALF_TO_3KG, { "half-kg": 85, "1kg": 160 }),
     0,
     [
       {
@@ -293,11 +273,7 @@ export const BASE_CATALOG: CatalogItem[] = [
     "cheesecakes",
     "cheesecakes",
     "Creamy baked cheesecake, whole cakes only.",
-    [
-      { id: "half-kg", label: "½ kg", price: 95, serves: SERVES["half-kg"] },
-      { id: "1kg", label: "1 kg", price: 170, serves: SERVES["1kg"] },
-      ...largerSizes(),
-    ],
+    weightTiers(HALF_TO_3KG, { "half-kg": 95, "1kg": 170 }),
     24,
     [
       { label: "Oreo", imageUrl: "/images/cheesecake-oreo.jpg" },
@@ -316,11 +292,7 @@ export const BASE_CATALOG: CatalogItem[] = [
     "indian-cakes",
     "indian-cakes",
     "Traditional Indian mithai flavours in cake form, made fresh each morning.",
-    [
-      { id: "half-kg", label: "½ kg", price: 105, serves: SERVES["half-kg"] },
-      { id: "1kg", label: "1 kg", price: 190, serves: SERVES["1kg"] },
-      ...largerSizes(),
-    ],
+    weightTiers(HALF_TO_3KG, { "half-kg": 105, "1kg": 190 }),
     24,
     [
       { label: "Motichoor", imageUrl: "/images/indian-motichoor.jpg" },
@@ -335,7 +307,7 @@ export const BASE_CATALOG: CatalogItem[] = [
     "hammer-cakes",
     "hammer-cakes",
     "A chocolate shell cake you crack open with a hammer.",
-    [{ id: "1kg", label: "1 kg", price: 190, serves: SERVES["1kg"] }, ...largerSizes()],
+    weightTiers(HALF_TO_1_5KG, { "1kg": 190 }),
     24,
     [{ label: "Heart Shape Hammer Cake", imageUrl: "/images/hammer-heart-shape.jpg" }],
   ),
@@ -344,7 +316,7 @@ export const BASE_CATALOG: CatalogItem[] = [
     "pull-me-up-cakes",
     "pull-me-up-cakes",
     "Pull the ribbons to reveal a surprise inside.",
-    [{ id: "1kg", label: "1 kg", price: 180, serves: SERVES["1kg"] }, ...largerSizes()],
+    weightTiers(HALF_TO_3KG, { "1kg": 180 }),
     24,
     ["Biscoff", "Coffee", "Nutella Strawberry", "Triple Chocolate", "Mango", "Red Velvet"],
   ),
@@ -353,7 +325,7 @@ export const BASE_CATALOG: CatalogItem[] = [
     "pinata-cakes",
     "pinata-cakes",
     "Break it open for the treats hidden inside.",
-    [{ id: "1kg", label: "1 kg", price: 190, serves: SERVES["1kg"] }, ...largerSizes()],
+    weightTiers(HALF_TO_1_5KG, { "1kg": 190 }),
     24,
     [
       "Fresh Fruit",
@@ -369,11 +341,7 @@ export const BASE_CATALOG: CatalogItem[] = [
     "photo-cakes",
     "photo-cakes",
     "An edible print of your photo on the cake — works with any flavour on this menu. Tell us which flavour you'd like and send the photo on WhatsApp after ordering.",
-    [
-      { id: "1kg", label: "1 kg", price: 170, serves: SERVES["1kg"] },
-      ...largerSizes({ "2kg": 340 }),
-      { id: "3kg-plus", label: "3 kg+", price: undefined, serves: SERVES["3kg-plus"] },
-    ],
+    weightTiers(HALF_TO_3KG, { "1kg": 170, "2kg": 340 }),
     24,
     [
       {
@@ -404,11 +372,7 @@ export const BASE_CATALOG: CatalogItem[] = [
     categoryId: "3d-cakes",
     description:
       "Designed to your idea in fondant. Describe what you have in mind — a reference photo helps — on WhatsApp after ordering.",
-    weightTiers: [
-      { id: "1kg", label: "1 kg", price: 190, serves: SERVES["1kg"] },
-      ...largerSizes({ "2kg": 380 }),
-      { id: "3kg-plus", label: "3 kg+", price: undefined, serves: SERVES["3kg-plus"] },
-    ],
+    weightTiers: weightTiers(CUSTOM_SIZES, { "1kg": 190, "2kg": 380 }),
     leadTimeHours: 24,
     cakeMessageMaxLength: CONFIG.cakeMessageMaxLength,
     available: true,

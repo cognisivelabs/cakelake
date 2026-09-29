@@ -73,7 +73,7 @@ describe("weightTierKg", () => {
     }
   });
 
-  it("treats a 'half' id as 0.5kg", () => {
+  it("reads each size's kg from SIZES", () => {
     expect(weightTierKg({ id: "half-kg" })).toBe(0.5);
   });
 
@@ -86,13 +86,38 @@ describe("weightTierKg", () => {
     expect(weightTierKg({ id: "1.5kg" })).toBe(1.5);
   });
 
-  it("reads only the leading number, ignoring a trailing suffix", () => {
+  it("counts 3 kg+ as 3 kg", () => {
     expect(weightTierKg({ id: "3kg-plus" })).toBe(3);
   });
 
-  it("falls back to 0 for an id with no recognizable weight", () => {
+  it("falls back to 0 for an id that isn't a size", () => {
     expect(weightTierKg({ id: "custom" })).toBe(0);
     expect(weightTierKg({ id: "" })).toBe(0);
+  });
+});
+
+describe("weight tiers", () => {
+  const sizesOf = (categoryId: string) =>
+    getCatalog().find((i) => i.categoryId === categoryId)!.weightTiers.map((t) => t.id);
+
+  it("sells each category in its agreed sizes", () => {
+    const halfTo3 = ["half-kg", "1kg", "1.5kg", "2kg", "2.5kg", "3kg"];
+    for (const id of ["classic-cakes", "premium-cakes", "exotic-cakes", "exotic-premium-cakes", "cheesecakes", "indian-cakes", "photo-cakes", "pull-me-up-cakes"]) {
+      expect(sizesOf(id), id).toEqual(halfTo3);
+    }
+    for (const id of ["hammer-cakes", "pinata-cakes"]) {
+      expect(sizesOf(id), id).toEqual(["half-kg", "1kg", "1.5kg"]);
+    }
+    expect(sizesOf("3d-cakes")).toEqual(["1kg", "1.5kg", "2kg", "2.5kg", "3kg-plus"]);
+  });
+
+  it("gives every tier a label and a serves count", () => {
+    for (const item of getCatalog()) {
+      for (const tier of item.weightTiers) {
+        expect(tier.label, `${item.id} ${tier.id}`).toBeTruthy();
+        expect(tier.serves, `${item.id} ${tier.id}`).toBeTruthy();
+      }
+    }
   });
 });
 

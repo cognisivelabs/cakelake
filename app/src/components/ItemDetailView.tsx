@@ -29,7 +29,7 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
   // instead of "SIZE" for just those. (Not "any tier without a price":
   // the larger sizes are unpriced on every cake until the client confirms.)
   const isWeightPriced = category?.kind === "custom";
-  const baseWeightPrice = item.weightTiers[0]?.price;
+  const baseWeightPrice = item.weightTiers.find((t) => t.id === "1kg")?.price;
   // Flavour is no longer a picker on this page (Sep 2026
   // recategorisation) — every other item in the same category is
   // cross-linked instead, at the foot of the page.

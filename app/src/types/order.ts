@@ -1,7 +1,9 @@
-/** One line in the cart: an item at one weight, with a quantity. */
+/** One line in the cart: representing an item, weight, with a quantity. */
+// 1× Butterscotch, ½ kg — AED 55
+// Happy Birthday
 export type CartLine = {
   /** Unique per line; the same item can appear on several lines. */
-  lineId: string;
+  cartLineId: string;
   itemId: string;
   quantity: number;
   weightTierId: string;

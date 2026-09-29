@@ -1,8 +1,8 @@
 /**
- * Where a photo is shown: "thumbnail" is every small, roughly square
- * rendering (menu card, flavour swatch, cart line, "added to order"
- * sheet); "hero" is Item Detail's large photo; "heroBleed" is a Home
- * banner's full-bleed photo.
+ * "thumbnail" is every small, roughly square photo used in various rendering 
+ * contexts (menu card, flavour swatch, cart line, "added to order" sheet); 
+ * "hero" is Item Detail's large photo; 
+ * "heroBleed" is a Home banner's full-bleed photo.
  */
 export type ImageSlot = "hero" | "thumbnail" | "heroBleed";
 

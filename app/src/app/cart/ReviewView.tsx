@@ -45,7 +45,7 @@ export function ReviewView({ onSend }: { onSend: () => void }) {
 
             <div className={styles.lineList}>
               {resolvedLines.map(({ item, line }) => (
-                <CartLineItem key={line.lineId} item={item} line={line} />
+                <CartLineItem key={line.cartLineId} item={item} line={line} />
               ))}
             </div>
 

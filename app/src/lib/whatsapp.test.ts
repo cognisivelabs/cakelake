@@ -70,7 +70,7 @@ describe("buildOrderMessage", () => {
 
   it("skips lines whose item is missing and still totals correctly", () => {
     const message = buildOrderMessage(
-      order({ lines: [line(), line({ lineId: "l2", itemId: "gone" })] }),
+      order({ lines: [line(), line({ cartLineId: "l2", itemId: "gone" })] }),
       [item]
     );
     expect(message).toContain(`Total: ${CONFIG.currency} 55`);

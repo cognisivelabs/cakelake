@@ -60,24 +60,42 @@ describe("CartContext", () => {
     expect(cart.order.pendingHandoff).toBe(false);
   });
 
-  it("addLine appends a line and gives each one a unique lineId", () => {
+  it("addLine appends a line and gives each one a unique cartLineId", () => {
     act(() => {
       cart.addLine(NEW_LINE);
-      cart.addLine(NEW_LINE);
+      cart.addLine({ ...NEW_LINE, weightTierId: "1kg" });
     });
     expect(cart.order.lines).toHaveLength(2);
     const [a, b] = cart.order.lines;
-    expect(a.lineId).not.toBe(b.lineId);
+    expect(a.cartLineId).not.toBe(b.cartLineId);
     expect(a.itemId).toBe("classic-cakes-butterscotch");
+  });
+
+  it("addLine adds to an identical line's quantity instead of adding a line", () => {
+    act(() => {
+      cart.addLine(NEW_LINE);
+      cart.addLine({ ...NEW_LINE, quantity: 2 });
+    });
+    expect(cart.order.lines).toHaveLength(1);
+    expect(cart.order.lines[0].quantity).toBe(3);
+  });
+
+  it("addLine keeps lines with different cake messages separate", () => {
+    act(() => {
+      cart.addLine({ ...NEW_LINE, cakeMessage: "Happy Birthday" });
+      cart.addLine({ ...NEW_LINE, cakeMessage: "Congrats" });
+      cart.addLine(NEW_LINE);
+    });
+    expect(cart.order.lines.map((l) => l.cakeMessage)).toEqual(["Happy Birthday", "Congrats", undefined]);
   });
 
   it("updateQuantity changes the matching line's quantity", () => {
     act(() => {
       cart.addLine(NEW_LINE);
     });
-    const lineId = cart.order.lines[0].lineId;
+    const cartLineId = cart.order.lines[0].cartLineId;
     act(() => {
-      cart.updateQuantity(lineId, 3);
+      cart.updateQuantity(cartLineId, 3);
     });
     expect(cart.order.lines[0].quantity).toBe(3);
   });
@@ -86,9 +104,9 @@ describe("CartContext", () => {
     act(() => {
       cart.addLine(NEW_LINE);
     });
-    const lineId = cart.order.lines[0].lineId;
+    const cartLineId = cart.order.lines[0].cartLineId;
     act(() => {
-      cart.updateQuantity(lineId, 0);
+      cart.updateQuantity(cartLineId, 0);
     });
     expect(cart.order.lines).toEqual([]);
   });
@@ -100,9 +118,9 @@ describe("CartContext", () => {
     });
     const [first, second] = cart.order.lines;
     act(() => {
-      cart.removeLine(first.lineId);
+      cart.removeLine(first.cartLineId);
     });
-    expect(cart.order.lines.map((l) => l.lineId)).toEqual([second.lineId]);
+    expect(cart.order.lines.map((l) => l.cartLineId)).toEqual([second.cartLineId]);
   });
 
   it("updateCakeMessage sets the message on the matching line only", () => {
@@ -112,12 +130,12 @@ describe("CartContext", () => {
     });
     const [first, second] = cart.order.lines;
     act(() => {
-      cart.updateCakeMessage(first.lineId, "Happy Birthday");
+      cart.updateCakeMessage(first.cartLineId, "Happy Birthday");
     });
-    expect(cart.order.lines.find((l) => l.lineId === first.lineId)?.cakeMessage).toBe(
+    expect(cart.order.lines.find((l) => l.cartLineId === first.cartLineId)?.cakeMessage).toBe(
       "Happy Birthday"
     );
-    expect(cart.order.lines.find((l) => l.lineId === second.lineId)?.cakeMessage).toBeUndefined();
+    expect(cart.order.lines.find((l) => l.cartLineId === second.cartLineId)?.cakeMessage).toBeUndefined();
   });
 
   it("setFulfillment, setWhenNeeded and setCustomerName update their own fields", () => {
@@ -190,7 +208,7 @@ describe("CartContext", () => {
     expect(cart.order.expiresAt).toBeDefined();
 
     act(() => {
-      cart.updateQuantity(cart.order.lines[0].lineId, 2);
+      cart.updateQuantity(cart.order.lines[0].cartLineId, 2);
     });
     expect(cart.order.expiresAt).toBeUndefined();
   });
@@ -234,7 +252,7 @@ describe("CartContext — localStorage hydration on load", () => {
     const stored: Order = {
       lines: [
         {
-          lineId: "l1",
+          cartLineId: "l1",
           itemId: "classic-cakes-butterscotch",
           quantity: 2,
           weightTierId: "half-kg",
@@ -256,7 +274,7 @@ describe("CartContext — localStorage hydration on load", () => {
     const stored: Order = {
       lines: [
         {
-          lineId: "l1",
+          cartLineId: "l1",
           itemId: "classic-cakes-butterscotch",
           quantity: 1,
           weightTierId: "half-kg",
@@ -280,12 +298,12 @@ describe("CartContext — localStorage hydration on load", () => {
     const stored: Order = {
       lines: [
         {
-          lineId: "l1",
+          cartLineId: "l1",
           itemId: "classic-cakes-butterscotch",
           quantity: 1,
           weightTierId: "half-kg",
         },
-        { lineId: "l2", itemId: "does-not-exist", quantity: 1, weightTierId: "x" },
+        { cartLineId: "l2", itemId: "does-not-exist", quantity: 1, weightTierId: "x" },
       ],
       fulfillment: "pickup",
       whenNeeded: { kind: "today" },
@@ -294,9 +312,9 @@ describe("CartContext — localStorage hydration on load", () => {
     };
     localStorage.setItem(STORAGE_KEYS.cart, JSON.stringify(stored));
     await mountFresh();
-    expect(cart.order.lines.map((l) => l.lineId)).toEqual(["l1"]);
+    expect(cart.order.lines.map((l) => l.cartLineId)).toEqual(["l1"]);
     const persisted = JSON.parse(localStorage.getItem(STORAGE_KEYS.cart)!) as Order;
-    expect(persisted.lines.map((l) => l.lineId)).toEqual(["l1"]);
+    expect(persisted.lines.map((l) => l.cartLineId)).toEqual(["l1"]);
   });
 
   it("falls back to an empty cart when the stored value is corrupt JSON", async () => {

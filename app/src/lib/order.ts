@@ -15,6 +15,15 @@ export function describeLine(item: CatalogItem, line: CartLine): string {
   return tier ? `${item.name}, ${tier.label}` : item.name;
 }
 
+/** Whether two lines are the same item, weight and cake message (no
+ * message and an empty one count as the same). */
+export function isSameLine(
+  a: Pick<CartLine, "itemId" | "weightTierId" | "cakeMessage">,
+  b: Pick<CartLine, "itemId" | "weightTierId" | "cakeMessage">,
+): boolean {
+  return a.itemId === b.itemId && a.weightTierId === b.weightTierId && (a.cakeMessage ?? "") === (b.cakeMessage ?? "");
+}
+
 /** Each cart line paired with its catalog item; lines whose item isn't
  * in the catalog are left out. */
 export function resolveOrderLines(

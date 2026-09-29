@@ -47,8 +47,8 @@ describe("hasUnpricedLines", () => {
 
 describe("orderTotal", () => {
   it("sums priced lines and skips unpriced ones", () => {
-    const priced = line({ lineId: "a", quantity: 2 }); // 2 * 55 = 110
-    const unpriced = line({ lineId: "b", weightTierId: "3kg-plus" });
+    const priced = line({ cartLineId: "a", quantity: 2 }); // 2 * 55 = 110
+    const unpriced = line({ cartLineId: "b", weightTierId: "3kg-plus" });
     expect(orderTotal(order({ lines: [priced, unpriced] }), [item])).toBe(110);
   });
 

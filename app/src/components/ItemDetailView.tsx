@@ -5,7 +5,7 @@ import Link from "next/link";
 import type { CatalogItem } from "@/types/catalog";
 import { useCart } from "@/context/CartContext";
 import { formatAed, orderTotal, lineTotal } from "@/lib/pricing";
-import { resolveSelection, orderItemCount, resolveOrderLines, describeLine } from "@/lib/order";
+import { resolveSelection, orderItemCount, resolveOrderLines, describeLine, isSameLine } from "@/lib/order";
 import { getCategory, getCatalog, getSiblingItems, readyLabel } from "@/lib/catalog";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import { AddedToOrderPanel, type AddedSnapshot } from "@/components/AddedToOrderPanel";
@@ -52,23 +52,21 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
 
   function handleAdd() {
     if (!canAdd) return;
-    // Snapshot the "also in your order" lines before adding — order.lines
-    // doesn't include the new one yet at this point.
+    // The cart's other lines, before this add: every line except one this
+    // add merges into.
     const catalog = getCatalog();
-    const otherLines = resolveOrderLines(order, catalog).map(({ item: lineItem, line }) => ({
-      label: describeLine(lineItem, line),
-      quantity: line.quantity,
-      total: lineTotal(lineItem, line),
-    }));
-    addLine({
-      itemId: item.id,
-      quantity,
-      weightTierId,
-      cakeMessage: cakeMessage.trim() || undefined,
-    });
+    const newLine = { itemId: item.id, weightTierId, cakeMessage: cakeMessage.trim() || undefined };
+    const otherLines = resolveOrderLines(order, catalog)
+      .filter(({ line }) => !isSameLine(line, newLine))
+      .map(({ item: lineItem, line }) => ({
+        label: describeLine(lineItem, line),
+        quantity: line.quantity,
+        total: lineTotal(lineItem, line),
+      }));
+    addLine({ ...newLine, quantity });
     setAddedSnapshot({
       tierLabel: selectedTier?.label,
-      cakeMessage: cakeMessage.trim() || undefined,
+      cakeMessage: newLine.cakeMessage,
       quantity,
       lineTotal: total,
       itemCount: orderItemCount(order) + quantity,

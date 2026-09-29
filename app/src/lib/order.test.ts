@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   describeLine,
   dropDiscontinuedLines,
+  isSameLine,
   orderItemCount,
   orderLeadTimeHours,
   resolveOrderLines,
@@ -37,7 +38,7 @@ describe("resolveOrderLines", () => {
     const resolved = resolveOrderLines(order({ lines: [line()] }), [item]);
     expect(resolved).toHaveLength(1);
     expect(resolved[0].item).toBe(item);
-    expect(resolved[0].line.lineId).toBe("l1");
+    expect(resolved[0].line.cartLineId).toBe("l1");
   });
 
   it("drops lines whose item no longer exists in the catalog", () => {
@@ -52,7 +53,7 @@ describe("orderItemCount", () => {
   it("sums quantities across all lines", () => {
     const count = orderItemCount(
       order({
-        lines: [line({ lineId: "a", quantity: 2 }), line({ lineId: "b", quantity: 3 })],
+        lines: [line({ cartLineId: "a", quantity: 2 }), line({ cartLineId: "b", quantity: 3 })],
       })
     );
     expect(count).toBe(5);
@@ -66,10 +67,10 @@ describe("orderItemCount", () => {
 describe("dropDiscontinuedLines", () => {
   it("removes lines whose item id is no longer in the catalog", () => {
     const original = order({
-      lines: [line({ lineId: "a" }), line({ lineId: "b", itemId: "discontinued" })],
+      lines: [line({ cartLineId: "a" }), line({ cartLineId: "b", itemId: "discontinued" })],
     });
     const result = dropDiscontinuedLines(original, [item]);
-    expect(result.lines.map((l) => l.lineId)).toEqual(["a"]);
+    expect(result.lines.map((l) => l.cartLineId)).toEqual(["a"]);
   });
 
   it("returns the same order reference when nothing was dropped", () => {
@@ -100,7 +101,25 @@ describe("orderLeadTimeHours", () => {
   });
 
   it("is the longest lead time among the order's items", () => {
-    const lines = [line(), line({ lineId: "l2", itemId: notice.id })];
+    const lines = [line(), line({ cartLineId: "l2", itemId: notice.id })];
     expect(orderLeadTimeHours(order({ lines }), catalog)).toBe(24);
+  });
+});
+
+describe("isSameLine", () => {
+  const base = { itemId: "a", weightTierId: "1kg" };
+
+  it("matches the same item, weight and message", () => {
+    expect(isSameLine({ ...base, cakeMessage: "Hi" }, { ...base, cakeMessage: "Hi" })).toBe(true);
+  });
+
+  it("treats no message and an empty message as the same", () => {
+    expect(isSameLine(base, { ...base, cakeMessage: "" })).toBe(true);
+  });
+
+  it("tells apart a different item, weight or message", () => {
+    expect(isSameLine(base, { ...base, itemId: "b" })).toBe(false);
+    expect(isSameLine(base, { ...base, weightTierId: "2kg" })).toBe(false);
+    expect(isSameLine(base, { ...base, cakeMessage: "Hi" })).toBe(false);
   });
 });

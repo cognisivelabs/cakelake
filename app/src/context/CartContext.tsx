@@ -10,7 +10,7 @@ import type { CartLine, Fulfillment, Order, WhenNeeded } from "@/types/order";
 import { STORAGE_KEYS } from "@/lib/storageKeys";
 import { safeGetItem, safeSetItem } from "@/lib/safeStorage";
 import { getCatalog } from "@/lib/catalog";
-import { dropDiscontinuedLines } from "@/lib/order";
+import { dropDiscontinuedLines, isSameLine } from "@/lib/order";
 import { isOrderExpired, pendingHandoffExpiresAt, declinedHandoffExpiresAt } from "@/lib/cartExpiry";
 
 const STORAGE_KEY = STORAGE_KEYS.cart;
@@ -103,10 +103,11 @@ export type NewLineInput = {
 
 type CartContextValue = {
   order: Order;
+  /** Adds to the quantity of an identical line (see isSameLine), or adds a new line. */
   addLine: (input: NewLineInput) => void;
-  updateQuantity: (lineId: string, quantity: number) => void;
-  removeLine: (lineId: string) => void;
-  updateCakeMessage: (lineId: string, cakeMessage: string) => void;
+  updateQuantity: (cartLineId: string, quantity: number) => void;
+  removeLine: (cartLineId: string) => void;
+  updateCakeMessage: (cartLineId: string, cakeMessage: string) => void;
   setFulfillment: (fulfillment: Fulfillment) => void;
   setWhenNeeded: (whenNeeded: WhenNeeded) => void;
   setCustomerName: (customerName: string) => void;
@@ -128,31 +129,41 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const value: CartContextValue = {
     order,
     addLine: (input) => {
+      const match = currentOrder.lines.find((l) => isSameLine(l, input));
+      if (match) {
+        commitActive({
+          ...currentOrder,
+          lines: currentOrder.lines.map((l) =>
+            l === match ? { ...l, quantity: l.quantity + input.quantity } : l,
+          ),
+        });
+        return;
+      }
       const line: CartLine = {
-        lineId: `${input.itemId}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+        cartLineId: `${input.itemId}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
         ...input,
       };
       commitActive({ ...currentOrder, lines: [...currentOrder.lines, line] });
     },
-    updateQuantity: (lineId, quantity) => {
+    updateQuantity: (cartLineId, quantity) => {
       commitActive({
         ...currentOrder,
         lines: currentOrder.lines
-          .map((l) => (l.lineId === lineId ? { ...l, quantity } : l))
+          .map((l) => (l.cartLineId === cartLineId ? { ...l, quantity } : l))
           .filter((l) => l.quantity > 0),
       });
     },
-    removeLine: (lineId) => {
+    removeLine: (cartLineId) => {
       commitActive({
         ...currentOrder,
-        lines: currentOrder.lines.filter((l) => l.lineId !== lineId),
+        lines: currentOrder.lines.filter((l) => l.cartLineId !== cartLineId),
       });
     },
-    updateCakeMessage: (lineId, cakeMessage) => {
+    updateCakeMessage: (cartLineId, cakeMessage) => {
       commitActive({
         ...currentOrder,
         lines: currentOrder.lines.map((l) =>
-          l.lineId === lineId ? { ...l, cakeMessage } : l,
+          l.cartLineId === cartLineId ? { ...l, cakeMessage } : l,
         ),
       });
     },

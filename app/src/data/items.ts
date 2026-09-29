@@ -1,35 +1,16 @@
 import type { CatalogItem, WeightTier } from "@/types/catalog";
 import { CONFIG } from "@/lib/config";
 
-/**
- * The menu's items. PLACEHOLDER CONTENT in places — see individual
- * comments below. The client will provide the remaining items, prices and
- * photos (see the "Content checklist" in docs/requirements/requirements.md).
- * Every screen reads through lib/catalog.ts, so swapping in real data is a
- * data change, not a code one.
- *
- * Scope, client-confirmed: only cakes are ordered online. Cupcakes,
- * cookies, pastries, desserts, and savoury items are not — the bakery
- * doesn't take online orders for those.
- *
- * Sep 2026 recategorisation (client-confirmed): each flavour is now its
- * own catalog item, and what used to be a multi-flavour "group" (e.g.
- * Premium Cakes) is now a Category instead. Photo Cakes and Custom Cakes
- * stay single items (no per-flavour split — Photo Cakes works with any
- * flavour on this menu, chosen in the WhatsApp chat; Custom Cakes is a
- * from-scratch design brief). Any customisation a customer wants — a
- * photo to print, a design idea, anything — is handled entirely in that
- * WhatsApp chat, not a form field in the app.
- */
+// The menu's items, one per flavour (or shape), grouped by category.
+// Some prices, sizes and photos are placeholders until the client
+// supplies them.
 
-/** Ids other screens link to directly: `customCakes` is the Custom Cakes
- * item (and its single-item category); `photoCakes` is the Photo Cakes
- * category, which holds the Round/Rectangle/Heart items. */
+/** Ids linked to directly: `customCakes` is the Custom Cakes item and
+ * its category; `photoCakes` is the Photo Cakes category. */
 export const SPECIAL_ITEM_IDS = { photoCakes: "photo-cakes", customCakes: "custom-cakes" } as const;
 
-/** Every weight a cake can be ordered in, smallest first: its label,
- * weight in kg and how many people it serves. Serves counts are
- * proposed, not yet client-confirmed. */
+/** Every cake size, smallest first: its label, weight in kg and how
+ * many people it serves. */
 export const SIZES = {
   "half-kg": { label: "½ kg", kg: 0.5, serves: "Serves 2–4" },
   "1kg": { label: "1 kg", kg: 1, serves: "Serves 5–6" },
@@ -40,19 +21,22 @@ export const SIZES = {
   "3kg-plus": { label: "3 kg+", kg: 3, serves: "Serves 18+" },
 } as const;
 
+/** A key of SIZES, e.g. "half-kg". */
 type SizeId = keyof typeof SIZES;
 
-/** The size ranges categories are sold in. */
+/** The sizes each group of categories is sold in. */
 const HALF_TO_3KG: SizeId[] = ["half-kg", "1kg", "1.5kg", "2kg", "2.5kg", "3kg"];
 const HALF_TO_1_5KG: SizeId[] = ["half-kg", "1kg", "1.5kg"];
 const CUSTOM_SIZES: SizeId[] = ["1kg", "1.5kg", "2kg", "2.5kg", "3kg-plus"];
 
-/** One weight tier per size, priced from `prices`; a size missing from
- * `prices` shows "Ask us". */
+/** One weight tier per size, priced from `prices`; a size with no price
+ * shows "Ask us". */
 function weightTiers(sizes: SizeId[], prices: Partial<Record<SizeId, number>>): WeightTier[] {
   return sizes.map((id) => ({ id, label: SIZES[id].label, price: prices[id], serves: SIZES[id].serves }));
 }
 
+/** One flavour of a category: its name alone, or with its own
+ * description and photo. */
 type ItemEntry = string | { label: string; description?: string; imageUrl?: string };
 
 /**
@@ -86,6 +70,7 @@ function categoryItems(
   });
 }
 
+/** Every item on the menu, in menu order. */
 export const BASE_CATALOG: CatalogItem[] = [
   ...categoryItems(
     "classic-cakes",
@@ -261,7 +246,6 @@ export const BASE_CATALOG: CatalogItem[] = [
     ],
   ),
 
-  // NEW category (Sep 2026 recategorisation) — whole cakes only.
   ...categoryItems(
     "cheesecakes",
     "Creamy baked cheesecake, whole cakes only.",
@@ -276,7 +260,6 @@ export const BASE_CATALOG: CatalogItem[] = [
     ],
   ),
 
-  // Made in small batches each morning; 24 hours notice.
   ...categoryItems(
     "indian-cakes",
     "Traditional Indian mithai flavours in cake form, made fresh each morning.",
@@ -319,9 +302,7 @@ export const BASE_CATALOG: CatalogItem[] = [
     ],
   ),
 
-  // Shape variants (client-supplied photos) — same pricing and notice as
-  // the single "Photo Cakes" item this replaces; the flavour is still
-  // chosen in the WhatsApp chat, not a picker here.
+  // One item per shape; the flavour is chosen in the WhatsApp chat.
   ...categoryItems(
     "photo-cakes",
     "An edible print of your photo on the cake — works with any flavour on this menu. Tell us which flavour you'd like and send the photo on WhatsApp after ordering.",

@@ -1,8 +1,11 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
+  earliestNeededIsoDate,
   estimatedReadyTime,
+  fitWhenNeeded,
   formatShortDate,
   formatTime,
+  isoDateInDays,
   parseIsoDateLocal,
   sameDayCutoffLabel,
   sameDayCutoffPassed,
@@ -180,5 +183,60 @@ describe("todayIsoDate", () => {
         now.getDate()
       ).padStart(2, "0")}`
     );
+  });
+});
+
+describe("earliestNeededIsoDate", () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("is today for 0, then one day per started 24 hours", () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2026, 8, 30, 15, 0));
+    expect(earliestNeededIsoDate(0)).toBe("2026-09-30");
+    expect(earliestNeededIsoDate(24)).toBe("2026-10-01");
+    expect(earliestNeededIsoDate(25)).toBe("2026-10-02");
+    expect(earliestNeededIsoDate(72)).toBe("2026-10-03");
+  });
+});
+
+describe("fitWhenNeeded", () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  function at3pm() {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date(2026, 8, 30, 15, 0));
+  }
+
+  it("keeps any choice a same-day cart allows", () => {
+    at3pm();
+    const today = isoDateInDays(0);
+    for (const w of [{ kind: "today" }, { kind: "tomorrow" }, { kind: "unsure" }, { kind: "date", date: today }] as const) {
+      expect(fitWhenNeeded(w, today, true)).toBe(w);
+    }
+  });
+
+  it("moves today to tomorrow once same-day ordering is closed", () => {
+    at3pm();
+    expect(fitWhenNeeded({ kind: "today" }, isoDateInDays(0), false)).toEqual({ kind: "tomorrow" });
+  });
+
+  it("moves today to tomorrow for a 24-hour cart", () => {
+    at3pm();
+    expect(fitWhenNeeded({ kind: "today" }, earliestNeededIsoDate(24), true)).toEqual({ kind: "tomorrow" });
+  });
+
+  it("moves today, tomorrow and too-early dates to the earliest date for a 72-hour cart", () => {
+    at3pm();
+    const earliest = earliestNeededIsoDate(72);
+    const expected = { kind: "date", date: "2026-10-03" };
+    expect(fitWhenNeeded({ kind: "today" }, earliest, true)).toEqual(expected);
+    expect(fitWhenNeeded({ kind: "tomorrow" }, earliest, true)).toEqual(expected);
+    expect(fitWhenNeeded({ kind: "date", date: "2026-10-02" }, earliest, true)).toEqual(expected);
+    expect(fitWhenNeeded({ kind: "date", date: "2026-10-05" }, earliest, true)).toEqual({ kind: "date", date: "2026-10-05" });
+    expect(fitWhenNeeded({ kind: "unsure" }, earliest, true)).toEqual({ kind: "unsure" });
   });
 });

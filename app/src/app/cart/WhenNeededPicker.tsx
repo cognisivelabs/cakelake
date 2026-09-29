@@ -2,37 +2,50 @@
 
 import { useEffect, useEffectEvent } from "react";
 import { useCart } from "@/context/CartContext";
+import { getCatalog, readyLabel } from "@/lib/catalog";
 import {
+  earliestNeededIsoDate,
   estimatedReadyTime,
+  fitWhenNeeded,
+  formatShortDate,
+  isoDateInDays,
+  parseIsoDateLocal,
   sameDayCutoffLabel,
   sameDayCutoffPassed,
   sameDayOrderingNotYetOpen,
   sameDayOrderingOpensAtLabel,
-  todayIsoDate,
 } from "@/lib/dates";
+import { orderLeadTimeHours } from "@/lib/order";
 import type { WhenNeeded } from "@/types/order";
 import styles from "./cart.module.css";
 
-// "When do you need it?" — Today / Tomorrow / Pick a date. Today closes
-// when the shop isn't open yet or the day's cutoff (earlier for
-// delivery) has passed.
+// "When do you need it?" — Today / Tomorrow / Pick a date. Dates before
+// the cart's lead time allows are disabled; Today also closes when the
+// shop isn't open yet or the day's cutoff (earlier for delivery) has
+// passed.
 export function WhenNeededPicker() {
   const { order, setWhenNeeded } = useCart();
   const kind = order.whenNeeded.kind;
   const readyTime = estimatedReadyTime();
   const tooEarly = sameDayOrderingNotYetOpen();
   const cutoffPassed = sameDayCutoffPassed(order.fulfillment);
-  const todayUnavailable = tooEarly || cutoffPassed;
+  const leadTimeHours = orderLeadTimeHours(order, getCatalog());
+  const earliestIso = earliestNeededIsoDate(leadTimeHours);
+  const tomorrowIso = isoDateInDays(1);
+  const needsNotice = leadTimeHours > 0;
+  const todayUnavailable = needsNotice || tooEarly || cutoffPassed;
+  const tomorrowUnavailable = earliestIso > tomorrowIso;
 
-  // "Today" can go from available to not (the shop isn't open yet, past
-  // the cutoff, or the customer switches to delivery's earlier cutoff)
-  // without the customer touching this control at all — drop a
-  // now-invalid "today" selection to "tomorrow" instead of silently
-  // letting an order that can't be fulfilled today stay selected.
-  const moveOffToday = useEffectEvent(() => setWhenNeeded({ kind: "tomorrow" }));
+  // The allowed dates can change without the customer touching this
+  // control (the shop isn't open yet, past the cutoff, delivery's earlier
+  // cutoff, a notice item added) — move a now-invalid selection to the
+  // earliest valid one.
+  const fitted = fitWhenNeeded(order.whenNeeded, earliestIso, !(tooEarly || cutoffPassed));
+  const moveToFitted = useEffectEvent(() => setWhenNeeded(fitted));
+  const outOfRange = fitted !== order.whenNeeded;
   useEffect(() => {
-    if (kind === "today" && todayUnavailable) moveOffToday();
-  }, [kind, todayUnavailable]);
+    if (outOfRange) moveToFitted();
+  }, [outOfRange]);
 
   function handleWhenNeededChange(value: string) {
     const next: WhenNeeded =
@@ -42,14 +55,16 @@ export function WhenNeededPicker() {
           ? { kind: "tomorrow" }
           // Some browsers let a date be typed in rather than only picked
           // from the min-constrained widget — clamp rather than trust that.
-          : { kind: "date", date: value < todayIsoDate() ? todayIsoDate() : value };
+          : { kind: "date", date: value < earliestIso ? earliestIso : value };
     setWhenNeeded(next);
   }
 
   function pickADate() {
     if (kind === "date") return;
-    setWhenNeeded({ kind: "date", date: todayIsoDate() });
+    setWhenNeeded({ kind: "date", date: earliestIso });
   }
+
+  const earliestText = earliestIso === tomorrowIso ? "tomorrow" : formatShortDate(parseIsoDateLocal(earliestIso));
 
   return (
     <section className={styles.section}>
@@ -64,20 +79,24 @@ export function WhenNeededPicker() {
         >
           Today
           <span className={styles.pillSubtext}>
-            {cutoffPassed
-              ? `Order by ${sameDayCutoffLabel(order.fulfillment)}`
-              : tooEarly
-                ? `Opens at ${sameDayOrderingOpensAtLabel()}`
-                : `from ${readyTime}`}
+            {needsNotice
+              ? "Needs notice"
+              : cutoffPassed
+                ? `Order by ${sameDayCutoffLabel(order.fulfillment)}`
+                : tooEarly
+                  ? `Opens at ${sameDayOrderingOpensAtLabel()}`
+                  : `from ${readyTime}`}
           </span>
         </button>
         <button
           type="button"
           className={styles.pillOption}
           data-selected={kind === "tomorrow"}
+          disabled={tomorrowUnavailable}
           onClick={() => handleWhenNeededChange("tomorrow")}
         >
           Tomorrow
+          {tomorrowUnavailable && <span className={styles.pillSubtext}>Needs notice</span>}
         </button>
         <button
           type="button"
@@ -93,13 +112,22 @@ export function WhenNeededPicker() {
           type="date"
           className={styles.dateInput}
           value={order.whenNeeded.date}
-          min={todayIsoDate()}
+          min={earliestIso}
           onChange={(e) => handleWhenNeededChange(e.target.value)}
         />
       )}
       <div className={styles.infoBox}>
-        Everything here is ready within the hour. Pick a later slot if
-        you&apos;d rather — delivery runs on top and is confirmed in chat.
+        {needsNotice ? (
+          <>
+            Something here needs {readyLabel({ leadTimeHours }).toLowerCase()}, so the earliest is{" "}
+            {earliestText}. Delivery runs on top and is confirmed in chat.
+          </>
+        ) : (
+          <>
+            Everything here is ready within the hour. Pick a later slot if
+            you&apos;d rather — delivery runs on top and is confirmed in chat.
+          </>
+        )}
       </div>
     </section>
   );

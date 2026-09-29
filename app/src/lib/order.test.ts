@@ -3,6 +3,7 @@ import {
   describeLine,
   dropDiscontinuedLines,
   orderItemCount,
+  orderLeadTimeHours,
   resolveOrderLines,
   resolveSelection,
 } from "@/lib/order";
@@ -86,5 +87,20 @@ describe("dropDiscontinuedLines", () => {
     expect(result.lines).toEqual([]);
     expect(result.customerName).toBe("Sam");
     expect(result.fulfillment).toBe("delivery");
+  });
+});
+
+describe("orderLeadTimeHours", () => {
+  const notice = { ...item, id: "cheesecakes-oreo", leadTimeHours: 24 };
+  const catalog = [item, notice];
+
+  it("is 0 for an empty or all-same-day order", () => {
+    expect(orderLeadTimeHours(order({ lines: [] }), catalog)).toBe(0);
+    expect(orderLeadTimeHours(order(), catalog)).toBe(0);
+  });
+
+  it("is the longest lead time among the order's items", () => {
+    const lines = [line(), line({ lineId: "l2", itemId: notice.id })];
+    expect(orderLeadTimeHours(order({ lines }), catalog)).toBe(24);
   });
 });

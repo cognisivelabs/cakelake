@@ -34,6 +34,12 @@ export function resolveOrderLines(
     .filter((x): x is { item: CatalogItem; line: CartLine } => x !== null);
 }
 
+/** The longest leadTimeHours among the order's items; 0 for an empty or
+ * all-same-day order. */
+export function orderLeadTimeHours(order: Order, catalog: CatalogItem[]): number {
+  return Math.max(0, ...resolveOrderLines(order, catalog).map(({ item }) => item.leadTimeHours));
+}
+
 /** Total quantity across every line — the number shown on the cart pill. */
 export function orderItemCount(order: Order): number {
   return order.lines.reduce((sum, line) => sum + line.quantity, 0);

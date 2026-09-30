@@ -1,11 +1,11 @@
 import type { Banner } from "@/types/banner";
-import { SPECIAL_ITEM_IDS } from "@/data/items";
+import { SPECIAL_SLUGS } from "@/data/items";
 import { categoryRoute, itemRoute, ROUTES } from "@/lib/routes";
 
 /** Home's hero banners, in rotation order. */
 export const HOME_BANNERS: Banner[] = [
   {
-    id: "ready-in-an-hour",
+    id: 1,
     tone: "light",
     badge: "READY IN 1 HOUR",
     title: ["Eggless cakes,", "baked after you order"],
@@ -16,13 +16,13 @@ export const HOME_BANNERS: Banner[] = [
     bleedPhotoUrl: "/images/hero-bakery-case.jpg",
   },
   {
-    id: "photo-cakes",
+    id: 2,
     tone: "brand",
     badge: "ORDER 24 HOURS AHEAD",
     title: ["Your photo,", "printed on the cake"],
     body: "Send the picture on WhatsApp with your order. Eggless sponge in any of our flavours, AED 170 a kilo.",
-    cta: { label: "ORDER A PHOTO CAKE", href: categoryRoute(SPECIAL_ITEM_IDS.photoCakes) },
-    secondaryCta: { label: "See custom cakes →", href: itemRoute(SPECIAL_ITEM_IDS.customCakes) },
+    cta: { label: "ORDER A PHOTO CAKE", href: categoryRoute(SPECIAL_SLUGS.photoCakes) },
+    secondaryCta: { label: "See custom cakes →", href: itemRoute(SPECIAL_SLUGS.customCakes) },
     // A cake with an edible photo print.
     bleedPhotoUrl: "/images/hero-photo-cake.jpg",
   },

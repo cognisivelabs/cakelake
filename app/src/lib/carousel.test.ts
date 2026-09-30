@@ -42,8 +42,8 @@ describe("HOME_BANNERS", () => {
   it("has unique ids and a call to action on each banner", () => {
     expect(new Set(HOME_BANNERS.map((b) => b.id)).size).toBe(HOME_BANNERS.length);
     for (const banner of HOME_BANNERS) {
-      expect(banner.cta.href, banner.id).toBeTruthy();
-      expect(banner.title.length, banner.id).toBeGreaterThan(0);
+      expect(banner.cta.href, `banner ${banner.id}`).toBeTruthy();
+      expect(banner.title.length, `banner ${banner.id}`).toBeGreaterThan(0);
     }
   });
 });

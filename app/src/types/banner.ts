@@ -1,6 +1,6 @@
 /** One of Home's hero banners. */
 export type Banner = {
-  id: string;
+  id: number;
   /** "light" is the soft panel; "brand" is the deep, promotional one. */
   tone?: "light" | "brand";
   /** Small pill above the headline, e.g. "READY IN 1 HOUR". */

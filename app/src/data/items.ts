@@ -1,15 +1,10 @@
 import type { CatalogItem, WeightTier } from "@/types/catalog";
 import { CONFIG } from "@/lib/config";
-import { CATEGORIES } from "@/data/categories";
 
 // The menu's items, one per flavour (or shape), grouped by category.
 // Some prices, sizes and photos are placeholders until the client
 // supplies them, as are the occasions per category and the "Most
 // ordered" ranks (taken from the client's design).
-
-/** Slugs linked to directly: `photoCakes` is the Photo Cakes category;
- * `customCakes` is the Custom Cakes item. */
-export const SPECIAL_SLUGS = { photoCakes: "photo-cakes", customCakes: "custom-cakes" } as const;
 
 /** Every cake size, smallest first: its weight tier id, label, weight in
  * kg and how many people it serves. */
@@ -37,14 +32,12 @@ function weightTiers(sizes: SizeKey[], prices: Partial<Record<SizeKey, number>>)
   return sizes.map((key) => ({ ...SIZES[key], price: prices[key] }));
 }
 
-/** One flavour of a category: its id and name, optionally with its own
- * description, photo, flavour tag ids and "Most ordered" rank. `slug`
- * replaces the generated "<category slug>-<flavour>" slug. */
-type ItemEntry = Pick<CatalogItem, "id" | "flavours" | "mostOrderedRank"> & {
+/** One flavour of a category: its id, slug and name, optionally with its
+ * own description, photo, flavour tag ids and "Most ordered" rank. */
+type ItemEntry = Pick<CatalogItem, "id" | "slug" | "flavours" | "mostOrderedRank"> & {
   label: string;
   description?: string;
   imageUrl?: string;
-  slug?: string;
 };
 
 /** One category's items and what they share. */
@@ -61,14 +54,8 @@ type CategorySpec = {
   items: ItemEntry[];
 };
 
-/** "Black Forest" → "black-forest". */
-function slugify(text: string): string {
-  return text.toLowerCase().replace(/[^a-z0-9]+/g, "-");
-}
-
-/** One CatalogItem per entry, with slug "<category slug>-<flavour>" unless
- * the entry sets its own, all sharing the category's occasions, tiers,
- * lead time and delivery rule. */
+/** One CatalogItem per entry, all sharing the category's occasions,
+ * tiers, lead time and delivery rule. */
 function categoryItems({
   categoryId,
   occasions,
@@ -78,10 +65,9 @@ function categoryItems({
   requiresDelivery = false,
   items,
 }: CategorySpec): CatalogItem[] {
-  const categorySlug = CATEGORIES.find((c) => c.id === categoryId)?.slug ?? String(categoryId);
-  return items.map(({ id, label, description, imageUrl, slug, flavours, mostOrderedRank }) => ({
+  return items.map(({ id, slug, label, description, imageUrl, flavours, mostOrderedRank }) => ({
     id,
-    slug: slug ?? `${categorySlug}-${slugify(label)}`,
+    slug,
     name: label,
     categoryId,
     description: description ?? fallbackDescription,
@@ -97,11 +83,6 @@ function categoryItems({
   }));
 }
 
-/** A Photo Cake's description, for one shape ("round", "heart-shaped"…). */
-function photoCakeDescription(shape: string): string {
-  return `An edible print of your photo on a ${shape} cake — works with any flavour on this menu. Tell us which flavour you'd like and send the photo on WhatsApp after ordering.`;
-}
-
 /** Every item on the menu, in menu order. */
 export const CATALOG: CatalogItem[] = [
   ...categoryItems({
@@ -112,6 +93,7 @@ export const CATALOG: CatalogItem[] = [
     items: [
       {
         id: 1,
+        slug: "classic-cakes-butterscotch",
         label: "Butterscotch",
         description: "Ultra moist cake with each bite having a creamy butterscotch mouthfeel.",
         imageUrl: "/images/classic-butterscotch.jpg",
@@ -120,6 +102,7 @@ export const CATALOG: CatalogItem[] = [
       },
       {
         id: 2,
+        slug: "classic-cakes-black-forest",
         label: "Black Forest",
         description: "A divine combination of chocolate, cherries and whipped cream in every layer.",
         imageUrl: "/images/classic-black-forest.jpg",
@@ -127,6 +110,7 @@ export const CATALOG: CatalogItem[] = [
       },
       {
         id: 3,
+        slug: "classic-cakes-pineapple",
         label: "Pineapple",
         description: "A light and airy cake with tropical, fresh pineapple in every bite.",
         imageUrl: "/images/classic-pineapple.jpg",
@@ -142,6 +126,7 @@ export const CATALOG: CatalogItem[] = [
     items: [
       {
         id: 4,
+        slug: "premium-cakes-dark-chocolate-truffle",
         label: "Dark Chocolate Truffle",
         description: "Love dark chocolate? This luxurious, ganache based cake is for you.",
         imageUrl: "/images/premium-dark-chocolate-truffle.jpg",
@@ -150,6 +135,7 @@ export const CATALOG: CatalogItem[] = [
       },
       {
         id: 5,
+        slug: "premium-cakes-milk-chocolate-truffle",
         label: "Milk Chocolate Truffle",
         description:
           "A chocolate layer cake recipe with dense, moist chocolate cake, silky chocolate truffle frosting.",
@@ -158,6 +144,7 @@ export const CATALOG: CatalogItem[] = [
       },
       {
         id: 6,
+        slug: "premium-cakes-chocolate-vanilla",
         label: "Chocolate Vanilla",
         description:
           "Soft, buttery, fluffy, moist, and filled with rich chocolate and vanilla flavor with zebra design.",
@@ -165,12 +152,14 @@ export const CATALOG: CatalogItem[] = [
       },
       {
         id: 7,
+        slug: "premium-cakes-chocolate-chips-loaded",
         label: "Chocolate Chips Loaded",
         description: "Delicious taste of chocolate cake with chocolate chips, moist and fluffy. Kids' favourite.",
         imageUrl: "/images/premium-chocolate-chips-loaded.jpg",
       },
       {
         id: 8,
+        slug: "premium-cakes-dark-chocolate-strawberry",
         label: "Dark Chocolate Strawberry",
         description:
           "Made with moist and rich dark chocolate cake layers, silky smooth strawberry cream, dark chocolate ganache.",
@@ -178,18 +167,21 @@ export const CATALOG: CatalogItem[] = [
       },
       {
         id: 9,
+        slug: "premium-cakes-strawberry",
         label: "Strawberry",
         description: "Strawberry cake in combination of vanilla sponge with strawberry filling with nice presentation.",
         imageUrl: "/images/premium-strawberry.jpg",
       },
       {
         id: 10,
+        slug: "premium-cakes-blueberry",
         label: "Blueberry",
         description: "Tangy, tart and sweet. Creamy blueberry reduction in between layers of vanilla cake.",
         imageUrl: "/images/premium-blueberry.jpg",
       },
       {
         id: 11,
+        slug: "premium-cakes-fresh-fruit",
         label: "Fresh Fruit",
         description:
           "Subtle, delectable vanilla cake with fresh, fruity goodness in every bite. Made of fresh fruit with less sugar.",
@@ -207,18 +199,21 @@ export const CATALOG: CatalogItem[] = [
     items: [
       {
         id: 12,
+        slug: "exotic-cakes-chocolate-mousse",
         label: "Chocolate Mousse",
         description: "A classic with layers of moist chocolate cake and creamy chocolate mousse.",
         imageUrl: "/images/exotic-chocolate-mousse.jpg",
       },
       {
         id: 13,
+        slug: "exotic-cakes-chocolate-brownie",
         label: "Chocolate Brownie",
         description: "Dense brownie sponge topped with chocolate ganache and decorated with chocolate brownie balls.",
         imageUrl: "/images/exotic-chocolate-brownie.jpg",
       },
       {
         id: 14,
+        slug: "exotic-cakes-hazelnut-crunch",
         label: "Hazelnut Crunch",
         description:
           "A rich hazelnut ganache in between layers of velvety chocolate sponge. A favourite with those who like a little crunch and texture in every bite.",
@@ -226,6 +221,7 @@ export const CATALOG: CatalogItem[] = [
       },
       {
         id: 15,
+        slug: "exotic-cakes-white-chocolate-coconut",
         label: "White Chocolate Coconut",
         description:
           "Layered with white chocolate ganache and coconut flakes, garnished with white chocolate coconut truffle balls.",
@@ -233,24 +229,28 @@ export const CATALOG: CatalogItem[] = [
       },
       {
         id: 16,
+        slug: "exotic-cakes-cafe-latte",
         label: "Cafe Latte",
         description: "A coffee lover's delight — a light and airy vanilla-based cake with a coffee frosting.",
         imageUrl: "/images/exotic-cafe-latte.jpg",
       },
       {
         id: 17,
+        slug: "exotic-cakes-mango",
         label: "Mango",
         description: "Moist and spongy mango cake layered with mango cream, topped with fresh mango pieces.",
         imageUrl: "/images/exotic-mango.jpg",
       },
       {
         id: 18,
+        slug: "exotic-cakes-caramel-chocolate",
         label: "Caramel Chocolate",
         description: "Moist chocolate cake layered with delicious chocolate caramel and crunchy bits.",
         imageUrl: "/images/exotic-caramel-chocolate.jpg",
       },
       {
         id: 19,
+        slug: "exotic-cakes-triple-chocolate-indulgence",
         label: "Triple Chocolate Indulgence",
         description:
           "Three different chocolate frostings — white, milk and dark — creating an ombre effect. Every chocoholic's dream come true.",
@@ -268,19 +268,28 @@ export const CATALOG: CatalogItem[] = [
     items: [
       {
         id: 20,
+        slug: "exotic-premium-cakes-oreo",
         label: "Oreo",
         description: "The perfect combo of an incredibly moist chocolate cake with crushed Oreo cookies.",
         imageUrl: "/images/exotic-premium-oreo.jpg",
       },
       {
         id: 21,
+        slug: "exotic-premium-cakes-snickers",
         label: "Snickers",
         description: "A cake reminiscent of a Snickers bar, with a peanut nougat, salted caramel filling.",
         imageUrl: "/images/exotic-premium-snickers.jpg",
       },
-      { id: 22, label: "Red Velvet", imageUrl: "/images/exotic-premium-red-velvet.jpg", flavours: [2] },
+      {
+        id: 22,
+        slug: "exotic-premium-cakes-red-velvet",
+        label: "Red Velvet",
+        imageUrl: "/images/exotic-premium-red-velvet.jpg",
+        flavours: [2],
+      },
       {
         id: 23,
+        slug: "exotic-premium-cakes-pinacolada",
         label: "Pinacolada",
         description:
           "This unique, alcohol-free cake pays homage to the classic beverage — coconut, pineapple bits and whipped cream.",
@@ -288,6 +297,7 @@ export const CATALOG: CatalogItem[] = [
       },
       {
         id: 24,
+        slug: "exotic-premium-cakes-kinder-bueno",
         label: "Kinder Bueno",
         description:
           "A perfect celebration cake smothered in chocolate hazelnut cream and decorated with an array of Kinder Bueno chocolates.",
@@ -295,22 +305,36 @@ export const CATALOG: CatalogItem[] = [
       },
       {
         id: 25,
+        slug: "exotic-premium-cakes-lotus-biscoff",
         label: "Lotus Biscoff",
-        description: "The ultimate cake for Biscoff lovers — made with both crushed Biscoff biscuits and Biscoff spread.",
+        description:
+          "The ultimate cake for Biscoff lovers — made with both crushed Biscoff biscuits and Biscoff spread.",
         imageUrl: "/images/exotic-premium-lotus-biscoff.jpg",
         flavours: [3],
         mostOrderedRank: 3,
       },
       {
         id: 26,
+        slug: "exotic-premium-cakes-nutella-rocher",
         label: "Nutella Rocher",
         description:
           "Chocolate sponge layers sandwiched with Nutella cream and Ferrero Rocher bits. Recommended for all Nutella lovers out there.",
         imageUrl: "/images/exotic-premium-nutella-rocher.jpg",
         mostOrderedRank: 1,
       },
-      { id: 27, label: "KitKat & Gems", imageUrl: "/images/exotic-premium-kitkat-gems.jpg" },
-      { id: 28, label: "Rose & Pistachio", imageUrl: "/images/exotic-premium-rose-pistachio.jpg", flavours: [7] },
+      {
+        id: 27,
+        slug: "exotic-premium-cakes-kitkat-gems",
+        label: "KitKat & Gems",
+        imageUrl: "/images/exotic-premium-kitkat-gems.jpg",
+      },
+      {
+        id: 28,
+        slug: "exotic-premium-cakes-rose-pistachio",
+        label: "Rose & Pistachio",
+        imageUrl: "/images/exotic-premium-rose-pistachio.jpg",
+        flavours: [7],
+      },
     ],
   }),
 
@@ -321,11 +345,32 @@ export const CATALOG: CatalogItem[] = [
     tiers: weightTiers(HALF_TO_3KG, { "half-kg": 95, "1kg": 170 }),
     leadTimeHours: 24,
     items: [
-      { id: 29, label: "Oreo", imageUrl: "/images/cheesecake-oreo.jpg" },
-      { id: 30, label: "Strawberry", imageUrl: "/images/cheesecake-strawberry.jpg" },
-      { id: 31, label: "Blueberry", imageUrl: "/images/cheesecake-blueberry.jpg" },
-      { id: 32, label: "Lotus Biscoff", imageUrl: "/images/cheesecake-lotus-biscoff.jpg", flavours: [3] },
-      { id: 33, label: "New York", imageUrl: "/images/cheesecake-new-york.jpg" },
+      { id: 29, slug: "cheesecakes-oreo", label: "Oreo", imageUrl: "/images/cheesecake-oreo.jpg" },
+      {
+        id: 30,
+        slug: "cheesecakes-strawberry",
+        label: "Strawberry",
+        imageUrl: "/images/cheesecake-strawberry.jpg",
+      },
+      {
+        id: 31,
+        slug: "cheesecakes-blueberry",
+        label: "Blueberry",
+        imageUrl: "/images/cheesecake-blueberry.jpg",
+      },
+      {
+        id: 32,
+        slug: "cheesecakes-lotus-biscoff",
+        label: "Lotus Biscoff",
+        imageUrl: "/images/cheesecake-lotus-biscoff.jpg",
+        flavours: [3],
+      },
+      {
+        id: 33,
+        slug: "cheesecakes-new-york",
+        label: "New York",
+        imageUrl: "/images/cheesecake-new-york.jpg",
+      },
     ],
   }),
 
@@ -336,11 +381,41 @@ export const CATALOG: CatalogItem[] = [
     tiers: weightTiers(HALF_TO_3KG, { "half-kg": 105, "1kg": 190 }),
     leadTimeHours: 24,
     items: [
-      { id: 34, label: "Motichoor", imageUrl: "/images/indian-motichoor.jpg", flavours: [8] },
-      { id: 35, label: "Kaju Katli", imageUrl: "/images/indian-kaju-katli.jpg", flavours: [8] },
-      { id: 36, label: "Gulkand", imageUrl: "/images/indian-gulkand.jpg", flavours: [8] },
-      { id: 37, label: "Gulab Jamun", imageUrl: "/images/indian-gulab-jamun.jpg", flavours: [8] },
-      { id: 38, label: "Rasmalai", imageUrl: "/images/indian-rasmalai.jpg", flavours: [8] },
+      {
+        id: 34,
+        slug: "indian-cakes-motichoor",
+        label: "Motichoor",
+        imageUrl: "/images/indian-motichoor.jpg",
+        flavours: [8],
+      },
+      {
+        id: 35,
+        slug: "indian-cakes-kaju-katli",
+        label: "Kaju Katli",
+        imageUrl: "/images/indian-kaju-katli.jpg",
+        flavours: [8],
+      },
+      {
+        id: 36,
+        slug: "indian-cakes-gulkand",
+        label: "Gulkand",
+        imageUrl: "/images/indian-gulkand.jpg",
+        flavours: [8],
+      },
+      {
+        id: 37,
+        slug: "indian-cakes-gulab-jamun",
+        label: "Gulab Jamun",
+        imageUrl: "/images/indian-gulab-jamun.jpg",
+        flavours: [8],
+      },
+      {
+        id: 38,
+        slug: "indian-cakes-rasmalai",
+        label: "Rasmalai",
+        imageUrl: "/images/indian-rasmalai.jpg",
+        flavours: [8],
+      },
     ],
   }),
 
@@ -350,7 +425,14 @@ export const CATALOG: CatalogItem[] = [
     fallbackDescription: "A chocolate shell cake you crack open with a hammer.",
     tiers: weightTiers(HALF_TO_1_5KG, { "1kg": 190 }),
     leadTimeHours: 24,
-    items: [{ id: 39, label: "Heart Shape Hammer Cake", imageUrl: "/images/hammer-heart-shape.jpg" }],
+    items: [
+      {
+        id: 39,
+        slug: "hammer-cakes-heart-shape-hammer-cake",
+        label: "Heart Shape Hammer Cake",
+        imageUrl: "/images/hammer-heart-shape.jpg",
+      },
+    ],
   }),
 
   ...categoryItems({
@@ -360,12 +442,12 @@ export const CATALOG: CatalogItem[] = [
     tiers: weightTiers(HALF_TO_3KG, { "1kg": 180 }),
     leadTimeHours: 24,
     items: [
-      { id: 40, label: "Biscoff", flavours: [3] },
-      { id: 41, label: "Coffee" },
-      { id: 42, label: "Nutella Strawberry" },
-      { id: 43, label: "Triple Chocolate" },
-      { id: 44, label: "Mango" },
-      { id: 45, label: "Red Velvet", flavours: [2] },
+      { id: 40, slug: "pull-me-up-cakes-biscoff", label: "Biscoff", flavours: [3] },
+      { id: 41, slug: "pull-me-up-cakes-coffee", label: "Coffee" },
+      { id: 42, slug: "pull-me-up-cakes-nutella-strawberry", label: "Nutella Strawberry" },
+      { id: 43, slug: "pull-me-up-cakes-triple-chocolate", label: "Triple Chocolate" },
+      { id: 44, slug: "pull-me-up-cakes-mango", label: "Mango" },
+      { id: 45, slug: "pull-me-up-cakes-red-velvet", label: "Red Velvet", flavours: [2] },
     ],
   }),
 
@@ -376,9 +458,14 @@ export const CATALOG: CatalogItem[] = [
     tiers: weightTiers(HALF_TO_1_5KG, { "1kg": 190 }),
     leadTimeHours: 24,
     items: [
-      { id: 46, label: "Fresh Fruit", flavours: [6] },
-      { id: 47, label: "Chocolate", imageUrl: "/images/pinata-chocolate.jpg" },
-      { id: 48, label: "Rainbow" },
+      { id: 46, slug: "pinata-cakes-fresh-fruit", label: "Fresh Fruit", flavours: [6] },
+      {
+        id: 47,
+        slug: "pinata-cakes-chocolate",
+        label: "Chocolate",
+        imageUrl: "/images/pinata-chocolate.jpg",
+      },
+      { id: 48, slug: "pinata-cakes-rainbow", label: "Rainbow" },
     ],
   }),
 
@@ -392,20 +479,26 @@ export const CATALOG: CatalogItem[] = [
     items: [
       {
         id: 49,
+        slug: "photo-cakes-round-photo-cake",
         label: "Round Photo Cake",
-        description: photoCakeDescription("round"),
+        description:
+          "An edible print of your photo on a round cake — works with any flavour on this menu. Tell us which flavour you'd like and send the photo on WhatsApp after ordering.",
         imageUrl: "/images/photo-cakes-round.jpg",
       },
       {
         id: 50,
+        slug: "photo-cakes-rectangle-photo-cake",
         label: "Rectangle Photo Cake",
-        description: photoCakeDescription("rectangle"),
+        description:
+          "An edible print of your photo on a rectangle cake — works with any flavour on this menu. Tell us which flavour you'd like and send the photo on WhatsApp after ordering.",
         imageUrl: "/images/photo-cakes-rectangle.jpg",
       },
       {
         id: 51,
+        slug: "photo-cakes-heart-photo-cake",
         label: "Heart Photo Cake",
-        description: photoCakeDescription("heart-shaped"),
+        description:
+          "An edible print of your photo on a heart-shaped cake — works with any flavour on this menu. Tell us which flavour you'd like and send the photo on WhatsApp after ordering.",
         imageUrl: "/images/photo-cakes-heart.jpg",
       },
     ],
@@ -420,7 +513,7 @@ export const CATALOG: CatalogItem[] = [
     items: [
       {
         id: 52,
-        slug: SPECIAL_SLUGS.customCakes,
+        slug: "custom-cakes",
         label: "Custom Cakes",
         description:
           "Designed to your idea in fondant. Describe what you have in mind — a reference photo helps — on WhatsApp after ordering.",

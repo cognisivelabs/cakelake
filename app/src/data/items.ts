@@ -1,10 +1,5 @@
 import type { CatalogItem, WeightTier } from "@/types/catalog";
 
-// Every item on the menu, one per flavour (or shape), in menu order.
-// Some prices, sizes and photos are placeholders until the client
-// supplies them, as are the occasions and the "Most ordered" ranks
-// (taken from the client's design).
-
 /** Sizes and prices for Classic Cakes; a size with no price shows "Ask us". */
 const CLASSIC_TIERS: WeightTier[] = [
   { id: 1, label: "½ kg", kg: 0.5, price: 55, serves: "Serves 2–4" },

@@ -5,9 +5,6 @@ export const OCCASIONS: Occasion[] = [
   { id: 2, slug: "anniversary", label: "Anniversary", imageUrl: "/images/hammer-heart-shape.jpg" },
   { id: 3, slug: "new-baby", label: "New baby", imageUrl: "/images/indian-rasmalai.jpg" },
   { id: 4, slug: "graduation", label: "Graduation", imageUrl: "/images/photo-cakes.jpg" },
-  // Halloween and Valentine are in the design as seasonal occasions, but
-  // the client hasn't supplied their content yet — added with their
-  // seasonal categories.
 ];
 
 export const FLAVOUR_TAGS: FlavourTag[] = [

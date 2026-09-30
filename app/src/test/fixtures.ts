@@ -9,7 +9,6 @@ import { CATEGORIES } from "@/data/categories";
 import { ITEMS } from "@/data/items";
 import { FLAVOUR_TAGS, OCCASIONS } from "@/data/taxonomy";
 import type { CartLine, Order } from "@/types/order";
-import { CONFIG } from "@/lib/config";
 
 /** A realistic item with both a priced and an "Ask us" (unpriced) weight
  * tier, so tests needing either case can use the same fixture. */
@@ -25,7 +24,7 @@ export const item: CatalogItem = {
     { id: 7, label: "3 kg+", kg: 3 }, // "Ask us" — no fixed price
   ],
   leadTimeHours: 0,
-  cakeMessageMaxLength: CONFIG.cakeMessageMaxLength,
+  cakeMessageMaxLength: 25,
   available: true,
   requiresDelivery: false,
 };

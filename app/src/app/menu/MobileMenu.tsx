@@ -54,11 +54,11 @@ export function MobileMenu({
             {sections.map(({ category }) => (
               <a
                 key={category.id}
-                href={`#${category.id}`}
-                ref={spy.chipRef(category.id)}
+                href={`#${category.slug}`}
+                ref={spy.chipRef(category.slug)}
                 className={styles.railChip}
                 style={
-                  category.id === spy.activeId
+                  category.slug === spy.activeId
                     ? { background: category.accent, borderColor: category.accent, color: "#fff" }
                     : undefined
                 }
@@ -72,7 +72,7 @@ export function MobileMenu({
       )}
 
       {sections.map(({ category, items }) => (
-        <section key={category.id} id={category.id} ref={spy.sectionRef(category.id)} className={styles.section}>
+        <section key={category.id} id={category.slug} ref={spy.sectionRef(category.slug)} className={styles.section}>
           <h2 className={styles.categoryHeading} style={{ borderColor: category.accent, color: category.accent }}>
             {category.label}
             <span className={styles.count}>{items.length} ranges</span>

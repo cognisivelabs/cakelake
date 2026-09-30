@@ -2,17 +2,17 @@ import { describe, expect, it } from "vitest";
 import { getCategories } from "@/lib/catalog";
 import { getCustomCategoriesRoute, getMenuGroups } from "@/lib/menuGroups";
 import { categoryPriceLabel } from "@/lib/pricing";
-import { getCatalog } from "@/lib/catalog";
+import { getCatalog, getCategoryBySlug } from "@/lib/catalog";
 
 describe("getMenuGroups", () => {
   it("lists every category exactly once", () => {
-    const listed = getMenuGroups().flatMap((g) => g.entries.map((e) => e.category.id));
-    expect([...listed].sort()).toEqual(getCategories().map((c) => c.id).sort());
+    const listed = getMenuGroups().flatMap((g) => g.entries.map((e) => e.category.slug));
+    expect([...listed].sort()).toEqual(getCategories().map((c) => c.slug).sort());
   });
 
   it("puts same-day ranges in the 1-hour group and the rest on 24 hours", () => {
     const groups = Object.fromEntries(
-      getMenuGroups().map((g) => [g.id, g.entries.map((e) => e.category.id)]),
+      getMenuGroups().map((g) => [g.id, g.entries.map((e) => e.category.slug)]),
     );
     expect(groups["ready-1h"]).toEqual([
       "classic-cakes",
@@ -44,7 +44,7 @@ describe("getCustomCategoriesRoute", () => {
 });
 
 describe("categoryPriceLabel", () => {
-  const items = (categoryId: string) => getCatalog().filter((i) => i.categoryId === categoryId);
+  const items = (slug: string) => getCatalog().filter((i) => i.categoryId === getCategoryBySlug(slug)?.id);
   it("says 'from N' for ranges sold by the cake", () => {
     expect(categoryPriceLabel(items("classic-cakes"))).toBe("from 55");
     expect(categoryPriceLabel(items("cheesecakes"))).toBe("from 95");

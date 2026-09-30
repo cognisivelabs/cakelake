@@ -21,7 +21,7 @@ describe("buildOrderMessage", () => {
   });
 
   it("shows 'price to confirm' for an unpriced weight tier", () => {
-    const unpriced = { ...item, weightTiers: [{ id: "half-kg", label: "½ kg" }] };
+    const unpriced = { ...item, weightTiers: [{ id: 1, label: "½ kg", kg: 0.5 }] };
     const message = buildOrderMessage(order(), [unpriced]);
     expect(message).toContain("price to confirm");
   });
@@ -70,7 +70,7 @@ describe("buildOrderMessage", () => {
 
   it("skips lines whose item is missing and still totals correctly", () => {
     const message = buildOrderMessage(
-      order({ lines: [line(), line({ cartLineId: "l2", itemId: "gone" })] }),
+      order({ lines: [line(), line({ cartLineId: "l2", itemId: 9999 })] }),
       [item]
     );
     expect(message).toContain(`Total: ${CONFIG.currency} 55`);

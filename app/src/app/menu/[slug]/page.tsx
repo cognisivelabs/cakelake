@@ -1,20 +1,20 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getCatalog, getItemById } from "@/lib/catalog";
+import { getCatalog, getItemBySlug } from "@/lib/catalog";
 import { withBasePath } from "@/lib/assets";
 import { itemRoute } from "@/lib/routes";
 import { SITE_NAME, DEFAULT_OG_IMAGE } from "@/lib/og";
 import { ItemDetailView } from "@/components/ItemDetailView";
 
 export function generateStaticParams() {
-  return getCatalog().map((item) => ({ itemId: item.id }));
+  return getCatalog().map((item) => ({ slug: item.slug }));
 }
 
-type ItemPageProps = { params: Promise<{ itemId: string }> };
+type ItemPageProps = { params: Promise<{ slug: string }> };
 
 export async function generateMetadata({ params }: ItemPageProps): Promise<Metadata> {
-  const { itemId } = await params;
-  const item = getItemById(itemId);
+  const { slug } = await params;
+  const item = getItemBySlug(slug);
   if (!item) return {};
 
   const photo = item.imageUrl;
@@ -29,15 +29,15 @@ export async function generateMetadata({ params }: ItemPageProps): Promise<Metad
     openGraph: {
       siteName: SITE_NAME,
       type: "website",
-      url: withBasePath(`${itemRoute(item.id)}/`),
+      url: withBasePath(`${itemRoute(item.slug)}/`),
       images: [photo ? { url: withBasePath(photo), alt: item.name } : DEFAULT_OG_IMAGE],
     },
   };
 }
 
 export default async function ItemDetailPage({ params }: ItemPageProps) {
-  const { itemId } = await params;
-  const item = getItemById(itemId);
+  const { slug } = await params;
+  const item = getItemBySlug(slug);
   if (!item) notFound();
 
   return <ItemDetailView item={item} />;

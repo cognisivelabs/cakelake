@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getCatalog, getItemById } from "@/lib/catalog";
+import { getCatalog, getCategoryBySlug, getFlavourTag, getFlavourTagBySlug, getItemBySlug, getOccasionBySlug } from "@/lib/catalog";
 import {
   CATEGORY_GROUP_KEY,
   describePriceRange,
@@ -12,13 +12,17 @@ import {
   itemMatchesQuery,
   normalizePriceRange,
   parsePriceRange,
+  type MenuFilters,
 } from "@/lib/search";
 
-const item = (id: string) => {
-  const found = getItemById(id);
-  if (!found) throw new Error(`missing test item ${id}`);
+const item = (slug: string) => {
+  const found = getItemBySlug(slug);
+  if (!found) throw new Error(`missing test item ${slug}`);
   return found;
 };
+const categoryIdOf = (slug: string) => getCategoryBySlug(slug)!.id;
+const flavourIdOf = (slug: string) => getFlavourTagBySlug(slug)!.id;
+const occasionIdOf = (slug: string) => getOccasionBySlug(slug)!.id;
 
 describe("itemMatchesQuery", () => {
   it("matches everything for an empty or blank query", () => {
@@ -41,7 +45,7 @@ describe("itemMatchesQuery", () => {
   });
 });
 
-const none = { query: "", priceRange: null, flavourId: "", occasionId: "" };
+const none: MenuFilters = { query: "", priceRange: null, flavourId: null, occasionId: null };
 
 describe("price range", () => {
   const bounds = getPriceBounds();
@@ -95,14 +99,14 @@ describe("itemMatchesFilters", () => {
   });
 
   it("filters by flavour tag and by occasion", () => {
-    expect(itemMatchesFilters(item("cheesecakes-lotus-biscoff"), { ...none, flavourId: "biscoff" })).toBe(true);
-    expect(itemMatchesFilters(item("classic-cakes-butterscotch"), { ...none, flavourId: "biscoff" })).toBe(false);
-    expect(itemMatchesFilters(item("pinata-cakes-chocolate"), { ...none, occasionId: "graduation" })).toBe(true);
-    expect(itemMatchesFilters(item("pinata-cakes-chocolate"), { ...none, occasionId: "anniversary" })).toBe(false);
+    expect(itemMatchesFilters(item("cheesecakes-lotus-biscoff"), { ...none, flavourId: flavourIdOf("biscoff") })).toBe(true);
+    expect(itemMatchesFilters(item("classic-cakes-butterscotch"), { ...none, flavourId: flavourIdOf("biscoff") })).toBe(false);
+    expect(itemMatchesFilters(item("pinata-cakes-chocolate"), { ...none, occasionId: occasionIdOf("graduation") })).toBe(true);
+    expect(itemMatchesFilters(item("pinata-cakes-chocolate"), { ...none, occasionId: occasionIdOf("anniversary") })).toBe(false);
   });
 
   it("requires every active filter together", () => {
-    const filters = { ...none, flavourId: "biscoff", priceRange: { min: 55, max: 99 } };
+    const filters = { ...none, flavourId: flavourIdOf("biscoff"), priceRange: { min: 55, max: 99 } };
     expect(itemMatchesFilters(item("exotic-premium-cakes-lotus-biscoff"), filters)).toBe(true);
     expect(itemMatchesFilters(item("cheesecakes-lotus-biscoff"), filters)).toBe(true);
     expect(itemMatchesFilters(item("pull-me-up-cakes-biscoff"), filters)).toBe(false);
@@ -111,10 +115,10 @@ describe("itemMatchesFilters", () => {
 
 describe("getFilterGroups", () => {
   it("offers price, flavour and occasion, and marks the current pick", () => {
-    const groups = getFilterGroups({ ...none, flavourId: "biscoff" });
+    const groups = getFilterGroups({ ...none, flavourId: flavourIdOf("biscoff") });
     expect(groups.map((g) => g.key)).toEqual(["priceRange", "flavourId", "occasionId"]);
     const flavour = groups.find((g) => g.key === "flavourId");
-    expect(flavour?.kind === "checkbox" && flavour.selected).toEqual(["biscoff"]);
+    expect(flavour?.kind === "checkbox" && flavour.selected).toEqual([flavourIdOf("biscoff")]);
   });
 
   it("gives the slider the bounds, the current range and the matching cake count", () => {
@@ -126,7 +130,7 @@ describe("getFilterGroups", () => {
     expect(price(none)).toMatchObject({ bounds: { min: 55, max: 190 }, value: { min: 55, max: 190 }, count: getCatalog().length });
     expect(price({ ...none, priceRange: { min: 60, max: 100 } })).toMatchObject({ value: { min: 60, max: 100 } });
     // Biscoff cakes under AED 100: the Lotus Biscoff (85) and the cheesecake (95).
-    expect(price({ ...none, flavourId: "biscoff", priceRange: { min: 55, max: 99 } }).count).toBe(2);
+    expect(price({ ...none, flavourId: flavourIdOf("biscoff"), priceRange: { min: 55, max: 99 } }).count).toBe(2);
   });
 
   it("counts flavour and occasion options inside the chosen price range", () => {
@@ -134,8 +138,8 @@ describe("getFilterGroups", () => {
     const flavour = groups.find((g) => g.key === "flavourId");
     if (flavour?.kind !== "checkbox") throw new Error("no flavour group");
     // Only the AED 180 Pull Me Up cakes are Biscoff and this dear.
-    expect(flavour.options.find((o) => o.id === "biscoff")?.count).toBe(1);
-    expect(flavour.options.find((o) => o.id === "butterscotch")?.count).toBe(0);
+    expect(flavour.options.find((o) => o.id === flavourIdOf("biscoff"))?.count).toBe(1);
+    expect(flavour.options.find((o) => o.id === flavourIdOf("butterscotch"))?.count).toBe(0);
   });
 });
 
@@ -145,7 +149,7 @@ describe("getActiveFilterChips", () => {
   });
 
   it("labels each active filter, in price / flavour / occasion order", () => {
-    expect(getActiveFilterChips({ query: "x", priceRange: { min: 60, max: 120 }, flavourId: "biscoff", occasionId: "birthday" })).toEqual([
+    expect(getActiveFilterChips({ query: "x", priceRange: { min: 60, max: 120 }, flavourId: flavourIdOf("biscoff"), occasionId: occasionIdOf("birthday") })).toEqual([
       { key: "priceRange", label: "Price: AED 60 – 120" },
       { key: "flavourId", label: "Flavour: Biscoff" },
       { key: "occasionId", label: "Occasion: Birthday" },
@@ -155,24 +159,24 @@ describe("getActiveFilterChips", () => {
 
 describe("getCategoryFilterGroup", () => {
   it("lists every category with its cake count and the ticked ones", () => {
-    const group = getCategoryFilterGroup(["cheesecakes"], none);
+    const group = getCategoryFilterGroup([categoryIdOf("cheesecakes")], none);
     expect(group.key).toBe(CATEGORY_GROUP_KEY);
-    expect(group.selected).toEqual(["cheesecakes"]);
+    expect(group.selected).toEqual([categoryIdOf("cheesecakes")]);
     expect(group.options).toHaveLength(11);
-    expect(group.options.find((o) => o.id === "cheesecakes")?.count).toBe(5);
+    expect(group.options.find((o) => o.id === categoryIdOf("cheesecakes"))?.count).toBe(5);
     expect(group.options.reduce((sum, o) => sum + o.count, 0)).toBe(getCatalog().length);
   });
 
   it("counts within the other filters, so an option that would be empty shows 0", () => {
-    const group = getCategoryFilterGroup([], { ...none, flavourId: "biscoff" });
+    const group = getCategoryFilterGroup([], { ...none, flavourId: flavourIdOf("biscoff") });
     const counts = Object.fromEntries(group.options.map((o) => [o.id, o.count]));
-    expect(counts["exotic-premium-cakes"]).toBe(1);
-    expect(counts["cheesecakes"]).toBe(1);
-    expect(counts["classic-cakes"]).toBe(0);
+    expect(counts[categoryIdOf("exotic-premium-cakes")]).toBe(1);
+    expect(counts[categoryIdOf("cheesecakes")]).toBe(1);
+    expect(counts[categoryIdOf("classic-cakes")]).toBe(0);
   });
 
   it("doesn't let the ticked categories change the other categories' counts", () => {
-    const withTick = getCategoryFilterGroup(["classic-cakes"], none);
+    const withTick = getCategoryFilterGroup([categoryIdOf("classic-cakes")], none);
     const without = getCategoryFilterGroup([], none);
     expect(withTick.options).toEqual(without.options);
   });
@@ -180,10 +184,10 @@ describe("getCategoryFilterGroup", () => {
 
 describe("category-aware filtering", () => {
   it("only matches cakes in the ticked categories", () => {
-    const classic = { ...none, categoryIds: ["classic-cakes"] };
+    const classic = { ...none, categoryIds: [categoryIdOf("classic-cakes")] };
     expect(itemMatchesFilters(item("classic-cakes-butterscotch"), classic)).toBe(true);
     expect(itemMatchesFilters(item("premium-cakes-strawberry"), classic)).toBe(false);
-    const several = { ...none, categoryIds: ["classic-cakes", "hammer-cakes"] };
+    const several = { ...none, categoryIds: [categoryIdOf("classic-cakes"), categoryIdOf("hammer-cakes")] };
     expect(itemMatchesFilters(item("hammer-cakes-heart-shape-hammer-cake"), several)).toBe(true);
   });
 
@@ -193,19 +197,19 @@ describe("category-aware filtering", () => {
 
   it("counts the other filters inside the ticked categories", () => {
     // Classic has 3 cakes, so the slider counts 3 — not the whole menu.
-    const groups = getFilterGroups({ ...none, categoryIds: ["classic-cakes"] });
+    const groups = getFilterGroups({ ...none, categoryIds: [categoryIdOf("classic-cakes")] });
     const price = groups.find((g) => g.key === "priceRange");
     expect(price?.kind === "range" && price.count).toBe(3);
     const flavour = groups.find((g) => g.key === "flavourId");
     if (flavour?.kind !== "checkbox") throw new Error("no flavour group");
-    expect(flavour.options.filter((o) => o.count > 0).map((o) => o.id).sort()).toEqual(["black-forest", "butterscotch"]);
+    expect(flavour.options.filter((o) => o.count > 0).map((o) => getFlavourTag(o.id)?.slug).sort()).toEqual(["black-forest", "butterscotch"]);
     const occasion = groups.find((g) => g.key === "occasionId");
     if (occasion?.kind !== "checkbox") throw new Error("no occasion group");
     expect(Math.max(...occasion.options.map((o) => o.count))).toBe(3);
   });
 
   it("adds up across several ticked categories", () => {
-    const groups = getFilterGroups({ ...none, categoryIds: ["classic-cakes", "hammer-cakes"] });
+    const groups = getFilterGroups({ ...none, categoryIds: [categoryIdOf("classic-cakes"), categoryIdOf("hammer-cakes")] });
     const price = groups.find((g) => g.key === "priceRange");
     expect(price?.kind === "range" && price.count).toBe(4);
   });

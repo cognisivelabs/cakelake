@@ -95,9 +95,9 @@ if (typeof window !== "undefined") {
 }
 
 export type NewLineInput = {
-  itemId: string;
+  itemId: number;
   quantity: number;
-  weightTierId: string;
+  weightTierId: number;
   cakeMessage?: string;
 };
 

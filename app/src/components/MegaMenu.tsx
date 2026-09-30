@@ -21,7 +21,7 @@ export function CakesMegaMenu({ onNavigate }: { onNavigate: () => void }) {
           <ul className={styles.list}>
             {group.entries.map(({ category, priceLabel }) => (
               <li key={category.id}>
-                <Link href={categoryRoute(category.id)} className={styles.link} onClick={onNavigate}>
+                <Link href={categoryRoute(category.slug)} className={styles.link} onClick={onNavigate}>
                   {category.label} <span className={styles.muted}>· {priceLabel}</span>
                 </Link>
               </li>
@@ -34,7 +34,7 @@ export function CakesMegaMenu({ onNavigate }: { onNavigate: () => void }) {
         <div className={styles.label}>BY FLAVOUR</div>
         <div className={styles.pills}>
           {getFlavourTags().map((tag) => (
-            <Link key={tag.id} href={flavourRoute(tag.id)} className={styles.pill} onClick={onNavigate}>
+            <Link key={tag.id} href={flavourRoute(tag.slug)} className={styles.pill} onClick={onNavigate}>
               {tag.label}
             </Link>
           ))}
@@ -42,7 +42,7 @@ export function CakesMegaMenu({ onNavigate }: { onNavigate: () => void }) {
       </div>
 
       {featured && (
-        <Link href={itemRoute(featured.id)} className={styles.card} onClick={onNavigate}>
+        <Link href={itemRoute(featured.slug)} className={styles.card} onClick={onNavigate}>
           <div className={styles.cardPhoto}>
             <Photo src={featured.imageUrl} />
             <span className={`${styles.cardBadge} mono-tag`}>MOST ORDERED</span>
@@ -70,7 +70,7 @@ export function OccasionsMenu({ onNavigate }: { onNavigate: () => void }) {
         <ul className={styles.list}>
           {getOccasions().map((occasion) => (
             <li key={occasion.id}>
-              <Link href={occasionRoute(occasion.id)} className={styles.link} onClick={onNavigate}>
+              <Link href={occasionRoute(occasion.slug)} className={styles.link} onClick={onNavigate}>
                 {occasion.label}
               </Link>
             </li>

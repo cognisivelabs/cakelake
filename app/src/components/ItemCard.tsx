@@ -23,7 +23,7 @@ export function ItemCard({ item }: { item: CatalogItem }) {
           <div className={styles.name}>{item.name}</div>
           <div className={styles.footer}>
             <span className={styles.price}>{priceFrom(item)}</span>
-            <Link href={itemRoute(item.id)} className={styles.askButton}>
+            <Link href={itemRoute(item.slug)} className={styles.askButton}>
               ASK US
             </Link>
           </div>
@@ -33,7 +33,7 @@ export function ItemCard({ item }: { item: CatalogItem }) {
   }
 
   return (
-    <Link href={itemRoute(item.id)} className={styles.card}>
+    <Link href={itemRoute(item.slug)} className={styles.card}>
       <div className={styles.photo}>
         <Photo src={item.imageUrl} slot="thumbnail" />
         {item.mostOrderedRank !== undefined && (

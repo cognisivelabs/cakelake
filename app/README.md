@@ -32,7 +32,7 @@ sizes; the cart and WhatsApp message both handle that case honestly
 
 - Home, Menu (2 categories, weight-tiered pricing, flavour-count
   badges), a dedicated Item Detail page per item
-  (`/menu/[itemId]`) with flavour picker / weight tiers / cake
+  (`/menu/[slug]`) with flavour picker / weight tiers / cake
   message / custom-cake description, Cart, and Contact
 - The full three-stage WhatsApp handoff from the Hi-Fi: review the
   exact message → "OPEN WHATSAPP" → a "Did you send it?" confirmation

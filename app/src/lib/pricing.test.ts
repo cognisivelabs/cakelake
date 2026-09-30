@@ -11,11 +11,11 @@ import { item, line, order } from "@/test/fixtures";
 
 describe("unitPrice", () => {
   it("returns the selected weight tier's price", () => {
-    expect(unitPrice(item, line({ weightTierId: "1kg" }))).toBe(100);
+    expect(unitPrice(item, line({ weightTierId: 2 }))).toBe(100);
   });
 
   it("returns undefined for an 'Ask us' tier", () => {
-    expect(unitPrice(item, line({ weightTierId: "3kg-plus" }))).toBeUndefined();
+    expect(unitPrice(item, line({ weightTierId: 7 }))).toBeUndefined();
   });
 });
 
@@ -25,7 +25,7 @@ describe("lineTotal", () => {
   });
 
   it("is undefined when the tier has no fixed price", () => {
-    expect(lineTotal(item, line({ weightTierId: "3kg-plus", quantity: 2 }))).toBeUndefined();
+    expect(lineTotal(item, line({ weightTierId: 7, quantity: 2 }))).toBeUndefined();
   });
 });
 
@@ -35,20 +35,20 @@ describe("hasUnpricedLines", () => {
   });
 
   it("is true when any line has an 'Ask us' tier", () => {
-    expect(hasUnpricedLines(order({ lines: [line({ weightTierId: "3kg-plus" })] }), [item])).toBe(
+    expect(hasUnpricedLines(order({ lines: [line({ weightTierId: 7 })] }), [item])).toBe(
       true
     );
   });
 
   it("ignores lines whose item is missing from the catalog", () => {
-    expect(hasUnpricedLines(order({ lines: [line({ itemId: "gone" })] }), [item])).toBe(false);
+    expect(hasUnpricedLines(order({ lines: [line({ itemId: 9999 })] }), [item])).toBe(false);
   });
 });
 
 describe("orderTotal", () => {
   it("sums priced lines and skips unpriced ones", () => {
     const priced = line({ cartLineId: "a", quantity: 2 }); // 2 * 55 = 110
-    const unpriced = line({ cartLineId: "b", weightTierId: "3kg-plus" });
+    const unpriced = line({ cartLineId: "b", weightTierId: 7 });
     expect(orderTotal(order({ lines: [priced, unpriced] }), [item])).toBe(110);
   });
 
@@ -71,14 +71,14 @@ describe("cheapestPrice", () => {
   it("returns the lowest priced tier across multiple items", () => {
     const pricier = {
       ...item,
-      id: "premium-cakes",
-      weightTiers: [{ id: "half-kg", label: "½ kg", price: 85 }],
+      id: 4,
+      weightTiers: [{ id: 1, label: "½ kg", kg: 0.5, price: 85 }],
     };
     expect(cheapestPrice([pricier, item])).toBe(55);
   });
 
   it("is undefined when every tier is 'Ask us'", () => {
-    const unpriced = { ...item, weightTiers: [{ id: "custom", label: "Custom" }] };
+    const unpriced = { ...item, weightTiers: [{ id: 7, label: "3 kg+", kg: 3 }] };
     expect(cheapestPrice([unpriced])).toBeUndefined();
   });
 

@@ -61,16 +61,16 @@ export function describePriceRange(range: PriceRange): string {
   return `AED ${range.min} – ${range.max}`;
 }
 
-/** The menu's filter selections — an empty string, or a null range, means
- * "no filter". */
+/** The menu's filter selections — an empty query, or a null range or
+ * id, means "no filter". */
 export type MenuFilters = {
   /** Categories ticked on desktop — none (or omitted) means every category. */
-  categoryIds?: string[];
+  categoryIds?: number[];
   query: string;
   /** Starting-price range from the slider. */
   priceRange: PriceRange | null;
-  flavourId: string;
-  occasionId: string;
+  flavourId: number | null;
+  occasionId: number | null;
 };
 
 /** Whether an item passes every active menu filter (search text plus
@@ -78,8 +78,8 @@ export type MenuFilters = {
 export function itemMatchesFilters(item: CatalogItem, filters: MenuFilters): boolean {
   if (!itemMatchesQuery(item, filters.query)) return false;
   if (filters.categoryIds?.length && !filters.categoryIds.includes(item.categoryId)) return false;
-  if (filters.flavourId && !item.flavours?.includes(filters.flavourId)) return false;
-  if (filters.occasionId && !item.occasions?.includes(filters.occasionId)) return false;
+  if (filters.flavourId !== null && !item.flavours?.includes(filters.flavourId)) return false;
+  if (filters.occasionId !== null && !item.occasions?.includes(filters.occasionId)) return false;
   if (filters.priceRange) {
     const price = cheapestPrice([item]);
     if (price === undefined || price < filters.priceRange.min || price > filters.priceRange.max) return false;
@@ -96,8 +96,8 @@ export type CheckboxGroup = {
   /** A single-choice filter (FilterKey) or the multi-choice category list. */
   key: Exclude<FilterKey, "priceRange"> | typeof CATEGORY_GROUP_KEY;
   label: string;
-  selected: string[];
-  options: { id: string; label: string; count: number }[];
+  selected: number[];
+  options: { id: number; label: string; count: number }[];
 };
 
 /** The price slider: its ends, the chosen range (the ends when unfiltered)
@@ -119,9 +119,9 @@ export const CATEGORY_GROUP_KEY = "categoryIds";
 
 /** The Price / Flavour / Occasion groups for the filter panel. */
 export function getFilterGroups(filters: MenuFilters, catalog: CatalogItem[] = getCatalog()): FilterGroup[] {
-  const countWith = (key: "flavourId" | "occasionId", id: string) =>
+  const countWith = (key: "flavourId" | "occasionId", id: number) =>
     catalog.filter((item) => itemMatchesFilters(item, { ...filters, [key]: id })).length;
-  const options = (key: "flavourId" | "occasionId", list: { id: string; label: string }[]) =>
+  const options = (key: "flavourId" | "occasionId", list: { id: number; label: string }[]) =>
     list.map(({ id, label }) => ({ id, label, count: countWith(key, id) }));
   const bounds = getPriceBounds(catalog);
   return [
@@ -133,8 +133,8 @@ export function getFilterGroups(filters: MenuFilters, catalog: CatalogItem[] = g
       value: filters.priceRange ?? bounds,
       count: catalog.filter((item) => itemMatchesFilters(item, filters)).length,
     },
-    { kind: "checkbox", key: "flavourId", label: "FLAVOUR", selected: filters.flavourId ? [filters.flavourId] : [], options: options("flavourId", getFlavourTags()) },
-    { kind: "checkbox", key: "occasionId", label: "OCCASION", selected: filters.occasionId ? [filters.occasionId] : [], options: options("occasionId", getOccasions()) },
+    { kind: "checkbox", key: "flavourId", label: "FLAVOUR", selected: filters.flavourId !== null ? [filters.flavourId] : [], options: options("flavourId", getFlavourTags()) },
+    { kind: "checkbox", key: "occasionId", label: "OCCASION", selected: filters.occasionId !== null ? [filters.occasionId] : [], options: options("occasionId", getOccasions()) },
   ];
 }
 
@@ -142,7 +142,7 @@ export function getFilterGroups(filters: MenuFilters, catalog: CatalogItem[] = g
  * has under the current search, price, flavour and occasion. Unlike the
  * single-choice filters, several can be ticked; none ticked means all. */
 export function getCategoryFilterGroup(
-  selectedIds: string[],
+  selectedIds: number[],
   filters: MenuFilters,
   catalog: CatalogItem[] = getCatalog(),
 ): CheckboxGroup {
@@ -166,10 +166,10 @@ export function getActiveFilterChips(filters: MenuFilters): { key: FilterKey; la
   if (filters.priceRange) {
     chips.push({ key: "priceRange", label: `Price: ${describePriceRange(filters.priceRange)}` });
   }
-  if (filters.flavourId) {
+  if (filters.flavourId !== null) {
     chips.push({ key: "flavourId", label: `Flavour: ${getFlavourTag(filters.flavourId)?.label ?? filters.flavourId}` });
   }
-  if (filters.occasionId) {
+  if (filters.occasionId !== null) {
     chips.push({ key: "occasionId", label: `Occasion: ${getOccasion(filters.occasionId)?.label ?? filters.occasionId}` });
   }
   return chips;

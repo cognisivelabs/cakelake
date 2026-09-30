@@ -5,16 +5,17 @@ import {
   getCategories,
   getCategoriesByKind,
   getCategory,
+  getCategoryBySlug,
   getCategoryImage,
   getFlavourTagImage,
   getFlavourTags,
   getItemById,
+  getItemBySlug,
   getMostOrdered,
   getOccasions,
   getSiblingItems,
   readyBadge,
   readyLabel,
-  weightTierKg,
 } from "@/lib/catalog";
 
 describe("getCatalog / getCategories", () => {
@@ -36,9 +37,18 @@ describe("getCatalog / getCategories", () => {
     }
   });
 
-  it("has no duplicate item ids — each flavour is its own flattened item since the Sep 2026 recategorisation", () => {
+  it("has no duplicate item ids or slugs", () => {
     const ids = getCatalog().map((item) => item.id);
+    const slugs = getCatalog().map((item) => item.slug);
     expect(new Set(ids).size).toBe(ids.length);
+    expect(new Set(slugs).size).toBe(slugs.length);
+  });
+
+  it("has no duplicate category ids or slugs", () => {
+    const ids = getCategories().map((c) => c.id);
+    const slugs = getCategories().map((c) => c.slug);
+    expect(new Set(ids).size).toBe(ids.length);
+    expect(new Set(slugs).size).toBe(slugs.length);
   });
 });
 
@@ -49,7 +59,12 @@ describe("getCategory", () => {
   });
 
   it("returns undefined for an unknown id", () => {
-    expect(getCategory("does-not-exist")).toBeUndefined();
+    expect(getCategory(9999)).toBeUndefined();
+  });
+
+  it("finds a category by slug", () => {
+    expect(getCategoryBySlug("cheesecakes")?.label).toBe("Cheesecakes");
+    expect(getCategoryBySlug("does-not-exist")).toBeUndefined();
   });
 });
 
@@ -60,66 +75,48 @@ describe("getItemById", () => {
   });
 
   it("returns undefined for an unknown id", () => {
-    expect(getItemById("does-not-exist")).toBeUndefined();
-  });
-});
-
-describe("weightTierKg", () => {
-  it("reads every real weight tier id in the catalogue as a sane, non-negative number", () => {
-    for (const item of getCatalog()) {
-      for (const tier of item.weightTiers) {
-        expect(weightTierKg(tier)).toBeGreaterThanOrEqual(0);
-      }
-    }
+    expect(getItemById(9999)).toBeUndefined();
   });
 
-  it("reads each size's kg from SIZES", () => {
-    expect(weightTierKg({ id: "half-kg" })).toBe(0.5);
-  });
-
-  it("reads a leading integer id as whole kilograms", () => {
-    expect(weightTierKg({ id: "1kg" })).toBe(1);
-    expect(weightTierKg({ id: "2kg" })).toBe(2);
-  });
-
-  it("reads a leading decimal id as fractional kilograms", () => {
-    expect(weightTierKg({ id: "1.5kg" })).toBe(1.5);
-  });
-
-  it("counts 3 kg+ as 3 kg", () => {
-    expect(weightTierKg({ id: "3kg-plus" })).toBe(3);
-  });
-
-  it("falls back to 0 for an id that isn't a size", () => {
-    expect(weightTierKg({ id: "custom" })).toBe(0);
-    expect(weightTierKg({ id: "" })).toBe(0);
+  it("finds an item by slug", () => {
+    expect(getItemBySlug("classic-cakes-black-forest")?.name).toBe("Black Forest");
+    expect(getItemBySlug("custom-cakes")?.name).toBe("Custom Cakes");
+    expect(getItemBySlug("does-not-exist")).toBeUndefined();
   });
 });
 
 describe("weight tiers", () => {
-  const sizesOf = (categoryId: string) =>
-    getCatalog().find((i) => i.categoryId === categoryId)!.weightTiers.map((t) => t.id);
+  const sizesOf = (slug: string) =>
+    getCatalog().find((i) => i.categoryId === getCategoryBySlug(slug)?.id)!.weightTiers.map((t) => t.label);
 
   it("sells each category in its agreed sizes", () => {
-    const halfTo3 = ["half-kg", "1kg", "1.5kg", "2kg", "2.5kg", "3kg"];
-    for (const id of ["classic-cakes", "premium-cakes", "exotic-cakes", "exotic-premium-cakes", "cheesecakes", "indian-cakes", "photo-cakes", "pull-me-up-cakes"]) {
-      expect(sizesOf(id), id).toEqual(halfTo3);
+    const halfTo3 = ["½ kg", "1 kg", "1½ kg", "2 kg", "2½ kg", "3 kg"];
+    for (const slug of ["classic-cakes", "premium-cakes", "exotic-cakes", "exotic-premium-cakes", "cheesecakes", "indian-cakes", "photo-cakes", "pull-me-up-cakes"]) {
+      expect(sizesOf(slug), slug).toEqual(halfTo3);
     }
-    for (const id of ["hammer-cakes", "pinata-cakes"]) {
-      expect(sizesOf(id), id).toEqual(["half-kg", "1kg", "1.5kg"]);
+    for (const slug of ["hammer-cakes", "pinata-cakes"]) {
+      expect(sizesOf(slug), slug).toEqual(["½ kg", "1 kg", "1½ kg"]);
     }
-    expect(sizesOf("custom-cakes")).toEqual(["1kg", "1.5kg", "2kg", "2.5kg", "3kg-plus"]);
+    expect(sizesOf("custom-cakes")).toEqual(["1 kg", "1½ kg", "2 kg", "2½ kg", "3 kg+"]);
+  });
+
+  it("gives every tier a unique id within its item and a positive weight", () => {
+    for (const item of getCatalog()) {
+      const ids = item.weightTiers.map((t) => t.id);
+      expect(new Set(ids).size, item.slug).toBe(ids.length);
+      for (const tier of item.weightTiers) expect(tier.kg, `${item.slug} ${tier.label}`).toBeGreaterThan(0);
+    }
   });
 
   it("gives every item a description", () => {
-    for (const item of getCatalog()) expect(item.description, item.id).toBeTruthy();
+    for (const item of getCatalog()) expect(item.description, item.slug).toBeTruthy();
   });
 
   it("gives every tier a label and a serves count", () => {
     for (const item of getCatalog()) {
       for (const tier of item.weightTiers) {
-        expect(tier.label, `${item.id} ${tier.id}`).toBeTruthy();
-        expect(tier.serves, `${item.id} ${tier.id}`).toBeTruthy();
+        expect(tier.label, `${item.slug} ${tier.id}`).toBeTruthy();
+        expect(tier.serves, `${item.slug} ${tier.id}`).toBeTruthy();
       }
     }
   });
@@ -127,15 +124,15 @@ describe("weight tiers", () => {
 
 describe("getSiblingItems", () => {
   it("returns every other item in the same category, excluding itself", () => {
-    const butterscotch = getItemById("classic-cakes-butterscotch")!;
+    const butterscotch = getItemById(1)!;
     const siblings = getSiblingItems(butterscotch);
     expect(siblings.length).toBeGreaterThan(0);
-    expect(siblings.every((s) => s.categoryId === "classic-cakes")).toBe(true);
+    expect(siblings.every((s) => s.categoryId === butterscotch.categoryId)).toBe(true);
     expect(siblings.some((s) => s.id === butterscotch.id)).toBe(false);
   });
 
   it("is empty for a category with only one item", () => {
-    const customCakes = getItemById("custom-cakes")!;
+    const customCakes = getItemById(52)!;
     expect(getSiblingItems(customCakes)).toEqual([]);
   });
 });
@@ -144,14 +141,14 @@ describe("occasions, flavour tags and most ordered", () => {
   it("every occasion an item lists is a real occasion, and every item lists at least one", () => {
     const ids = new Set(getOccasions().map((o) => o.id));
     for (const item of getCatalog()) {
-      expect(item.occasions?.length, item.id).toBeGreaterThan(0);
-      for (const id of item.occasions ?? []) expect(ids.has(id), `${item.id} -> ${id}`).toBe(true);
+      expect(item.occasions?.length, item.slug).toBeGreaterThan(0);
+      for (const id of item.occasions ?? []) expect(ids.has(id), `${item.slug} -> ${id}`).toBe(true);
     }
   });
 
   it("the per-category occasion map only names real categories", () => {
     const categoryIds = new Set(getCategories().map((c) => c.id));
-    for (const id of Object.keys(CATEGORY_OCCASIONS)) expect(categoryIds.has(id), id).toBe(true);
+    for (const id of Object.keys(CATEGORY_OCCASIONS).map(Number)) expect(categoryIds.has(id), String(id)).toBe(true);
   });
 
   it("every item id listed under a flavour tag exists, so a typo can't silently drop it", () => {
@@ -162,7 +159,7 @@ describe("occasions, flavour tags and most ordered", () => {
 
   it("every flavour tag has at least one item", () => {
     for (const tag of getFlavourTags()) {
-      expect(getCatalog().some((i) => i.flavours?.includes(tag.id)), tag.id).toBe(true);
+      expect(getCatalog().some((i) => i.flavours?.includes(tag.id)), tag.slug).toBe(true);
     }
   });
 
@@ -172,14 +169,16 @@ describe("occasions, flavour tags and most ordered", () => {
   });
 
   it("finds a tile photo from the items themselves", () => {
-    expect(getCategoryImage("classic-cakes")).toBe("/images/classic-butterscotch.jpg");
-    expect(getFlavourTagImage("indian-sweets")).toMatch(/^\/images\/indian-/);
+    expect(getCategoryImage(getCategoryBySlug("classic-cakes")!.id)).toBe("/images/classic-butterscotch.jpg");
+    const indianSweets = getFlavourTags().find((t) => t.slug === "indian-sweets")!;
+    expect(getFlavourTagImage(indianSweets.id)).toMatch(/^\/images\/indian-/);
   });
 
   it("Cheesecakes and Flavourful Indian cakes need 24 hours' notice", () => {
-    for (const item of getCatalog().filter((i) => ["cheesecakes", "indian-cakes"].includes(i.categoryId))) {
-      expect(item.leadTimeHours, item.id).toBe(24);
-      expect(readyLabel(item), item.id).toBe("24 hours notice");
+    const ids = ["cheesecakes", "indian-cakes"].map((slug) => getCategoryBySlug(slug)!.id);
+    for (const item of getCatalog().filter((i) => ids.includes(i.categoryId))) {
+      expect(item.leadTimeHours, item.slug).toBe(24);
+      expect(readyLabel(item), item.slug).toBe("24 hours notice");
     }
   });
 
@@ -193,7 +192,7 @@ describe("occasions, flavour tags and most ordered", () => {
 
 describe("getCategoriesByKind", () => {
   it("splits the categories into everyday, made-to-order and custom, in menu order", () => {
-    const ids = (kind: Parameters<typeof getCategoriesByKind>[0]) => getCategoriesByKind(kind).map((c) => c.id);
+    const ids = (kind: Parameters<typeof getCategoriesByKind>[0]) => getCategoriesByKind(kind).map((c) => c.slug);
     expect(ids("everyday")).toEqual([
       "classic-cakes",
       "premium-cakes",

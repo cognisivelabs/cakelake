@@ -98,7 +98,7 @@ export function CategoryTiles() {
         // outlined "24 HRS" tile instead of an empty placeholder.
         const custom = category.kind === "custom" && !image;
         return (
-          <Link key={category.id} href={categoryRoute(category.id)} className={styles.tile}>
+          <Link key={category.id} href={categoryRoute(category.slug)} className={styles.tile}>
             <div className={`${styles.tileImage} ${custom ? styles.tileImageCustom : ""}`}>
               <Photo src={image} />
               {custom && <span className={`${styles.tileNote} mono-tag`}>24 HRS</span>}
@@ -120,7 +120,7 @@ export function OccasionTiles() {
       arrows={false}
     >
       {getOccasions().map((occasion) => (
-        <Link key={occasion.id} href={occasionRoute(occasion.id)} className={styles.occasion}>
+        <Link key={occasion.id} href={occasionRoute(occasion.slug)} className={styles.occasion}>
           <div className={styles.occasionPhoto}>
             <Photo src={occasion.imageUrl} />
           </div>
@@ -141,7 +141,7 @@ export function MostOrderedSection() {
       categoryId: item.categoryId,
       categoryLabel: getCategory(item.categoryId)?.label ?? "",
       imageUrl: item.imageUrl,
-      href: itemRoute(item.id),
+      href: itemRoute(item.slug),
       leadBadge: readyBadge(item),
       price: price === undefined ? "Ask us" : formatAed(price),
     };
@@ -157,7 +157,7 @@ export function FlavourTiles() {
   return (
     <RailSection title="Browse by flavour" meta={`${tags.length} flavours`} mobileMeta={`${tags.length} · swipe →`}>
       {tags.map((tag) => (
-        <Link key={tag.id} href={flavourRoute(tag.id)} className={styles.tile}>
+        <Link key={tag.id} href={flavourRoute(tag.slug)} className={styles.tile}>
           <div className={styles.tileImage}>
             <Photo src={getFlavourTagImage(tag.id)} />
           </div>

@@ -17,12 +17,12 @@ export function Footer() {
 
   const categoryLinks = (list: typeof categories) =>
     list.map((c) => (
-      <Link key={c.id} href={categoryRoute(c.id)} className={styles.link}>
+      <Link key={c.id} href={categoryRoute(c.slug)} className={styles.link}>
         {c.label}
       </Link>
     ));
   const occasionLinks = occasions.map((o) => (
-    <Link key={o.id} href={occasionRoute(o.id)} className={styles.link}>
+    <Link key={o.id} href={occasionRoute(o.slug)} className={styles.link}>
       {o.label}
     </Link>
   ));

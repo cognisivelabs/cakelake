@@ -6,8 +6,8 @@ import type { Order } from "@/types/order";
 
 const order = (overrides: Partial<Order> = {}): Order => ({
   lines: [
-    { cartLineId: "a", itemId: "classic-cakes-butterscotch", quantity: 2, weightTierId: "half-kg", cakeMessage: "Happy Birthday" },
-    { cartLineId: "b", itemId: "custom-cakes", quantity: 1, weightTierId: "3kg-plus" },
+    { cartLineId: "a", itemId: 1, quantity: 2, weightTierId: 1, cakeMessage: "Happy Birthday" },
+    { cartLineId: "b", itemId: 52, quantity: 1, weightTierId: 7 },
   ],
   fulfillment: "pickup",
   whenNeeded: { kind: "tomorrow" },

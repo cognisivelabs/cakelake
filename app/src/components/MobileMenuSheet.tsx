@@ -59,7 +59,7 @@ export function MobileMenuSheet({ onClose }: { onClose: () => void }) {
               {group.entries.map(({ category, priceLabel }) => (
                 <Link
                   key={category.id}
-                  href={categoryRoute(category.id)}
+                  href={categoryRoute(category.slug)}
                   className={styles.row}
                   onClick={onClose}
                 >
@@ -79,7 +79,7 @@ export function MobileMenuSheet({ onClose }: { onClose: () => void }) {
           <div className={styles.label}>OCCASIONS</div>
           <div className={styles.card}>
             {getOccasions().map((occasion) => (
-              <Link key={occasion.id} href={occasionRoute(occasion.id)} className={styles.row} onClick={onClose}>
+              <Link key={occasion.id} href={occasionRoute(occasion.slug)} className={styles.row} onClick={onClose}>
                 <span className={styles.dot} style={{ background: "var(--color-pink)" }} />
                 <span className={styles.rowName}>{occasion.label}</span>
                 <span className={styles.chevron} aria-hidden="true">
@@ -94,7 +94,7 @@ export function MobileMenuSheet({ onClose }: { onClose: () => void }) {
           <div className={styles.label}>BY FLAVOUR</div>
           <div className={styles.pills}>
             {getFlavourTags().map((tag) => (
-              <Link key={tag.id} href={flavourRoute(tag.id)} className={styles.pill} onClick={onClose}>
+              <Link key={tag.id} href={flavourRoute(tag.slug)} className={styles.pill} onClick={onClose}>
                 {tag.label}
               </Link>
             ))}

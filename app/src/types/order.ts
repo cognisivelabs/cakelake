@@ -4,9 +4,9 @@
 export type CartLine = {
   /** Unique per line; the same item can appear on several lines. */
   cartLineId: string;
-  itemId: string;
+  itemId: number;
   quantity: number;
-  weightTierId: string;
+  weightTierId: number;
   /** Optional inscription for the cake. */
   cakeMessage?: string;
 };

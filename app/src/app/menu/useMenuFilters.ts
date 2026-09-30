@@ -2,7 +2,14 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { getCategory, getFlavourTag, getOccasion } from "@/lib/catalog";
+import {
+  getCategory,
+  getCategoryBySlug,
+  getFlavourTag,
+  getFlavourTagBySlug,
+  getOccasion,
+  getOccasionBySlug,
+} from "@/lib/catalog";
 import { ROUTES } from "@/lib/routes";
 import {
   CATEGORY_GROUP_KEY,
@@ -21,13 +28,13 @@ import {
 import type { MenuUrlParams } from "./UrlParamsSync";
 
 type Selection = {
-  categoryIds: string[];
+  categoryIds: number[];
   priceRange: PriceRange | null;
-  flavourId: string;
-  occasionId: string;
+  flavourId: number | null;
+  occasionId: number | null;
 };
 
-const NO_SELECTION: Selection = { categoryIds: [], priceRange: null, flavourId: "", occasionId: "" };
+const NO_SELECTION: Selection = { categoryIds: [], priceRange: null, flavourId: null, occasionId: null };
 
 /** How long the slider rests before the URL follows it — the results
  * update as it moves, but the address shouldn't be rewritten per pixel. */
@@ -69,27 +76,30 @@ export function useMenuFilters() {
   // Classic is ticked). Mobile lists every category and uses `values`.
   const desktopValues: MenuFilters = { ...values, categoryIds: selection.categoryIds };
 
-  /** Takes the filters from the URL — unknown ids are ignored. */
+  /** Takes the filters from the URL's slugs — unknown slugs are ignored. */
   function applyParams(params: MenuUrlParams) {
     // Only a ?q= replaces what's typed — a link without one (a category
     // link, a filter change) shouldn't wipe the shopper's own search.
     if (params.q) setQuery(params.q);
     setSelection((current) => ({
-      categoryIds: params.category.split(",").filter((id) => getCategory(id)),
+      categoryIds: params.category.split(",").flatMap((slug) => getCategoryBySlug(slug)?.id ?? []),
       // The slider is mid-drag while a URL update is pending, and this
       // echo would be stale — keep what's on screen.
       priceRange: urlTimer.current ? current.priceRange : parsePriceRange(params.price),
-      flavourId: getFlavourTag(params.flavour) ? params.flavour : "",
-      occasionId: getOccasion(params.occasion) ? params.occasion : "",
+      flavourId: getFlavourTagBySlug(params.flavour)?.id ?? null,
+      occasionId: getOccasionBySlug(params.occasion)?.id ?? null,
     }));
   }
 
   function syncUrl(next: Selection) {
     const params = new URLSearchParams();
-    if (next.categoryIds.length > 0) params.set("category", next.categoryIds.join(","));
+    const categorySlugs = next.categoryIds.flatMap((id) => getCategory(id)?.slug ?? []);
+    const flavourSlug = next.flavourId !== null ? getFlavourTag(next.flavourId)?.slug : undefined;
+    const occasionSlug = next.occasionId !== null ? getOccasion(next.occasionId)?.slug : undefined;
+    if (categorySlugs.length > 0) params.set("category", categorySlugs.join(","));
     if (next.priceRange) params.set("price", formatPriceRange(next.priceRange));
-    if (next.flavourId) params.set("flavour", next.flavourId);
-    if (next.occasionId) params.set("occasion", next.occasionId);
+    if (flavourSlug) params.set("flavour", flavourSlug);
+    if (occasionSlug) params.set("occasion", occasionSlug);
     const qs = params.toString();
     router.replace(qs ? `${ROUTES.menu}?${qs}` : ROUTES.menu, { scroll: false });
   }
@@ -120,7 +130,7 @@ export function useMenuFilters() {
   }
 
   /** A checkbox was toggled: categories add or drop, the others replace. */
-  function toggle(key: Exclude<FilterGroup["key"], "priceRange">, optionId: string) {
+  function toggle(key: Exclude<FilterGroup["key"], "priceRange">, optionId: number) {
     if (key === CATEGORY_GROUP_KEY) {
       const ticked = selection.categoryIds.includes(optionId);
       commit({
@@ -130,7 +140,7 @@ export function useMenuFilters() {
           : [...selection.categoryIds, optionId],
       });
     } else {
-      commit({ ...selection, [key]: selection[key] === optionId ? "" : optionId });
+      commit({ ...selection, [key]: selection[key] === optionId ? null : optionId });
     }
   }
 
@@ -146,7 +156,7 @@ export function useMenuFilters() {
     desktopGroups: getFilterGroups(desktopValues),
     categoryGroup: getCategoryFilterGroup(selection.categoryIds, values),
     chips: getActiveFilterChips(values),
-    anyFilterActive: Boolean(selection.priceRange || selection.flavourId || selection.occasionId),
+    anyFilterActive: Boolean(selection.priceRange) || selection.flavourId !== null || selection.occasionId !== null,
   };
 }
 

@@ -15,7 +15,7 @@ export function FilterPanel({
   onPriceChange,
 }: {
   groups: FilterGroup[];
-  onToggle: (key: Exclude<FilterGroup["key"], "priceRange">, optionId: string) => void;
+  onToggle: (key: Exclude<FilterGroup["key"], "priceRange">, optionId: number) => void;
   onPriceChange: (range: PriceRange) => void;
 }) {
   return (

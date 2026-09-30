@@ -7,9 +7,9 @@ import { ROUTES } from "@/lib/routes";
 import styles from "./HomeSections.module.css";
 
 export type MostOrderedCard = {
-  id: string;
+  id: number;
   name: string;
-  categoryId: string;
+  categoryId: number;
   categoryLabel: string;
   imageUrl?: string;
   href: string;
@@ -18,13 +18,14 @@ export type MostOrderedCard = {
   price: string;
 };
 
-export type MostOrderedTab = { id: string; label: string };
+export type MostOrderedTab = { id: number; label: string };
 
 // "Most ordered": All, plus a tab for each category that has one of the
 // featured cakes — a tab with nothing under it would just be a dead end.
 export function MostOrdered({ cards, tabs }: { cards: MostOrderedCard[]; tabs: MostOrderedTab[] }) {
-  const [activeTab, setActiveTab] = useState("all");
-  const shown = activeTab === "all" ? cards : cards.filter((c) => c.categoryId === activeTab);
+  /** The selected category id; null is the All tab. */
+  const [activeTab, setActiveTab] = useState<number | null>(null);
+  const shown = activeTab === null ? cards : cards.filter((c) => c.categoryId === activeTab);
 
   return (
     <section className={styles.section}>
@@ -37,9 +38,9 @@ export function MostOrdered({ cards, tabs }: { cards: MostOrderedCard[]; tabs: M
       </div>
 
       <div className={styles.tabs} role="tablist" aria-label="Most ordered by category">
-        {[{ id: "all", label: "All" }, ...tabs].map((tab) => (
+        {[{ id: null, label: "All" }, ...tabs].map((tab) => (
           <button
-            key={tab.id}
+            key={tab.id ?? "all"}
             type="button"
             role="tab"
             className={styles.tab}

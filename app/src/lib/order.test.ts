@@ -13,12 +13,12 @@ import type { Order } from "@/types/order";
 
 describe("resolveSelection", () => {
   it("resolves the matching tier", () => {
-    const { tier } = resolveSelection(item, { weightTierId: "1kg" });
+    const { tier } = resolveSelection(item, { weightTierId: 2 });
     expect(tier?.label).toBe("1 kg");
   });
 
   it("returns undefined for an id that doesn't match any tier", () => {
-    const { tier } = resolveSelection(item, { weightTierId: "nope" });
+    const { tier } = resolveSelection(item, { weightTierId: 9999 });
     expect(tier).toBeUndefined();
   });
 });
@@ -29,7 +29,7 @@ describe("describeLine", () => {
   });
 
   it("falls back to just the item name when the tier doesn't resolve", () => {
-    expect(describeLine(item, line({ weightTierId: "nope" }))).toBe("Butterscotch");
+    expect(describeLine(item, line({ weightTierId: 9999 }))).toBe("Butterscotch");
   });
 });
 
@@ -42,7 +42,7 @@ describe("resolveOrderLines", () => {
   });
 
   it("drops lines whose item no longer exists in the catalog", () => {
-    const resolved = resolveOrderLines(order({ lines: [line({ itemId: "discontinued" })] }), [
+    const resolved = resolveOrderLines(order({ lines: [line({ itemId: 9999 })] }), [
       item,
     ]);
     expect(resolved).toHaveLength(0);
@@ -67,7 +67,7 @@ describe("orderItemCount", () => {
 describe("dropDiscontinuedLines", () => {
   it("removes lines whose item id is no longer in the catalog", () => {
     const original = order({
-      lines: [line({ cartLineId: "a" }), line({ cartLineId: "b", itemId: "discontinued" })],
+      lines: [line({ cartLineId: "a" }), line({ cartLineId: "b", itemId: 9999 })],
     });
     const result = dropDiscontinuedLines(original, [item]);
     expect(result.lines.map((l) => l.cartLineId)).toEqual(["a"]);
@@ -80,7 +80,7 @@ describe("dropDiscontinuedLines", () => {
 
   it("preserves every other order field when lines are dropped", () => {
     const original: Order = order({
-      lines: [line({ itemId: "discontinued" })],
+      lines: [line({ itemId: 9999 })],
       customerName: "Sam",
       fulfillment: "delivery",
     });
@@ -92,7 +92,7 @@ describe("dropDiscontinuedLines", () => {
 });
 
 describe("orderLeadTimeHours", () => {
-  const notice = { ...item, id: "cheesecakes-oreo", leadTimeHours: 24 };
+  const notice = { ...item, id: 29, leadTimeHours: 24 };
   const catalog = [item, notice];
 
   it("is 0 for an empty or all-same-day order", () => {
@@ -107,7 +107,7 @@ describe("orderLeadTimeHours", () => {
 });
 
 describe("isSameLine", () => {
-  const base = { itemId: "a", weightTierId: "1kg" };
+  const base = { itemId: 1, weightTierId: 2 };
 
   it("matches the same item, weight and message", () => {
     expect(isSameLine({ ...base, cakeMessage: "Hi" }, { ...base, cakeMessage: "Hi" })).toBe(true);
@@ -118,8 +118,8 @@ describe("isSameLine", () => {
   });
 
   it("tells apart a different item, weight or message", () => {
-    expect(isSameLine(base, { ...base, itemId: "b" })).toBe(false);
-    expect(isSameLine(base, { ...base, weightTierId: "2kg" })).toBe(false);
+    expect(isSameLine(base, { ...base, itemId: 3 })).toBe(false);
+    expect(isSameLine(base, { ...base, weightTierId: 4 })).toBe(false);
     expect(isSameLine(base, { ...base, cakeMessage: "Hi" })).toBe(false);
   });
 });

@@ -25,16 +25,16 @@ export default function MenuPage() {
   const filters = useMenuFilters();
 
   const visibleCatalog = catalog.filter((item) => itemMatchesFilters(item, filters.values));
-  const visibleCategoryIds = categories
+  const visibleCategorySlugs = categories
     .filter((c) => visibleCatalog.some((item) => item.categoryId === c.id))
-    .map((c) => c.id);
-  const spy = useScrollSpy(visibleCategoryIds);
+    .map((c) => c.slug);
+  const spy = useScrollSpy(visibleCategorySlugs);
 
   function applyUrlParams(params: MenuUrlParams) {
     filters.applyParams(params);
     // Desktop ticks the category as a filter; mobile is one long scroll,
     // so jump to the (first) category's section.
-    const first = params.category.split(",").find((id) => categories.some((c) => c.id === id));
+    const first = params.category.split(",").find((slug) => categories.some((c) => c.slug === slug));
     if (first) document.getElementById(first)?.scrollIntoView({ behavior: "instant" });
   }
 

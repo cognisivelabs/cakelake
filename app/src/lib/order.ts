@@ -4,7 +4,7 @@ import type { CartLine, Order } from "@/types/order";
 /** The item's weight tier matching `ids.weightTierId`, or undefined. */
 export function resolveSelection(
   item: CatalogItem,
-  ids: { weightTierId: string }
+  ids: { weightTierId: number | null }
 ): { tier: WeightTier | undefined } {
   return { tier: item.weightTiers.find((t) => t.id === ids.weightTierId) };
 }

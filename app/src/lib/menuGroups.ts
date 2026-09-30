@@ -41,6 +41,6 @@ export function getMenuGroups(): MenuGroup[] {
 /** Where the "Photo & Custom" links go: every custom category (Photo Cakes and
  * Custom Cakes) ticked together, or the whole menu if a build has none. */
 export function getCustomCategoriesRoute(): string {
-  const ids = getCategoriesByKind("custom").map((c) => c.id);
-  return ids.length > 0 ? categoriesRoute(ids) : ROUTES.menu;
+  const slugs = getCategoriesByKind("custom").map((c) => c.slug);
+  return slugs.length > 0 ? categoriesRoute(slugs) : ROUTES.menu;
 }

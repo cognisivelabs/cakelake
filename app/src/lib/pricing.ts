@@ -1,4 +1,3 @@
-import { weightTierKg } from "@/lib/catalog";
 import type { CatalogItem } from "@/types/catalog";
 import type { CartLine, Order } from "@/types/order";
 import { CONFIG } from "@/lib/config";
@@ -58,7 +57,7 @@ export function categoryPriceLabel(items: CatalogItem[]): string {
   for (const item of items) {
     for (const tier of item.weightTiers) {
       if (tier.price === undefined) continue;
-      if (!best || tier.price < best.price) best = { price: tier.price, kg: weightTierKg(tier) };
+      if (!best || tier.price < best.price) best = { price: tier.price, kg: tier.kg };
     }
   }
   if (!best) return "Ask us";

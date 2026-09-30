@@ -23,19 +23,19 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
   const categoryLabel = category?.label ?? "Menu";
   // Back goes to where this item's category sits in the menu, not the
   // top of the whole long scroll.
-  const backHref = category ? categoryRoute(category.id) : ROUTES.menu;
+  const backHref = category ? categoryRoute(category.slug) : ROUTES.menu;
   // Photo Cakes/Custom Cakes are priced by the kilo rather than as a fixed
   // ½kg/1kg pair — used below to label the size section "WEIGHT ... PER KG"
   // instead of "SIZE" for just those. (Not "any tier without a price":
   // the larger sizes are unpriced on every cake until the client confirms.)
   const isWeightPriced = category?.kind === "custom";
-  const baseWeightPrice = item.weightTiers.find((t) => t.id === "1kg")?.price;
+  const baseWeightPrice = item.weightTiers.find((t) => t.kg === 1)?.price;
   // Flavour is no longer a picker on this page (Sep 2026
   // recategorisation) — every other item in the same category is
   // cross-linked instead, at the foot of the page.
   const siblingItems = getSiblingItems(item);
 
-  const [weightTierId, setWeightTierId] = useState(item.weightTiers[0]?.id ?? "");
+  const [weightTierId, setWeightTierId] = useState<number | null>(item.weightTiers[0]?.id ?? null);
   const [quantity, setQuantity] = useState(1);
   const [cakeMessage, setCakeMessage] = useState("");
   // See docs/design/CLB-Hi-Fi-Screens.dc.html's "Added to order" screens —
@@ -48,10 +48,10 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
   const unitPrice = selectedTier?.price;
   const total = unitPrice === undefined ? undefined : unitPrice * quantity;
 
-  const canAdd = weightTierId !== "";
+  const canAdd = weightTierId !== null;
 
   function handleAdd() {
-    if (!canAdd) return;
+    if (weightTierId === null) return;
     // The cart's other lines, before this add: every line except one this
     // add merges into.
     const catalog = getCatalog();
@@ -223,7 +223,7 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
                   {siblingItems.map((sibling) => (
                     <Link
                       key={sibling.id}
-                      href={itemRoute(sibling.id)}
+                      href={itemRoute(sibling.slug)}
                       className={styles.otherFlavourLink}
                     >
                       <span className={styles.otherFlavourSwatch}>

@@ -1,7 +1,7 @@
 import type { CatalogItem, Category, CategoryKind, FlavourTag, Occasion } from "@/types/catalog";
 import { CONFIG } from "@/lib/config";
 import { CATEGORIES } from "@/data/categories";
-import { BASE_CATALOG, SIZES } from "@/data/items";
+import { BASE_CATALOG } from "@/data/items";
 import { CATEGORY_OCCASIONS, FLAVOUR_ITEMS, FLAVOUR_TAGS, MOST_ORDERED, OCCASIONS } from "@/data/taxonomy";
 
 // The catalogue's content lives in src/data (categories, items, taxonomy);
@@ -37,12 +37,20 @@ export function getCategoriesByKind(kind: CategoryKind): Category[] {
   return CATEGORIES.filter((c) => c.kind === kind);
 }
 
-export function getCategory(id: string): Category | undefined {
+export function getCategory(id: number): Category | undefined {
   return CATEGORIES.find((c) => c.id === id);
 }
 
-export function getItemById(id: string): CatalogItem | undefined {
+export function getCategoryBySlug(slug: string): Category | undefined {
+  return CATEGORIES.find((c) => c.slug === slug);
+}
+
+export function getItemById(id: number): CatalogItem | undefined {
   return CATALOG.find((item) => item.id === id);
+}
+
+export function getItemBySlug(slug: string): CatalogItem | undefined {
+  return CATALOG.find((item) => item.slug === slug);
 }
 
 /** Every other item in the same category — for the "OTHER FLAVOURS IN
@@ -52,25 +60,28 @@ export function getSiblingItems(item: CatalogItem): CatalogItem[] {
   return CATALOG.filter((c) => c.categoryId === item.categoryId && c.id !== item.id);
 }
 
-/** A weight tier's weight in kg (SIZES); 0 for an id that isn't a size. */
-export function weightTierKg(tier: { id: string }): number {
-  return tier.id in SIZES ? SIZES[tier.id as keyof typeof SIZES].kg : 0;
-}
-
 export function getOccasions(): Occasion[] {
   return OCCASIONS;
 }
 
-export function getOccasion(id: string): Occasion | undefined {
+export function getOccasion(id: number): Occasion | undefined {
   return OCCASIONS.find((o) => o.id === id);
+}
+
+export function getOccasionBySlug(slug: string): Occasion | undefined {
+  return OCCASIONS.find((o) => o.slug === slug);
 }
 
 export function getFlavourTags(): FlavourTag[] {
   return FLAVOUR_TAGS;
 }
 
-export function getFlavourTag(id: string): FlavourTag | undefined {
+export function getFlavourTag(id: number): FlavourTag | undefined {
   return FLAVOUR_TAGS.find((t) => t.id === id);
+}
+
+export function getFlavourTagBySlug(slug: string): FlavourTag | undefined {
+  return FLAVOUR_TAGS.find((t) => t.slug === slug);
 }
 
 /** Home's "Most ordered" items, in display order. */
@@ -82,12 +93,12 @@ export function getMostOrdered(): CatalogItem[] {
 
 /** The first photo among a category's items — a tile image for that
  * category without keeping a second photo field in sync. */
-export function getCategoryImage(categoryId: string): string | undefined {
+export function getCategoryImage(categoryId: number): string | undefined {
   return CATALOG.find((item) => item.categoryId === categoryId && item.imageUrl)?.imageUrl;
 }
 
 /** Same idea for a flavour tag: the first tagged item that has a photo. */
-export function getFlavourTagImage(tagId: string): string | undefined {
+export function getFlavourTagImage(tagId: number): string | undefined {
   return CATALOG.find((item) => item.flavours?.includes(tagId) && item.imageUrl)?.imageUrl;
 }
 

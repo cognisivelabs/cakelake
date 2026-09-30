@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   categoriesByKind,
   categoryImage,
+  categoryShortLabel,
   findCategory,
   findCategoryBySlug,
   flavourTagImage,
@@ -166,6 +167,24 @@ describe("occasions, flavour tags and most ordered", () => {
     expect(readyBadge({ leadTimeHours: 0 })).toBe("1 HOUR");
     expect(readyLabel({ leadTimeHours: 72 })).toBe("72 hours notice");
     expect(readyBadge({ leadTimeHours: 72 })).toBe("72 HOURS");
+  });
+});
+
+describe("categoryShortLabel", () => {
+  const label = (slug: string) => categoryShortLabel(findCategoryBySlug(testCatalog, slug)!);
+
+  it("strips the ' Cakes' suffix", () => {
+    expect(label("classic-cakes")).toBe("Classic");
+    expect(label("custom-cakes")).toBe("Custom");
+    expect(label("photo-cakes")).toBe("Photo");
+  });
+
+  it("strips a leading 'Flavourful ' as well as the suffix", () => {
+    expect(label("indian-cakes")).toBe("Indian");
+  });
+
+  it("leaves a label with neither the prefix nor the suffix unchanged", () => {
+    expect(label("cheesecakes")).toBe("Cheesecakes");
   });
 });
 

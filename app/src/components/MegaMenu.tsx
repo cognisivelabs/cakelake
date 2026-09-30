@@ -1,6 +1,9 @@
+"use client";
+
 import Link from "next/link";
 import { Photo } from "@/components/Photo";
-import { getCatalog, getFlavourTags, getMostOrdered, getCategory, getOccasions } from "@/lib/catalog";
+import { useCatalog } from "@/context/CatalogContext";
+import { findCategory, mostOrderedItems } from "@/lib/catalog";
 import { getMenuGroups } from "@/lib/menuGroups";
 import { formatAed } from "@/lib/pricing";
 import { categoryRoute, flavourRoute, itemRoute, occasionRoute, ROUTES } from "@/lib/routes";
@@ -9,8 +12,9 @@ import styles from "./MegaMenu.module.css";
 // The Cakes mega-menu (desktop header) — the whole menu in one hover.
 // Everything is read from the catalog, so it can't drift from the menu.
 export function CakesMegaMenu({ onNavigate }: { onNavigate: () => void }) {
-  const groups = getMenuGroups();
-  const featured = getMostOrdered()[0];
+  const catalog = useCatalog();
+  const groups = getMenuGroups(catalog);
+  const featured = mostOrderedItems(catalog)[0];
   const featuredTier = featured?.weightTiers.find((t) => t.price !== undefined);
 
   return (
@@ -33,7 +37,7 @@ export function CakesMegaMenu({ onNavigate }: { onNavigate: () => void }) {
       <div className={styles.column}>
         <div className={styles.label}>BY FLAVOUR</div>
         <div className={styles.pills}>
-          {getFlavourTags().map((tag) => (
+          {catalog.flavourTags.map((tag) => (
             <Link key={tag.id} href={flavourRoute(tag.slug)} className={styles.pill} onClick={onNavigate}>
               {tag.label}
             </Link>
@@ -50,7 +54,7 @@ export function CakesMegaMenu({ onNavigate }: { onNavigate: () => void }) {
           <div className={styles.cardBody}>
             <div className={styles.cardName}>{featured.name}</div>
             <div className={styles.cardMeta}>
-              {getCategory(featured.categoryId)?.label}
+              {findCategory(catalog, featured.categoryId)?.label}
               {featuredTier?.price !== undefined && ` · ${featuredTier.label} ${formatAed(featuredTier.price)}`}
             </div>
           </div>
@@ -62,13 +66,14 @@ export function CakesMegaMenu({ onNavigate }: { onNavigate: () => void }) {
 
 // The Occasions dropdown — the same cakes, entered by the moment.
 export function OccasionsMenu({ onNavigate }: { onNavigate: () => void }) {
-  const total = getCatalog().length;
+  const { items, occasions } = useCatalog();
+  const total = items.length;
   return (
     <div className={styles.inner}>
       <div className={styles.column}>
         <div className={styles.label}>SHOP BY OCCASION</div>
         <ul className={styles.list}>
-          {getOccasions().map((occasion) => (
+          {occasions.map((occasion) => (
             <li key={occasion.id}>
               <Link href={occasionRoute(occasion.slug)} className={styles.link} onClick={onNavigate}>
                 {occasion.label}

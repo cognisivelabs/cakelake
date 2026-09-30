@@ -12,3 +12,4 @@ and its technical companion, [requirements.md](../requirements/requirements.md).
 | [ADR-003](ADR-003-whatsapp-order-handoff.md) | Order Handoff — WhatsApp Click-to-Chat Link | Accepted |
 | [ADR-004](ADR-004-content-management.md) | Menu & Content Management — Git-Managed, No CMS | Proposed |
 | [ADR-005](ADR-005-installable-web-app.md) | Installable Web App (PWA), No Native App Store App | Proposed |
+| [ADR-006](ADR-006-internal-data-api.md) | Data Access Through an Internal API | Proposed |

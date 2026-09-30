@@ -2,7 +2,8 @@
 
 import { useEffect, useEffectEvent } from "react";
 import { useCart } from "@/context/CartContext";
-import { getCatalog, readyLabel } from "@/lib/catalog";
+import { useCatalog } from "@/context/CatalogContext";
+import { readyLabel } from "@/lib/catalog";
 import {
   earliestNeededIsoDate,
   estimatedReadyTime,
@@ -24,12 +25,13 @@ import styles from "./cart.module.css";
 // shop isn't open yet or the day's cutoff (earlier for delivery) has
 // passed.
 export function WhenNeededPicker() {
+  const { items } = useCatalog();
   const { order, setWhenNeeded } = useCart();
   const kind = order.whenNeeded.kind;
   const readyTime = estimatedReadyTime();
   const tooEarly = sameDayOrderingNotYetOpen();
   const cutoffPassed = sameDayCutoffPassed(order.fulfillment);
-  const leadTimeHours = orderLeadTimeHours(order, getCatalog());
+  const leadTimeHours = orderLeadTimeHours(order, items);
   const earliestIso = earliestNeededIsoDate(leadTimeHours);
   const tomorrowIso = isoDateInDays(1);
   const needsNotice = leadTimeHours > 0;

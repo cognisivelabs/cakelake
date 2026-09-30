@@ -1,92 +1,71 @@
 import { describe, expect, it } from "vitest";
 import {
-  getCatalog,
-  getCategories,
-  getCategoriesByKind,
-  getCategory,
-  getCategoryBySlug,
-  getCategoryImage,
-  getFlavourTagImage,
-  getFlavourTags,
-  getItemById,
-  getItemBySlug,
-  getMostOrdered,
-  getOccasions,
-  getSiblingItems,
+  categoriesByKind,
+  categoryImage,
+  findCategory,
+  findCategoryBySlug,
+  flavourTagImage,
+  mostOrderedItems,
   readyBadge,
   readyLabel,
+  siblingItems,
 } from "@/lib/catalog";
+import { testCatalog } from "@/test/fixtures";
 
-describe("getCatalog / getCategories", () => {
+describe("catalogue data", () => {
   it("returns a non-empty catalogue and category list", () => {
-    expect(getCatalog().length).toBeGreaterThan(0);
-    expect(getCategories().length).toBeGreaterThan(0);
+    expect(testCatalog.items.length).toBeGreaterThan(0);
+    expect(testCatalog.categories.length).toBeGreaterThan(0);
   });
 
   it("every item references a category that actually exists", () => {
-    const categoryIds = new Set(getCategories().map((c) => c.id));
-    for (const item of getCatalog()) {
+    const categoryIds = new Set(testCatalog.categories.map((c) => c.id));
+    for (const item of testCatalog.items) {
       expect(categoryIds.has(item.categoryId)).toBe(true);
     }
   });
 
   it("every item has at least one weight tier", () => {
-    for (const item of getCatalog()) {
+    for (const item of testCatalog.items) {
       expect(item.weightTiers.length).toBeGreaterThan(0);
     }
   });
 
   it("has no duplicate item ids or slugs", () => {
-    const ids = getCatalog().map((item) => item.id);
-    const slugs = getCatalog().map((item) => item.slug);
+    const ids = testCatalog.items.map((item) => item.id);
+    const slugs = testCatalog.items.map((item) => item.slug);
     expect(new Set(ids).size).toBe(ids.length);
     expect(new Set(slugs).size).toBe(slugs.length);
   });
 
   it("has no duplicate category ids or slugs", () => {
-    const ids = getCategories().map((c) => c.id);
-    const slugs = getCategories().map((c) => c.slug);
+    const ids = testCatalog.categories.map((c) => c.id);
+    const slugs = testCatalog.categories.map((c) => c.slug);
     expect(new Set(ids).size).toBe(ids.length);
     expect(new Set(slugs).size).toBe(slugs.length);
   });
 });
 
-describe("getCategory", () => {
+describe("findCategory / findCategoryBySlug", () => {
   it("finds a category by id", () => {
-    const [first] = getCategories();
-    expect(getCategory(first.id)).toEqual(first);
+    const [first] = testCatalog.categories;
+    expect(findCategory(testCatalog, first.id)).toEqual(first);
   });
 
   it("returns undefined for an unknown id", () => {
-    expect(getCategory(9999)).toBeUndefined();
+    expect(findCategory(testCatalog, 9999)).toBeUndefined();
   });
 
   it("finds a category by slug", () => {
-    expect(getCategoryBySlug("cheesecakes")?.label).toBe("Cheesecakes");
-    expect(getCategoryBySlug("does-not-exist")).toBeUndefined();
+    expect(findCategoryBySlug(testCatalog, "cheesecakes")?.label).toBe("Cheesecakes");
+    expect(findCategoryBySlug(testCatalog, "does-not-exist")).toBeUndefined();
   });
 });
 
-describe("getItemById", () => {
-  it("finds an item by id", () => {
-    const [first] = getCatalog();
-    expect(getItemById(first.id)).toEqual(first);
-  });
-
-  it("returns undefined for an unknown id", () => {
-    expect(getItemById(9999)).toBeUndefined();
-  });
-
-  it("finds an item by slug", () => {
-    expect(getItemBySlug("classic-cakes-black-forest")?.name).toBe("Black Forest");
-    expect(getItemBySlug("custom-cakes")?.name).toBe("Custom Cakes");
-    expect(getItemBySlug("does-not-exist")).toBeUndefined();
-  });
-});
 
 describe("weight tiers", () => {
   const sizesOf = (slug: string) =>
-    getCatalog().find((i) => i.categoryId === getCategoryBySlug(slug)?.id)!.weightTiers.map((t) => t.label);
+    testCatalog.items.find((i) => i.categoryId === findCategoryBySlug(testCatalog, slug)?.id)!.weightTiers.map((t) => t.label);
 
   it("sells each category in its agreed sizes", () => {
     const halfTo3 = ["½ kg", "1 kg", "1½ kg", "2 kg", "2½ kg", "3 kg"];
@@ -100,7 +79,7 @@ describe("weight tiers", () => {
   });
 
   it("gives every tier a unique id within its item and a positive weight", () => {
-    for (const item of getCatalog()) {
+    for (const item of testCatalog.items) {
       const ids = item.weightTiers.map((t) => t.id);
       expect(new Set(ids).size, item.slug).toBe(ids.length);
       for (const tier of item.weightTiers) expect(tier.kg, `${item.slug} ${tier.label}`).toBeGreaterThan(0);
@@ -108,11 +87,11 @@ describe("weight tiers", () => {
   });
 
   it("gives every item a description", () => {
-    for (const item of getCatalog()) expect(item.description, item.slug).toBeTruthy();
+    for (const item of testCatalog.items) expect(item.description, item.slug).toBeTruthy();
   });
 
   it("gives every tier a label and a serves count", () => {
-    for (const item of getCatalog()) {
+    for (const item of testCatalog.items) {
       for (const tier of item.weightTiers) {
         expect(tier.label, `${item.slug} ${tier.id}`).toBeTruthy();
         expect(tier.serves, `${item.slug} ${tier.id}`).toBeTruthy();
@@ -123,60 +102,60 @@ describe("weight tiers", () => {
 
 describe("getSiblingItems", () => {
   it("returns every other item in the same category, excluding itself", () => {
-    const butterscotch = getItemById(1)!;
-    const siblings = getSiblingItems(butterscotch);
+    const butterscotch = testCatalog.items.find((i) => i.slug === "classic-cakes-butterscotch")!;
+    const siblings = siblingItems(testCatalog, butterscotch);
     expect(siblings.length).toBeGreaterThan(0);
     expect(siblings.every((s) => s.categoryId === butterscotch.categoryId)).toBe(true);
     expect(siblings.some((s) => s.id === butterscotch.id)).toBe(false);
   });
 
   it("is empty for a category with only one item", () => {
-    const customCakes = getItemById(52)!;
-    expect(getSiblingItems(customCakes)).toEqual([]);
+    const customCakes = testCatalog.items.find((i) => i.slug === "custom-cakes")!;
+    expect(siblingItems(testCatalog, customCakes)).toEqual([]);
   });
 });
 
 describe("occasions, flavour tags and most ordered", () => {
   it("every occasion an item lists is a real occasion, and every item lists at least one", () => {
-    const ids = new Set(getOccasions().map((o) => o.id));
-    for (const item of getCatalog()) {
+    const ids = new Set(testCatalog.occasions.map((o) => o.id));
+    for (const item of testCatalog.items) {
       expect(item.occasions?.length, item.slug).toBeGreaterThan(0);
       for (const id of item.occasions ?? []) expect(ids.has(id), `${item.slug} -> ${id}`).toBe(true);
     }
   });
 
   it("every flavour tag id an item lists is a real flavour tag", () => {
-    const ids = new Set(getFlavourTags().map((t) => t.id));
-    for (const item of getCatalog()) {
+    const ids = new Set(testCatalog.flavourTags.map((t) => t.id));
+    for (const item of testCatalog.items) {
       for (const id of item.flavours ?? []) expect(ids.has(id), `${item.slug} -> ${id}`).toBe(true);
     }
   });
 
   it("every flavour tag has at least one item", () => {
-    for (const tag of getFlavourTags()) {
-      expect(getCatalog().some((i) => i.flavours?.includes(tag.id)), tag.slug).toBe(true);
+    for (const tag of testCatalog.flavourTags) {
+      expect(testCatalog.items.some((i) => i.flavours?.includes(tag.id)), tag.slug).toBe(true);
     }
   });
 
   it("returns the most-ordered items in rank order", () => {
-    expect(getMostOrdered().map((i) => i.slug)).toEqual([
+    expect(mostOrderedItems(testCatalog).map((i) => i.slug)).toEqual([
       "exotic-premium-cakes-nutella-rocher",
       "classic-cakes-butterscotch",
       "exotic-premium-cakes-lotus-biscoff",
       "premium-cakes-dark-chocolate-truffle",
     ]);
-    expect(getMostOrdered().map((i) => i.mostOrderedRank)).toEqual([1, 2, 3, 4]);
+    expect(mostOrderedItems(testCatalog).map((i) => i.mostOrderedRank)).toEqual([1, 2, 3, 4]);
   });
 
   it("finds a tile photo from the items themselves", () => {
-    expect(getCategoryImage(getCategoryBySlug("classic-cakes")!.id)).toBe("/images/classic-butterscotch.jpg");
-    const indianSweets = getFlavourTags().find((t) => t.slug === "indian-sweets")!;
-    expect(getFlavourTagImage(indianSweets.id)).toMatch(/^\/images\/indian-/);
+    expect(categoryImage(testCatalog, findCategoryBySlug(testCatalog, "classic-cakes")!.id)).toBe("/images/classic-butterscotch.jpg");
+    const indianSweets = testCatalog.flavourTags.find((t) => t.slug === "indian-sweets")!;
+    expect(flavourTagImage(testCatalog, indianSweets.id)).toMatch(/^\/images\/indian-/);
   });
 
   it("Cheesecakes and Flavourful Indian cakes need 24 hours' notice", () => {
-    const ids = ["cheesecakes", "indian-cakes"].map((slug) => getCategoryBySlug(slug)!.id);
-    for (const item of getCatalog().filter((i) => ids.includes(i.categoryId))) {
+    const ids = ["cheesecakes", "indian-cakes"].map((slug) => findCategoryBySlug(testCatalog, slug)!.id);
+    for (const item of testCatalog.items.filter((i) => ids.includes(i.categoryId))) {
       expect(item.leadTimeHours, item.slug).toBe(24);
       expect(readyLabel(item), item.slug).toBe("24 hours notice");
     }
@@ -192,7 +171,7 @@ describe("occasions, flavour tags and most ordered", () => {
 
 describe("getCategoriesByKind", () => {
   it("splits the categories into everyday, made-to-order and custom, in menu order", () => {
-    const ids = (kind: Parameters<typeof getCategoriesByKind>[0]) => getCategoriesByKind(kind).map((c) => c.slug);
+    const ids = (kind: Parameters<typeof categoriesByKind>[1]) => categoriesByKind(testCatalog, kind).map((c) => c.slug);
     expect(ids("everyday")).toEqual([
       "classic-cakes",
       "premium-cakes",
@@ -207,7 +186,7 @@ describe("getCategoriesByKind", () => {
 
   it("covers every category exactly once", () => {
     const kinds = ["everyday", "made-to-order", "custom"] as const;
-    const total = kinds.flatMap((kind) => getCategoriesByKind(kind)).length;
-    expect(total).toBe(getCategories().length);
+    const total = kinds.flatMap((kind) => categoriesByKind(testCatalog, kind)).length;
+    expect(total).toBe(testCatalog.categories.length);
   });
 });

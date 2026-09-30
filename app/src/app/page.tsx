@@ -1,3 +1,4 @@
+import { fetchBanners } from "@/api/banners";
 import { Header } from "@/components/Header";
 import { HeaderSearch } from "@/components/HeaderSearch";
 import { InstallPrompt } from "@/components/InstallPrompt";
@@ -17,7 +18,8 @@ import styles from "./home.module.css";
 // The merchandised Home — see docs CLB Desktop Home / CLB Mobile Home.
 // Every tile, price and count is read from the catalog. Halloween and
 // Valentine (in the design) join once the client supplies their content.
-export default function HomePage() {
+export default async function HomePage() {
+  const banners = await fetchBanners();
   return (
     <div className={styles.page}>
       {/* Above the header, not a floating card over the page — it pushes
@@ -35,7 +37,7 @@ export default function HomePage() {
         {/* Outside the width-capped column below so the "photo" hero style
             can bleed its photo to the screen edge (CONFIG.heroStyle). */}
         <div className={styles.heroSlot}>
-          <HomeHero />
+          <HomeHero banners={banners} />
         </div>
 
         <div className={styles.content}>

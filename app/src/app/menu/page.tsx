@@ -3,9 +3,8 @@
 import { Suspense } from "react";
 import { Footer } from "@/components/Footer";
 import { ResponsiveHeader } from "@/components/ResponsiveHeader";
-import { getCatalog, getCategories } from "@/lib/catalog";
+import { useCatalog } from "@/context/CatalogContext";
 import { ROUTES } from "@/lib/routes";
-import { itemMatchesFilters } from "@/lib/search";
 import { DesktopMenu } from "./DesktopMenu";
 import { MobileMenu } from "./MobileMenu";
 import { NoResults } from "./NoResults";
@@ -20,11 +19,10 @@ import styles from "./menu.module.css";
 // ?category=), so links from Home, the header menus and item pages land
 // on the right view.
 export default function MenuPage() {
-  const catalog = getCatalog();
-  const categories = getCategories();
+  const { categories } = useCatalog();
   const filters = useMenuFilters();
 
-  const visibleCatalog = catalog.filter((item) => itemMatchesFilters(item, filters.values));
+  const visibleCatalog = filters.results;
   const visibleCategorySlugs = categories
     .filter((c) => visibleCatalog.some((item) => item.categoryId === c.id))
     .map((c) => c.slug);

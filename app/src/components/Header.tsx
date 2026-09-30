@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { CONFIG } from "@/lib/config";
 import { ROUTES } from "@/lib/routes";
 import { getCustomCategoriesRoute } from "@/lib/menuGroups";
+import { useCatalog } from "@/context/CatalogContext";
 import { buildWhatsAppUrl, formatLocalPhone } from "@/lib/whatsapp";
 import { EXTERNAL_LINK_PROPS } from "@/lib/externalLink";
 import { CartButton } from "@/components/CartButton";
@@ -23,6 +24,7 @@ type OpenMenu = "cakes" | "occasions" | null;
 // desktop is a nav with hover mega-menus, search, WhatsApp and cart —
 // see docs CLB Desktop Home / CLB Mobile Home.
 export function Header() {
+  const catalog = useCatalog();
   const pathname = usePathname();
   const [sheetOpen, setSheetOpen] = useState(false);
   const [openMenu, setOpenMenu] = useState<OpenMenu>(null);
@@ -104,7 +106,7 @@ export function Header() {
             Occasions <span className={styles.caret}>▾</span>
           </button>
           <Link
-            href={getCustomCategoriesRoute()}
+            href={getCustomCategoriesRoute(catalog)}
             className={styles.navItem}
             onMouseEnter={() => setOpenMenu(null)}
           >

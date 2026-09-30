@@ -1,90 +1,59 @@
-import type { CatalogItem, Category, CategoryKind, FlavourTag, Occasion } from "@/types/catalog";
+import type { Catalog, CatalogItem, Category, CategoryKind, FlavourTag, Occasion } from "@/types/catalog";
 import { CONFIG } from "@/lib/config";
-import { CATEGORIES } from "@/data/categories";
-import { CATALOG } from "@/data/items";
-import { FLAVOUR_TAGS, OCCASIONS } from "@/data/taxonomy";
 
-// The catalogue's content lives in src/data (categories, items, taxonomy);
-// this module answers questions about it. Every screen
-// reads through these functions, so swapping in real data is a data
-// change, not a code one.
+// Lookups and labels over a Catalog loaded from the internal API (src/api).
 
-export function getCatalog(): CatalogItem[] {
-  return CATALOG;
+export function findCategory(catalog: Catalog, id: number): Category | undefined {
+  return catalog.categories.find((c) => c.id === id);
 }
 
-export function getCategories(): Category[] {
-  return CATEGORIES;
+export function findCategoryBySlug(catalog: Catalog, slug: string): Category | undefined {
+  return catalog.categories.find((c) => c.slug === slug);
 }
 
 /** The categories sold a given way (see Category.kind), in menu order. */
-export function getCategoriesByKind(kind: CategoryKind): Category[] {
-  return CATEGORIES.filter((c) => c.kind === kind);
-}
-
-export function getCategory(id: number): Category | undefined {
-  return CATEGORIES.find((c) => c.id === id);
-}
-
-export function getCategoryBySlug(slug: string): Category | undefined {
-  return CATEGORIES.find((c) => c.slug === slug);
-}
-
-export function getItemById(id: number): CatalogItem | undefined {
-  return CATALOG.find((item) => item.id === id);
-}
-
-export function getItemBySlug(slug: string): CatalogItem | undefined {
-  return CATALOG.find((item) => item.slug === slug);
+export function categoriesByKind(catalog: Catalog, kind: CategoryKind): Category[] {
+  return catalog.categories.filter((c) => c.kind === kind);
 }
 
 /** Every other item in the same category — for the "OTHER FLAVOURS IN
- * [category]" strip on an item's detail page, since flavour is no
- * longer a picker on that same page (Sep 2026 recategorisation). */
-export function getSiblingItems(item: CatalogItem): CatalogItem[] {
-  return CATALOG.filter((c) => c.categoryId === item.categoryId && c.id !== item.id);
+ * [category]" strip on an item's detail page. */
+export function siblingItems(catalog: Catalog, item: CatalogItem): CatalogItem[] {
+  return catalog.items.filter((c) => c.categoryId === item.categoryId && c.id !== item.id);
 }
 
-export function getOccasions(): Occasion[] {
-  return OCCASIONS;
+export function findOccasion(catalog: Catalog, id: number): Occasion | undefined {
+  return catalog.occasions.find((o) => o.id === id);
 }
 
-export function getOccasion(id: number): Occasion | undefined {
-  return OCCASIONS.find((o) => o.id === id);
+export function findOccasionBySlug(catalog: Catalog, slug: string): Occasion | undefined {
+  return catalog.occasions.find((o) => o.slug === slug);
 }
 
-export function getOccasionBySlug(slug: string): Occasion | undefined {
-  return OCCASIONS.find((o) => o.slug === slug);
+export function findFlavourTag(catalog: Catalog, id: number): FlavourTag | undefined {
+  return catalog.flavourTags.find((t) => t.id === id);
 }
 
-export function getFlavourTags(): FlavourTag[] {
-  return FLAVOUR_TAGS;
-}
-
-export function getFlavourTag(id: number): FlavourTag | undefined {
-  return FLAVOUR_TAGS.find((t) => t.id === id);
-}
-
-export function getFlavourTagBySlug(slug: string): FlavourTag | undefined {
-  return FLAVOUR_TAGS.find((t) => t.slug === slug);
+export function findFlavourTagBySlug(catalog: Catalog, slug: string): FlavourTag | undefined {
+  return catalog.flavourTags.find((t) => t.slug === slug);
 }
 
 /** Home's "Most ordered" items, in display order. */
-export function getMostOrdered(): CatalogItem[] {
-  return CATALOG.filter((item) => item.mostOrderedRank !== undefined).sort(
-    (a, b) => (a.mostOrderedRank ?? 0) - (b.mostOrderedRank ?? 0),
-  );
+export function mostOrderedItems(catalog: Catalog): CatalogItem[] {
+  return catalog.items
+    .filter((item) => item.mostOrderedRank !== undefined)
+    .sort((a, b) => (a.mostOrderedRank ?? 0) - (b.mostOrderedRank ?? 0));
 }
 
 /** The first photo among a category's items — a tile image for that
- * category without keeping a second photo field in sync. */
-export function getCategoryImage(categoryId: number): string | undefined {
-  return CATALOG.find((item) => item.categoryId === categoryId && item.imageUrl)?.imageUrl;
+ * category. */
+export function categoryImage(catalog: Catalog, categoryId: number): string | undefined {
+  return catalog.items.find((item) => item.categoryId === categoryId && item.imageUrl)?.imageUrl;
 }
 
-/** Same idea for a flavour tag: the first tagged item that has a photo. */
-export function getFlavourTagImage(tagId: number): string | undefined {
-  return CATALOG.find((item) => item.flavours?.includes(tagId) && item.imageUrl)?.imageUrl;
+/** The first photo among a flavour tag's items. */
+export function flavourTagImage(catalog: Catalog, tagId: number): string | undefined {
+  return catalog.items.find((item) => item.flavours?.includes(tagId) && item.imageUrl)?.imageUrl;
 }
 
 /** Anything carrying a lead time — an item, or just `{ leadTimeHours }`. */

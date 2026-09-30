@@ -1,16 +1,15 @@
+"use client";
+
 import Link from "next/link";
 import { CONFIG } from "@/lib/config";
 import { Photo } from "@/components/Photo";
+import { useCatalog } from "@/context/CatalogContext";
 import {
+  categoryImage,
   categoryShortLabel,
-  getCatalog,
-  getCategories,
-  getCategory,
-  getFlavourTagImage,
-  getFlavourTags,
-  getCategoryImage,
-  getMostOrdered,
-  getOccasions,
+  findCategory,
+  flavourTagImage,
+  mostOrderedItems,
   readyBadge,
 } from "@/lib/catalog";
 import { cheapestPrice, formatAed } from "@/lib/pricing";
@@ -18,7 +17,7 @@ import { categoryRoute, flavourRoute, itemRoute, occasionRoute } from "@/lib/rou
 import { getCustomCategoriesRoute } from "@/lib/menuGroups";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import { EXTERNAL_LINK_PROPS } from "@/lib/externalLink";
-import { HOME_BANNERS } from "@/data/banners";
+import type { Banner } from "@/types/banner";
 import { HeroBanners } from "./HeroBanners";
 import { MostOrdered, type MostOrderedCard } from "./MostOrdered";
 import { RailSection } from "./RailSection";
@@ -26,19 +25,20 @@ import styles from "./HomeSections.module.css";
 
 // The "photo" style runs edge to edge on desktop and has no side cards
 // (see docs CLB Desktop Home v2, screens 6a/6b/7a/7b); "boxed" is unchanged.
-export function HomeHero() {
+export function HomeHero({ banners }: { banners: Banner[] }) {
+  const catalog = useCatalog();
   if (CONFIG.heroStyle === "photo") {
     return (
       <div className={styles.heroFull}>
-        <HeroBanners banners={HOME_BANNERS} variant="photo" />
+        <HeroBanners banners={banners} variant="photo" />
       </div>
     );
   }
   return (
     <div className={styles.hero}>
-      <HeroBanners banners={HOME_BANNERS} />
+      <HeroBanners banners={banners} />
       <div className={styles.sideCards}>
-        <Link href={getCustomCategoriesRoute()} className={`${styles.sideCard} ${styles.sideCardWhite}`}>
+        <Link href={getCustomCategoriesRoute(catalog)} className={`${styles.sideCard} ${styles.sideCardWhite}`}>
           <span className={`${styles.sideBadge} mono-tag`}>24 HOURS</span>
           <div className={styles.sideTitle}>Photo &amp; Custom cakes</div>
           <div className={styles.sideText}>
@@ -84,8 +84,9 @@ export function TrustStrip() {
 }
 
 export function CategoryTiles() {
-  const categories = getCategories();
-  const minPrice = cheapestPrice(getCatalog());
+  const catalog = useCatalog();
+  const { categories } = catalog;
+  const minPrice = cheapestPrice(catalog.items);
   return (
     <RailSection
       title="Shop by category"
@@ -93,7 +94,7 @@ export function CategoryTiles() {
       mobileMeta={`${categories.length} · swipe →`}
     >
       {categories.map((category) => {
-        const image = getCategoryImage(category.id);
+        const image = categoryImage(catalog, category.id);
         // A custom category with no photo of its own (Custom Cakes) gets the
         // outlined "24 HRS" tile instead of an empty placeholder.
         const custom = category.kind === "custom" && !image;
@@ -112,6 +113,7 @@ export function CategoryTiles() {
 }
 
 export function OccasionTiles() {
+  const { occasions } = useCatalog();
   return (
     <RailSection
       title="Shop by occasion"
@@ -119,7 +121,7 @@ export function OccasionTiles() {
       mobileMeta="Swipe →"
       arrows={false}
     >
-      {getOccasions().map((occasion) => (
+      {occasions.map((occasion) => (
         <Link key={occasion.id} href={occasionRoute(occasion.slug)} className={styles.occasion}>
           <div className={styles.occasionPhoto}>
             <Photo src={occasion.imageUrl} />
@@ -132,34 +134,36 @@ export function OccasionTiles() {
 }
 
 export function MostOrderedSection() {
-  const items = getMostOrdered();
+  const catalog = useCatalog();
+  const items = mostOrderedItems(catalog);
   const cards: MostOrderedCard[] = items.map((item) => {
     const price = cheapestPrice([item]);
     return {
       id: item.id,
       name: item.name,
       categoryId: item.categoryId,
-      categoryLabel: getCategory(item.categoryId)?.label ?? "",
+      categoryLabel: findCategory(catalog, item.categoryId)?.label ?? "",
       imageUrl: item.imageUrl,
       href: itemRoute(item.slug),
       leadBadge: readyBadge(item),
       price: price === undefined ? "Ask us" : formatAed(price),
     };
   });
-  const tabs = getCategories()
+  const tabs = catalog.categories
     .filter((category) => cards.some((card) => card.categoryId === category.id))
     .map((category) => ({ id: category.id, label: categoryShortLabel(category) }));
   return <MostOrdered cards={cards} tabs={tabs} />;
 }
 
 export function FlavourTiles() {
-  const tags = getFlavourTags();
+  const catalog = useCatalog();
+  const tags = catalog.flavourTags;
   return (
     <RailSection title="Browse by flavour" meta={`${tags.length} flavours`} mobileMeta={`${tags.length} · swipe →`}>
       {tags.map((tag) => (
         <Link key={tag.id} href={flavourRoute(tag.slug)} className={styles.tile}>
           <div className={styles.tileImage}>
-            <Photo src={getFlavourTagImage(tag.id)} />
+            <Photo src={flavourTagImage(catalog, tag.id)} />
           </div>
           <div className={styles.tileLabel}>{tag.label}</div>
         </Link>

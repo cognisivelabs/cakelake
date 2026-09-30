@@ -1,18 +1,18 @@
 import { describe, expect, it } from "vitest";
-import { getCategories } from "@/lib/catalog";
+import { findCategoryBySlug } from "@/lib/catalog";
 import { getCustomCategoriesRoute, getMenuGroups } from "@/lib/menuGroups";
 import { categoryPriceLabel } from "@/lib/pricing";
-import { getCatalog, getCategoryBySlug } from "@/lib/catalog";
+import { testCatalog } from "@/test/fixtures";
 
 describe("getMenuGroups", () => {
   it("lists every category exactly once", () => {
-    const listed = getMenuGroups().flatMap((g) => g.entries.map((e) => e.category.slug));
-    expect([...listed].sort()).toEqual(getCategories().map((c) => c.slug).sort());
+    const listed = getMenuGroups(testCatalog).flatMap((g) => g.entries.map((e) => e.category.slug));
+    expect([...listed].sort()).toEqual(testCatalog.categories.map((c) => c.slug).sort());
   });
 
   it("puts same-day ranges in the 1-hour group and the rest on 24 hours", () => {
     const groups = Object.fromEntries(
-      getMenuGroups().map((g) => [g.id, g.entries.map((e) => e.category.slug)]),
+      getMenuGroups(testCatalog).map((g) => [g.id, g.entries.map((e) => e.category.slug)]),
     );
     expect(groups["ready-1h"]).toEqual([
       "classic-cakes",
@@ -31,7 +31,7 @@ describe("getMenuGroups", () => {
   });
 
   it("labels the lead-time groups from the catalog's hours", () => {
-    const labels = Object.fromEntries(getMenuGroups().map((g) => [g.id, g.label]));
+    const labels = Object.fromEntries(getMenuGroups(testCatalog).map((g) => [g.id, g.label]));
     expect(labels["ready-1h"]).toBe("CAKES · READY IN 1 HOUR");
     expect(labels["notice-24h"]).toBe("CAKES ON 24 HOURS");
   });
@@ -39,12 +39,12 @@ describe("getMenuGroups", () => {
 
 describe("getCustomCategoriesRoute", () => {
   it("points the Photo & Custom links at Photo Cakes and Custom Cakes together", () => {
-    expect(getCustomCategoriesRoute()).toBe("/menu?category=photo-cakes,custom-cakes");
+    expect(getCustomCategoriesRoute(testCatalog)).toBe("/menu?category=photo-cakes,custom-cakes");
   });
 });
 
 describe("categoryPriceLabel", () => {
-  const items = (slug: string) => getCatalog().filter((i) => i.categoryId === getCategoryBySlug(slug)?.id);
+  const items = (slug: string) => testCatalog.items.filter((i) => i.categoryId === findCategoryBySlug(testCatalog, slug)?.id);
   it("says 'from N' for ranges sold by the cake", () => {
     expect(categoryPriceLabel(items("classic-cakes"))).toBe("from 55");
     expect(categoryPriceLabel(items("cheesecakes"))).toBe("from 95");

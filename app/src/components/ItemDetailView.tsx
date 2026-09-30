@@ -6,7 +6,8 @@ import type { CatalogItem } from "@/types/catalog";
 import { useCart } from "@/context/CartContext";
 import { formatAed, orderTotal, lineTotal } from "@/lib/pricing";
 import { resolveSelection, orderItemCount, resolveOrderLines, describeLine, isSameLine } from "@/lib/order";
-import { getCategory, getCatalog, getSiblingItems, readyLabel } from "@/lib/catalog";
+import { useCatalog } from "@/context/CatalogContext";
+import { findCategory, readyLabel, siblingItems } from "@/lib/catalog";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import { AddedToOrderPanel, type AddedSnapshot } from "@/components/AddedToOrderPanel";
 import { CategoryTag, MostOrderedTag, ReadyTag } from "@/components/ItemTags";
@@ -18,8 +19,9 @@ import { Footer } from "@/components/Footer";
 import styles from "./ItemDetailView.module.css";
 
 export function ItemDetailView({ item }: { item: CatalogItem }) {
+  const catalog = useCatalog();
   const { order, addLine } = useCart();
-  const category = getCategory(item.categoryId);
+  const category = findCategory(catalog, item.categoryId);
   const categoryLabel = category?.label ?? "Menu";
   // Back goes to where this item's category sits in the menu, not the
   // top of the whole long scroll.
@@ -33,7 +35,7 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
   // Flavour is no longer a picker on this page (Sep 2026
   // recategorisation) — every other item in the same category is
   // cross-linked instead, at the foot of the page.
-  const siblingItems = getSiblingItems(item);
+  const siblings = siblingItems(catalog, item);
 
   const [weightTierId, setWeightTierId] = useState<number | null>(item.weightTiers[0]?.id ?? null);
   const [quantity, setQuantity] = useState(1);
@@ -54,9 +56,8 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
     if (weightTierId === null) return;
     // The cart's other lines, before this add: every line except one this
     // add merges into.
-    const catalog = getCatalog();
     const newLine = { itemId: item.id, weightTierId, cakeMessage: cakeMessage.trim() || undefined };
-    const otherLines = resolveOrderLines(order, catalog)
+    const otherLines = resolveOrderLines(order, catalog.items)
       .filter(({ line }) => !isSameLine(line, newLine))
       .map(({ item: lineItem, line }) => ({
         label: describeLine(lineItem, line),
@@ -70,7 +71,7 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
       quantity,
       lineTotal: total,
       itemCount: orderItemCount(order) + quantity,
-      orderTotalAmount: orderTotal(order, catalog) + (total ?? 0),
+      orderTotalAmount: orderTotal(order, catalog.items) + (total ?? 0),
       otherLines,
     });
   }
@@ -216,11 +217,11 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
               </div>
             </div>
 
-            {siblingItems.length > 0 && (
+            {siblings.length > 0 && (
               <div className={styles.otherFlavoursSection}>
                 <div className={styles.sectionLabel}>OTHER FLAVOURS IN {categoryLabel.toUpperCase()}</div>
                 <div className={styles.otherFlavoursStrip}>
-                  {siblingItems.map((sibling) => (
+                  {siblings.map((sibling) => (
                     <Link
                       key={sibling.id}
                       href={itemRoute(sibling.slug)}

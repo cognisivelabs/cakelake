@@ -1,7 +1,9 @@
+"use client";
+
 import Link from "next/link";
 import { CONFIG } from "@/lib/config";
 import { groupOpeningHours } from "@/lib/hours";
-import { getCategories, getOccasions } from "@/lib/catalog";
+import { useCatalog } from "@/context/CatalogContext";
 import { categoryRoute, occasionRoute } from "@/lib/routes";
 import styles from "./Footer.module.css";
 
@@ -10,10 +12,9 @@ const COUNTER_ONLY = ["Cupcakes & minis", "Cookies & bites", "Pastries & dessert
 // Rendered as the last element on every page.
 export function Footer() {
   const groupedHours = groupOpeningHours(CONFIG.openingHoursByDay);
-  const categories = getCategories();
+  const { categories, occasions } = useCatalog();
   const everyday = categories.filter((c) => c.kind === "everyday");
   const madeToOrder = categories.filter((c) => c.kind !== "everyday");
-  const occasions = getOccasions();
 
   const categoryLinks = (list: typeof categories) =>
     list.map((c) => (

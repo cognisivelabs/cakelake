@@ -2,6 +2,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { act, createElement } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { CartProvider, useCart, type NewLineInput } from "@/context/CartContext";
+import { CatalogProvider } from "@/context/CatalogContext";
+import { testCatalog } from "@/test/fixtures";
 import { STORAGE_KEYS } from "@/lib/storageKeys";
 import { CONFIG } from "@/lib/config";
 import type { Order } from "@/types/order";
@@ -28,7 +30,9 @@ function mount() {
   document.body.appendChild(container);
   act(() => {
     root = createRoot(container);
-    root.render(createElement(CartProvider, null, createElement(Probe)));
+    root.render(
+      createElement(CatalogProvider, { catalog: testCatalog }, createElement(CartProvider, null, createElement(Probe))),
+    );
   });
 }
 
@@ -231,6 +235,7 @@ describe("CartContext — localStorage hydration on load", () => {
 
   async function mountFresh() {
     const mod = await import("@/context/CartContext");
+    const catalogMod = await import("@/context/CatalogContext");
     container = document.createElement("div");
     document.body.appendChild(container);
     function FreshProbe() {
@@ -239,7 +244,13 @@ describe("CartContext — localStorage hydration on load", () => {
     }
     act(() => {
       root = createRoot(container);
-      root.render(createElement(mod.CartProvider, null, createElement(FreshProbe)));
+      root.render(
+        createElement(
+          catalogMod.CatalogProvider,
+          { catalog: testCatalog },
+          createElement(mod.CartProvider, null, createElement(FreshProbe)),
+        ),
+      );
     });
   }
 

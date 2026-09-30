@@ -1,7 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import Script from "next/script";
+import { fetchCatalog } from "@/api/catalog";
 import { CartProvider } from "@/context/CartContext";
+import { CatalogProvider } from "@/context/CatalogContext";
 import { ServiceWorkerRegister } from "@/components/ServiceWorkerRegister";
 import { CONFIG } from "@/lib/config";
 import { getActiveTheme, getActiveThemeCss, getThemeColor } from "@/theme";
@@ -42,7 +44,8 @@ export const viewport: Viewport = {
   themeColor: getThemeColor(),
 };
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default async function RootLayout({ children }: { children: ReactNode }) {
+  const catalog = await fetchCatalog();
   return (
     <html lang="en" data-theme={getActiveTheme().id}>
       <head>
@@ -69,9 +72,11 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         {/* No shared header — the Hi-Fi uses a different header per
             screen (Home: hamburger/wordmark/WhatsApp; sub-pages: a
             back link + page title), so each page renders its own. */}
-        <CartProvider>
-          <main>{children}</main>
-        </CartProvider>
+        <CatalogProvider catalog={catalog}>
+          <CartProvider>
+            <main>{children}</main>
+          </CartProvider>
+        </CatalogProvider>
         <ServiceWorkerRegister />
       </body>
     </html>

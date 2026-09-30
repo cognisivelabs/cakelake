@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useCart } from "@/context/CartContext";
-import { getCatalog } from "@/lib/catalog";
+import { useCatalog } from "@/context/CatalogContext";
 import { estimatedReadyTime } from "@/lib/dates";
 import { buildAckSummary, type AckSummary } from "@/lib/orderSummary";
 import { buildOrderMessage, buildWhatsAppUrl, openWhatsAppUrl } from "@/lib/whatsapp";
@@ -22,7 +22,7 @@ export type CartScreen =
  */
 export function useCheckout() {
   const { order, startHandoff, declineHandoff, clearCart } = useCart();
-  const catalog = getCatalog();
+  const { items } = useCatalog();
 
   // Not plain local state: an installed PWA can navigate its one window
   // away to wa.me instead of opening a separate tab, wiping in-memory
@@ -36,10 +36,10 @@ export function useCheckout() {
 
   const [sentMessage, setSentMessage] = useState("");
   const [chatUrl, setChatUrl] = useState("");
-  const message = sentMessage || buildOrderMessage(order, catalog);
+  const message = sentMessage || buildOrderMessage(order, items);
 
   function goToHandoff() {
-    setSentMessage(buildOrderMessage(order, catalog));
+    setSentMessage(buildOrderMessage(order, items));
     setChosenScreen({ kind: "handoff" });
   }
 
@@ -66,7 +66,7 @@ export function useCheckout() {
     // "confirming" after a reload, openWhatsApp() (which normally sets
     // this) never ran this session.
     setChatUrl((current) => current || buildWhatsAppUrl(message));
-    const summary = buildAckSummary(order, catalog, estimatedReadyTime(), new Date());
+    const summary = buildAckSummary(order, items, estimatedReadyTime(), new Date());
     clearCart();
     setChosenScreen({ kind: "acknowledged", summary });
   }

@@ -1,5 +1,5 @@
-import type { Category } from "@/types/catalog";
-import { getCatalog, getCategories, getCategoriesByKind, readyBadge } from "@/lib/catalog";
+import type { Catalog, Category } from "@/types/catalog";
+import { categoriesByKind, readyBadge } from "@/lib/catalog";
 import { categoriesRoute, ROUTES } from "@/lib/routes";
 import { categoryPriceLabel } from "@/lib/pricing";
 
@@ -12,14 +12,12 @@ export type MenuGroup = { id: string; label: string; entries: MenuGroupEntry[] }
  * the catalog's own lead times, so a category whose notice changes moves
  * group without editing any menu.
  */
-export function getMenuGroups(): MenuGroup[] {
-  const catalog = getCatalog();
-  const itemsIn = (category: Category) => catalog.filter((item) => item.categoryId === category.id);
+export function getMenuGroups(catalog: Catalog): MenuGroup[] {
+  const itemsIn = (category: Category) => catalog.items.filter((item) => item.categoryId === category.id);
   const entry = (category: Category): MenuGroupEntry => ({ category, priceLabel: categoryPriceLabel(itemsIn(category)) });
   const isSameDay = (category: Category) => itemsIn(category).every((item) => item.leadTimeHours === 0);
 
-  const categories = getCategories();
-  const standard = categories.filter((c) => c.kind !== "custom");
+  const standard = catalog.categories.filter((c) => c.kind !== "custom");
   const sameDay = standard.filter(isSameDay);
   const notice = standard.filter((c) => !isSameDay(c));
   const noticeHours = Math.max(0, ...notice.flatMap(itemsIn).map((item) => item.leadTimeHours));
@@ -33,14 +31,14 @@ export function getMenuGroups(): MenuGroup[] {
     {
       id: "custom",
       label: "PHOTO & CUSTOM",
-      entries: getCategoriesByKind("custom").map(entry),
+      entries: categoriesByKind(catalog, "custom").map(entry),
     },
   ].filter((group) => group.entries.length > 0);
 }
 
 /** Where the "Photo & Custom" links go: every custom category (Photo Cakes and
  * Custom Cakes) ticked together, or the whole menu if a build has none. */
-export function getCustomCategoriesRoute(): string {
-  const slugs = getCategoriesByKind("custom").map((c) => c.slug);
+export function getCustomCategoriesRoute(catalog: Catalog): string {
+  const slugs = categoriesByKind(catalog, "custom").map((c) => c.slug);
   return slugs.length > 0 ? categoriesRoute(slugs) : ROUTES.menu;
 }

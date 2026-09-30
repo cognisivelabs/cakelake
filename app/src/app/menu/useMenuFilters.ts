@@ -1,14 +1,16 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { searchItems } from "@/api/catalog";
+import { useCatalog } from "@/context/CatalogContext";
 import {
-  getCategory,
-  getCategoryBySlug,
-  getFlavourTag,
-  getFlavourTagBySlug,
-  getOccasion,
-  getOccasionBySlug,
+  findCategory,
+  findCategoryBySlug,
+  findFlavourTag,
+  findFlavourTagBySlug,
+  findOccasion,
+  findOccasionBySlug,
 } from "@/lib/catalog";
 import { ROUTES } from "@/lib/routes";
 import {
@@ -53,6 +55,8 @@ const URL_DEBOUNCE_MS = 250;
  * jump to a section.
  */
 export function useMenuFilters() {
+  const catalog = useCatalog();
+  const bounds = getPriceBounds(catalog.items);
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [selection, setSelection] = useState<Selection>(NO_SELECTION);
@@ -65,12 +69,24 @@ export function useMenuFilters() {
     [],
   );
 
-  const values: MenuFilters = {
-    query,
-    priceRange: selection.priceRange,
-    flavourId: selection.flavourId,
-    occasionId: selection.occasionId,
-  };
+  const { priceRange, flavourId, occasionId } = selection;
+  const values: MenuFilters = useMemo(
+    () => ({ query, priceRange, flavourId, occasionId }),
+    [query, priceRange, flavourId, occasionId],
+  );
+
+  // The items matching `values`, from the internal API; every item until
+  // the first answer arrives.
+  const [results, setResults] = useState(catalog.items);
+  useEffect(() => {
+    let current = true;
+    searchItems(values).then((items) => {
+      if (current) setResults(items);
+    });
+    return () => {
+      current = false;
+    };
+  }, [values]);
   // Desktop also narrows to the ticked categories, so its filter counts
   // are for the cakes inside them ("Under AED 100" can't say 33 when only
   // Classic is ticked). Mobile lists every category and uses `values`.
@@ -82,20 +98,20 @@ export function useMenuFilters() {
     // link, a filter change) shouldn't wipe the shopper's own search.
     if (params.q) setQuery(params.q);
     setSelection((current) => ({
-      categoryIds: params.category.split(",").flatMap((slug) => getCategoryBySlug(slug)?.id ?? []),
+      categoryIds: params.category.split(",").flatMap((slug) => findCategoryBySlug(catalog, slug)?.id ?? []),
       // The slider is mid-drag while a URL update is pending, and this
       // echo would be stale — keep what's on screen.
-      priceRange: urlTimer.current ? current.priceRange : parsePriceRange(params.price),
-      flavourId: getFlavourTagBySlug(params.flavour)?.id ?? null,
-      occasionId: getOccasionBySlug(params.occasion)?.id ?? null,
+      priceRange: urlTimer.current ? current.priceRange : parsePriceRange(params.price, bounds),
+      flavourId: findFlavourTagBySlug(catalog, params.flavour)?.id ?? null,
+      occasionId: findOccasionBySlug(catalog, params.occasion)?.id ?? null,
     }));
   }
 
   function syncUrl(next: Selection) {
     const params = new URLSearchParams();
-    const categorySlugs = next.categoryIds.flatMap((id) => getCategory(id)?.slug ?? []);
-    const flavourSlug = next.flavourId !== null ? getFlavourTag(next.flavourId)?.slug : undefined;
-    const occasionSlug = next.occasionId !== null ? getOccasion(next.occasionId)?.slug : undefined;
+    const categorySlugs = next.categoryIds.flatMap((id) => findCategory(catalog, id)?.slug ?? []);
+    const flavourSlug = next.flavourId !== null ? findFlavourTag(catalog, next.flavourId)?.slug : undefined;
+    const occasionSlug = next.occasionId !== null ? findOccasion(catalog, next.occasionId)?.slug : undefined;
     if (categorySlugs.length > 0) params.set("category", categorySlugs.join(","));
     if (next.priceRange) params.set("price", formatPriceRange(next.priceRange));
     if (flavourSlug) params.set("flavour", flavourSlug);
@@ -115,7 +131,7 @@ export function useMenuFilters() {
 
   /** The slider moved (or was reset to full width, which clears it). */
   function setPriceRange(range: PriceRange) {
-    const next = { ...selection, priceRange: normalizePriceRange(range, getPriceBounds()) };
+    const next = { ...selection, priceRange: normalizePriceRange(range, bounds) };
     setSelection(next);
     if (urlTimer.current) clearTimeout(urlTimer.current);
     urlTimer.current = setTimeout(() => {
@@ -146,16 +162,17 @@ export function useMenuFilters() {
 
   return {
     values,
+    results,
     categoryIds: selection.categoryIds,
     setQuery,
     setPriceRange,
     clear,
     toggle,
     applyParams,
-    groups: getFilterGroups(values),
-    desktopGroups: getFilterGroups(desktopValues),
-    categoryGroup: getCategoryFilterGroup(selection.categoryIds, values),
-    chips: getActiveFilterChips(values),
+    groups: getFilterGroups(catalog, values),
+    desktopGroups: getFilterGroups(catalog, desktopValues),
+    categoryGroup: getCategoryFilterGroup(catalog, selection.categoryIds, values),
+    chips: getActiveFilterChips(catalog, values),
     anyFilterActive: Boolean(selection.priceRange) || selection.flavourId !== null || selection.occasionId !== null,
   };
 }

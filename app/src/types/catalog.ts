@@ -86,3 +86,11 @@ export type CatalogItem = {
   /** True when the item must be delivered; Pickup isn't offered for it. */
   requiresDelivery: boolean;
 };
+
+/** The whole catalogue, as loaded from the internal API (src/api). */
+export type Catalog = {
+  categories: Category[];
+  items: CatalogItem[];
+  occasions: Occasion[];
+  flavourTags: FlavourTag[];
+};

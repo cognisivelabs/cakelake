@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useInstallPrompt } from "@/hooks/useInstallPrompt";
-import { getFlavourTags, getOccasions } from "@/lib/catalog";
+import { useCatalog } from "@/context/CatalogContext";
 import { getMenuGroups } from "@/lib/menuGroups";
 import { ROUTES, categoryRoute, flavourRoute, occasionRoute } from "@/lib/routes";
 import { INSTALL_STEPS } from "@/components/installSteps";
@@ -13,6 +13,7 @@ import styles from "./MobileMenuSheet.module.css";
 // Mobile's mega-menu: a full-screen sheet grouped by lead time — the
 // same groups as the desktop Cakes menu, plus occasions and Find us.
 export function MobileMenuSheet({ onClose }: { onClose: () => void }) {
+  const catalog = useCatalog();
   const { platform, triggerInstall } = useInstallPrompt();
   const [showInstallSteps, setShowInstallSteps] = useState(false);
 
@@ -52,7 +53,7 @@ export function MobileMenuSheet({ onClose }: { onClose: () => void }) {
           <HeaderSearch variant="mobile" onSubmitted={onClose} />
         </div>
 
-        {getMenuGroups().map((group) => (
+        {getMenuGroups(catalog).map((group) => (
           <div key={group.id} className={styles.group}>
             <div className={styles.label}>{group.label}</div>
             <div className={styles.card}>
@@ -78,7 +79,7 @@ export function MobileMenuSheet({ onClose }: { onClose: () => void }) {
         <div className={styles.group}>
           <div className={styles.label}>OCCASIONS</div>
           <div className={styles.card}>
-            {getOccasions().map((occasion) => (
+            {catalog.occasions.map((occasion) => (
               <Link key={occasion.id} href={occasionRoute(occasion.slug)} className={styles.row} onClick={onClose}>
                 <span className={styles.dot} style={{ background: "var(--color-pink)" }} />
                 <span className={styles.rowName}>{occasion.label}</span>
@@ -93,7 +94,7 @@ export function MobileMenuSheet({ onClose }: { onClose: () => void }) {
         <div className={styles.group}>
           <div className={styles.label}>BY FLAVOUR</div>
           <div className={styles.pills}>
-            {getFlavourTags().map((tag) => (
+            {catalog.flavourTags.map((tag) => (
               <Link key={tag.id} href={flavourRoute(tag.slug)} className={styles.pill} onClick={onClose}>
                 {tag.label}
               </Link>

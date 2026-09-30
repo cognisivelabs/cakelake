@@ -3,13 +3,14 @@
 import {
   createContext,
   useContext,
+  useEffect,
   useSyncExternalStore,
   type ReactNode,
 } from "react";
 import type { CartLine, Fulfillment, Order, WhenNeeded } from "@/types/order";
 import { STORAGE_KEYS } from "@/lib/storageKeys";
 import { safeGetItem, safeSetItem } from "@/lib/safeStorage";
-import { getCatalog } from "@/lib/catalog";
+import { useCatalog } from "@/context/CatalogContext";
 import { dropDiscontinuedLines, isSameLine } from "@/lib/order";
 import { isOrderExpired, pendingHandoffExpiresAt, declinedHandoffExpiresAt } from "@/lib/cartExpiry";
 
@@ -84,9 +85,7 @@ if (typeof window !== "undefined") {
         currentOrder = EMPTY_ORDER;
         persist(EMPTY_ORDER);
       } else {
-        const reconciled = dropDiscontinuedLines(merged, getCatalog());
-        currentOrder = reconciled;
-        if (reconciled.lines.length !== merged.lines.length) persist(reconciled);
+        currentOrder = merged;
       }
     }
   } catch {
@@ -124,16 +123,27 @@ type CartContextValue = {
 const CartContext = createContext<CartContextValue | null>(null);
 
 export function CartProvider({ children }: { children: ReactNode }) {
-  const order = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+  const { items } = useCatalog();
+  const storedOrder = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+  // The cart without lines whose item is no longer in the catalogue.
+  const order = dropDiscontinuedLines(storedOrder, items);
+
+  useEffect(() => {
+    if (order !== storedOrder) commit(order);
+  }, [order, storedOrder]);
+
+  /** The current cart, without discontinued lines. */
+  const current = () => dropDiscontinuedLines(currentOrder, items);
 
   const value: CartContextValue = {
     order,
     addLine: (input) => {
-      const match = currentOrder.lines.find((l) => isSameLine(l, input));
+      const cart = current();
+      const match = cart.lines.find((l) => isSameLine(l, input));
       if (match) {
         commitActive({
-          ...currentOrder,
-          lines: currentOrder.lines.map((l) =>
+          ...cart,
+          lines: cart.lines.map((l) =>
             l === match ? { ...l, quantity: l.quantity + input.quantity } : l,
           ),
         });
@@ -143,49 +153,52 @@ export function CartProvider({ children }: { children: ReactNode }) {
         id: `${input.itemId}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
         ...input,
       };
-      commitActive({ ...currentOrder, lines: [...currentOrder.lines, line] });
+      commitActive({ ...cart, lines: [...cart.lines, line] });
     },
     updateQuantity: (cartLineId, quantity) => {
+      const cart = current();
       commitActive({
-        ...currentOrder,
-        lines: currentOrder.lines
+        ...cart,
+        lines: cart.lines
           .map((l) => (l.id === cartLineId ? { ...l, quantity } : l))
           .filter((l) => l.quantity > 0),
       });
     },
     removeLine: (cartLineId) => {
+      const cart = current();
       commitActive({
-        ...currentOrder,
-        lines: currentOrder.lines.filter((l) => l.id !== cartLineId),
+        ...cart,
+        lines: cart.lines.filter((l) => l.id !== cartLineId),
       });
     },
     updateCakeMessage: (cartLineId, cakeMessage) => {
+      const cart = current();
       commitActive({
-        ...currentOrder,
-        lines: currentOrder.lines.map((l) =>
+        ...cart,
+        lines: cart.lines.map((l) =>
           l.id === cartLineId ? { ...l, cakeMessage } : l,
         ),
       });
     },
     setFulfillment: (fulfillment) => {
-      commitActive({ ...currentOrder, fulfillment });
+      commitActive({ ...current(), fulfillment });
     },
     setWhenNeeded: (whenNeeded) => {
-      commitActive({ ...currentOrder, whenNeeded });
+      commitActive({ ...current(), whenNeeded });
     },
     setCustomerName: (customerName) => {
-      commitActive({ ...currentOrder, customerName });
+      commitActive({ ...current(), customerName });
     },
     startHandoff: () => {
       commit({
-        ...currentOrder,
+        ...current(),
         pendingHandoff: true,
         expiresAt: pendingHandoffExpiresAt(Date.now()),
       });
     },
     declineHandoff: () => {
       commit({
-        ...currentOrder,
+        ...current(),
         pendingHandoff: false,
         expiresAt: declinedHandoffExpiresAt(Date.now()),
       });

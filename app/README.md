@@ -63,9 +63,9 @@ The catalogue in `src/data/` (`categories.ts`, `items.ts`,
 `taxonomy.ts`) is **not final** — the client will provide the actual
 items/prices/flavours (see the "Content checklist" in
 [requirements.md](../docs/requirements/requirements.md)). Every screen
-reads it through `src/lib/catalog.ts` (`getCatalog()`,
-`getCategories()`, …); swapping in real data is a data change, not a
-code change. `src/lib/config.ts` holds the real contact numbers and
+reads it through the internal API in `src/api/` (`fetchCatalog()`,
+`fetchItem()`, …); swapping in real data is a data change, and
+switching to a backend changes only `src/api/`. `src/lib/config.ts` holds the real contact numbers and
 address already confirmed by the client, and `CONFIG.theme` picks the
 colour theme (see [../docs/theming.md](../docs/theming.md)).
 
@@ -75,10 +75,11 @@ colour theme (see [../docs/theming.md](../docs/theming.md)).
 |---|---|
 | `src/app/` | Routes. Each page is a thin composition; the cart and menu split their screens into components and hooks (`useCheckout`, `useMenuFilters`, `useScrollSpy`). |
 | `src/components/` | Shared UI: header, footer, `Photo`, `Icons`, cards, and `home/` sections. |
-| `src/data/` | Content: categories, items, taxonomy (occasions, flavour tags, most ordered), hero banners, image framing. |
-| `src/lib/` | Pure logic — pricing, dates, search and filters, order summaries, WhatsApp messages — with unit tests beside it. |
+| `src/api/` | The internal API: async functions standing in for backend endpoints, and the only code that reads the catalogue and banner data (see [ADR-006](../docs/adr/ADR-006-internal-data-api.md)). |
+| `src/data/` | Content read by `src/api/`: categories, items, occasions and flavour tags, hero banners; plus image framing. |
+| `src/lib/` | Pure logic over data it is given — lookups, pricing, dates, search and filters, order summaries, WhatsApp messages — with unit tests beside it. |
 | `src/theme/` | The colour themes and the helpers that turn one into CSS variables. |
-| `src/context/`, `src/hooks/` | Cart state and the install-prompt hook. |
+| `src/context/`, `src/hooks/` | The loaded catalogue (`useCatalog`), cart state and the install-prompt hook. |
 
 Shared styles (`btn-accent`, `pill-link`, `fill-cover`, …) live in
 `src/app/globals.css` and are reused with `composes: … from global`.

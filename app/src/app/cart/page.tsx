@@ -1,7 +1,7 @@
 "use client";
 
 import { useCart } from "@/context/CartContext";
-import { getCatalog } from "@/lib/catalog";
+import { useCatalog } from "@/context/CatalogContext";
 import { resolveOrderLines } from "@/lib/order";
 import { AcknowledgedView } from "./AcknowledgedView";
 import { EmptyCartView } from "./EmptyCartView";
@@ -12,6 +12,7 @@ import { useCheckout } from "./useCheckout";
 // The cart, one screen at a time: review → send to WhatsApp → order sent.
 // The flow's state lives in useCheckout; each screen is its own view.
 export default function CartPage() {
+  const { items } = useCatalog();
   const { order } = useCart();
   const { screen, message, chatUrl, goToHandoff, openWhatsApp, backToReview, confirmSent } = useCheckout();
 
@@ -32,7 +33,7 @@ export default function CartPage() {
     );
   }
 
-  if (resolveOrderLines(order, getCatalog()).length === 0) return <EmptyCartView />;
+  if (resolveOrderLines(order, items).length === 0) return <EmptyCartView />;
 
   return <ReviewView onSend={goToHandoff} />;
 }

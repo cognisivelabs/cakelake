@@ -4,7 +4,7 @@ import { CartLineItem } from "@/components/CartLineItem";
 import { Footer } from "@/components/Footer";
 import { ResponsiveHeader } from "@/components/ResponsiveHeader";
 import { useCart } from "@/context/CartContext";
-import { getCatalog } from "@/lib/catalog";
+import { useCatalog } from "@/context/CatalogContext";
 import { CONFIG } from "@/lib/config";
 import { estimatedReadyTime } from "@/lib/dates";
 import { orderItemCount, resolveOrderLines } from "@/lib/order";
@@ -27,12 +27,12 @@ function UnpricedNote() {
 // their name, and the totals with the button that hands off to WhatsApp.
 export function ReviewView({ onSend }: { onSend: () => void }) {
   const { order, setFulfillment, setCustomerName } = useCart();
-  const catalog = getCatalog();
-  const resolvedLines = resolveOrderLines(order, catalog);
+  const { items } = useCatalog();
+  const resolvedLines = resolveOrderLines(order, items);
   const itemCount = orderItemCount(order);
   const pickupSummary = describeWhenNeeded(order.whenNeeded, estimatedReadyTime());
-  const total = formatAed(orderTotal(order, catalog));
-  const hasUnpriced = hasUnpricedLines(order, catalog);
+  const total = formatAed(orderTotal(order, items));
+  const hasUnpriced = hasUnpricedLines(order, items);
 
   return (
     <div className={styles.page}>

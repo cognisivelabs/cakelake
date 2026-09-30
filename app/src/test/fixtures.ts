@@ -4,7 +4,10 @@
 // change only needs updating here. Lives under src/test/ (not src/lib/)
 // since it's fixture data for tests, not production code — vitest.config
 // only treats *.test.ts as test files, so this needed its own signal.
-import type { CatalogItem } from "@/types/catalog";
+import type { Catalog, CatalogItem } from "@/types/catalog";
+import { CATEGORIES } from "@/data/categories";
+import { CATALOG } from "@/data/items";
+import { FLAVOUR_TAGS, OCCASIONS } from "@/data/taxonomy";
 import type { CartLine, Order } from "@/types/order";
 import { CONFIG } from "@/lib/config";
 
@@ -47,3 +50,11 @@ export function order(overrides: Partial<Order> = {}): Order {
     ...overrides,
   };
 }
+
+/** The real catalogue from src/data, as the internal API returns it. */
+export const testCatalog: Catalog = {
+  categories: CATEGORIES,
+  items: CATALOG,
+  occasions: OCCASIONS,
+  flavourTags: FLAVOUR_TAGS,
+};

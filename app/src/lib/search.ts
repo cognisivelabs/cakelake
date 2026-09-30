@@ -1,5 +1,5 @@
-import type { CatalogItem } from "@/types/catalog";
-import { getCatalog, getCategories, getCategory, getFlavourTag, getFlavourTags, getOccasion, getOccasions } from "@/lib/catalog";
+import type { Catalog, CatalogItem } from "@/types/catalog";
+import { findCategory, findFlavourTag, findOccasion } from "@/lib/catalog";
 import { cheapestPrice } from "@/lib/pricing";
 
 /**
@@ -8,13 +8,13 @@ import { cheapestPrice } from "@/lib/pricing";
  * whose own names are just "Oreo", "New York"…) and any flavour tag it
  * belongs to (so "indian sweets" finds every mithai cake).
  */
-export function itemMatchesQuery(item: CatalogItem, query: string): boolean {
+export function itemMatchesQuery(catalog: Catalog, item: CatalogItem, query: string): boolean {
   const q = query.trim().toLowerCase();
   if (!q) return true;
   const haystacks = [
     item.name,
-    getCategory(item.categoryId)?.label ?? "",
-    ...(item.flavours ?? []).map((id) => getFlavourTag(id)?.label ?? ""),
+    findCategory(catalog, item.categoryId)?.label ?? "",
+    ...(item.flavours ?? []).map((id) => findFlavourTag(catalog, id)?.label ?? ""),
   ];
   return haystacks.some((text) => text.toLowerCase().includes(q));
 }
@@ -28,8 +28,8 @@ export const PRICE_STEP = 5;
 
 /** The slider's ends: the cheapest and dearest starting prices, rounded
  * out to the step. */
-export function getPriceBounds(catalog: CatalogItem[] = getCatalog()): PriceRange {
-  const prices = catalog.flatMap((item) => cheapestPrice([item]) ?? []);
+export function getPriceBounds(items: CatalogItem[]): PriceRange {
+  const prices = items.flatMap((item) => cheapestPrice([item]) ?? []);
   return {
     min: Math.floor(Math.min(...prices) / PRICE_STEP) * PRICE_STEP,
     max: Math.ceil(Math.max(...prices) / PRICE_STEP) * PRICE_STEP,
@@ -38,7 +38,7 @@ export function getPriceBounds(catalog: CatalogItem[] = getCatalog()): PriceRang
 
 /** A chosen range kept inside the bounds and in order — or null when it
  * covers the whole slider, which means "no price filter". */
-export function normalizePriceRange(range: PriceRange, bounds: PriceRange = getPriceBounds()): PriceRange | null {
+export function normalizePriceRange(range: PriceRange, bounds: PriceRange): PriceRange | null {
   const clamp = (v: number) => Math.min(bounds.max, Math.max(bounds.min, v));
   const min = clamp(Math.min(range.min, range.max));
   const max = clamp(Math.max(range.min, range.max));
@@ -51,7 +51,7 @@ export function formatPriceRange(range: PriceRange): string {
 }
 
 /** Reads a URL range back; anything malformed means no filter. */
-export function parsePriceRange(text: string, bounds: PriceRange = getPriceBounds()): PriceRange | null {
+export function parsePriceRange(text: string, bounds: PriceRange): PriceRange | null {
   const match = /^(\d+)-(\d+)$/.exec(text);
   return match ? normalizePriceRange({ min: Number(match[1]), max: Number(match[2]) }, bounds) : null;
 }
@@ -75,8 +75,8 @@ export type MenuFilters = {
 
 /** Whether an item passes every active menu filter (search text plus
  * category, price range, flavour tag and occasion). */
-export function itemMatchesFilters(item: CatalogItem, filters: MenuFilters): boolean {
-  if (!itemMatchesQuery(item, filters.query)) return false;
+export function itemMatchesFilters(catalog: Catalog, item: CatalogItem, filters: MenuFilters): boolean {
+  if (!itemMatchesQuery(catalog, item, filters.query)) return false;
   if (filters.categoryIds?.length && !filters.categoryIds.includes(item.categoryId)) return false;
   if (filters.flavourId !== null && !item.flavours?.includes(filters.flavourId)) return false;
   if (filters.occasionId !== null && !item.occasions?.includes(filters.occasionId)) return false;
@@ -118,12 +118,12 @@ export type FilterGroup = CheckboxGroup | RangeGroup;
 export const CATEGORY_GROUP_KEY = "categoryIds";
 
 /** The Price / Flavour / Occasion groups for the filter panel. */
-export function getFilterGroups(filters: MenuFilters, catalog: CatalogItem[] = getCatalog()): FilterGroup[] {
+export function getFilterGroups(catalog: Catalog, filters: MenuFilters): FilterGroup[] {
   const countWith = (key: "flavourId" | "occasionId", id: number) =>
-    catalog.filter((item) => itemMatchesFilters(item, { ...filters, [key]: id })).length;
+    catalog.items.filter((item) => itemMatchesFilters(catalog, item, { ...filters, [key]: id })).length;
   const options = (key: "flavourId" | "occasionId", list: { id: number; label: string }[]) =>
     list.map(({ id, label }) => ({ id, label, count: countWith(key, id) }));
-  const bounds = getPriceBounds(catalog);
+  const bounds = getPriceBounds(catalog.items);
   return [
     {
       kind: "range",
@@ -131,28 +131,24 @@ export function getFilterGroups(filters: MenuFilters, catalog: CatalogItem[] = g
       label: "PRICE",
       bounds,
       value: filters.priceRange ?? bounds,
-      count: catalog.filter((item) => itemMatchesFilters(item, filters)).length,
+      count: catalog.items.filter((item) => itemMatchesFilters(catalog, item, filters)).length,
     },
-    { kind: "checkbox", key: "flavourId", label: "FLAVOUR", selected: filters.flavourId !== null ? [filters.flavourId] : [], options: options("flavourId", getFlavourTags()) },
-    { kind: "checkbox", key: "occasionId", label: "OCCASION", selected: filters.occasionId !== null ? [filters.occasionId] : [], options: options("occasionId", getOccasions()) },
+    { kind: "checkbox", key: "flavourId", label: "FLAVOUR", selected: filters.flavourId !== null ? [filters.flavourId] : [], options: options("flavourId", catalog.flavourTags) },
+    { kind: "checkbox", key: "occasionId", label: "OCCASION", selected: filters.occasionId !== null ? [filters.occasionId] : [], options: options("occasionId", catalog.occasions) },
   ];
 }
 
 /** The category checkboxes (desktop): each category with how many cakes it
  * has under the current search, price, flavour and occasion. Unlike the
  * single-choice filters, several can be ticked; none ticked means all. */
-export function getCategoryFilterGroup(
-  selectedIds: number[],
-  filters: MenuFilters,
-  catalog: CatalogItem[] = getCatalog(),
-): CheckboxGroup {
-  const matching = catalog.filter((item) => itemMatchesFilters(item, filters));
+export function getCategoryFilterGroup(catalog: Catalog, selectedIds: number[], filters: MenuFilters): CheckboxGroup {
+  const matching = catalog.items.filter((item) => itemMatchesFilters(catalog, item, filters));
   return {
     kind: "checkbox",
     key: CATEGORY_GROUP_KEY,
     label: "CATEGORY",
     selected: selectedIds,
-    options: getCategories().map(({ id, label }) => ({
+    options: catalog.categories.map(({ id, label }) => ({
       id,
       label,
       count: matching.filter((item) => item.categoryId === id).length,
@@ -161,16 +157,16 @@ export function getCategoryFilterGroup(
 }
 
 /** A removable "Price: AED 60 – 120" style chip for each active filter. */
-export function getActiveFilterChips(filters: MenuFilters): { key: FilterKey; label: string }[] {
+export function getActiveFilterChips(catalog: Catalog, filters: MenuFilters): { key: FilterKey; label: string }[] {
   const chips: { key: FilterKey; label: string }[] = [];
   if (filters.priceRange) {
     chips.push({ key: "priceRange", label: `Price: ${describePriceRange(filters.priceRange)}` });
   }
   if (filters.flavourId !== null) {
-    chips.push({ key: "flavourId", label: `Flavour: ${getFlavourTag(filters.flavourId)?.label ?? filters.flavourId}` });
+    chips.push({ key: "flavourId", label: `Flavour: ${findFlavourTag(catalog, filters.flavourId)?.label ?? filters.flavourId}` });
   }
   if (filters.occasionId !== null) {
-    chips.push({ key: "occasionId", label: `Occasion: ${getOccasion(filters.occasionId)?.label ?? filters.occasionId}` });
+    chips.push({ key: "occasionId", label: `Occasion: ${findOccasion(catalog, filters.occasionId)?.label ?? filters.occasionId}` });
   }
   return chips;
 }

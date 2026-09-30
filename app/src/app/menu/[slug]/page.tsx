@@ -1,20 +1,20 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getCatalog, getItemBySlug } from "@/lib/catalog";
+import { fetchItem, fetchItems } from "@/api/catalog";
 import { withBasePath } from "@/lib/assets";
 import { itemRoute } from "@/lib/routes";
 import { SITE_NAME, DEFAULT_OG_IMAGE } from "@/lib/og";
 import { ItemDetailView } from "@/components/ItemDetailView";
 
-export function generateStaticParams() {
-  return getCatalog().map((item) => ({ slug: item.slug }));
+export async function generateStaticParams() {
+  return (await fetchItems()).map((item) => ({ slug: item.slug }));
 }
 
 type ItemPageProps = { params: Promise<{ slug: string }> };
 
 export async function generateMetadata({ params }: ItemPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const item = getItemBySlug(slug);
+  const item = await fetchItem(slug);
   if (!item) return {};
 
   const photo = item.imageUrl;
@@ -37,7 +37,7 @@ export async function generateMetadata({ params }: ItemPageProps): Promise<Metad
 
 export default async function ItemDetailPage({ params }: ItemPageProps) {
   const { slug } = await params;
-  const item = getItemBySlug(slug);
+  const item = await fetchItem(slug);
   if (!item) notFound();
 
   return <ItemDetailView item={item} />;

@@ -140,7 +140,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         return;
       }
       const line: CartLine = {
-        cartLineId: `${input.itemId}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+        id: `${input.itemId}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
         ...input,
       };
       commitActive({ ...currentOrder, lines: [...currentOrder.lines, line] });
@@ -149,21 +149,21 @@ export function CartProvider({ children }: { children: ReactNode }) {
       commitActive({
         ...currentOrder,
         lines: currentOrder.lines
-          .map((l) => (l.cartLineId === cartLineId ? { ...l, quantity } : l))
+          .map((l) => (l.id === cartLineId ? { ...l, quantity } : l))
           .filter((l) => l.quantity > 0),
       });
     },
     removeLine: (cartLineId) => {
       commitActive({
         ...currentOrder,
-        lines: currentOrder.lines.filter((l) => l.cartLineId !== cartLineId),
+        lines: currentOrder.lines.filter((l) => l.id !== cartLineId),
       });
     },
     updateCakeMessage: (cartLineId, cakeMessage) => {
       commitActive({
         ...currentOrder,
         lines: currentOrder.lines.map((l) =>
-          l.cartLineId === cartLineId ? { ...l, cakeMessage } : l,
+          l.id === cartLineId ? { ...l, cakeMessage } : l,
         ),
       });
     },

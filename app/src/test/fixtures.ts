@@ -29,7 +29,7 @@ export const item: CatalogItem = {
 
 export function line(overrides: Partial<CartLine> = {}): CartLine {
   return {
-    cartLineId: "l1",
+    id: "l1",
     itemId: item.id,
     quantity: 1,
     weightTierId: 1,

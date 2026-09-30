@@ -2,8 +2,7 @@
 // 1× Butterscotch, ½ kg — AED 55
 // Happy Birthday
 export type CartLine = {
-  /** Unique per line; the same item can appear on several lines. */
-  cartLineId: string;
+  id: string;
   itemId: number;
   quantity: number;
   weightTierId: number;

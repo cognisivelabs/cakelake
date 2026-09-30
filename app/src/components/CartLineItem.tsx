@@ -25,7 +25,7 @@ export function CartLineItem({ item, line }: { item: CatalogItem; line: CartLine
             {item.name}
             {tier ? ` · ${tier.label}` : ""}
           </strong>
-          <button type="button" className={styles.remove} onClick={() => removeLine(line.cartLineId)}>
+          <button type="button" className={styles.remove} onClick={() => removeLine(line.id)}>
             Remove
           </button>
         </div>
@@ -37,7 +37,7 @@ export function CartLineItem({ item, line }: { item: CatalogItem; line: CartLine
           <div className={styles.quantityStepper}>
             <button
               type="button"
-              onClick={() => updateQuantity(line.cartLineId, line.quantity - 1)}
+              onClick={() => updateQuantity(line.id, line.quantity - 1)}
               aria-label="Decrease quantity"
             >
               −
@@ -45,7 +45,7 @@ export function CartLineItem({ item, line }: { item: CatalogItem; line: CartLine
             <span>{line.quantity}</span>
             <button
               type="button"
-              onClick={() => updateQuantity(line.cartLineId, line.quantity + 1)}
+              onClick={() => updateQuantity(line.id, line.quantity + 1)}
               aria-label="Increase quantity"
             >
               +

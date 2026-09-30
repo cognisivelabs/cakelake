@@ -38,7 +38,7 @@ describe("resolveOrderLines", () => {
     const resolved = resolveOrderLines(order({ lines: [line()] }), [item]);
     expect(resolved).toHaveLength(1);
     expect(resolved[0].item).toBe(item);
-    expect(resolved[0].line.cartLineId).toBe("l1");
+    expect(resolved[0].line.id).toBe("l1");
   });
 
   it("drops lines whose item no longer exists in the catalog", () => {
@@ -53,7 +53,7 @@ describe("orderItemCount", () => {
   it("sums quantities across all lines", () => {
     const count = orderItemCount(
       order({
-        lines: [line({ cartLineId: "a", quantity: 2 }), line({ cartLineId: "b", quantity: 3 })],
+        lines: [line({ id: "a", quantity: 2 }), line({ id: "b", quantity: 3 })],
       })
     );
     expect(count).toBe(5);
@@ -67,10 +67,10 @@ describe("orderItemCount", () => {
 describe("dropDiscontinuedLines", () => {
   it("removes lines whose item id is no longer in the catalog", () => {
     const original = order({
-      lines: [line({ cartLineId: "a" }), line({ cartLineId: "b", itemId: 9999 })],
+      lines: [line({ id: "a" }), line({ id: "b", itemId: 9999 })],
     });
     const result = dropDiscontinuedLines(original, [item]);
-    expect(result.lines.map((l) => l.cartLineId)).toEqual(["a"]);
+    expect(result.lines.map((l) => l.id)).toEqual(["a"]);
   });
 
   it("returns the same order reference when nothing was dropped", () => {
@@ -101,7 +101,7 @@ describe("orderLeadTimeHours", () => {
   });
 
   it("is the longest lead time among the order's items", () => {
-    const lines = [line(), line({ cartLineId: "l2", itemId: notice.id })];
+    const lines = [line(), line({ id: "l2", itemId: notice.id })];
     expect(orderLeadTimeHours(order({ lines }), catalog)).toBe(24);
   });
 });

@@ -4,7 +4,8 @@ import { CATEGORIES } from "@/data/categories";
 
 // The menu's items, one per flavour (or shape), grouped by category.
 // Some prices, sizes and photos are placeholders until the client
-// supplies them.
+// supplies them, as are the occasions per category and the "Most
+// ordered" ranks (taken from the client's design).
 
 /** Slugs linked to directly: `photoCakes` is the Photo Cakes category;
  * `customCakes` is the Custom Cakes item. */
@@ -37,13 +38,20 @@ function weightTiers(sizes: SizeKey[], prices: Partial<Record<SizeKey, number>>)
 }
 
 /** One flavour of a category: its id and name, optionally with its own
- * description and photo. `slug` replaces the generated
- * "<category slug>-<flavour>" slug. */
-type ItemEntry = { id: number; label: string; description?: string; imageUrl?: string; slug?: string };
+ * description, photo, flavour tag ids and "Most ordered" rank. `slug`
+ * replaces the generated "<category slug>-<flavour>" slug. */
+type ItemEntry = Pick<CatalogItem, "id" | "flavours" | "mostOrderedRank"> & {
+  label: string;
+  description?: string;
+  imageUrl?: string;
+  slug?: string;
+};
 
 /** One category's items and what they share. */
 type CategorySpec = {
   categoryId: number;
+  /** Occasion ids every item in the category suits. */
+  occasions: number[];
   /** Description for items without their own. */
   fallbackDescription?: string;
   tiers: WeightTier[];
@@ -59,10 +67,11 @@ function slugify(text: string): string {
 }
 
 /** One CatalogItem per entry, with slug "<category slug>-<flavour>" unless
- * the entry sets its own, all sharing the category's tiers, lead time and
- * delivery rule. */
+ * the entry sets its own, all sharing the category's occasions, tiers,
+ * lead time and delivery rule. */
 function categoryItems({
   categoryId,
+  occasions,
   fallbackDescription = "",
   tiers,
   leadTimeHours,
@@ -70,12 +79,15 @@ function categoryItems({
   items,
 }: CategorySpec): CatalogItem[] {
   const categorySlug = CATEGORIES.find((c) => c.id === categoryId)?.slug ?? String(categoryId);
-  return items.map(({ id, label, description, imageUrl, slug }) => ({
+  return items.map(({ id, label, description, imageUrl, slug, flavours, mostOrderedRank }) => ({
     id,
     slug: slug ?? `${categorySlug}-${slugify(label)}`,
     name: label,
     categoryId,
     description: description ?? fallbackDescription,
+    occasions,
+    ...(flavours ? { flavours } : {}),
+    ...(mostOrderedRank ? { mostOrderedRank } : {}),
     weightTiers: tiers,
     leadTimeHours,
     cakeMessageMaxLength: CONFIG.cakeMessageMaxLength,
@@ -91,9 +103,10 @@ function photoCakeDescription(shape: string): string {
 }
 
 /** Every item on the menu, in menu order. */
-export const BASE_CATALOG: CatalogItem[] = [
+export const CATALOG: CatalogItem[] = [
   ...categoryItems({
     categoryId: 1, // classic-cakes
+    occasions: [1, 2, 3, 4], // birthday, anniversary, new-baby, graduation
     tiers: weightTiers(HALF_TO_3KG, { "half-kg": 55, "1kg": 100 }),
     leadTimeHours: 0,
     items: [
@@ -102,12 +115,15 @@ export const BASE_CATALOG: CatalogItem[] = [
         label: "Butterscotch",
         description: "Ultra moist cake with each bite having a creamy butterscotch mouthfeel.",
         imageUrl: "/images/classic-butterscotch.jpg",
+        flavours: [5],
+        mostOrderedRank: 2,
       },
       {
         id: 2,
         label: "Black Forest",
         description: "A divine combination of chocolate, cherries and whipped cream in every layer.",
         imageUrl: "/images/classic-black-forest.jpg",
+        flavours: [4],
       },
       {
         id: 3,
@@ -120,6 +136,7 @@ export const BASE_CATALOG: CatalogItem[] = [
 
   ...categoryItems({
     categoryId: 2, // premium-cakes
+    occasions: [1, 2, 3, 4], // birthday, anniversary, new-baby, graduation
     tiers: weightTiers(HALF_TO_3KG, { "half-kg": 65, "1kg": 115 }),
     leadTimeHours: 0,
     items: [
@@ -128,6 +145,8 @@ export const BASE_CATALOG: CatalogItem[] = [
         label: "Dark Chocolate Truffle",
         description: "Love dark chocolate? This luxurious, ganache based cake is for you.",
         imageUrl: "/images/premium-dark-chocolate-truffle.jpg",
+        flavours: [1],
+        mostOrderedRank: 4,
       },
       {
         id: 5,
@@ -135,6 +154,7 @@ export const BASE_CATALOG: CatalogItem[] = [
         description:
           "A chocolate layer cake recipe with dense, moist chocolate cake, silky chocolate truffle frosting.",
         imageUrl: "/images/premium-milk-chocolate-truffle.jpg",
+        flavours: [1],
       },
       {
         id: 6,
@@ -174,12 +194,14 @@ export const BASE_CATALOG: CatalogItem[] = [
         description:
           "Subtle, delectable vanilla cake with fresh, fruity goodness in every bite. Made of fresh fruit with less sugar.",
         imageUrl: "/images/premium-fresh-fruit.jpg",
+        flavours: [6],
       },
     ],
   }),
 
   ...categoryItems({
     categoryId: 3, // exotic-cakes
+    occasions: [1, 2, 3, 4], // birthday, anniversary, new-baby, graduation
     tiers: weightTiers(HALF_TO_3KG, { "half-kg": 75, "1kg": 140 }),
     leadTimeHours: 0,
     items: [
@@ -239,6 +261,7 @@ export const BASE_CATALOG: CatalogItem[] = [
 
   ...categoryItems({
     categoryId: 4, // exotic-premium-cakes
+    occasions: [1, 2, 3, 4], // birthday, anniversary, new-baby, graduation
     fallbackDescription: "From our top-tier range.",
     tiers: weightTiers(HALF_TO_3KG, { "half-kg": 85, "1kg": 160 }),
     leadTimeHours: 0,
@@ -255,7 +278,7 @@ export const BASE_CATALOG: CatalogItem[] = [
         description: "A cake reminiscent of a Snickers bar, with a peanut nougat, salted caramel filling.",
         imageUrl: "/images/exotic-premium-snickers.jpg",
       },
-      { id: 22, label: "Red Velvet", imageUrl: "/images/exotic-premium-red-velvet.jpg" },
+      { id: 22, label: "Red Velvet", imageUrl: "/images/exotic-premium-red-velvet.jpg", flavours: [2] },
       {
         id: 23,
         label: "Pinacolada",
@@ -275,6 +298,8 @@ export const BASE_CATALOG: CatalogItem[] = [
         label: "Lotus Biscoff",
         description: "The ultimate cake for Biscoff lovers — made with both crushed Biscoff biscuits and Biscoff spread.",
         imageUrl: "/images/exotic-premium-lotus-biscoff.jpg",
+        flavours: [3],
+        mostOrderedRank: 3,
       },
       {
         id: 26,
@@ -282,14 +307,16 @@ export const BASE_CATALOG: CatalogItem[] = [
         description:
           "Chocolate sponge layers sandwiched with Nutella cream and Ferrero Rocher bits. Recommended for all Nutella lovers out there.",
         imageUrl: "/images/exotic-premium-nutella-rocher.jpg",
+        mostOrderedRank: 1,
       },
       { id: 27, label: "KitKat & Gems", imageUrl: "/images/exotic-premium-kitkat-gems.jpg" },
-      { id: 28, label: "Rose & Pistachio", imageUrl: "/images/exotic-premium-rose-pistachio.jpg" },
+      { id: 28, label: "Rose & Pistachio", imageUrl: "/images/exotic-premium-rose-pistachio.jpg", flavours: [7] },
     ],
   }),
 
   ...categoryItems({
     categoryId: 5, // cheesecakes
+    occasions: [1, 2, 3], // birthday, anniversary, new-baby
     fallbackDescription: "Creamy baked cheesecake, whole cakes only.",
     tiers: weightTiers(HALF_TO_3KG, { "half-kg": 95, "1kg": 170 }),
     leadTimeHours: 24,
@@ -297,27 +324,29 @@ export const BASE_CATALOG: CatalogItem[] = [
       { id: 29, label: "Oreo", imageUrl: "/images/cheesecake-oreo.jpg" },
       { id: 30, label: "Strawberry", imageUrl: "/images/cheesecake-strawberry.jpg" },
       { id: 31, label: "Blueberry", imageUrl: "/images/cheesecake-blueberry.jpg" },
-      { id: 32, label: "Lotus Biscoff", imageUrl: "/images/cheesecake-lotus-biscoff.jpg" },
+      { id: 32, label: "Lotus Biscoff", imageUrl: "/images/cheesecake-lotus-biscoff.jpg", flavours: [3] },
       { id: 33, label: "New York", imageUrl: "/images/cheesecake-new-york.jpg" },
     ],
   }),
 
   ...categoryItems({
     categoryId: 6, // indian-cakes
+    occasions: [1, 2], // birthday, anniversary
     fallbackDescription: "Traditional Indian mithai flavours in cake form, made fresh each morning.",
     tiers: weightTiers(HALF_TO_3KG, { "half-kg": 105, "1kg": 190 }),
     leadTimeHours: 24,
     items: [
-      { id: 34, label: "Motichoor", imageUrl: "/images/indian-motichoor.jpg" },
-      { id: 35, label: "Kaju Katli", imageUrl: "/images/indian-kaju-katli.jpg" },
-      { id: 36, label: "Gulkand", imageUrl: "/images/indian-gulkand.jpg" },
-      { id: 37, label: "Gulab Jamun", imageUrl: "/images/indian-gulab-jamun.jpg" },
-      { id: 38, label: "Rasmalai", imageUrl: "/images/indian-rasmalai.jpg" },
+      { id: 34, label: "Motichoor", imageUrl: "/images/indian-motichoor.jpg", flavours: [8] },
+      { id: 35, label: "Kaju Katli", imageUrl: "/images/indian-kaju-katli.jpg", flavours: [8] },
+      { id: 36, label: "Gulkand", imageUrl: "/images/indian-gulkand.jpg", flavours: [8] },
+      { id: 37, label: "Gulab Jamun", imageUrl: "/images/indian-gulab-jamun.jpg", flavours: [8] },
+      { id: 38, label: "Rasmalai", imageUrl: "/images/indian-rasmalai.jpg", flavours: [8] },
     ],
   }),
 
   ...categoryItems({
     categoryId: 10, // hammer-cakes
+    occasions: [1, 2], // birthday, anniversary
     fallbackDescription: "A chocolate shell cake you crack open with a hammer.",
     tiers: weightTiers(HALF_TO_1_5KG, { "1kg": 190 }),
     leadTimeHours: 24,
@@ -326,26 +355,28 @@ export const BASE_CATALOG: CatalogItem[] = [
 
   ...categoryItems({
     categoryId: 9, // pull-me-up-cakes
+    occasions: [1, 4], // birthday, graduation
     fallbackDescription: "Pull the ribbons to reveal a surprise inside.",
     tiers: weightTiers(HALF_TO_3KG, { "1kg": 180 }),
     leadTimeHours: 24,
     items: [
-      { id: 40, label: "Biscoff" },
+      { id: 40, label: "Biscoff", flavours: [3] },
       { id: 41, label: "Coffee" },
       { id: 42, label: "Nutella Strawberry" },
       { id: 43, label: "Triple Chocolate" },
       { id: 44, label: "Mango" },
-      { id: 45, label: "Red Velvet" },
+      { id: 45, label: "Red Velvet", flavours: [2] },
     ],
   }),
 
   ...categoryItems({
     categoryId: 11, // pinata-cakes
+    occasions: [1, 4], // birthday, graduation
     fallbackDescription: "Break it open for the treats hidden inside.",
     tiers: weightTiers(HALF_TO_1_5KG, { "1kg": 190 }),
     leadTimeHours: 24,
     items: [
-      { id: 46, label: "Fresh Fruit" },
+      { id: 46, label: "Fresh Fruit", flavours: [6] },
       { id: 47, label: "Chocolate", imageUrl: "/images/pinata-chocolate.jpg" },
       { id: 48, label: "Rainbow" },
     ],
@@ -354,6 +385,7 @@ export const BASE_CATALOG: CatalogItem[] = [
   // One item per shape; the flavour is chosen in the WhatsApp chat.
   ...categoryItems({
     categoryId: 7, // photo-cakes
+    occasions: [1, 2, 3, 4], // birthday, anniversary, new-baby, graduation
     tiers: weightTiers(HALF_TO_3KG, { "1kg": 170, "2kg": 340 }),
     leadTimeHours: 24,
     requiresDelivery: true,
@@ -381,6 +413,7 @@ export const BASE_CATALOG: CatalogItem[] = [
 
   ...categoryItems({
     categoryId: 8, // custom-cakes
+    occasions: [1, 2, 3, 4], // birthday, anniversary, new-baby, graduation
     tiers: weightTiers(CUSTOM_SIZES, { "1kg": 190, "2kg": 380 }),
     leadTimeHours: 24,
     requiresDelivery: true,

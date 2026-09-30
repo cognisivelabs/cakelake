@@ -1,5 +1,4 @@
 import { describe, expect, it } from "vitest";
-import { CATEGORY_OCCASIONS, FLAVOUR_ITEMS, MOST_ORDERED } from "@/data/taxonomy";
 import {
   getCatalog,
   getCategories,
@@ -146,14 +145,10 @@ describe("occasions, flavour tags and most ordered", () => {
     }
   });
 
-  it("the per-category occasion map only names real categories", () => {
-    const categoryIds = new Set(getCategories().map((c) => c.id));
-    for (const id of Object.keys(CATEGORY_OCCASIONS).map(Number)) expect(categoryIds.has(id), String(id)).toBe(true);
-  });
-
-  it("every item id listed under a flavour tag exists, so a typo can't silently drop it", () => {
-    for (const [tag, itemIds] of Object.entries(FLAVOUR_ITEMS)) {
-      for (const id of itemIds) expect(getItemById(id), `${tag} -> ${id}`).toBeDefined();
+  it("every flavour tag id an item lists is a real flavour tag", () => {
+    const ids = new Set(getFlavourTags().map((t) => t.id));
+    for (const item of getCatalog()) {
+      for (const id of item.flavours ?? []) expect(ids.has(id), `${item.slug} -> ${id}`).toBe(true);
     }
   });
 
@@ -163,8 +158,13 @@ describe("occasions, flavour tags and most ordered", () => {
     }
   });
 
-  it("returns the most-ordered items in the configured order", () => {
-    expect(getMostOrdered().map((i) => i.id)).toEqual(MOST_ORDERED);
+  it("returns the most-ordered items in rank order", () => {
+    expect(getMostOrdered().map((i) => i.slug)).toEqual([
+      "exotic-premium-cakes-nutella-rocher",
+      "classic-cakes-butterscotch",
+      "exotic-premium-cakes-lotus-biscoff",
+      "premium-cakes-dark-chocolate-truffle",
+    ]);
     expect(getMostOrdered().map((i) => i.mostOrderedRank)).toEqual([1, 2, 3, 4]);
   });
 

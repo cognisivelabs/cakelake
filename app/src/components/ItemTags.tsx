@@ -21,8 +21,8 @@ export function ReadyTag({ item }: { item: CatalogItem }) {
   );
 }
 
-/** "Most ordered" — one of Home's featured best-sellers (data/taxonomy.ts's
- * MOST_ORDERED). Renders nothing for any other item, so callers can just
+/** "Most ordered" — one of Home's featured best-sellers (an item with a
+ * `mostOrderedRank`). Renders nothing for any other item, so callers can just
  * always place it rather than checking `mostOrderedRank` themselves. */
 export function MostOrderedTag({ item }: { item: CatalogItem }) {
   if (item.mostOrderedRank === undefined) return null;

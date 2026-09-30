@@ -1,28 +1,13 @@
 import type { CatalogItem, Category, CategoryKind, FlavourTag, Occasion } from "@/types/catalog";
 import { CONFIG } from "@/lib/config";
 import { CATEGORIES } from "@/data/categories";
-import { BASE_CATALOG } from "@/data/items";
-import { CATEGORY_OCCASIONS, FLAVOUR_ITEMS, FLAVOUR_TAGS, MOST_ORDERED, OCCASIONS } from "@/data/taxonomy";
+import { CATALOG } from "@/data/items";
+import { FLAVOUR_TAGS, OCCASIONS } from "@/data/taxonomy";
 
 // The catalogue's content lives in src/data (categories, items, taxonomy);
-// this module joins it up and answers questions about it. Every screen
+// this module answers questions about it. Every screen
 // reads through these functions, so swapping in real data is a data
 // change, not a code one.
-
-/** Each item plus what the taxonomy says about it: its occasions, the
- * flavour tags it belongs to and its place in "Most ordered". */
-const CATALOG: CatalogItem[] = BASE_CATALOG.map((item) => {
-  const flavours = FLAVOUR_TAGS.filter((tag) => FLAVOUR_ITEMS[tag.id]?.includes(item.id)).map(
-    (tag) => tag.id,
-  );
-  const rank = MOST_ORDERED.indexOf(item.id);
-  return {
-    ...item,
-    occasions: CATEGORY_OCCASIONS[item.categoryId] ?? [],
-    ...(flavours.length > 0 ? { flavours } : {}),
-    ...(rank >= 0 ? { mostOrderedRank: rank + 1 } : {}),
-  };
-});
 
 export function getCatalog(): CatalogItem[] {
   return CATALOG;

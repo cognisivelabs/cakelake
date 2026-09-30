@@ -1,4 +1,4 @@
-export type DayHours = { day: string; hours: string };
+type DayHours = { day: string; hours: string };
 
 /**
  * Collapses consecutive days sharing the same hours into one "Day - Day"

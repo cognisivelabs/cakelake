@@ -4,7 +4,7 @@ import { categoriesRoute, ROUTES } from "@/lib/routes";
 import { categoryPriceLabel } from "@/lib/pricing";
 
 type MenuGroupEntry = { category: Category; priceLabel: string };
-export type MenuGroup = { id: string; label: string; entries: MenuGroupEntry[] };
+type MenuGroup = { id: string; label: string; entries: MenuGroupEntry[] };
 
 /**
  * The categories grouped by how soon they're ready — the layout of the

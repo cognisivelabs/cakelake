@@ -91,7 +91,7 @@ export type FilterKey = "priceRange" | "flavourId" | "occasionId";
 
 /** A group of checkboxes in the filter panel, with how many cakes each
  * choice would leave (given every *other* filter already set). */
-export type CheckboxGroup = {
+type CheckboxGroup = {
   kind: "checkbox";
   /** A single-choice filter (FilterKey) or the multi-choice category list. */
   key: Exclude<FilterKey, "priceRange"> | typeof CATEGORY_GROUP_KEY;

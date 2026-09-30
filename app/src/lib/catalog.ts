@@ -66,7 +66,7 @@ function hoursText(hours: number): string {
 
 /** Hours until an item can be ready: CONFIG.sameDayPrepHours for a
  * same-day item, otherwise its leadTimeHours. */
-export function readyHours(item: LeadTime): number {
+function readyHours(item: LeadTime): number {
   return item.leadTimeHours === 0 ? CONFIG.sameDayPrepHours : item.leadTimeHours;
 }
 

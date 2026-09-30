@@ -8,7 +8,7 @@ import { cheapestPrice } from "@/lib/pricing";
  * whose own names are just "Oreo", "New York"…) and any flavour tag it
  * belongs to (so "indian sweets" finds every mithai cake).
  */
-export function itemMatchesQuery(catalog: Catalog, item: CatalogItem, query: string): boolean {
+function itemMatchesQuery(catalog: Catalog, item: CatalogItem, query: string): boolean {
   const q = query.trim().toLowerCase();
   if (!q) return true;
   const haystacks = [
@@ -57,7 +57,7 @@ export function parsePriceRange(text: string, bounds: PriceRange): PriceRange | 
 }
 
 /** "AED 60 – 120", for a chip or a label. */
-export function describePriceRange(range: PriceRange): string {
+function describePriceRange(range: PriceRange): string {
   return `AED ${range.min} – ${range.max}`;
 }
 

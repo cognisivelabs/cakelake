@@ -27,7 +27,7 @@ export function estimatedReadyTime(): string {
 /**
  * Parses a "YYYY-MM-DD" string as local midnight, not UTC midnight —
  * `new Date(iso)` parses as UTC, which rolls back to the previous
- * calendar day in any timezone ahead of UTC. Matches todayIsoDate()'s
+ * calendar day in any timezone ahead of UTC. Matches isoDateInDays()'s
  * local-date convention below.
  */
 export function parseIsoDateLocal(iso: string): Date {
@@ -65,7 +65,7 @@ function sameDayCutoff(fulfillment: Fulfillment): ClockTime {
  * Whether it's already too late, right now, to place a same-day order
  * for the given fulfillment — see sameDayCutoff. Evaluated against the
  * current time at call time, not kept live-updating while a page sits
- * open across the cutoff (matches todayIsoDate()/estimatedReadyTime()'s
+ * open across the cutoff (matches isoDateInDays()/estimatedReadyTime()'s
  * same per-call convention).
  */
 export function sameDayCutoffPassed(fulfillment: Fulfillment): boolean {
@@ -95,15 +95,10 @@ export function sameDayOrderingOpensAtLabel(): string {
 }
 
 /**
- * Today's date in the viewer's local timezone, as "YYYY-MM-DD".
- * toISOString() converts to UTC first, which is wrong here for the same
- * reason as parseIsoDateLocal above.
+ * The local date `days` days from today, as "YYYY-MM-DD" (0 = today).
+ * Built from the local calendar fields, not toISOString() (which
+ * converts to UTC first) — same reason as parseIsoDateLocal above.
  */
-export function todayIsoDate(): string {
-  return isoDateInDays(0);
-}
-
-/** The local date `days` days from today, as "YYYY-MM-DD". */
 export function isoDateInDays(days: number): string {
   const d = new Date();
   d.setDate(d.getDate() + days);
@@ -127,7 +122,7 @@ export function earliestNeededIsoDate(leadTimeHours: number): string {
 function whenNeededFits(whenNeeded: WhenNeeded, earliestIso: string, todayOpen: boolean): boolean {
   switch (whenNeeded.kind) {
     case "today":
-      return todayOpen && earliestIso <= todayIsoDate();
+      return todayOpen && earliestIso <= isoDateInDays(0);
     case "tomorrow":
       return earliestIso <= isoDateInDays(1);
     case "date":

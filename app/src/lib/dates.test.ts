@@ -11,7 +11,6 @@ import {
   sameDayCutoffPassed,
   sameDayOrderingNotYetOpen,
   sameDayOrderingOpensAtLabel,
-  todayIsoDate,
 } from "@/lib/dates";
 import { CONFIG } from "@/lib/config";
 
@@ -156,13 +155,13 @@ describe("sameDayOrderingOpensAtLabel", () => {
   });
 });
 
-describe("todayIsoDate", () => {
-  it("returns today's date in YYYY-MM-DD form", () => {
+describe("isoDateInDays", () => {
+  it("returns today's date in YYYY-MM-DD form for 0", () => {
     const now = new Date();
     const expected = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(
       now.getDate()
     ).padStart(2, "0")}`;
-    expect(todayIsoDate()).toBe(expected);
+    expect(isoDateInDays(0)).toBe(expected);
   });
 
   it("matches the local calendar day even just after local midnight in a timezone ahead of UTC", () => {
@@ -172,13 +171,13 @@ describe("todayIsoDate", () => {
     process.env.TZ = "Asia/Dubai";
     const now = new Date();
     const viaToISOString = now.toISOString().slice(0, 10);
-    const viaTodayIsoDate = todayIsoDate();
+    const viaIsoDateInDays = isoDateInDays(0);
     // Only assert divergence when we're actually in the bug's danger
     // window (before 4am local) — otherwise both forms happen to agree.
     if (now.getHours() < 4) {
-      expect(viaTodayIsoDate).not.toBe(viaToISOString);
+      expect(viaIsoDateInDays).not.toBe(viaToISOString);
     }
-    expect(viaTodayIsoDate).toBe(
+    expect(viaIsoDateInDays).toBe(
       `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(
         now.getDate()
       ).padStart(2, "0")}`

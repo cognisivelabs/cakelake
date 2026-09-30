@@ -3,14 +3,12 @@ import { findCategoryBySlug, findFlavourTag, findFlavourTagBySlug, findOccasionB
 import { testCatalog } from "@/test/fixtures";
 import {
   CATEGORY_GROUP_KEY,
-  describePriceRange,
   formatPriceRange,
   getActiveFilterChips,
   getCategoryFilterGroup,
   getFilterGroups,
   getPriceBounds,
   itemMatchesFilters,
-  itemMatchesQuery,
   normalizePriceRange,
   parsePriceRange,
   type MenuFilters,
@@ -24,27 +22,6 @@ const item = (slug: string) => {
 const categoryIdOf = (slug: string) => findCategoryBySlug(testCatalog, slug)!.id;
 const flavourIdOf = (slug: string) => findFlavourTagBySlug(testCatalog, slug)!.id;
 const occasionIdOf = (slug: string) => findOccasionBySlug(testCatalog, slug)!.id;
-
-describe("itemMatchesQuery", () => {
-  it("matches everything for an empty or blank query", () => {
-    expect(testCatalog.items.every((i) => itemMatchesQuery(testCatalog, i, "  "))).toBe(true);
-  });
-
-  it("matches by item name, case-insensitively", () => {
-    expect(itemMatchesQuery(testCatalog, item("classic-cakes-butterscotch"), "BUTTER")).toBe(true);
-    expect(itemMatchesQuery(testCatalog, item("classic-cakes-butterscotch"), "pineapple")).toBe(false);
-  });
-
-  it("matches by category name, since flavour items are named just 'Oreo' etc.", () => {
-    expect(itemMatchesQuery(testCatalog, item("cheesecakes-oreo"), "cheesecake")).toBe(true);
-    expect(itemMatchesQuery(testCatalog, item("classic-cakes-butterscotch"), "cheesecake")).toBe(false);
-  });
-
-  it("matches by flavour tag label", () => {
-    expect(itemMatchesQuery(testCatalog, item("indian-cakes-gulkand"), "indian sweets")).toBe(true);
-    expect(itemMatchesQuery(testCatalog, item("cheesecakes-lotus-biscoff"), "biscoff")).toBe(true);
-  });
-});
 
 const none: MenuFilters = { query: "", priceRange: null, flavourId: null, occasionId: null };
 
@@ -76,10 +53,6 @@ describe("price range", () => {
     for (const text of ["", "abc", "60", "60-", "-60", "55-190"]) expect(parsePriceRange(text, bounds), text).toBeNull();
   });
 
-  it("describes a range for a chip", () => {
-    expect(describePriceRange({ min: 60, max: 120 })).toBe("AED 60 – 120");
-  });
-
   it("filters by starting price, both ends included", () => {
     const range = (min: number, max: number) => ({ ...none, priceRange: { min, max } });
     expect(itemMatchesFilters(testCatalog, item("classic-cakes-butterscotch"), range(55, 55))).toBe(true);
@@ -97,6 +70,25 @@ describe("price range", () => {
 describe("itemMatchesFilters", () => {
   it("matches everything with no filters", () => {
     expect(testCatalog.items.every((i) => itemMatchesFilters(testCatalog, i, none))).toBe(true);
+  });
+
+  it("matches everything for an empty or blank query", () => {
+    expect(testCatalog.items.every((i) => itemMatchesFilters(testCatalog, i, { ...none, query: "  " }))).toBe(true);
+  });
+
+  it("matches the query by item name, case-insensitively", () => {
+    expect(itemMatchesFilters(testCatalog, item("classic-cakes-butterscotch"), { ...none, query: "BUTTER" })).toBe(true);
+    expect(itemMatchesFilters(testCatalog, item("classic-cakes-butterscotch"), { ...none, query: "pineapple" })).toBe(false);
+  });
+
+  it("matches the query by category name, since flavour items are named just 'Oreo' etc.", () => {
+    expect(itemMatchesFilters(testCatalog, item("cheesecakes-oreo"), { ...none, query: "cheesecake" })).toBe(true);
+    expect(itemMatchesFilters(testCatalog, item("classic-cakes-butterscotch"), { ...none, query: "cheesecake" })).toBe(false);
+  });
+
+  it("matches the query by flavour tag label", () => {
+    expect(itemMatchesFilters(testCatalog, item("indian-cakes-gulkand"), { ...none, query: "indian sweets" })).toBe(true);
+    expect(itemMatchesFilters(testCatalog, item("cheesecakes-lotus-biscoff"), { ...none, query: "biscoff" })).toBe(true);
   });
 
   it("filters by flavour tag and by occasion", () => {

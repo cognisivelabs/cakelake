@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { Photo } from "@/components/Photo";
 import { ROUTES } from "@/lib/routes";
+import { SectionHead } from "./SectionHead";
 import styles from "./HomeSections.module.css";
 
 export type MostOrderedCard = {
@@ -29,13 +30,12 @@ export function MostOrdered({ cards, tabs }: { cards: MostOrderedCard[]; tabs: M
 
   return (
     <section className={styles.section}>
-      <div className={styles.sectionHead}>
-        <h2 className={styles.sectionTitle}>Most ordered</h2>
+      <SectionHead title="Most ordered">
         <div className={styles.sectionMeta} style={{ flex: 1 }} />
         <Link href={ROUTES.menu} className={styles.viewAll}>
           View all <span className={styles.viewAllDesktop}>cakes </span>→
         </Link>
-      </div>
+      </SectionHead>
 
       <div className={styles.tabs} role="tablist" aria-label="Most ordered by category">
         {[{ id: null, label: "All" }, ...tabs].map((tab) => (

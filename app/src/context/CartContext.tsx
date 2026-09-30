@@ -129,14 +129,18 @@ export function CartProvider({ children }: { children: ReactNode }) {
   /** The current cart, without discontinued lines. */
   const current = () => dropDiscontinuedLines(currentOrder, items);
 
+  /** Merges `patch` into the current cart and commits it as an active
+   * edit (see commitActive). Every mutator below goes through this
+   * except startHandoff/declineHandoff, which set expiresAt themselves. */
+  const update = (patch: Partial<Order>) => commitActive({ ...current(), ...patch });
+
   const value: CartContextValue = {
     order,
     addLine: (input) => {
       const cart = current();
       const match = cart.lines.find((l) => isSameLine(l, input));
       if (match) {
-        commitActive({
-          ...cart,
+        update({
           lines: cart.lines.map((l) =>
             l === match ? { ...l, quantity: l.quantity + input.quantity } : l,
           ),
@@ -147,42 +151,28 @@ export function CartProvider({ children }: { children: ReactNode }) {
         id: `${input.itemId}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
         ...input,
       };
-      commitActive({ ...cart, lines: [...cart.lines, line] });
+      update({ lines: [...cart.lines, line] });
     },
     updateQuantity: (cartLineId, quantity) => {
-      const cart = current();
-      commitActive({
-        ...cart,
-        lines: cart.lines
-          .map((l) => (l.id === cartLineId ? { ...l, quantity } : l))
+      update({
+        lines: current()
+          .lines.map((l) => (l.id === cartLineId ? { ...l, quantity } : l))
           .filter((l) => l.quantity > 0),
       });
     },
     removeLine: (cartLineId) => {
-      const cart = current();
-      commitActive({
-        ...cart,
-        lines: cart.lines.filter((l) => l.id !== cartLineId),
-      });
+      update({ lines: current().lines.filter((l) => l.id !== cartLineId) });
     },
     updateCakeMessage: (cartLineId, cakeMessage) => {
-      const cart = current();
-      commitActive({
-        ...cart,
-        lines: cart.lines.map((l) =>
+      update({
+        lines: current().lines.map((l) =>
           l.id === cartLineId ? { ...l, cakeMessage } : l,
         ),
       });
     },
-    setFulfillment: (fulfillment) => {
-      commitActive({ ...current(), fulfillment });
-    },
-    setWhenNeeded: (whenNeeded) => {
-      commitActive({ ...current(), whenNeeded });
-    },
-    setCustomerName: (customerName) => {
-      commitActive({ ...current(), customerName });
-    },
+    setFulfillment: (fulfillment) => update({ fulfillment }),
+    setWhenNeeded: (whenNeeded) => update({ whenNeeded }),
+    setCustomerName: (customerName) => update({ customerName }),
     startHandoff: () => {
       commit({
         ...current(),

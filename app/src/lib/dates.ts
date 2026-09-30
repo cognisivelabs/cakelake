@@ -124,16 +124,21 @@ export function earliestNeededIsoDate(leadTimeHours: number): string {
  * same-day ordering is open) — otherwise the earliest choice that is:
  * "tomorrow" when that's allowed, else a date of `earliestIso`.
  */
+function whenNeededFits(whenNeeded: WhenNeeded, earliestIso: string, todayOpen: boolean): boolean {
+  switch (whenNeeded.kind) {
+    case "today":
+      return todayOpen && earliestIso <= todayIsoDate();
+    case "tomorrow":
+      return earliestIso <= isoDateInDays(1);
+    case "date":
+      return whenNeeded.date >= earliestIso;
+    case "unsure":
+      return true;
+  }
+}
+
 export function fitWhenNeeded(whenNeeded: WhenNeeded, earliestIso: string, todayOpen: boolean): WhenNeeded {
+  if (whenNeededFits(whenNeeded, earliestIso, todayOpen)) return whenNeeded;
   const tomorrowIso = isoDateInDays(1);
-  const fits =
-    whenNeeded.kind === "today"
-      ? todayOpen && earliestIso <= todayIsoDate()
-      : whenNeeded.kind === "tomorrow"
-        ? earliestIso <= tomorrowIso
-        : whenNeeded.kind === "date"
-          ? whenNeeded.date >= earliestIso
-          : true;
-  if (fits) return whenNeeded;
   return earliestIso <= tomorrowIso ? { kind: "tomorrow" } : { kind: "date", date: earliestIso };
 }

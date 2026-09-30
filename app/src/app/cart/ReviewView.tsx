@@ -11,6 +11,7 @@ import { orderItemCount, resolveOrderLines } from "@/lib/order";
 import { describeWhenNeeded } from "@/lib/orderSummary";
 import { formatAed, hasUnpricedLines, orderTotal } from "@/lib/pricing";
 import { ROUTES } from "@/lib/routes";
+import { PillOption } from "./PillOption";
 import { WhenNeededPicker } from "./WhenNeededPicker";
 import styles from "./cart.module.css";
 
@@ -55,22 +56,12 @@ export function ReviewView({ onSend }: { onSend: () => void }) {
               <section className={styles.section}>
                 <div className={styles.sectionLabel}>PICKUP OR DELIVERY</div>
                 <div className={styles.pillRow}>
-                  <button
-                    type="button"
-                    className={styles.pillOption}
-                    data-selected={order.fulfillment === "pickup"}
-                    onClick={() => setFulfillment("pickup")}
-                  >
+                  <PillOption selected={order.fulfillment === "pickup"} onClick={() => setFulfillment("pickup")}>
                     Pickup
-                  </button>
-                  <button
-                    type="button"
-                    className={styles.pillOption}
-                    data-selected={order.fulfillment === "delivery"}
-                    onClick={() => setFulfillment("delivery")}
-                  >
+                  </PillOption>
+                  <PillOption selected={order.fulfillment === "delivery"} onClick={() => setFulfillment("delivery")}>
                     Delivery
-                  </button>
+                  </PillOption>
                 </div>
                 {order.fulfillment === "delivery" && (
                   <p className={styles.deliveryNote}>

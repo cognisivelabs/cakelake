@@ -18,6 +18,7 @@ import {
 } from "@/lib/dates";
 import { orderLeadTimeHours } from "@/lib/order";
 import type { WhenNeeded } from "@/types/order";
+import { PillOption } from "./PillOption";
 import styles from "./cart.module.css";
 
 // "When do you need it?" — Today / Tomorrow / Pick a date. Dates before
@@ -68,46 +69,37 @@ export function WhenNeededPicker() {
 
   const earliestText = earliestIso === tomorrowIso ? "tomorrow" : formatShortDate(parseIsoDateLocal(earliestIso));
 
+  const todaySubtext = needsNotice
+    ? "Needs notice"
+    : cutoffPassed
+      ? `Order by ${sameDayCutoffLabel(order.fulfillment)}`
+      : tooEarly
+        ? `Opens at ${sameDayOrderingOpensAtLabel()}`
+        : `from ${readyTime}`;
+
   return (
     <section className={styles.section}>
       <div className={styles.sectionLabel}>WHEN DO YOU NEED IT?</div>
       <div className={styles.pillRow}>
-        <button
-          type="button"
-          className={styles.pillOption}
-          data-selected={kind === "today"}
+        <PillOption
+          selected={kind === "today"}
           disabled={todayUnavailable}
           onClick={() => handleWhenNeededChange("today")}
+          subtext={todaySubtext}
         >
           Today
-          <span className={styles.pillSubtext}>
-            {needsNotice
-              ? "Needs notice"
-              : cutoffPassed
-                ? `Order by ${sameDayCutoffLabel(order.fulfillment)}`
-                : tooEarly
-                  ? `Opens at ${sameDayOrderingOpensAtLabel()}`
-                  : `from ${readyTime}`}
-          </span>
-        </button>
-        <button
-          type="button"
-          className={styles.pillOption}
-          data-selected={kind === "tomorrow"}
+        </PillOption>
+        <PillOption
+          selected={kind === "tomorrow"}
           disabled={tomorrowUnavailable}
           onClick={() => handleWhenNeededChange("tomorrow")}
+          subtext={tomorrowUnavailable ? "Needs notice" : undefined}
         >
           Tomorrow
-          {tomorrowUnavailable && <span className={styles.pillSubtext}>Needs notice</span>}
-        </button>
-        <button
-          type="button"
-          className={styles.pillOption}
-          data-selected={kind === "date"}
-          onClick={pickADate}
-        >
+        </PillOption>
+        <PillOption selected={kind === "date"} onClick={pickADate}>
           Pick a date
-        </button>
+        </PillOption>
       </div>
       {order.whenNeeded.kind === "date" && (
         <input

@@ -12,6 +12,7 @@ import { buildWhatsAppUrl } from "@/lib/whatsapp";
 import { AddedToOrderPanel, type AddedSnapshot } from "@/components/AddedToOrderPanel";
 import { CategoryTag, MostOrderedTag, ReadyTag } from "@/components/ItemTags";
 import { Photo } from "@/components/Photo";
+import { QuantityStepper } from "@/components/QuantityStepper";
 import { EXTERNAL_LINK_PROPS } from "@/lib/externalLink";
 import { ROUTES, categoryRoute, itemRoute } from "@/lib/routes";
 import { ResponsiveHeader } from "@/components/ResponsiveHeader";
@@ -238,19 +239,12 @@ export function ItemDetailView({ item }: { item: CatalogItem }) {
             )}
 
             <div className={styles.footer}>
-              <div className={styles.quantityStepper}>
-                <button
-                  type="button"
-                  aria-label="Decrease quantity"
-                  onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-                >
-                  −
-                </button>
-                <span>{quantity}</span>
-                <button type="button" aria-label="Increase quantity" onClick={() => setQuantity((q) => q + 1)}>
-                  +
-                </button>
-              </div>
+              <QuantityStepper
+                className={styles.quantityStepper}
+                quantity={quantity}
+                onDecrease={() => setQuantity((q) => Math.max(1, q - 1))}
+                onIncrease={() => setQuantity((q) => q + 1)}
+              />
               <button type="button" className={styles.addButton} disabled={!canAdd} onClick={handleAdd}>
                 ADD{total !== undefined ? ` · ${formatAed(total)}` : ""}
               </button>

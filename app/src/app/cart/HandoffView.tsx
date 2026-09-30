@@ -22,6 +22,31 @@ function MessagePreview({ message }: { message: string }) {
   );
 }
 
+// The "did you send it?" pair — mobile's confirm modal and desktop's QR
+// panel each show the same primary/outline pair, just with different copy.
+function ConfirmSentActions({
+  confirmLabel,
+  backLabel,
+  onConfirmSent,
+  onBack,
+}: {
+  confirmLabel: string;
+  backLabel: string;
+  onConfirmSent: () => void;
+  onBack: () => void;
+}) {
+  return (
+    <div className={styles.stackedActions}>
+      <button type="button" className={styles.primaryButton} onClick={onConfirmSent}>
+        {confirmLabel}
+      </button>
+      <button type="button" className={styles.outlineButton} onClick={onBack}>
+        {backLabel}
+      </button>
+    </div>
+  );
+}
+
 // "This is the message we'll send" — then, once WhatsApp has been
 // opened, "did you send it?". Desktop swaps the open-WhatsApp button
 // for a QR code to scan on a phone.
@@ -70,14 +95,12 @@ export function HandoffView({
                 We can&apos;t see your WhatsApp, so tell us and we&apos;ll clear
                 your cart.
               </p>
-              <div className={styles.stackedActions}>
-                <button type="button" className={styles.primaryButton} onClick={onConfirmSent}>
-                  YES, SENT
-                </button>
-                <button type="button" className={styles.outlineButton} onClick={onBack}>
-                  NOT YET — BACK TO MY ORDER
-                </button>
-              </div>
+              <ConfirmSentActions
+                confirmLabel="YES, SENT"
+                backLabel="NOT YET — BACK TO MY ORDER"
+                onConfirmSent={onConfirmSent}
+                onBack={onBack}
+              />
             </div>
           )}
         </div>
@@ -112,14 +135,12 @@ export function HandoffView({
               Or open WhatsApp Web in another tab — the message will be
               waiting
             </button>
-            <div className={styles.stackedActions}>
-              <button type="button" className={styles.primaryButton} onClick={onConfirmSent}>
-                I&apos;VE SENT IT
-              </button>
-              <button type="button" className={styles.outlineButton} onClick={onBack}>
-                BACK TO MY ORDER
-              </button>
-            </div>
+            <ConfirmSentActions
+              confirmLabel="I&apos;VE SENT IT"
+              backLabel="BACK TO MY ORDER"
+              onConfirmSent={onConfirmSent}
+              onBack={onBack}
+            />
           </div>
         </div>
       </div>

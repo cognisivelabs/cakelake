@@ -243,6 +243,7 @@
 }
 
 .tealButtonBlock {
+  composes: btn-teal from global;
   /* position+z-index, not just a higher stacking order by default — the
      docked WhatsApp button (z-index 15) can otherwise end up visually on
      top of this even though it's later in normal document flow, since a
@@ -254,14 +255,7 @@
   margin: 20px 20px 24px;
   width: calc(100% - 40px);
   padding: 15px;
-  border: none;
   border-radius: var(--radius-md);
-  background: var(--color-teal);
-  color: #fff;
-  font-weight: 800;
-  font-size: 0.8rem;
-  letter-spacing: 0.03em;
-  cursor: pointer;
 }
 
 /* — handoff / confirm — */
@@ -305,17 +299,11 @@
 }
 
 .tealButton {
+  composes: btn-teal from global;
   margin-top: 18px;
   width: 100%;
   padding: 16px;
-  border: none;
   border-radius: var(--radius-md);
-  background: var(--color-teal);
-  color: #fff;
-  font-weight: 800;
-  font-size: 0.8rem;
-  letter-spacing: 0.03em;
-  cursor: pointer;
 }
 
 .confirmModal {
@@ -355,9 +343,7 @@
   letter-spacing: 0.04em;
 }
 
-.outlineButton {
-  border: 1.5px solid var(--color-ink);
-  color: var(--color-ink);
+.outlineButtonBase {
   background: none;
   border-radius: var(--radius-md);
   padding: 12px;
@@ -368,16 +354,16 @@
   cursor: pointer;
 }
 
+.outlineButton {
+  composes: outlineButtonBase;
+  border: 1.5px solid var(--color-ink);
+  color: var(--color-ink);
+}
+
 .tealOutlineButton {
+  composes: outlineButtonBase;
   border: 1.5px solid var(--color-teal);
   color: var(--color-teal);
-  background: none;
-  border-radius: var(--radius-md);
-  padding: 12px;
-  text-align: center;
-  font-weight: 700;
-  font-size: 0.72rem;
-  letter-spacing: 0.04em;
   text-decoration: none;
 }
 

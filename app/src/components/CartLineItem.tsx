@@ -6,6 +6,7 @@ import { useCart } from "@/context/CartContext";
 import { lineTotal, formatAed } from "@/lib/pricing";
 import { resolveSelection } from "@/lib/order";
 import { Photo } from "@/components/Photo";
+import { QuantityStepper } from "@/components/QuantityStepper";
 import styles from "./CartLineItem.module.css";
 
 export function CartLineItem({ item, line }: { item: CatalogItem; line: CartLine }) {
@@ -34,23 +35,12 @@ export function CartLineItem({ item, line }: { item: CatalogItem; line: CartLine
           <span className={styles.price}>
             {total === undefined ? "Price to confirm" : formatAed(total)}
           </span>
-          <div className={styles.quantityStepper}>
-            <button
-              type="button"
-              onClick={() => updateQuantity(line.id, line.quantity - 1)}
-              aria-label="Decrease quantity"
-            >
-              −
-            </button>
-            <span>{line.quantity}</span>
-            <button
-              type="button"
-              onClick={() => updateQuantity(line.id, line.quantity + 1)}
-              aria-label="Increase quantity"
-            >
-              +
-            </button>
-          </div>
+          <QuantityStepper
+            className={styles.quantityStepper}
+            quantity={line.quantity}
+            onDecrease={() => updateQuantity(line.id, line.quantity - 1)}
+            onIncrease={() => updateQuantity(line.id, line.quantity + 1)}
+          />
         </div>
       </div>
     </div>

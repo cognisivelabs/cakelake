@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import { SectionHead } from "./SectionHead";
 import styles from "./HomeSections.module.css";
 
 // A titled, horizontally scrolling row. Touch scrolls it natively; on
@@ -51,8 +52,7 @@ export function RailSection({
 
   return (
     <section className={styles.section}>
-      <div className={styles.sectionHead}>
-        <h2 className={styles.sectionTitle}>{title}</h2>
+      <SectionHead title={title}>
         {meta && (
           <div className={`${styles.sectionMeta} ${styles.metaDesktop}`}>
             {meta}
@@ -85,7 +85,7 @@ export function RailSection({
             </button>
           </div>
         )}
-      </div>
+      </SectionHead>
       <div ref={railRef} className={styles.rail}>
         {children}
       </div>

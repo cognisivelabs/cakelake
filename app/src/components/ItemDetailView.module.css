@@ -57,10 +57,7 @@
 }
 
 .sectionLabel {
-  font-weight: 700;
-  font-size: 0.75rem;
-  letter-spacing: 0.08em;
-  color: var(--color-ink-muted);
+  composes: section-label from global;
   padding: 0 20px;
 }
 

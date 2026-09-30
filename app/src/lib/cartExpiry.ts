@@ -3,9 +3,9 @@ import { CONFIG } from "@/lib/config";
 
 const HOUR_MS = 60 * 60 * 1000;
 
-/** ADR-003: order.expiresAt is stamped when a handoff attempt starts or
- * is explicitly declined — absent for an ordinary in-progress cart,
- * which never expires. */
+/** True once order.expiresAt (stamped when a handoff attempt starts or
+ * is explicitly declined) has passed. Always false for an ordinary
+ * in-progress cart, which has no expiresAt. */
 export function isOrderExpired(order: Order, now: number): boolean {
   return order.expiresAt !== undefined && now > order.expiresAt;
 }

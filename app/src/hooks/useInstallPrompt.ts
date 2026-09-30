@@ -34,7 +34,7 @@ export function isIOSDevice(): boolean {
 export function isIOSSafari(): boolean {
   const ua = window.navigator.userAgent;
   // Chrome/Firefox/Edge on iOS all render with WebKit but can't install
-  // to the home screen the way Safari can (ADR-005) — exclude them.
+  // to the home screen the way Safari can — exclude them.
   return isIOSDevice() && !/CriOS|FxiOS|EdgiOS|OPiOS|mercury/i.test(ua);
 }
 

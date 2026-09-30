@@ -5,10 +5,8 @@ import { lineTotal, orderTotal, formatAed } from "@/lib/pricing";
 import { describeLine, resolveOrderLines } from "@/lib/order";
 import { formatShortDate, parseIsoDateLocal } from "@/lib/dates";
 
-// Matches docs/adr/ADR-003-whatsapp-order-handoff.md's template, updated
-// for the weight pricing model and the optional name field. Design/photo
-// customisation isn't a line-item field — see types/catalog.ts's header
-// comment — the customer sends that directly in the chat.
+// Design/photo customisation isn't a line-item field here — the
+// customer sends that directly in the chat.
 
 function formatItemLine(item: CatalogItem, line: CartLine): string {
   const total = lineTotal(item, line);

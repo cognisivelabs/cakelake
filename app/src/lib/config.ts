@@ -21,7 +21,7 @@ export const CONFIG = {
   shortName: "Cake Lake",
   /**
    * The bakery's one WhatsApp number, client-confirmed — used for both
-   * the order handoff (ADR-003) and every general "message us" link.
+   * the order handoff and every general "message us" link.
    */
   bakeryWhatsAppNumber: "971503287761",
   /** Year the bakery opened — "Baked to order in Karama since 2020". */
@@ -92,17 +92,16 @@ export const CONFIG = {
    * deliveries need to land by sameDayPickupCutoff too, so the order
    * itself has to go in earlier to leave room to bake and deliver. */
   sameDayDeliveryCutoff: { hour: 21, minute: 0 },
-  /** ADR-003: an unanswered "did you send it?" prompt is treated as
-   * abandoned after this long, resetting to an empty cart. */
+  /** An unanswered "did you send it?" prompt is treated as abandoned
+   * after this long, resetting to an empty cart. */
   pendingHandoffExpiryHours: 2,
-  /** ADR-003: explicitly tapping "not yet, back to my cart" gets a
-   * longer, more forgiving window than an unanswered prompt — that's a
-   * deliberate choice to keep shopping, not an ambiguous no-response. */
+  /** Explicitly tapping "not yet, back to my cart" gets this longer
+   * window instead of pendingHandoffExpiryHours. */
   declinedHandoffExpiryHours: 24,
   /**
    * The deployed site's origin (no path) — feeds metadataBase for Open
-   * Graph/Twitter image resolution. GitHub Pages for this POC phase (see
-   * ADR-002); update this when the site moves to its own domain.
+   * Graph/Twitter image resolution. GitHub Pages for now; update this
+   * when the site moves to its own domain.
    */
   siteUrl: "https://cognisivelabs.github.io",
 } as const;

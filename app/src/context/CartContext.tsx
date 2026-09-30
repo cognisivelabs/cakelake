@@ -45,12 +45,8 @@ function commit(next: Order) {
   for (const listener of listeners) listener();
 }
 
-// Any edit — adding an item, changing quantity, picking a date — is real
-// engagement, not the inactivity ADR-003's expiry windows are meant to
-// catch. Without this, a cart that was declined once (24h stamp) and
-// then actively used the next day could still get wiped mid-session once
-// the original stamp's clock ran out, even though nothing about it was
-// actually abandoned.
+// Commits with any pending expiry stamp cleared — any real edit counts
+// as active use, not abandonment.
 function commitActive(next: Order) {
   commit({ ...next, expiresAt: undefined });
 }
@@ -79,9 +75,8 @@ if (typeof window !== "undefined") {
     if (parsed?.lines) {
       const merged = { ...EMPTY_ORDER, ...parsed };
       if (isOrderExpired(merged, Date.now())) {
-        // ADR-003: an unanswered or explicitly-declined handoff attempt
-        // expires to a plain empty cart, not a stale order with a
-        // "when needed" date that may have already passed.
+        // An expired order resets to empty rather than keeping a stale
+        // "when needed" date.
         currentOrder = EMPTY_ORDER;
         persist(EMPTY_ORDER);
       } else {
@@ -110,12 +105,11 @@ type CartContextValue = {
   setFulfillment: (fulfillment: Fulfillment) => void;
   setWhenNeeded: (whenNeeded: WhenNeeded) => void;
   setCustomerName: (customerName: string) => void;
-  /** Call right before opening the wa.me link — ADR-003's 2-hour
-   * abandonment window starts from this moment. */
+  /** Call right before opening the wa.me link; stamps a 2-hour expiry. */
   startHandoff: () => void;
-  /** Call only for an explicit "not yet, back to my cart" — ADR-003's
-   * more forgiving 24-hour window. Not for merely navigating back
-   * before a handoff was ever attempted. */
+  /** Call only for an explicit "not yet, back to my cart"; stamps a
+   * 24-hour expiry. Not for navigating back before a handoff was ever
+   * attempted. */
   declineHandoff: () => void;
   clearCart: () => void;
 };

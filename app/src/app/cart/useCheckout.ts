@@ -53,10 +53,9 @@ export function useCheckout() {
   }
 
   function backToReview() {
-    // Only an explicit decline from the "did you send it?" prompt counts
-    // as ADR-003's 24-hour case — this same handler also runs for the
-    // "Send order" screen's plain back button, before a handoff was ever
-    // attempted, which shouldn't start any abandonment clock at all.
+    // Only decline when a handoff was actually pending — this same
+    // handler also runs for the "Send order" screen's plain back button,
+    // before any handoff was attempted.
     if (order.pendingHandoff) declineHandoff();
     setChosenScreen({ kind: "review" });
   }

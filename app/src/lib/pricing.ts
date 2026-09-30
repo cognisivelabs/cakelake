@@ -22,8 +22,8 @@ export function hasUnpricedLines(order: Order, catalog: CatalogItem[]): boolean 
   );
 }
 
-// Delivery cost isn't priced on the site — see ADR-003: it's confirmed
-// with the customer over WhatsApp, not shown as a line item here.
+// Delivery cost isn't priced on the site — it's confirmed with the
+// customer over WhatsApp, not shown as a line item here.
 export function orderTotal(order: Order, catalog: CatalogItem[]): number {
   return resolveOrderLines(order, catalog).reduce((sum, { item, line }) => {
     const total = lineTotal(item, line);

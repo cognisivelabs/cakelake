@@ -8,6 +8,7 @@ import { NoResults } from "./NoResults";
 import { SearchField } from "./SearchField";
 import type { MenuFilterState } from "./useMenuFilters";
 import styles from "./menu.module.css";
+import { categoryColours } from "@/theme";
 
 // Desktop: a filter panel on the left — Category checkboxes (tick as many
 // as you like; none means all), then Price, Flavour and Occasion — and the
@@ -27,7 +28,11 @@ export function DesktopMenu({
   const ticked = filters.categoryIds;
   const sections = categories
     .filter((category) => ticked.length === 0 || ticked.includes(category.id))
-    .map((category) => ({ category, items: visibleCatalog.filter((item) => item.categoryId === category.id) }))
+    .map((category) => ({
+      category,
+      accent: categoryColours(category.colour).accent,
+      items: visibleCatalog.filter((item) => item.categoryId === category.id),
+    }))
     .filter(({ items }) => items.length > 0);
 
   return (
@@ -52,11 +57,11 @@ export function DesktopMenu({
             {filters.anyFilterActive ? " these filters" : ""} — try ticking another category.
           </p>
         ) : (
-          sections.map(({ category, items }) => (
+          sections.map(({ category, accent, items }) => (
             <div key={category.id} className={styles.desktopSection}>
               <h2
                 className={styles.desktopCategoryHeading}
-                style={{ borderColor: category.accent, color: category.accent }}
+                style={{ borderColor: accent, color: accent }}
               >
                 {category.label}
                 <span className={styles.count}>{items.length} ranges</span>

@@ -6,7 +6,7 @@
 // only treats *.test.ts as test files, so this needed its own signal.
 import type { Catalog, CatalogItem } from "@/types/catalog";
 import { CATEGORIES } from "@/data/categories";
-import { CATALOG } from "@/data/items";
+import { ITEMS } from "@/data/items";
 import { FLAVOUR_TAGS, OCCASIONS } from "@/data/taxonomy";
 import type { CartLine, Order } from "@/types/order";
 import { CONFIG } from "@/lib/config";
@@ -54,7 +54,7 @@ export function order(overrides: Partial<Order> = {}): Order {
 /** The real catalogue from src/data, as the internal API returns it. */
 export const testCatalog: Catalog = {
   categories: CATEGORIES,
-  items: CATALOG,
+  items: ITEMS,
   occasions: OCCASIONS,
   flavourTags: FLAVOUR_TAGS,
 };

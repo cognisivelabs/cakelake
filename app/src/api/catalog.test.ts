@@ -65,4 +65,24 @@ describe("internal banner API", () => {
   it("returns the hero banners", async () => {
     expect((await fetchBanners()).length).toBeGreaterThan(0);
   });
+
+  it("links every banner button to the menu, a real category or a real item", async () => {
+    const catalog = await fetchCatalog();
+    const categorySlugs = new Set(catalog.categories.map((c) => c.slug));
+    const itemSlugs = new Set(catalog.items.map((i) => i.slug));
+    const isRealLink = (href: string) => {
+      const url = new URL(href, "https://example.test");
+      if (url.pathname === "/menu") {
+        const category = url.searchParams.get("category");
+        return category === null || category.split(",").every((slug) => categorySlugs.has(slug));
+      }
+      const itemSlug = /^\/menu\/([^/]+)$/.exec(url.pathname)?.[1];
+      return itemSlug !== undefined && itemSlugs.has(itemSlug);
+    };
+    for (const banner of await fetchBanners()) {
+      for (const cta of [banner.cta, banner.secondaryCta]) {
+        if (cta) expect(isRealLink(cta.href), `banner ${banner.id}: ${cta.href}`).toBe(true);
+      }
+    }
+  });
 });

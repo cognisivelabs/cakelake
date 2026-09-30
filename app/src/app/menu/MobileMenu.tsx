@@ -9,6 +9,7 @@ import { SearchField } from "./SearchField";
 import type { MenuFilterState } from "./useMenuFilters";
 import type { useScrollSpy } from "./useScrollSpy";
 import styles from "./menu.module.css";
+import { categoryColours } from "@/theme";
 
 // Mobile lists every category in one long scroll — see docs CLB Menu
 // Recategorised's "1a": a sticky rail of chips jumps between sections
@@ -28,7 +29,11 @@ export function MobileMenu({
   // Only categories with something to jump to right now get a chip or a
   // section — the same "skip if empty" rule for both.
   const sections = categories
-    .map((category) => ({ category, items: visibleCatalog.filter((item) => item.categoryId === category.id) }))
+    .map((category) => ({
+      category,
+      accent: categoryColours(category.colour).accent,
+      items: visibleCatalog.filter((item) => item.categoryId === category.id),
+    }))
     .filter(({ items }) => items.length > 0);
 
   return (
@@ -51,7 +56,7 @@ export function MobileMenu({
       {sections.length > 0 && (
         <div className={styles.railChips}>
           <div className={styles.railChipsScroll}>
-            {sections.map(({ category }) => (
+            {sections.map(({ category, accent }) => (
               <a
                 key={category.id}
                 href={`#${category.slug}`}
@@ -59,7 +64,7 @@ export function MobileMenu({
                 className={styles.railChip}
                 style={
                   category.slug === spy.activeId
-                    ? { background: category.accent, borderColor: category.accent, color: "#fff" }
+                    ? { background: accent, borderColor: accent, color: "#fff" }
                     : undefined
                 }
               >
@@ -71,9 +76,9 @@ export function MobileMenu({
         </div>
       )}
 
-      {sections.map(({ category, items }) => (
+      {sections.map(({ category, accent, items }) => (
         <section key={category.id} id={category.slug} ref={spy.sectionRef(category.slug)} className={styles.section}>
-          <h2 className={styles.categoryHeading} style={{ borderColor: category.accent, color: category.accent }}>
+          <h2 className={styles.categoryHeading} style={{ borderColor: accent, color: accent }}>
             {category.label}
             <span className={styles.count}>{items.length} ranges</span>
           </h2>

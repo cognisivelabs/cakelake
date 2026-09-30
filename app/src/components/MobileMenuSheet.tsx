@@ -9,6 +9,7 @@ import { ROUTES, categoryRoute, flavourRoute, occasionRoute } from "@/lib/routes
 import { INSTALL_STEPS } from "@/components/installSteps";
 import { HeaderSearch } from "@/components/HeaderSearch";
 import styles from "./MobileMenuSheet.module.css";
+import { categoryColours } from "@/theme";
 
 // Mobile's mega-menu: a full-screen sheet grouped by lead time — the
 // same groups as the desktop Cakes menu, plus occasions and Find us.
@@ -64,7 +65,7 @@ export function MobileMenuSheet({ onClose }: { onClose: () => void }) {
                   className={styles.row}
                   onClick={onClose}
                 >
-                  <span className={styles.dot} style={{ background: category.accent }} />
+                  <span className={styles.dot} style={{ background: categoryColours(category.colour).accent }} />
                   <span className={styles.rowName}>{category.label}</span>
                   <span className={styles.rowMeta}>{priceLabel}</span>
                   <span className={styles.chevron} aria-hidden="true">

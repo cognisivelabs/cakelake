@@ -18,17 +18,17 @@ export type WeightTier = {
  * (made to order), or a from-scratch custom brief (Photo, 3D). */
 export type CategoryKind = "everyday" | "made-to-order" | "custom";
 
+/** A category's colour, one of the theme's named colours. */
+export type CategoryColour = "pink" | "berry";
+
 export type Category = {
   id: number;
   /** URL form of the category, e.g. "classic-cakes". */
   slug: string;
   label: string;
   kind: CategoryKind;
-  /** Accent colour for chips and headers, usually a theme variable such
-   * as var(--color-pink). */
-  accent: string;
-  /** A pale version of the accent, used as a tag background. */
-  tint: string;
+  /** Colour of the category's chips, headings and tags. */
+  colour: CategoryColour;
 };
 
 /** A "shop by occasion" grouping (Birthday, Anniversary...). Which items

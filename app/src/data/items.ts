@@ -84,7 +84,7 @@ function categoryItems({
 }
 
 /** Every item on the menu, in menu order. */
-export const CATALOG: CatalogItem[] = [
+export const ITEMS: CatalogItem[] = [
   ...categoryItems({
     categoryId: 1, // classic-cakes
     occasions: [1, 2, 3, 4], // birthday, anniversary, new-baby, graduation

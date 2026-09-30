@@ -29,7 +29,8 @@ tint on mobile) and the PWA manifest colours. Nothing else needs editing.
 - The root layout inlines that block, so there is no flash of the wrong
   colours, and every stylesheet reads `var(--color-…)`. No colour is
   hard-coded in a stylesheet.
-- Category colours (`data/categories.ts`) are variables too, so they follow the theme.
+- Each category names a theme colour (`colour: "pink"` in `data/categories.ts`);
+  `categoryColours()` in `theme/index.ts` turns it into CSS variables, so it follows the theme.
 
 ## Adding a theme
 

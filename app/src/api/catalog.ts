@@ -1,6 +1,6 @@
 import type { Catalog, CatalogItem, Category, FlavourTag, Occasion } from "@/types/catalog";
 import { CATEGORIES } from "@/data/categories";
-import { CATALOG } from "@/data/items";
+import { ITEMS } from "@/data/items";
 import { FLAVOUR_TAGS, OCCASIONS } from "@/data/taxonomy";
 import { itemMatchesFilters, type MenuFilters } from "@/lib/search";
 
@@ -12,12 +12,12 @@ export async function fetchCategories(): Promise<Category[]> {
 }
 
 export async function fetchItems(): Promise<CatalogItem[]> {
-  return CATALOG;
+  return ITEMS;
 }
 
 /** One item by its slug; undefined when there's no such item. */
 export async function fetchItem(slug: string): Promise<CatalogItem | undefined> {
-  return CATALOG.find((item) => item.slug === slug);
+  return ITEMS.find((item) => item.slug === slug);
 }
 
 export async function fetchOccasions(): Promise<Occasion[]> {

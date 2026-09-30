@@ -1,11 +1,13 @@
 import type { CatalogItem, Category } from "@/types/catalog";
 import { readyLabel } from "@/lib/catalog";
 import styles from "./ItemDetailView.module.css";
+import { categoryColours } from "@/theme";
 
 /** The category as a coloured tag. */
 export function CategoryTag({ category }: { category: Category }) {
+  const { accent, tint } = categoryColours(category.colour);
   return (
-    <span className={`${styles.tag} mono-tag`} style={{ background: category.tint, color: category.accent }}>
+    <span className={`${styles.tag} mono-tag`} style={{ background: tint, color: accent }}>
       {category.label}
     </span>
   );

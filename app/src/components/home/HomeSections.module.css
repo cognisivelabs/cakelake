@@ -486,7 +486,7 @@
   color: var(--color-ink);
 }
 
-.addButton {
+.viewButton {
   composes: btn-accent from global;
   display: flex;
   align-items: center;
@@ -936,7 +936,7 @@
     font-size: 0.94rem;
   }
 
-  .addButton {
+  .viewButton {
     height: 36px;
     padding: 0 16px;
     border-radius: 8px;

@@ -96,7 +96,7 @@
   color: var(--color-ink);
 }
 
-.addButton,
+.viewButton,
 .askButton {
   border: 1.5px solid var(--color-ink);
   border-radius: 7px;

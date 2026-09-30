@@ -65,7 +65,7 @@ export function MostOrdered({ cards, tabs }: { cards: MostOrderedCard[]; tabs: M
               <div className={styles.productSpacer} />
               <div className={styles.productFooter}>
                 <span className={styles.productPrice}>{card.price}</span>
-                <span className={styles.addButton}>ADD</span>
+                <span className={styles.viewButton}>VIEW</span>
               </div>
             </div>
           </Link>

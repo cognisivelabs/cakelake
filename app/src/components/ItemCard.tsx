@@ -10,12 +10,8 @@ function priceFrom(item: CatalogItem): string {
   return price === undefined ? "Ask us" : formatAed(price);
 }
 
-// Sep 2026 recategorisation: this card is now one flavour (one flattened
-// catalog item), not a multi-flavour group — no more "+N FLAVOURS"
-// badge or flavour-list subtitle, matching the updated Hi-Fi's simpler
-// card (photo, name, price, a button). Tapping ADD still opens the item
-// detail page rather than adding straight from the card — there's no
-// weight-tier/quantity picker here to add with yet.
+// A menu card for one catalog item: photo, name, price and a VIEW button.
+// The whole card links to the item's detail page.
 export function ItemCard({ item }: { item: CatalogItem }) {
   if (!item.available) {
     return (
@@ -48,7 +44,7 @@ export function ItemCard({ item }: { item: CatalogItem }) {
         <div className={styles.name}>{item.name}</div>
         <div className={styles.footer}>
           <span className={styles.price}>{priceFrom(item)}</span>
-          <span className={styles.addButton}>ADD</span>
+          <span className={styles.viewButton}>VIEW</span>
         </div>
       </div>
     </Link>
